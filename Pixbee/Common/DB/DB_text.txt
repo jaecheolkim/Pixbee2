@@ -1,0 +1,124 @@
+DB 설계
+
+그룹을 스캔 
+그룹별 사진을 스캔
+-> 중간 사이즈 사진을 스캔하면서 얼굴 검색 
+-> 검색된 얼굴이 있을 경우 원본 사진과 얼굴 영역 DB로 저장
+-> 검색된 얼굴이 없을 경우 스킵
+http://www.w3schools.com/sql/sql_datatypes.asp
+codev.it  
+jaecheolkim.kth@gmail.com  / jae154015
+
+    // People table  (Users Table ->  UserId / UserName으로 대체.)
+
+    const char *peopleSQL = "CREATE TABLE IF NOT EXISTS people ("
+
+                            "'id' integer NOT NULL PRIMARY KEY AUTOINCREMENT, "
+
+                            "'name' text NOT NULL)";
+
+    // Images table
+
+    const char *imagesSQL = "CREATE TABLE IF NOT EXISTS images ("
+
+                            "'id' integer NOT NULL PRIMARY KEY AUTOINCREMENT, “  
+
+                            "'person_id' integer NOT NULL, "
+
+                            "'image' blob NOT NULL)";
+
+[Groups]		// 로컬 앨범의 그룹 정보 Sync용
+———————————
+GroupURL		:  ALAssetsGroupPropertyURL (ALAsset이 속해 있던 ALAssetsGroup와 연동 될 수 있는 key) 	:  text
+GroupName	:  ALAssetsGroupPropertyName 그룹명	: text
+AssetCount	:  numberOfAssets 그룹에 속해있는 Assets 카운트 수.	: int
+timestamp	:  검사 일자.	:  datetime
+
+
+[Users]		// 로컬 사용자 정보
+———————————
+UserID		:  로컬 UserID	: int  (auto gen.)  
+UserName		:  사용자 이름 (default = nil / fbName)	: text
+GUID		:  서비스 연동시 필요한 Unique Global User id (default = nil / )	: text
+UserNick		:  사용자 닉네임 (default = nil / fbName) 	: text
+UserProfile	:  사용자 프로필 사진 (default = nil / fbProfile)	: blob
+fbID			:  페북 ID	(default = nil) 	: text
+fbName		:  페북 사용자명	(default = nil)	: text
+fbProfile		:  페북 프로필 사진 	(default = nil)	: blob
+timestamp 	:  생성일자		: datetime
+
+[Photos]		// 미분류,분류 사진들 모두 저장됨. (얼굴이 포함된 사진만 DB및 file로 저장)
+———————————
+PhotoID		:  로컬 사진ID		: int  (auto gen.) 
+AssetURL	:  ALAssetPropertyAssetURL (ALAsset 과 연동될 수 있는 key) : text
+GroupURL		:  ALAssetsGroupPropertyURL (ALAsset이 속해 있던 ALAssetsGroup와 연동 될 수 있는 key)  	:  text
+FilePath		:  Local save path  (로컬에 저장되는 사진 Path / 원본, 스크린, 섬네일) : text
+Date 		:  ALAssetPropertyDate : DATETIME
+AssetType  	:  ALAssetTypePhoto / ALAssetTypeVideo / ALAssetTypeUnknown : int
+Longitude    : ALAssetPropertyLocation : double
+Latitude   		: ALAssetPropertyLocation : double
+Duration     : ALAssetPropertyDuration : double
+CheckType    : 미검사(-1 : default) / 검출개수 / 미검출 : int 
+timestamp 		:  생성일자	 : datetime 
+
+[Faces]    		// 미분류된 얼굴 데이터들.
+———————————
+FaceNo		:  미분류 얼굴 ID	: int  (auto gen.) 
+PhotoID		:  Photos의 사진 ID	: int 
+PhotoBound	:  검출시 사진 사지즈 CGRect -> NSString		: text
+FaceBound	:  사진내 얼굴 검출 영역 CGRect -> NSString	: text
+LEyePoint	:  왼쪽눈 위치 CGPoint -> NSString 	: text
+REyePoint 	:  오늘쪽눈 위치  CGPoint -> NSString 	: text
+MouthPoint 	:  입 위치   CGPoint -> NSString 	: text
+FaceAngle	:  얼굴 기울기  : double
+FaceYaw		:  얼굴 Yaw : double
+FaceSmile	:  웃는 얼굴인가 (1 혹은 0)  : BOOL
+LEyeClosed	:  왼쪽눈 감겼는가  (1 혹은 0)  : BOOL
+REyeClosed		:  오른쪽눈 감겼는가  (1 혹은 0)  : BOOL
+image		:  사진내 검출된 얼굴 raw  (100x100)	: blob
+CheckType    : 미검사(-1 : default) / 검사(Recog.) : 1 
+timestamp	:  생성 일자 : datetime 
+
+[UserPhotos]  	// 분류된 사용자별 얼굴이 포함된 사진들
+———————————
+no  			:  Auto Gen ID
+UserID		:  Users Table의 UserID
+PhotoID		:  Photos Table의 사진ID
+FaceNo		:  Faces Table의  FaceNo
+timestamp	:  분류 일자.
+
+[FaceData] 	// 등록 사용자의 얼굴 데이터 (인식용으로 사용)
+———————————
+id	 :  Unique ID	 : int  (auto gen.)  
+UserID	 :  Users Table의 로컬 UserID	: int  
+image	 :  얼굴 raw  (100x100)	 : blob
+
+
+======================
+[GUsers]	 // 서비스와 연동되는 글로벌 사용자 정보 (서버상 존재)
+———————————
+GUID	 :  서비스 연동시 필요한 Unique Global User id 	: text   (server gen.)
+Email 	 :  서비스 가입용 Email 정보	 : text
+Passwd	 :  서비스 가입용 Password	 : text
+Date	 :  서비스 가입일자 	 : datetime
+IPAddr	 :  가입 IP Address	 : text
+Natioanl	 :  가입 지역	 : text
+
+
+
+순서
+
+처음 구동 시
+그룹 스캔 후 그룹 어레이 저장
+그룹/Asset 스캔 후  전체 Asset 어레이 저장
+얼굴 등록 
+등록된 얼굴 데이터와 과 전체 Asset 중 사진이 있는 Asset의 사진과 비교하여 UserPhotos DB에 넣어줌.  
+
+요구 
+처음 구동 시 앨범 전체를 스캔하므로 인트로 페이지 (3장~5장) 나오면 좋겠다. ex) PS Express
+페북 아이디 없으면 ? 처음에 진입부터 못하나?
+얼굴 메타 데이터 더 추가. (눈코입웃는거)
+사진 검사 영역을 포토 앨범(스트림 포함) 전체로 할지 아니면 Tidy처럼 camera roll 만 할지.
+
+==> 인트로 페이지 추가 / 카메라롤만 검색하게 / 얼굴등록 가이드 애니메이션 (가이드 노란색 +빨강 + 녹색)
+==> 가이드 정보 제공.
