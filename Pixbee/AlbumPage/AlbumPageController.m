@@ -50,6 +50,8 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
+    // Uncomment to display a logo as the navigation bar title
+    self.navigationItem.titleView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"pixbee.png"]];
     
     //KEYBOARD OBSERVERS
     /************************/
@@ -271,11 +273,11 @@
     }
 }
 
+#pragma mark FBFriendControllerDelegate
+
 - (void)searchFriend:(UserCell *)cell name:(NSString *)name {
     [self.friendPopup handleSearchForTerm:name];
 }
-
-#pragma mark FBFriendControllerDelegate
 
 - (void)selectedFBFriend:(NSDictionary *)friend {
     self.editCell.userName.text = [friend objectForKey:@"name"];

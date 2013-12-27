@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		696ECBDB1850551F00F54DB6 /* AllPhotosController.m in Sources */ = {isa = PBXBuildFile; fileRef = 696ECBDA1850551F00F54DB6 /* AllPhotosController.m */; };
+		697C83AB186DC57A00823990 /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 697C83A8186DC57A00823990 /* FacebookSDK.framework */; };
+		697C83AC186DC57A00823990 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 697C83A9186DC57A00823990 /* opencv2.framework */; };
+		697C83AD186DC57A00823990 /* SDWebImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 697C83AA186DC57A00823990 /* SDWebImage.framework */; };
+		697C83DA186DC8AA00823990 /* PBFaceLib.mm in Sources */ = {isa = PBXBuildFile; fileRef = 697C83D9186DC8AA00823990 /* PBFaceLib.mm */; };
 		69B1B2FD18587D9200774382 /* IntroControll.m in Sources */ = {isa = PBXBuildFile; fileRef = 69B1B2F818587D9200774382 /* IntroControll.m */; };
 		69B1B2FE18587D9200774382 /* IntroModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 69B1B2FA18587D9200774382 /* IntroModel.m */; };
 		69B1B2FF18587D9200774382 /* IntroView.m in Sources */ = {isa = PBXBuildFile; fileRef = 69B1B2FC18587D9200774382 /* IntroView.m */; };
@@ -202,10 +206,8 @@
 		801B35DF18561BC400EEB9F3 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 801B35DE18561BC400EEB9F3 /* ViewController.m */; };
 		807E75C81851576100B1AD7E /* THBinder.m in Sources */ = {isa = PBXBuildFile; fileRef = 807E75C31851576100B1AD7E /* THBinder.m */; };
 		807E75C91851576100B1AD7E /* THObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = 807E75C51851576100B1AD7E /* THObserver.m */; };
-		807E76271854E06A00B1AD7E /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 807E76261854E06A00B1AD7E /* opencv2.framework */; };
 		80812839184D22960000CF3E /* DB_text.txt in Resources */ = {isa = PBXBuildFile; fileRef = 80812838184D22960000CF3E /* DB_text.txt */; };
 		8081283D184D25F50000CF3E /* GlobalValues.m in Sources */ = {isa = PBXBuildFile; fileRef = 8081283C184D25F50000CF3E /* GlobalValues.m */; };
-		80BE59C81854E68400D3F44A /* SDWebImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 80BE59C71854E68400D3F44A /* SDWebImage.framework */; };
 		80D2A0C0184A1C1C008D29B2 /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 78685D551848EBAC002D2BAA /* Social.framework */; };
 		80D2A0C1184A1C29008D29B2 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 69ED32DE18484EBB00127196 /* CoreGraphics.framework */; };
 		80D2A116184A1E58008D29B2 /* AlbumListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 80D2A0C7184A1E57008D29B2 /* AlbumListViewController.m */; };
@@ -245,10 +247,8 @@
 		80D2A189184B7B54008D29B2 /* FBHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 80D2A186184B7B54008D29B2 /* FBHelper.m */; };
 		80D2A19F184B7CBB008D29B2 /* PB_DBModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 80D2A19E184B7CBB008D29B2 /* PB_DBModel.m */; };
 		80D55214186C710000B54974 /* FaceDetectionViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 80D55211186C710000B54974 /* FaceDetectionViewController.mm */; };
-		80D55215186C710000B54974 /* libPBFaceLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 80D55212186C710000B54974 /* libPBFaceLib.a */; };
 		80D55219186C713400B54974 /* MotionOrientation.m in Sources */ = {isa = PBXBuildFile; fileRef = 80D55218186C713400B54974 /* MotionOrientation.m */; };
 		80D5521B186C8E8200B54974 /* hive_line.png in Resources */ = {isa = PBXBuildFile; fileRef = 80D5521A186C8E8200B54974 /* hive_line.png */; };
-		80FD32EF185CD639007409B2 /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 807E76231854E05B00B1AD7E /* FacebookSDK.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -264,6 +264,10 @@
 /* Begin PBXFileReference section */
 		696ECBD91850551F00F54DB6 /* AllPhotosController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AllPhotosController.h; sourceTree = "<group>"; };
 		696ECBDA1850551F00F54DB6 /* AllPhotosController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AllPhotosController.m; sourceTree = "<group>"; };
+		697C83A8186DC57A00823990 /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FacebookSDK.framework; path = ../FacebookSDK.framework; sourceTree = "<group>"; };
+		697C83A9186DC57A00823990 /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = opencv2.framework; path = ../opencv2.framework; sourceTree = "<group>"; };
+		697C83AA186DC57A00823990 /* SDWebImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDWebImage.framework; path = ../SDWebImage.framework; sourceTree = "<group>"; };
+		697C83D9186DC8AA00823990 /* PBFaceLib.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PBFaceLib.mm; sourceTree = "<group>"; };
 		69B1B2F718587D9200774382 /* IntroControll.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntroControll.h; sourceTree = "<group>"; };
 		69B1B2F818587D9200774382 /* IntroControll.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IntroControll.m; sourceTree = "<group>"; };
 		69B1B2F918587D9200774382 /* IntroModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntroModel.h; sourceTree = "<group>"; };
@@ -552,12 +556,9 @@
 		807E75C41851576100B1AD7E /* THObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = THObserver.h; sourceTree = "<group>"; };
 		807E75C51851576100B1AD7E /* THObserver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = THObserver.m; sourceTree = "<group>"; };
 		807E75C71851576100B1AD7E /* THObserversAndBinders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = THObserversAndBinders.h; sourceTree = "<group>"; };
-		807E76231854E05B00B1AD7E /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FacebookSDK.framework; path = ../../../FacebookSDK.framework; sourceTree = "<group>"; };
-		807E76261854E06A00B1AD7E /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = opencv2.framework; path = ../../../opencv2.framework; sourceTree = "<group>"; };
 		80812838184D22960000CF3E /* DB_text.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = DB_text.txt; path = Pixbee/Common/DB/DB_text.txt; sourceTree = SOURCE_ROOT; };
 		8081283B184D25F50000CF3E /* GlobalValues.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GlobalValues.h; sourceTree = "<group>"; };
 		8081283C184D25F50000CF3E /* GlobalValues.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GlobalValues.m; sourceTree = "<group>"; };
-		80BE59C71854E68400D3F44A /* SDWebImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDWebImage.framework; path = ../../../SDWebImage.framework; sourceTree = "<group>"; };
 		80D2A0C6184A1E57008D29B2 /* AlbumListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlbumListViewController.h; sourceTree = "<group>"; };
 		80D2A0C7184A1E57008D29B2 /* AlbumListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AlbumListViewController.m; sourceTree = "<group>"; };
 		80D2A0C8184A1E57008D29B2 /* ASAssetsLibrary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASAssetsLibrary.h; sourceTree = "<group>"; };
@@ -620,7 +621,6 @@
 		80D2A19E184B7CBB008D29B2 /* PB_DBModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PB_DBModel.m; path = Pixbee/Common/DB/PB_DBModel.m; sourceTree = SOURCE_ROOT; };
 		80D55210186C710000B54974 /* FaceDetectionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FaceDetectionViewController.h; sourceTree = "<group>"; };
 		80D55211186C710000B54974 /* FaceDetectionViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FaceDetectionViewController.mm; sourceTree = "<group>"; };
-		80D55212186C710000B54974 /* libPBFaceLib.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libPBFaceLib.a; sourceTree = "<group>"; };
 		80D55213186C710000B54974 /* PBFaceLib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBFaceLib.h; sourceTree = "<group>"; };
 		80D55217186C713400B54974 /* MotionOrientation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MotionOrientation.h; sourceTree = "<group>"; };
 		80D55218186C713400B54974 /* MotionOrientation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MotionOrientation.m; sourceTree = "<group>"; };
@@ -632,15 +632,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				697C83AB186DC57A00823990 /* FacebookSDK.framework in Frameworks */,
+				697C83AC186DC57A00823990 /* opencv2.framework in Frameworks */,
+				697C83AD186DC57A00823990 /* SDWebImage.framework in Frameworks */,
 				7805A5E7186589BE00B234C1 /* MobileCoreServices.framework in Frameworks */,
 				7805A5E5186589B300B234C1 /* MessageUI.framework in Frameworks */,
 				7805A5E3186589A200B234C1 /* libz.1.2.5.dylib in Frameworks */,
 				7805A5E11865899100B234C1 /* ImageIO.framework in Frameworks */,
-				80D55215186C710000B54974 /* libPBFaceLib.a in Frameworks */,
 				7805A5DF1865897D00B234C1 /* Security.framework in Frameworks */,
-				80FD32EF185CD639007409B2 /* FacebookSDK.framework in Frameworks */,
-				80BE59C81854E68400D3F44A /* SDWebImage.framework in Frameworks */,
-				807E76271854E06A00B1AD7E /* opencv2.framework in Frameworks */,
 				80D2A17C184A7328008D29B2 /* QuartzCore.framework in Frameworks */,
 				80D2A16C184A72F7008D29B2 /* libTestFlight.a in Frameworks */,
 				80D2A176184A7328008D29B2 /* AVFoundation.framework in Frameworks */,
@@ -798,14 +797,14 @@
 		69ED32DB18484EBB00127196 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				697C83A8186DC57A00823990 /* FacebookSDK.framework */,
+				697C83A9186DC57A00823990 /* opencv2.framework */,
+				697C83AA186DC57A00823990 /* SDWebImage.framework */,
 				7805A5E6186589BE00B234C1 /* MobileCoreServices.framework */,
 				7805A5E4186589B300B234C1 /* MessageUI.framework */,
 				7805A5E2186589A200B234C1 /* libz.1.2.5.dylib */,
 				7805A5E01865899100B234C1 /* ImageIO.framework */,
 				7805A5DE1865897D00B234C1 /* Security.framework */,
-				80BE59C71854E68400D3F44A /* SDWebImage.framework */,
-				807E76261854E06A00B1AD7E /* opencv2.framework */,
-				807E76231854E05B00B1AD7E /* FacebookSDK.framework */,
 				80D2A16D184A7328008D29B2 /* libsqlite3.dylib */,
 				80D2A16E184A7328008D29B2 /* AVFoundation.framework */,
 				80D2A16F184A7328008D29B2 /* Accelerate.framework */,
@@ -1411,7 +1410,7 @@
 			children = (
 				80D55210186C710000B54974 /* FaceDetectionViewController.h */,
 				80D55211186C710000B54974 /* FaceDetectionViewController.mm */,
-				80D55212186C710000B54974 /* libPBFaceLib.a */,
+				697C83D9186DC8AA00823990 /* PBFaceLib.mm */,
 				80D55213186C710000B54974 /* PBFaceLib.h */,
 			);
 			path = FaceRecognition;
@@ -1714,6 +1713,7 @@
 				69C39FE418606CBD001EDDFA /* SDWebImageCompat.m in Sources */,
 				80D2A118184A1E58008D29B2 /* GalleryViewController.m in Sources */,
 				80D2A139184A1E58008D29B2 /* UIButton+Bootstrap.m in Sources */,
+				697C83DA186DC8AA00823990 /* PBFaceLib.mm in Sources */,
 				80D2A138184A1E58008D29B2 /* NSString+FontAwesome.m in Sources */,
 				80D2A187184B7B54008D29B2 /* PBAssetLibrary.mm in Sources */,
 				80D2A122184A1E58008D29B2 /* ASLoadImageQueue.m in Sources */,

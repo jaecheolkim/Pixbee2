@@ -50,20 +50,15 @@
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated {
     [super setEditing:editMode animated:animated];
     
-    
-    
     UIView* reorderControl = [self huntedSubviewWithClassName:@"UITableViewCellReorderControl"];
     
     for(UIImageView* subview in reorderControl.subviews) {
         if ([subview isKindOfClass: [UIImageView class]]) {
             ((UIImageView *)subview).image = [UIImage imageNamed: @"list.png"];
             ((UIImageView *)subview).frame = CGRectMake(0, 0, 16, 16);
-//            ((UIImageView *)subview).backgroundColor = [UIColor redColor];
         }
     }
-    
 
-    
     [UIView animateWithDuration:0.1
                      animations:^{
                          if (editMode) {
@@ -90,8 +85,6 @@
                      completion:^(BOOL finished){
                          
                      }];
-
-//    [self setNeedsLayout];
 }
 
 - (void)updateBorder:(NSIndexPath *)indexPath {

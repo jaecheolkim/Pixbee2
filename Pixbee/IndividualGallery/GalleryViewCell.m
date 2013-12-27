@@ -20,11 +20,15 @@
 
 - (void)setSelected:(BOOL)selected {
     [super setSelected:selected];
-    if (selected) {
-        [self setBackgroundColor:[UIColor blueColor]];
+    
+}
+
+- (void)showSelectIcon:(BOOL)show {
+    if (show) {
+        self.selectIcon.hidden = NO;
     }
     else {
-        [self setBackgroundColor:[UIColor yellowColor]];
+        self.selectIcon.hidden = YES;
     }
 }
 
