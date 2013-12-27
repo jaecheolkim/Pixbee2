@@ -12,6 +12,7 @@
 		697C83AC186DC57A00823990 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 697C83A9186DC57A00823990 /* opencv2.framework */; };
 		697C83AD186DC57A00823990 /* SDWebImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 697C83AA186DC57A00823990 /* SDWebImage.framework */; };
 		697C83DA186DC8AA00823990 /* PBFaceLib.mm in Sources */ = {isa = PBXBuildFile; fileRef = 697C83D9186DC8AA00823990 /* PBFaceLib.mm */; };
+		697C83DE186DF2FA00823990 /* MBSwitch.m in Sources */ = {isa = PBXBuildFile; fileRef = 697C83DD186DF2FA00823990 /* MBSwitch.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		69B1B2FD18587D9200774382 /* IntroControll.m in Sources */ = {isa = PBXBuildFile; fileRef = 69B1B2F818587D9200774382 /* IntroControll.m */; };
 		69B1B2FE18587D9200774382 /* IntroModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 69B1B2FA18587D9200774382 /* IntroModel.m */; };
 		69B1B2FF18587D9200774382 /* IntroView.m in Sources */ = {isa = PBXBuildFile; fileRef = 69B1B2FC18587D9200774382 /* IntroView.m */; };
@@ -268,6 +269,8 @@
 		697C83A9186DC57A00823990 /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = opencv2.framework; path = ../opencv2.framework; sourceTree = "<group>"; };
 		697C83AA186DC57A00823990 /* SDWebImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDWebImage.framework; path = ../SDWebImage.framework; sourceTree = "<group>"; };
 		697C83D9186DC8AA00823990 /* PBFaceLib.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PBFaceLib.mm; sourceTree = "<group>"; };
+		697C83DC186DF2FA00823990 /* MBSwitch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBSwitch.h; sourceTree = "<group>"; };
+		697C83DD186DF2FA00823990 /* MBSwitch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MBSwitch.m; sourceTree = "<group>"; };
 		69B1B2F718587D9200774382 /* IntroControll.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntroControll.h; sourceTree = "<group>"; };
 		69B1B2F818587D9200774382 /* IntroControll.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IntroControll.m; sourceTree = "<group>"; };
 		69B1B2F918587D9200774382 /* IntroModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntroModel.h; sourceTree = "<group>"; };
@@ -677,6 +680,15 @@
 				696ECBDA1850551F00F54DB6 /* AllPhotosController.m */,
 			);
 			path = AllPhotos;
+			sourceTree = "<group>";
+		};
+		697C83DB186DF2FA00823990 /* MBSwitch */ = {
+			isa = PBXGroup;
+			children = (
+				697C83DC186DF2FA00823990 /* MBSwitch.h */,
+				697C83DD186DF2FA00823990 /* MBSwitch.m */,
+			);
+			path = MBSwitch;
 			sourceTree = "<group>";
 		};
 		69B1B2F618587D9200774382 /* IntroControll */ = {
@@ -1282,6 +1294,7 @@
 		80D2A0C4184A1E57008D29B2 /* External */ = {
 			isa = PBXGroup;
 			children = (
+				697C83DB186DF2FA00823990 /* MBSwitch */,
 				80D55216186C713400B54974 /* MotionOrientation */,
 				7805A65118659ECC00B234C1 /* AFNetworking */,
 				7805A60D18658BA000B234C1 /* DCIntrospect */,
@@ -1717,6 +1730,7 @@
 				80D2A138184A1E58008D29B2 /* NSString+FontAwesome.m in Sources */,
 				80D2A187184B7B54008D29B2 /* PBAssetLibrary.mm in Sources */,
 				80D2A122184A1E58008D29B2 /* ASLoadImageQueue.m in Sources */,
+				697C83DE186DF2FA00823990 /* MBSwitch.m in Sources */,
 				807E75C81851576100B1AD7E /* THBinder.m in Sources */,
 				69C39FCB18606B39001EDDFA /* MKAnnotationView+WebCache.m in Sources */,
 				80D2A123184A1E58008D29B2 /* NSOperation+AS.m in Sources */,
