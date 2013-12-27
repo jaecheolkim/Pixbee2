@@ -16,6 +16,8 @@
 #import "PBFaceLib.h"
 #import "MotionOrientation.h"
 #import "UIButton+Bootstrap.h"
+#import "BasicBottomView.h"
+#import "MBSwitch.h"
 
 #define CAPTURE_FPS 30
 
@@ -51,6 +53,9 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     UIImage *guideImage;
 
     BOOL isReadyToScanFace;
+    
+    NSArray *instructPoint;
+    NSArray *instructStr;
 
 }
 @property (weak, nonatomic) IBOutlet UILabel *instructionsLabel;
@@ -60,10 +65,14 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 @property (weak, nonatomic) IBOutlet UIButton *flashButton;
 @property (weak, nonatomic) IBOutlet UIButton *switchButton;
 @property (weak, nonatomic) IBOutlet UIImageView *hiveImageView;
+@property (weak, nonatomic) IBOutlet BasicBottomView *CameraBottomView;
+@property (nonatomic, retain) MBSwitch *cameraSwitch;
 
 - (IBAction)toggleFlash:(id)sender;
 - (IBAction)switchCameras:(id)sender;
 - (IBAction)closeCamera:(id)sender;
+- (IBAction)switchCameraVideo:(id)sender;
+
 @end
 
 @implementation FaceDetectionViewController
@@ -73,6 +82,9 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
+    instructPoint = @[NSStringFromCGPoint(CGPointMake(0, 0)),  ];
+    
+    
     
     isReadyToScanFace = NO;
     [FaceLib initDetector:CIDetectorAccuracyLow Tacking:YES];
@@ -88,16 +100,24 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     
     if(self.faceMode == FaceModeCollect){
         self.navigationController.navigationBarHidden = YES;
+        [_CameraBottomView setHidden:YES];
         [self setupGuide];
         self.numPicsTaken = 0;
     } else {
         [_hiveImageView setHidden:YES];
         [_instructionsLabel setHidden:YES];
+        
+        self.cameraSwitch = [[MBSwitch alloc] initWithFrame:CGRectMake(248, 41, 61.0, 12.0)];
+        [_cameraSwitch setOnTintColor:[UIColor colorWithRed:0.23f green:0.35f blue:0.60f alpha:1.00f]];
+        [_cameraSwitch setTintColor:[UIColor colorWithRed:0.91f green:0.30f blue:0.24f alpha:1.00f]];
+        [self.CameraBottomView addSubview:_cameraSwitch];
+        [_cameraSwitch addTarget:self action:@selector(switchCameraVideo:) forControlEvents:UIControlEventValueChanged];
     }
 
     [_closeButton bootstrapStyle];
     
 }
+
 
 - (BOOL)prefersStatusBarHidden {
     return YES;
@@ -221,6 +241,9 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     } else {
         [self dismissViewControllerAnimated:YES completion:nil];
     }
+}
+
+- (void)switchCameraVideo:(id)sender {
 }
 
 - (void)goNext

@@ -521,7 +521,11 @@
                                             <rect key="frame" x="0.0" y="0.0" width="107" height="28"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
+<<<<<<< HEAD
                                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="3425DF15-AF15-4EDD-A447-FFAC4CE764F5" translatesAutoresizingMaskIntoConstraints="NO" id="6aK-Ak-lFj">
+=======
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="352B2560-EF7E-40FE-9450-A58C2BE9CB2C" translatesAutoresizingMaskIntoConstraints="NO" id="6aK-Ak-lFj">
+>>>>>>> 580e36045b7def0237778ba2007983601b4b0ccd
                                                     <rect key="frame" x="0.0" y="0.0" width="28" height="29"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
@@ -1045,13 +1049,51 @@
                                 </userDefinedRuntimeAttributes>
                             </view>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Zkt-wk-y7C">
-                                <rect key="frame" x="124" y="44" width="72" height="72"/>
+                                <rect key="frame" x="250" y="44" width="72" height="72"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             </imageView>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="hive0.png" translatesAutoresizingMaskIntoConstraints="NO" id="kzk-8P-vOU">
-                                <rect key="frame" x="129" y="468" width="62" height="56"/>
+                                <rect key="frame" x="129" y="460" width="62" height="56"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
+                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oja-Kt-JRx" customClass="BasicBottomView">
+                                <rect key="frame" x="0.0" y="498" width="320" height="70"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <subviews>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="bottombar.png" translatesAutoresizingMaskIntoConstraints="NO" id="cMV-q7-80A">
+                                        <rect key="frame" x="0.0" y="6" width="320" height="64"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    </imageView>
+                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lik-r0-KMe">
+                                        <rect key="frame" x="127" y="0.0" width="68" height="68"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                        <state key="normal" image="camerabutton.png">
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                    </button>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="camera.png" translatesAutoresizingMaskIntoConstraints="NO" id="ZNs-qv-M9g">
+                                        <rect key="frame" x="150" y="23" width="22" height="22"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    </imageView>
+                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UrB-l3-kBZ">
+                                        <rect key="frame" x="14" y="23" width="40" height="30"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <state key="normal" image="cameraroll_icon.png">
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                    </button>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="take_photo.png" translatesAutoresizingMaskIntoConstraints="NO" id="U7Z-hV-Kd9">
+                                        <rect key="frame" x="248" y="23" width="20" height="13"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    </imageView>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="take_video.png" translatesAutoresizingMaskIntoConstraints="NO" id="0Ah-z5-nAa">
+                                        <rect key="frame" x="290" y="23" width="19" height="12"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    </imageView>
+                                </subviews>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
@@ -1060,6 +1102,7 @@
                     <nil key="simulatedTopBarMetrics"/>
                     <nil key="simulatedBottomBarMetrics"/>
                     <connections>
+                        <outlet property="CameraBottomView" destination="oja-Kt-JRx" id="N6j-bT-e4x"/>
                         <outlet property="closeButton" destination="ARB-yI-jgk" id="M2n-O6-UHa"/>
                         <outlet property="faceImageView" destination="Zkt-wk-y7C" id="KQw-nq-msI"/>
                         <outlet property="faceView" destination="txv-P5-Vrr" id="sJs-Zd-pUP"/>
@@ -1099,7 +1142,11 @@
         </scene>
     </scenes>
     <resources>
+<<<<<<< HEAD
         <image name="3425DF15-AF15-4EDD-A447-FFAC4CE764F5" width="628" height="152">
+=======
+        <image name="352B2560-EF7E-40FE-9450-A58C2BE9CB2C" width="628" height="152">
+>>>>>>> 580e36045b7def0237778ba2007983601b4b0ccd
             <mutableData key="keyedArchiveRepresentation">
 YnBsaXN0MDDUAQIDBAUGPj9YJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoK4HCBMU
 GR4fIyQsLzI4O1UkbnVsbNUJCgsMDQ4PEBESVk5TU2l6ZVYkY2xhc3NcTlNJbWFnZUZsYWdzVk5TUmVw
@@ -7523,7 +7570,11 @@ Bd3JAAAAAAAABAEAAAAAAAAAQgAAAAAAAAAAAAAAAAAF3cs
         <image name="camera.png" width="22" height="22"/>
         <image name="camera_rotate.png" width="24" height="18"/>
         <image name="camerabutton.png" width="70" height="70"/>
+<<<<<<< HEAD
         <image name="check.png" width="19" height="19"/>
+=======
+        <image name="cameraroll_icon.png" width="40" height="30"/>
+>>>>>>> 580e36045b7def0237778ba2007983601b4b0ccd
         <image name="edit.png" width="20" height="20"/>
         <image name="flash_camera_selcet.png" width="18" height="24"/>
         <image name="hive0.png" width="62" height="56"/>
@@ -7538,6 +7589,8 @@ Bd3JAAAAAAAABAEAAAAAAAAAQgAAAAAAAAAAAAAAAAAF3cs
         <image name="profile.png" width="58" height="67"/>
         <image name="right_toalbum.png" width="16" height="22"/>
         <image name="setting.png" width="19" height="19"/>
+        <image name="take_photo.png" width="20" height="13"/>
+        <image name="take_video.png" width="19" height="12"/>
         <image name="trash.png" width="16" height="20"/>
         <image name="uncheck.png" width="19" height="19"/>
     </resources>
