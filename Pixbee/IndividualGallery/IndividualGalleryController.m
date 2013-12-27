@@ -14,8 +14,9 @@
 #import "OpenPhotoUnwindSegue.h"
 #import "SCTInclude.h"
 #import "IDMPhotoBrowser.h"
+#import "FBFriendController.h"
 
-@interface IndividualGalleryController () <UICollectionViewDataSource, UICollectionViewDelegate, IDMPhotoBrowserDelegate>{
+@interface IndividualGalleryController () <UICollectionViewDataSource, UICollectionViewDelegate, IDMPhotoBrowserDelegate, FBFriendControllerDelegate, UserCellDelegate>{
     NSMutableArray *selectedPhotos;
 }
 
@@ -24,6 +25,7 @@
 @property (strong, nonatomic) GalleryViewCell *selectedCell;
 @property (strong, nonatomic) NSArray *photos;
 @property (strong, nonatomic) NSDictionary *user;
+@property (strong, nonatomic) FBFriendController *friendPopup;
 
 - (IBAction)editButtonClickHandler:(id)sender;
 - (IBAction)albumButtonClickHandler:(id)sender;
@@ -53,9 +55,10 @@
     [self.userProfileView.borderView removeFromSuperview];
     self.userProfileView.borderView = nil;
     [self.userProfileView updateCell:self.user count:[self.photos count]];
+    self.userProfileView.delegate = self;
     
     UICollectionViewFlowLayout *collectionViewLayout = (UICollectionViewFlowLayout*)self.collectionView.collectionViewLayout;
-    collectionViewLayout.sectionInset = UIEdgeInsetsMake(20, 0, 20, 0);
+    collectionViewLayout.sectionInset = UIEdgeInsetsMake(0, 0, 3, 0);
     
     [self.collectionView reloadData];
     [self.userProfileView.borderView removeFromSuperview];
@@ -90,28 +93,28 @@
 }
 
 
-- (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath
-{
-    UICollectionReusableView *reusableview = nil;
-    
-    if (kind == UICollectionElementKindSectionHeader) {
-        GalleryHeaderView *headerView = [collectionView dequeueReusableSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:@"GalleryHeaderView" forIndexPath:indexPath];
-        NSString *title = [[NSString alloc]initWithFormat:@"Photos Group #%i", indexPath.section + 1];
-        headerView.leftLabel.text = title;
-        UIImage *headerImage = [UIImage imageNamed:@"header_banner.png"];
-        headerView.backgroundImage.image = headerImage;
-        
-        reusableview = headerView;
-    }
-    
-    if (kind == UICollectionElementKindSectionFooter) {
-        UICollectionReusableView *footerview = [collectionView dequeueReusableSupplementaryViewOfKind:UICollectionElementKindSectionFooter withReuseIdentifier:@"FooterView" forIndexPath:indexPath];
-        
-        reusableview = footerview;
-    }
-    
-    return reusableview;
-}
+//- (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath
+//{
+//    UICollectionReusableView *reusableview = nil;
+//    
+//    if (kind == UICollectionElementKindSectionHeader) {
+//        GalleryHeaderView *headerView = [collectionView dequeueReusableSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:@"GalleryHeaderView" forIndexPath:indexPath];
+//        NSString *title = [[NSString alloc]initWithFormat:@"Photos Group #%i", indexPath.section + 1];
+//        headerView.leftLabel.text = title;
+//        UIImage *headerImage = [UIImage imageNamed:@"header_banner.png"];
+//        headerView.backgroundImage.image = headerImage;
+//        
+//        reusableview = headerView;
+//    }
+//    
+//    if (kind == UICollectionElementKindSectionFooter) {
+//        UICollectionReusableView *footerview = [collectionView dequeueReusableSupplementaryViewOfKind:UICollectionElementKindSectionFooter withReuseIdentifier:@"FooterView" forIndexPath:indexPath];
+//        
+//        reusableview = footerview;
+//    }
+//    
+//    return reusableview;
+//}
 
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath{
@@ -145,11 +148,10 @@
         
         // UI
         GalleryViewCell *cell = (GalleryViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
-        [cell setSelected:YES];
+        [cell showSelectIcon:YES];
         [cell setNeedsDisplay];
     }
     else {
-        
         self.selectedCell = (GalleryViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
 //        [self performSegueWithIdentifier:SEGUE_6A_TO_10A sender:self];
         
@@ -178,6 +180,7 @@
         
         // Show
         [self presentViewController:browser animated:YES completion:nil];
+        [self collectionView:collectionView didDeselectItemAtIndexPath:indexPath];
     }
 }
 
@@ -186,12 +189,12 @@
     if (self.collectionView.allowsMultipleSelection) {
         NSDictionary *photo = [self.photos objectAtIndex:indexPath.row];
         [selectedPhotos removeObject:photo];
-
-        // UI
-        GalleryViewCell *cell = (GalleryViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
-        [cell setSelected:NO];
-        [cell setNeedsDisplay];
     }
+    
+    // UI
+    GalleryViewCell *cell = (GalleryViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
+    [cell showSelectIcon:NO];
+    [cell setNeedsDisplay];
 }
 
 
@@ -259,10 +262,82 @@
 //    return YES;
 //}
 
+#pragma mark UserCellDelegate
+
+- (void)editUserCell:(UserCell *)cell {
+    [self.userProfileView setEditing:YES animated:NO];
+}
+
+- (void)doneUserCell:(UserCell *)cell {
+    [self frientList:cell appear:NO];
+    [self.userProfileView setEditing:NO animated:NO];
+}
+
+- (void)deleteUserCell:(UserCell *)cell {
+    [self doneUserCell:cell];
+    
+    // 여기서 삭제시 어떻게 처리하는지 구현
+    
+    // 여기도 DB 업데이트
+}
+
+- (void)frientList:(UserCell *)cell appear:(BOOL)show {
+    if (show) {
+        [self popover:cell.editButton];
+    }
+    else {
+        [self.friendPopup disAppearPopup];
+        self.friendPopup = nil;
+    }
+}
+
+#pragma mark FBFriendControllerDelegate
+
+- (void)searchFriend:(UserCell *)cell name:(NSString *)name {
+    [self.friendPopup handleSearchForTerm:name];
+}
+
+- (void)selectedFBFriend:(NSDictionary *)friend {
+    self.userProfileView.userName.text = [friend objectForKey:@"name"];
+    self.userProfileView.inputName.text = @"";
+    
+    [self.userProfileView doneButtonClickHandler:nil];
+    // DB에 저장하는 부분 추가
+}
+
+-(void)popover:(id)sender
+{
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    FBFriendController *controller = (FBFriendController *)[storyboard instantiateViewControllerWithIdentifier:@"FBFriendController"];
+    
+    controller.delegate = self;
+    CGPoint convertedPoint = [self.view convertPoint:((UIButton *)sender).center fromView:((UIButton *)sender).superview];
+    [controller appearPopup:convertedPoint reverse:NO];
+    
+    self.friendPopup = controller;
+}
+
 #pragma mark -
 #pragma mark ButtonAction
 - (IBAction)editButtonClickHandler:(id)sender {
     self.collectionView.allowsMultipleSelection = !self.collectionView.allowsMultipleSelection;
+    
+    if (self.collectionView.allowsMultipleSelection) {
+        self.navigationItem.rightBarButtonItem.title = @"Close";
+    }
+    else {
+        self.navigationItem.rightBarButtonItem.title = @"Select";
+        
+        for (NSDictionary *photo in selectedPhotos) {
+            int index = [self.photos indexOfObject:photo];
+            
+            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:0] ;
+            GalleryViewCell *cell = (GalleryViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
+            [cell showSelectIcon:NO];
+        }
+        
+        [selectedPhotos removeAllObjects];
+    }
 }
 
 - (IBAction)albumButtonClickHandler:(id)sender {

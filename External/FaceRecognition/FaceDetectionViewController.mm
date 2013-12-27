@@ -91,6 +91,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     
     if(self.faceMode == FaceModeRecognize)
         isFaceRecRedy = [FaceLib initRecognizer:LBPHFaceRecognizer models:[SQLManager getTrainModels]];
+    
 
     recognisedFaces = @{}.mutableCopy;
     processing = @{}.mutableCopy;
@@ -203,6 +204,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 	[CATransaction setAnimationDuration:1.f];
 	transformLayer.transform = CATransform3DRotate(CATransform3DMakeRotation(M_PI * point.x, 0, 1, 0), -M_PI * point.y, 1, 0, 0);
 	[CATransaction commit];
+
 }
 
 - (IBAction)toggleFlash:(id)sender {
@@ -718,10 +720,12 @@ bail:
             dispatch_async(dispatch_get_main_queue(), ^{
                 UIImage *faceImage = [FaceLib MatToUIImage:cvImage];
                 if(faceImage) [faceImageView setImage:faceImage];
+
                 if(_numPicsTaken%2 == 0){
                     NSString *imagePath = [NSString stringWithFormat:@"hive%d.png", (int)_numPicsTaken * 10];
                     [_hiveImageView setImage:[UIImage imageNamed:imagePath]];
                 }
+
                 self.instructionsLabel.text = [NSString stringWithFormat:@"Taken %@'s face : %ld of 10", self.UserName, (long)self.numPicsTaken];
                 
                 if (self.numPicsTaken == 10) {
@@ -782,6 +786,7 @@ bail:
     {
         double confidence = [[match objectForKey:@"confidence"] doubleValue];
         
+
         if(confidence < 50.f){
             recognisedFaces[[NSNumber numberWithInt:trackingID]] = [SQLManager getUserName:UserID];
         }
@@ -792,7 +797,7 @@ bail:
         else {
            recognisedFaces[[NSNumber numberWithInt:trackingID]] = @"Unknown";
         }
- 
+
     }
 
     [processing removeObjectForKey:[NSNumber numberWithInt:trackingID]];
@@ -810,7 +815,7 @@ bail:
     view.layer.contents = (id)guideImage.CGImage;
     view.layer.borderWidth = 1.0f;
     view.layer.borderColor = (name && !mayBe) ? [UIColor greenColor].CGColor : [UIColor redColor].CGColor;
-    
+
     if (name) {
         UILabel *nameLabel = [UILabel new];
         nameLabel.text = name;

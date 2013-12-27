@@ -11,8 +11,10 @@
 
 @interface GalleryViewCell : UICollectionViewCell
 
-@property (weak, nonatomic) IBOutlet UIImageView *photoImageView;
+@property (strong, nonatomic) IBOutlet UIImageView *photoImageView;
+@property (strong, nonatomic) IBOutlet UIImageView *selectIcon;
 
 - (void)updateCell:(NSDictionary *)photo;
+- (void)showSelectIcon:(BOOL)show;
 
 @end
