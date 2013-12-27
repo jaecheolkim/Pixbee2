@@ -8,10 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		696ECBDB1850551F00F54DB6 /* AllPhotosController.m in Sources */ = {isa = PBXBuildFile; fileRef = 696ECBDA1850551F00F54DB6 /* AllPhotosController.m */; };
-		697C83AB186DC57A00823990 /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 697C83A8186DC57A00823990 /* FacebookSDK.framework */; };
-		697C83AC186DC57A00823990 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 697C83A9186DC57A00823990 /* opencv2.framework */; };
-		697C83AD186DC57A00823990 /* SDWebImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 697C83AA186DC57A00823990 /* SDWebImage.framework */; };
-		697C83DA186DC8AA00823990 /* PBFaceLib.mm in Sources */ = {isa = PBXBuildFile; fileRef = 697C83D9186DC8AA00823990 /* PBFaceLib.mm */; };
 		697C83DE186DF2FA00823990 /* MBSwitch.m in Sources */ = {isa = PBXBuildFile; fileRef = 697C83DD186DF2FA00823990 /* MBSwitch.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		69B1B2FD18587D9200774382 /* IntroControll.m in Sources */ = {isa = PBXBuildFile; fileRef = 69B1B2F818587D9200774382 /* IntroControll.m */; };
 		69B1B2FE18587D9200774382 /* IntroModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 69B1B2FA18587D9200774382 /* IntroModel.m */; };
@@ -160,7 +156,7 @@
 		78C1EB4B186B0A790072E7DB /* flash_camera_selcet@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 78C1EB07186B0A780072E7DB /* flash_camera_selcet@2x.png */; };
 		78C1EB4C186B0A790072E7DB /* flash_camera@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 78C1EB08186B0A780072E7DB /* flash_camera@2x.png */; };
 		78C1EB4D186B0A790072E7DB /* hive_toalbum@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 78C1EB09186B0A780072E7DB /* hive_toalbum@2x.png */; };
-		78C1EB4E186B0A790072E7DB /* hive@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 78C1EB0A186B0A780072E7DB /* hive@2x.png */; };
+		78C1EB4E186B0A790072E7DB /* hive0@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 78C1EB0A186B0A780072E7DB /* hive0@2x.png */; };
 		78C1EB4F186B0A790072E7DB /* hive20@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 78C1EB0B186B0A780072E7DB /* hive20@2x.png */; };
 		78C1EB50186B0A790072E7DB /* hive40@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 78C1EB0C186B0A780072E7DB /* hive40@2x.png */; };
 		78C1EB51186B0A790072E7DB /* hive60@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 78C1EB0D186B0A780072E7DB /* hive60@2x.png */; };
@@ -250,6 +246,10 @@
 		80D55214186C710000B54974 /* FaceDetectionViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 80D55211186C710000B54974 /* FaceDetectionViewController.mm */; };
 		80D55219186C713400B54974 /* MotionOrientation.m in Sources */ = {isa = PBXBuildFile; fileRef = 80D55218186C713400B54974 /* MotionOrientation.m */; };
 		80D5521B186C8E8200B54974 /* hive_line.png in Resources */ = {isa = PBXBuildFile; fileRef = 80D5521A186C8E8200B54974 /* hive_line.png */; };
+		80D5526C186DF71800B54974 /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 80D55269186DF71800B54974 /* FacebookSDK.framework */; };
+		80D5526D186DF71800B54974 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 80D5526A186DF71800B54974 /* opencv2.framework */; };
+		80D5526E186DF71800B54974 /* SDWebImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 80D5526B186DF71800B54974 /* SDWebImage.framework */; };
+		80D55270186DF8EA00B54974 /* PBFaceLib.mm in Sources */ = {isa = PBXBuildFile; fileRef = 80D5526F186DF8EA00B54974 /* PBFaceLib.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -268,7 +268,6 @@
 		697C83A8186DC57A00823990 /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FacebookSDK.framework; path = ../FacebookSDK.framework; sourceTree = "<group>"; };
 		697C83A9186DC57A00823990 /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = opencv2.framework; path = ../opencv2.framework; sourceTree = "<group>"; };
 		697C83AA186DC57A00823990 /* SDWebImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDWebImage.framework; path = ../SDWebImage.framework; sourceTree = "<group>"; };
-		697C83D9186DC8AA00823990 /* PBFaceLib.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PBFaceLib.mm; sourceTree = "<group>"; };
 		697C83DC186DF2FA00823990 /* MBSwitch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBSwitch.h; sourceTree = "<group>"; };
 		697C83DD186DF2FA00823990 /* MBSwitch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MBSwitch.m; sourceTree = "<group>"; };
 		69B1B2F718587D9200774382 /* IntroControll.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntroControll.h; sourceTree = "<group>"; };
@@ -505,7 +504,7 @@
 		78C1EB07186B0A780072E7DB /* flash_camera_selcet@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "flash_camera_selcet@2x.png"; sourceTree = "<group>"; };
 		78C1EB08186B0A780072E7DB /* flash_camera@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "flash_camera@2x.png"; sourceTree = "<group>"; };
 		78C1EB09186B0A780072E7DB /* hive_toalbum@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "hive_toalbum@2x.png"; sourceTree = "<group>"; };
-		78C1EB0A186B0A780072E7DB /* hive@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "hive@2x.png"; sourceTree = "<group>"; };
+		78C1EB0A186B0A780072E7DB /* hive0@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "hive0@2x.png"; sourceTree = "<group>"; };
 		78C1EB0B186B0A780072E7DB /* hive20@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "hive20@2x.png"; sourceTree = "<group>"; };
 		78C1EB0C186B0A780072E7DB /* hive40@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "hive40@2x.png"; sourceTree = "<group>"; };
 		78C1EB0D186B0A780072E7DB /* hive60@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "hive60@2x.png"; sourceTree = "<group>"; };
@@ -628,6 +627,10 @@
 		80D55217186C713400B54974 /* MotionOrientation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MotionOrientation.h; sourceTree = "<group>"; };
 		80D55218186C713400B54974 /* MotionOrientation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MotionOrientation.m; sourceTree = "<group>"; };
 		80D5521A186C8E8200B54974 /* hive_line.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = hive_line.png; sourceTree = "<group>"; };
+		80D55269186DF71800B54974 /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FacebookSDK.framework; path = ../../../FacebookSDK.framework; sourceTree = "<group>"; };
+		80D5526A186DF71800B54974 /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = opencv2.framework; path = ../../../opencv2.framework; sourceTree = "<group>"; };
+		80D5526B186DF71800B54974 /* SDWebImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDWebImage.framework; path = ../../../SDWebImage.framework; sourceTree = "<group>"; };
+		80D5526F186DF8EA00B54974 /* PBFaceLib.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PBFaceLib.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -635,9 +638,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				697C83AB186DC57A00823990 /* FacebookSDK.framework in Frameworks */,
-				697C83AC186DC57A00823990 /* opencv2.framework in Frameworks */,
-				697C83AD186DC57A00823990 /* SDWebImage.framework in Frameworks */,
+				80D5526C186DF71800B54974 /* FacebookSDK.framework in Frameworks */,
+				80D5526D186DF71800B54974 /* opencv2.framework in Frameworks */,
+				80D5526E186DF71800B54974 /* SDWebImage.framework in Frameworks */,
 				7805A5E7186589BE00B234C1 /* MobileCoreServices.framework in Frameworks */,
 				7805A5E5186589B300B234C1 /* MessageUI.framework in Frameworks */,
 				7805A5E3186589A200B234C1 /* libz.1.2.5.dylib in Frameworks */,
@@ -809,6 +812,9 @@
 		69ED32DB18484EBB00127196 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				80D55269186DF71800B54974 /* FacebookSDK.framework */,
+				80D5526A186DF71800B54974 /* opencv2.framework */,
+				80D5526B186DF71800B54974 /* SDWebImage.framework */,
 				697C83A8186DC57A00823990 /* FacebookSDK.framework */,
 				697C83A9186DC57A00823990 /* opencv2.framework */,
 				697C83AA186DC57A00823990 /* SDWebImage.framework */,
@@ -1014,7 +1020,7 @@
 				78C1EB07186B0A780072E7DB /* flash_camera_selcet@2x.png */,
 				78C1EB08186B0A780072E7DB /* flash_camera@2x.png */,
 				78C1EB09186B0A780072E7DB /* hive_toalbum@2x.png */,
-				78C1EB0A186B0A780072E7DB /* hive@2x.png */,
+				78C1EB0A186B0A780072E7DB /* hive0@2x.png */,
 				78C1EB0B186B0A780072E7DB /* hive20@2x.png */,
 				78C1EB0C186B0A780072E7DB /* hive40@2x.png */,
 				78C1EB0D186B0A780072E7DB /* hive60@2x.png */,
@@ -1423,8 +1429,8 @@
 			children = (
 				80D55210186C710000B54974 /* FaceDetectionViewController.h */,
 				80D55211186C710000B54974 /* FaceDetectionViewController.mm */,
-				697C83D9186DC8AA00823990 /* PBFaceLib.mm */,
 				80D55213186C710000B54974 /* PBFaceLib.h */,
+				80D5526F186DF8EA00B54974 /* PBFaceLib.mm */,
 			);
 			path = FaceRecognition;
 			sourceTree = "<group>";
@@ -1567,7 +1573,7 @@
 				78C1EB43186B0A790072E7DB /* edit_select@2x.png in Resources */,
 				78C1EB68186B0A790072E7DB /* social_facebook@2x.png in Resources */,
 				78C1EB3A186B0A790072E7DB /* buttombar_toalbum@2x.png in Resources */,
-				78C1EB4E186B0A790072E7DB /* hive@2x.png in Resources */,
+				78C1EB4E186B0A790072E7DB /* hive0@2x.png in Resources */,
 				78C1EB4B186B0A790072E7DB /* flash_camera_selcet@2x.png in Resources */,
 				7805A6E41866E7B800B234C1 /* newalbum@2x.png in Resources */,
 				78C1EB72186B0A790072E7DB /* tagbox@2x.png in Resources */,
@@ -1695,6 +1701,7 @@
 				80D2A119184A1E58008D29B2 /* ALAssetAdapter.m in Sources */,
 				69C39FE318606CBD001EDDFA /* NSData+GIF.m in Sources */,
 				69C39FD118606B39001EDDFA /* UIButton+WebCache.m in Sources */,
+				80D55270186DF8EA00B54974 /* PBFaceLib.mm in Sources */,
 				8081283D184D25F50000CF3E /* GlobalValues.m in Sources */,
 				7805A63C18658BA000B234C1 /* DCFrameView.m in Sources */,
 				80D2A13A184A1E58008D29B2 /* UIImageView+RoundMask.m in Sources */,
@@ -1726,7 +1733,6 @@
 				69C39FE418606CBD001EDDFA /* SDWebImageCompat.m in Sources */,
 				80D2A118184A1E58008D29B2 /* GalleryViewController.m in Sources */,
 				80D2A139184A1E58008D29B2 /* UIButton+Bootstrap.m in Sources */,
-				697C83DA186DC8AA00823990 /* PBFaceLib.mm in Sources */,
 				80D2A138184A1E58008D29B2 /* NSString+FontAwesome.m in Sources */,
 				80D2A187184B7B54008D29B2 /* PBAssetLibrary.mm in Sources */,
 				80D2A122184A1E58008D29B2 /* ASLoadImageQueue.m in Sources */,
