@@ -66,7 +66,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 @property (weak, nonatomic) IBOutlet UIButton *switchButton;
 @property (weak, nonatomic) IBOutlet UIImageView *hiveImageView;
 @property (weak, nonatomic) IBOutlet BasicBottomView *CameraBottomView;
-@property (weak, nonatomic) IBOutlet MBSwitch *cameraSwitch;
+@property (nonatomic, retain) MBSwitch *cameraSwitch;
 
 - (IBAction)toggleFlash:(id)sender;
 - (IBAction)switchCameras:(id)sender;
@@ -106,15 +106,17 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
         [_hiveImageView setHidden:YES];
         [_instructionsLabel setHidden:YES];
         
-        [_cameraSwitch setTintColor:[UIColor colorWithRed:0.58f green:0.65f blue:0.65f alpha:1.00f]];
-        [_cameraSwitch setOnTintColor:[UIColor colorWithRed:0.91f green:0.30f blue:0.24f alpha:1.00f]];
-        [_cameraSwitch setOffTintColor:[UIColor colorWithRed:0.93f green:0.94f blue:0.95f alpha:1.00f]];
-        [_cameraSwitch setFrame:CGRectMake(_cameraSwitch.frame.origin.x, _cameraSwitch.frame.origin.y, 61, 12)];
+        self.cameraSwitch = [[MBSwitch alloc] initWithFrame:CGRectMake(248, 41, 61.0, 12.0)];
+        [_cameraSwitch setOnTintColor:[UIColor colorWithRed:0.23f green:0.35f blue:0.60f alpha:1.00f]];
+        [_cameraSwitch setTintColor:[UIColor colorWithRed:0.91f green:0.30f blue:0.24f alpha:1.00f]];
+        [self.CameraBottomView addSubview:_cameraSwitch];
+        [_cameraSwitch addTarget:self action:@selector(switchCameraVideo:) forControlEvents:UIControlEventValueChanged];
     }
 
     [_closeButton bootstrapStyle];
     
 }
+
 
 - (BOOL)prefersStatusBarHidden {
     return YES;
@@ -239,7 +241,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     }
 }
 
-- (IBAction)switchCameraVideo:(id)sender {
+- (void)switchCameraVideo:(id)sender {
 }
 
 - (void)goNext
