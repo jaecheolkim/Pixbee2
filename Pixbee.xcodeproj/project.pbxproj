@@ -7,11 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		695B37F9186DF7A900FC7D72 /* libPBFaceLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 695B37F8186DF7A900FC7D72 /* libPBFaceLib.a */; };
+		695B37FB186DF88800FC7D72 /* PBFaceLib.mm in Sources */ = {isa = PBXBuildFile; fileRef = 695B37FA186DF88800FC7D72 /* PBFaceLib.mm */; };
 		696ECBDB1850551F00F54DB6 /* AllPhotosController.m in Sources */ = {isa = PBXBuildFile; fileRef = 696ECBDA1850551F00F54DB6 /* AllPhotosController.m */; };
 		697C83AB186DC57A00823990 /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 697C83A8186DC57A00823990 /* FacebookSDK.framework */; };
 		697C83AC186DC57A00823990 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 697C83A9186DC57A00823990 /* opencv2.framework */; };
 		697C83AD186DC57A00823990 /* SDWebImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 697C83AA186DC57A00823990 /* SDWebImage.framework */; };
-		697C83DA186DC8AA00823990 /* PBFaceLib.mm in Sources */ = {isa = PBXBuildFile; fileRef = 697C83D9186DC8AA00823990 /* PBFaceLib.mm */; };
 		697C83DE186DF2FA00823990 /* MBSwitch.m in Sources */ = {isa = PBXBuildFile; fileRef = 697C83DD186DF2FA00823990 /* MBSwitch.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		69B1B2FD18587D9200774382 /* IntroControll.m in Sources */ = {isa = PBXBuildFile; fileRef = 69B1B2F818587D9200774382 /* IntroControll.m */; };
 		69B1B2FE18587D9200774382 /* IntroModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 69B1B2FA18587D9200774382 /* IntroModel.m */; };
@@ -263,12 +264,13 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		695B37F8186DF7A900FC7D72 /* libPBFaceLib.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libPBFaceLib.a; sourceTree = "<group>"; };
+		695B37FA186DF88800FC7D72 /* PBFaceLib.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PBFaceLib.mm; sourceTree = "<group>"; };
 		696ECBD91850551F00F54DB6 /* AllPhotosController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AllPhotosController.h; sourceTree = "<group>"; };
 		696ECBDA1850551F00F54DB6 /* AllPhotosController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AllPhotosController.m; sourceTree = "<group>"; };
 		697C83A8186DC57A00823990 /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FacebookSDK.framework; path = ../FacebookSDK.framework; sourceTree = "<group>"; };
 		697C83A9186DC57A00823990 /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = opencv2.framework; path = ../opencv2.framework; sourceTree = "<group>"; };
 		697C83AA186DC57A00823990 /* SDWebImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDWebImage.framework; path = ../SDWebImage.framework; sourceTree = "<group>"; };
-		697C83D9186DC8AA00823990 /* PBFaceLib.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PBFaceLib.mm; sourceTree = "<group>"; };
 		697C83DC186DF2FA00823990 /* MBSwitch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBSwitch.h; sourceTree = "<group>"; };
 		697C83DD186DF2FA00823990 /* MBSwitch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MBSwitch.m; sourceTree = "<group>"; };
 		69B1B2F718587D9200774382 /* IntroControll.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntroControll.h; sourceTree = "<group>"; };
@@ -639,6 +641,7 @@
 				697C83AC186DC57A00823990 /* opencv2.framework in Frameworks */,
 				697C83AD186DC57A00823990 /* SDWebImage.framework in Frameworks */,
 				7805A5E7186589BE00B234C1 /* MobileCoreServices.framework in Frameworks */,
+				695B37F9186DF7A900FC7D72 /* libPBFaceLib.a in Frameworks */,
 				7805A5E5186589B300B234C1 /* MessageUI.framework in Frameworks */,
 				7805A5E3186589A200B234C1 /* libz.1.2.5.dylib in Frameworks */,
 				7805A5E11865899100B234C1 /* ImageIO.framework in Frameworks */,
@@ -1421,9 +1424,10 @@
 		80D2A15A184A58B4008D29B2 /* FaceRecognition */ = {
 			isa = PBXGroup;
 			children = (
+				695B37FA186DF88800FC7D72 /* PBFaceLib.mm */,
 				80D55210186C710000B54974 /* FaceDetectionViewController.h */,
 				80D55211186C710000B54974 /* FaceDetectionViewController.mm */,
-				697C83D9186DC8AA00823990 /* PBFaceLib.mm */,
+				695B37F8186DF7A900FC7D72 /* libPBFaceLib.a */,
 				80D55213186C710000B54974 /* PBFaceLib.h */,
 			);
 			path = FaceRecognition;
@@ -1695,6 +1699,7 @@
 				80D2A119184A1E58008D29B2 /* ALAssetAdapter.m in Sources */,
 				69C39FE318606CBD001EDDFA /* NSData+GIF.m in Sources */,
 				69C39FD118606B39001EDDFA /* UIButton+WebCache.m in Sources */,
+				695B37FB186DF88800FC7D72 /* PBFaceLib.mm in Sources */,
 				8081283D184D25F50000CF3E /* GlobalValues.m in Sources */,
 				7805A63C18658BA000B234C1 /* DCFrameView.m in Sources */,
 				80D2A13A184A1E58008D29B2 /* UIImageView+RoundMask.m in Sources */,
@@ -1726,7 +1731,6 @@
 				69C39FE418606CBD001EDDFA /* SDWebImageCompat.m in Sources */,
 				80D2A118184A1E58008D29B2 /* GalleryViewController.m in Sources */,
 				80D2A139184A1E58008D29B2 /* UIButton+Bootstrap.m in Sources */,
-				697C83DA186DC8AA00823990 /* PBFaceLib.mm in Sources */,
 				80D2A138184A1E58008D29B2 /* NSString+FontAwesome.m in Sources */,
 				80D2A187184B7B54008D29B2 /* PBAssetLibrary.mm in Sources */,
 				80D2A122184A1E58008D29B2 /* ASLoadImageQueue.m in Sources */,
@@ -1931,6 +1935,7 @@
 					"$(SRCROOT)/External",
 					"$(SRCROOT)/External/TestFlightSDK2-3",
 					"$(PROJECT_DIR)/External/FaceRecognition",
+					/Users/skplanet/Pixbee2/External/FaceRecognition,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = "";
@@ -1961,6 +1966,7 @@
 					"$(SRCROOT)/External",
 					"$(SRCROOT)/External/TestFlightSDK2-3",
 					"$(PROJECT_DIR)/External/FaceRecognition",
+					/Users/skplanet/Pixbee2/External/FaceRecognition,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = "";

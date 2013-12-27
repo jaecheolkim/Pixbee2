@@ -79,13 +79,14 @@
                         }];
     }
     else {
-        self.inView.alpha = 1.0;
-        [self.inView setFrame:CGRectMake(self.frame.size.width, 0, self.frame.size.width, self.frame.size.height)];
+        self.inView.alpha = 0.7;
+        [self.inView setFrame:CGRectMake(self.frame.size.width + self.frame.size.width/4, self.frame.size.height/4, self.frame.size.width/2, self.frame.size.height/2)];
         [self.outView setFrame:CGRectMake(0, 0, self.frame.size.width, self.frame.size.height)];
         
         [UIView animateWithDuration:0.1
                          animations:^{
-                             self.outView.transform = CGAffineTransformMakeScale(0.7, 0.7);
+                             //self.outView.transform = CGAffineTransformMakeScale(0.5, 0.5);
+                             [self.outView setFrame:CGRectMake(self.frame.size.width/4, self.frame.size.height/4, self.frame.size.width/2, self.frame.size.height/2)];
                              self.outView.alpha = 0.0;
                              
                              self.inView.alpha = 1.0;
@@ -100,7 +101,7 @@
                              [self.outView setFrame:self.inView.frame];
                              
                              [self.inView setImage:nil];
-                             [self.inView setFrame:CGRectMake(-self.frame.size.width, 0, self.frame.size.width, self.frame.size.height)];
+                             [self.inView setFrame:CGRectMake(self.frame.size.width + self.frame.size.width/4, self.frame.size.height/4, self.frame.size.width/2, self.frame.size.height/2)];
                              
                              
                          }];

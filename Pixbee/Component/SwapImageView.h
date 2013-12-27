@@ -10,6 +10,8 @@
 
 @interface SwapImageView : UIView
 
+
+@property (nonatomic) BOOL order;
 @property (nonatomic, strong) IBOutlet UIImageView   *inView;
 @property (nonatomic, strong) IBOutlet UIImageView   *outView;
 
