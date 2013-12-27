@@ -15,7 +15,7 @@
 #import "opencv2/highgui/ios.h"
 #import "PBFaceLib.h"
 #import "MotionOrientation.h"
-
+#import "UIButton+Bootstrap.h"
 
 #define CAPTURE_FPS 30
 
@@ -56,8 +56,11 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 @property (weak, nonatomic) IBOutlet UILabel *instructionsLabel;
 @property (nonatomic) NSInteger frameNum;
 @property (nonatomic) NSInteger numPicsTaken;
+@property (weak, nonatomic) IBOutlet UIButton *closeButton;
+@property (weak, nonatomic) IBOutlet UIButton *flashButton;
+@property (weak, nonatomic) IBOutlet UIButton *switchButton;
 
-
+- (IBAction)toggleFlash:(id)sender;
 - (IBAction)switchCameras:(id)sender;
 - (IBAction)closeCamera:(id)sender;
 @end
@@ -86,12 +89,13 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
         self.numPicsTaken = 0;
     }
 
+    [_closeButton bootstrapStyle];
     
 }
 
-//- (BOOL)prefersStatusBarHidden {
-//    return YES;
-//}
+- (BOOL)prefersStatusBarHidden {
+    return YES;
+}
 
 
 - (void)viewWillAppear:(BOOL)animated
@@ -143,7 +147,8 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 	[self.view addGestureRecognizer:tap];
     
     CGSize viewSize = faceView.bounds.size;
-	layer.frame = CGRectMake(viewSize.width/2 - 150, viewSize.height/2 - 150, 300, 400);
+	layer.frame = CGRectMake((viewSize.width - 232)/2, (viewSize.height - 279)/2, 232, 279);
+    
 	transformLayer.frame =  faceView.bounds;
 
     showGuide = YES;
@@ -164,6 +169,9 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 	transformLayer.transform = CATransform3DRotate(CATransform3DMakeRotation(M_PI * aniLoc.x, 0, 1, 0), -M_PI * aniLoc.y, 1, 0, 0);
 	[CATransaction commit];
 
+}
+
+- (IBAction)toggleFlash:(id)sender {
 }
 
 - (IBAction)switchCameras:(id)sender {
