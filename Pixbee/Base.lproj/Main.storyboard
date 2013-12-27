@@ -745,8 +745,6 @@
                         </constraints>
                     </view>
                     <toolbarItems/>
-                    <navigationItem key="navigationItem" id="m7r-T0-8U9">
-                        <barButtonItem key="rightBarButtonItem" title="Select" id="lx4-Wh-a9n"/>
                     <navigationItem key="navigationItem" title="Album" id="m7r-T0-8U9">
                         <barButtonItem key="rightBarButtonItem" title="Select" id="lx4-Wh-a9n">
                             <connections>

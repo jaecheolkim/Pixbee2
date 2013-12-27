@@ -182,11 +182,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 {
     [CATransaction begin];
 	[CATransaction setAnimationDuration:1.f];
-<<<<<<< .merge_file_RIItGq
-	transformLayer.transform = CATransform3DRotate(CATransform3DMakeRotation(M_PI * aniLoc.x, 0, 1, 0), -M_PI * aniLoc.y, 1, 0, 0);
-=======
 	transformLayer.transform = CATransform3DRotate(CATransform3DMakeRotation(M_PI * point.x, 0, 1, 0), -M_PI * point.y, 1, 0, 0);
->>>>>>> .merge_file_q8hv5z
 	[CATransaction commit];
 
 }
@@ -221,12 +217,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     [self teardownAVCapture];
     
     if(self.faceMode == FaceModeCollect){
-<<<<<<< .merge_file_RIItGq
-        self.navigationController.navigationBarHidden = NO;
-        [self performSegueWithIdentifier:SEGUE_ADDINGFACETOALBUM sender:self];
-=======
         [self goNext];
->>>>>>> .merge_file_q8hv5z
     } else {
         [self dismissViewControllerAnimated:YES completion:nil];
     }
@@ -706,30 +697,16 @@ bail:
             dispatch_async(dispatch_get_main_queue(), ^{
                 UIImage *faceImage = [FaceLib MatToUIImage:cvImage];
                 if(faceImage) [faceImageView setImage:faceImage];
-<<<<<<< .merge_file_RIItGq
-                
-=======
+
                 if(_numPicsTaken%2 == 0){
                     NSString *imagePath = [NSString stringWithFormat:@"hive%d.png", (int)_numPicsTaken * 10];
                     [_hiveImageView setImage:[UIImage imageNamed:imagePath]];
                 }
->>>>>>> .merge_file_q8hv5z
+
                 self.instructionsLabel.text = [NSString stringWithFormat:@"Taken %@'s face : %ld of 10", self.UserName, (long)self.numPicsTaken];
                 
                 if (self.numPicsTaken == 10) {
-<<<<<<< .merge_file_RIItGq
-                    // 종료
-//                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Good job!"
-//                                                                    message:@"10 pictures have been taken."
-//                                                                   delegate:nil
-//                                                          cancelButtonTitle:@"OK"
-//                                                          otherButtonTitles:nil];
-//                    [alert show];
-                    self.navigationController.navigationBarHidden = NO;
-                    [self performSegueWithIdentifier:SEGUE_ADDINGFACETOALBUM sender:self];
-=======
                     [self performSelector:@selector(goNext) withObject:nil afterDelay:2];
->>>>>>> .merge_file_q8hv5z
                 }
             });
             
@@ -786,14 +763,7 @@ bail:
     {
         double confidence = [[match objectForKey:@"confidence"] doubleValue];
         
-<<<<<<< .merge_file_RIItGq
-        if(confidence < 50.f)
-            recognisedFaces[[NSNumber numberWithInt:trackingID]] = [SQLManager getUserName:UserID];
-        else
-            recognisedFaces[[NSNumber numberWithInt:trackingID]] = @"Unknown";
-        //[match objectForKey:@"UserName"];
-        
-=======
+
         if(confidence < 50.f){
             recognisedFaces[[NSNumber numberWithInt:trackingID]] = [SQLManager getUserName:UserID];
         }
@@ -804,8 +774,7 @@ bail:
         else {
            recognisedFaces[[NSNumber numberWithInt:trackingID]] = @"Unknown";
         }
- 
->>>>>>> .merge_file_q8hv5z
+
     }
 
     [processing removeObjectForKey:[NSNumber numberWithInt:trackingID]];
@@ -822,21 +791,13 @@ bail:
     UIView *view = [[UIView alloc] initWithFrame:rect];
     view.layer.contents = (id)guideImage.CGImage;
     view.layer.borderWidth = 1.0f;
-<<<<<<< .merge_file_RIItGq
-    view.layer.borderColor = (name) ? [UIColor greenColor].CGColor : [UIColor redColor].CGColor;
-=======
     view.layer.borderColor = (name && !mayBe) ? [UIColor greenColor].CGColor : [UIColor redColor].CGColor;
->>>>>>> .merge_file_q8hv5z
-    
+
     if (name) {
         UILabel *nameLabel = [UILabel new];
         nameLabel.text = name;
         [nameLabel sizeToFit];
-<<<<<<< .merge_file_RIItGq
-        nameLabel.textColor = [UIColor greenColor];
-=======
         nameLabel.textColor = (name && !mayBe) ? [UIColor greenColor] : [UIColor redColor];
->>>>>>> .merge_file_q8hv5z
         nameLabel.backgroundColor = [UIColor clearColor];
         nameLabel.center = CGPointMake(view.frame.size.width / 2, view.frame.size.height / 2);
         
