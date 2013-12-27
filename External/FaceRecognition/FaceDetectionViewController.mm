@@ -50,7 +50,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     BOOL showGuide;
     UIImage *guideImage;
 
-    BOOL isMoving;
+    BOOL isReadyToScanFace;
 
 }
 @property (weak, nonatomic) IBOutlet UILabel *instructionsLabel;
@@ -69,7 +69,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
-    
+    isReadyToScanFace = NO;
     [FaceLib initDetector:CIDetectorAccuracyLow Tacking:YES];
     if(self.faceMode == FaceModeRecognize)
         isFaceRecRedy = [FaceLib initRecognizer:LBPHFaceRecognizer models:[SQLManager getTrainModels]];
@@ -100,6 +100,12 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     
 	[self setupAVCapture];
 
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    isReadyToScanFace = YES;
 }
 
 
@@ -435,7 +441,8 @@ bail:
 
 - (void)captureOutput:(AVCaptureOutput *)captureOutput didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnection *)connection
 {
-    [self processImage:sampleBuffer];
+    if(isReadyToScanFace)
+        [self processImage:sampleBuffer];
 }
 
 // called asynchronously as the capture output is capturing sample buffers, this method asks the face detector (if on)
@@ -660,7 +667,7 @@ bail:
                 if(faceImage) [faceImageView setImage:faceImage];
                 
                 self.instructionsLabel.text = [NSString stringWithFormat:@"Taken %@'s face : %ld of 10", self.UserName, (long)self.numPicsTaken];
-                if (self.numPicsTaken == 50) {
+                if (self.numPicsTaken == 10) {
                     // 종료
 //                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Good job!"
 //                                                                    message:@"10 pictures have been taken."

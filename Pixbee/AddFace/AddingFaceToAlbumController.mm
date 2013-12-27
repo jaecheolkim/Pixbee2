@@ -78,6 +78,13 @@
     self.flowView.minimumPageScale = 0.5;
 
     
+
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
     //모든 Asset뒤져서 얼굴 검출하고 DB에 저장.
     AssetLib.delegate = self;
     AssetLib.faceProcessStop = NO;
@@ -121,8 +128,6 @@
      ];
 
 }
-
-
 
 - (void)didReceiveMemoryWarning
 {
