@@ -59,7 +59,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 @property (weak, nonatomic) IBOutlet UIButton *closeButton;
 @property (weak, nonatomic) IBOutlet UIButton *flashButton;
 @property (weak, nonatomic) IBOutlet UIButton *switchButton;
-@property (weak, nonatomic) IBOutlet UIView *hiveImageView;
+@property (weak, nonatomic) IBOutlet UIImageView *hiveImageView;
 
 - (IBAction)toggleFlash:(id)sender;
 - (IBAction)switchCameras:(id)sender;
@@ -73,11 +73,12 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
+    
     isReadyToScanFace = NO;
     [FaceLib initDetector:CIDetectorAccuracyLow Tacking:YES];
+    
     if(self.faceMode == FaceModeRecognize)
         isFaceRecRedy = [FaceLib initRecognizer:LBPHFaceRecognizer models:[SQLManager getTrainModels]];
-    
 
     recognisedFaces = @{}.mutableCopy;
     processing = @{}.mutableCopy;
@@ -88,6 +89,9 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
         self.navigationController.navigationBarHidden = YES;
         [self setupGuide];
         self.numPicsTaken = 0;
+    } else {
+        [_hiveImageView setHidden:YES];
+        [_instructionsLabel setHidden:YES];
     }
 
     [_closeButton bootstrapStyle];
@@ -165,11 +169,20 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 	aniLoc = CGPointMake((location.x - viewSize.width / 2) / viewSize.width,
                          (location.y - viewSize.height / 2) / viewSize.height);
     
+//    [CATransaction begin];
+//	[CATransaction setAnimationDuration:1.f];
+//	transformLayer.transform = CATransform3DRotate(CATransform3DMakeRotation(M_PI * aniLoc.x, 0, 1, 0), -M_PI * aniLoc.y, 1, 0, 0);
+//	[CATransaction commit];
+    
+    [self guideAnimation:aniLoc];
+}
+
+- (void)guideAnimation:(CGPoint)point
+{
     [CATransaction begin];
 	[CATransaction setAnimationDuration:1.f];
-	transformLayer.transform = CATransform3DRotate(CATransform3DMakeRotation(M_PI * aniLoc.x, 0, 1, 0), -M_PI * aniLoc.y, 1, 0, 0);
+	transformLayer.transform = CATransform3DRotate(CATransform3DMakeRotation(M_PI * point.x, 0, 1, 0), -M_PI * point.y, 1, 0, 0);
 	[CATransaction commit];
-
 }
 
 - (IBAction)toggleFlash:(id)sender {
@@ -202,11 +215,17 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     [self teardownAVCapture];
     
     if(self.faceMode == FaceModeCollect){
-        self.navigationController.navigationBarHidden = NO;
-        [self performSegueWithIdentifier:SEGUE_ADDINGFACETOALBUM sender:self];
+        [self goNext];
     } else {
         [self dismissViewControllerAnimated:YES completion:nil];
     }
+}
+
+- (void)goNext
+{
+    self.navigationController.navigationBarHidden = NO;
+    [self performSegueWithIdentifier:SEGUE_ADDINGFACETOALBUM sender:self];
+
 }
 
 #pragma mark - AV setup
@@ -650,6 +669,8 @@ bail:
 #pragma mark -
 - (void)collectFace:(CIFaceFeature *)feature inImage:(CIImage *)ciImage ofUserID:(int)UserID
 {
+    if(_numPicsTaken > 10) return;
+    
     if(feature.hasLeftEyePosition && feature.hasRightEyePosition){
         UIImageOrientation imageOrient = [[MotionOrientation sharedInstance] currentImageOrientationWithFrontCamera:isUsingFrontFacingCamera MirrorFlip:NO];
         BOOL isLandScape = [[MotionOrientation sharedInstance] deviceIsLandscape];
@@ -674,18 +695,14 @@ bail:
             dispatch_async(dispatch_get_main_queue(), ^{
                 UIImage *faceImage = [FaceLib MatToUIImage:cvImage];
                 if(faceImage) [faceImageView setImage:faceImage];
-                
+                if(_numPicsTaken%2 == 0){
+                    NSString *imagePath = [NSString stringWithFormat:@"hive%d.png", (int)_numPicsTaken * 10];
+                    [_hiveImageView setImage:[UIImage imageNamed:imagePath]];
+                }
                 self.instructionsLabel.text = [NSString stringWithFormat:@"Taken %@'s face : %ld of 10", self.UserName, (long)self.numPicsTaken];
+                
                 if (self.numPicsTaken == 10) {
-                    // 종료
-//                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Good job!"
-//                                                                    message:@"10 pictures have been taken."
-//                                                                   delegate:nil
-//                                                          cancelButtonTitle:@"OK"
-//                                                          otherButtonTitles:nil];
-//                    [alert show];
-                    self.navigationController.navigationBarHidden = NO;
-                    [self performSegueWithIdentifier:SEGUE_ADDINGFACETOALBUM sender:self];
+                    [self performSelector:@selector(goNext) withObject:nil afterDelay:2];
                 }
             });
             
@@ -742,12 +759,17 @@ bail:
     {
         double confidence = [[match objectForKey:@"confidence"] doubleValue];
         
-        if(confidence < 50.f)
+        if(confidence < 50.f){
             recognisedFaces[[NSNumber numberWithInt:trackingID]] = [SQLManager getUserName:UserID];
-        else
-            recognisedFaces[[NSNumber numberWithInt:trackingID]] = @"Unknown";
-        //[match objectForKey:@"UserName"];
-        
+        }
+        else if(confidence > 50.f && confidence < 70.f){
+            NSString *name = [NSString stringWithFormat:@"? %@", [SQLManager getUserName:UserID]];
+            recognisedFaces[[NSNumber numberWithInt:trackingID]] = name;
+        }
+        else {
+           recognisedFaces[[NSNumber numberWithInt:trackingID]] = @"Unknown";
+        }
+ 
     }
 
     [processing removeObjectForKey:[NSNumber numberWithInt:trackingID]];
@@ -756,16 +778,21 @@ bail:
 
 - (void)showFaceRect:(CGRect)rect withName:(NSString *)name
 {
+    NSString *searchChar = @"?";
+    NSRange rang =[name rangeOfString:searchChar options:NSCaseInsensitiveSearch];
+    BOOL mayBe = FALSE;
+    if (rang.length == [searchChar length]) mayBe = TRUE;
+    
     UIView *view = [[UIView alloc] initWithFrame:rect];
     view.layer.contents = (id)guideImage.CGImage;
     view.layer.borderWidth = 1.0f;
-    view.layer.borderColor = (name) ? [UIColor greenColor].CGColor : [UIColor redColor].CGColor;
+    view.layer.borderColor = (name && !mayBe) ? [UIColor greenColor].CGColor : [UIColor redColor].CGColor;
     
     if (name) {
         UILabel *nameLabel = [UILabel new];
         nameLabel.text = name;
         [nameLabel sizeToFit];
-        nameLabel.textColor = [UIColor greenColor];
+        nameLabel.textColor = (name && !mayBe) ? [UIColor greenColor] : [UIColor redColor];
         nameLabel.backgroundColor = [UIColor clearColor];
         nameLabel.center = CGPointMake(view.frame.size.width / 2, view.frame.size.height / 2);
         
