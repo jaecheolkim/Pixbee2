@@ -16,6 +16,7 @@
 
 @property (strong, nonatomic) IBOutlet UITableView *tableView;
 @property (strong, nonatomic) NSMutableArray *usersPhotos;
+@property (strong, nonatomic) UserCell *selectedCell;
 
 - (IBAction)doneButtonClickHandler:(id)sender;
 - (IBAction)xButtonClickHandler:(id)sender;
@@ -104,7 +105,12 @@
 
 // Called after the user changes the selection.
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (self.selectedCell != nil) {
+        self.selectedCell.checkIcon.image = [UIImage imageNamed:@"uncheck.png"];
+    }
     
+    self.selectedCell = (UserCell *)[tableView cellForRowAtIndexPath:indexPath];
+    self.selectedCell.checkIcon.image = [UIImage imageNamed:@"check.png"];
 }
 
 
@@ -112,7 +118,7 @@
 }
 
 - (IBAction)xButtonClickHandler:(id)sender{
-    
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (IBAction)UnwindFromIndividualGalleryToAlbumPage:(UIStoryboardSegue *)segue{

@@ -37,13 +37,9 @@
 // initiate the sharing process. First we will need to login
 - (void)performActivity {
     NSLog(@"Copy performActivity");
-    [self.activityViewController dismissViewControllerAnimated:YES completion:nil];
+    [self activityDidFinish:YES];
 }
 
-// activity must call this when activity is finished. can be called on any thread
-- (void)activityDidFinish:(BOOL)completed {
-    NSLog(@"Copy activityDidFinish");
-}
 
 
 @end

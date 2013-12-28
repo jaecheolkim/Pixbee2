@@ -37,12 +37,7 @@
 // initiate the sharing process. First we will need to login
 - (void)performActivity {
     NSLog(@"New Album performActivity");
-    [self.activityViewController dismissViewControllerAnimated:YES completion:nil];
-}
-
-// activity must call this when activity is finished. can be called on any thread
-- (void)activityDidFinish:(BOOL)completed {
-    NSLog(@"New Album activityDidFinish");
+    [self activityDidFinish:YES];
 }
 
 
