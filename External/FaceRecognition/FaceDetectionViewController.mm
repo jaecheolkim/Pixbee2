@@ -270,6 +270,8 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 			{
 				imageData = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageDataSampleBuffer];
                 self.navigationController.navigationBarHidden = NO;
+                
+
                 //[self performSegueWithIdentifier:SEGUE_GO_FILTER sender:self];
 //				UIImage *image = [[UIImage alloc] initWithData:imageData];
 //				[[[ALAssetsLibrary alloc] init] writeImageToSavedPhotosAlbum:[image CGImage] orientation:(ALAssetOrientation)[image imageOrientation] completionBlock:nil];
