@@ -22,6 +22,10 @@
 #define SEGUE_4_1_TO_5_1                            @"Segue4_1to5_1"
 #define SEGUE_4_2_TO_5_1                            @"Segue4_2to5_1"
 #define SEGUE_6_1_TO_2_2                            @"Segue6_1to2_2"
+#define SEGUE_4_1_TO_3_2                            @"Segue4_1to3_2"
+#define SEGUE_4_2_TO_3_2                            @"Segue4_2to3_2"
+
+
 
 
 #define SEGUE_FACEANALYZE                           @"SegueFaceAnalyze"

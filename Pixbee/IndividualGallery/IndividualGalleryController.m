@@ -70,13 +70,11 @@
     [self.userProfileView.borderView removeFromSuperview];
     self.userProfileView.borderView = nil;
     
-//    if (self.photos && [self.photos count] <= 10) {
-        self.importView.titleLabel.lineBreakMode = NSLineBreakByWordWrapping;
-        self.importView.titleLabel.textAlignment = NSTextAlignmentCenter;
+    self.importView.titleLabel.lineBreakMode = NSLineBreakByWordWrapping;
+    self.importView.titleLabel.textAlignment = NSTextAlignmentCenter;
 
-        NSString *buttonTitle = [NSString stringWithFormat:@"Message Here\nPlease import\nmore %@'s Photo", [self.user objectForKey:@"UserName"]];
-        self.importView.titleLabel.text = buttonTitle;
-//    }
+    NSString *buttonTitle = [NSString stringWithFormat:@"Message Here\nPlease import\nmore %@'s Photo", [self.user objectForKey:@"UserName"]];
+    self.importView.titleLabel.text = buttonTitle;
 }
 
 - (void)didReceiveMemoryWarning
@@ -435,19 +433,43 @@
                        animated:YES
                      completion:nil];
     
-    [activityController setCompletionHandler:^(NSString *act, BOOL done)
-     {
-         NSString *ServiceMsg = nil;
-         if ( [act isEqualToString:UIActivityTypeMail] )           ServiceMsg = @"Mail sended!";
-         if ( [act isEqualToString:UIActivityTypePostToTwitter] )  ServiceMsg = @"Post on twitter, ok!";
-         if ( [act isEqualToString:UIActivityTypePostToFacebook] ) ServiceMsg = @"Post on facebook, ok!";
-         if ( [act isEqualToString:UIActivityTypeMessage] )        ServiceMsg = @"SMS sended!";
-         if ( done )
-         {
-//             UIAlertView *Alert = [[UIAlertView alloc] initWithTitle:ServiceMsg message:@"" delegate:nil cancelButtonTitle:@"ok" otherButtonTitles:nil];
-//             [Alert show];
-//             [Alert release];
+    [activityController setCompletionHandler:^(NSString *act, BOOL done) {
+        if ( [act isEqualToString:@"com.pixbee.copySharing"] ) {
+            if (self.importView) {
+                [self performSegueWithIdentifier:SEGUE_4_2_TO_3_2 sender:self];
+            }
+            else {
+                [self performSegueWithIdentifier:SEGUE_4_1_TO_3_2 sender:self];
+            }
          }
+         else if ( [act isEqualToString:@"com.pixbee.moveSharing"] ) {
+             if (self.importView) {
+                 [self performSegueWithIdentifier:SEGUE_4_2_TO_3_2 sender:self];
+             }
+             else {
+                 [self performSegueWithIdentifier:SEGUE_4_1_TO_3_2 sender:self];
+             }
+         }
+         else if ( [act isEqualToString:@"com.pixbee.newAlbumSharing"] ) {
+             if (self.importView) {
+                 [self performSegueWithIdentifier:SEGUE_4_2_TO_3_2 sender:self];
+             }
+             else {
+                 [self performSegueWithIdentifier:SEGUE_4_1_TO_3_2 sender:self];
+             }
+         }
+        
+         
+//         if ( [act isEqualToString:UIActivityTypeMail] )           ServiceMsg = @"Mail sended!";
+//         if ( [act isEqualToString:UIActivityTypePostToTwitter] )  ServiceMsg = @"Post on twitter, ok!";
+//         if ( [act isEqualToString:UIActivityTypePostToFacebook] ) ServiceMsg = @"Post on facebook, ok!";
+//         if ( [act isEqualToString:UIActivityTypeMessage] )        ServiceMsg = @"SMS sended!";
+//         if ( done )
+//         {
+////             UIAlertView *Alert = [[UIAlertView alloc] initWithTitle:ServiceMsg message:@"" delegate:nil cancelButtonTitle:@"ok" otherButtonTitles:nil];
+////             [Alert show];
+////             [Alert release];
+//         }
      }];
 
 }

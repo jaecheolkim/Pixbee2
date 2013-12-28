@@ -12,6 +12,7 @@
 		6968D99C186EE8B700831442 /* CopyActivity.m in Sources */ = {isa = PBXBuildFile; fileRef = 6968D99B186EE8B700831442 /* CopyActivity.m */; };
 		6968D9A1186EEE0000831442 /* MoveActivity.m in Sources */ = {isa = PBXBuildFile; fileRef = 6968D99E186EEE0000831442 /* MoveActivity.m */; };
 		6968D9A2186EEE0000831442 /* NewAlbumActivity.m in Sources */ = {isa = PBXBuildFile; fileRef = 6968D9A0186EEE0000831442 /* NewAlbumActivity.m */; };
+		6968D9A6186EF7DB00831442 /* AlbumSelectionController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6968D9A5186EF7DB00831442 /* AlbumSelectionController.m */; };
 		696ECBDB1850551F00F54DB6 /* AllPhotosController.m in Sources */ = {isa = PBXBuildFile; fileRef = 696ECBDA1850551F00F54DB6 /* AllPhotosController.m */; };
 		697C83AB186DC57A00823990 /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 697C83A8186DC57A00823990 /* FacebookSDK.framework */; };
 		697C83AC186DC57A00823990 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 697C83A9186DC57A00823990 /* opencv2.framework */; };
@@ -275,6 +276,8 @@
 		6968D99E186EEE0000831442 /* MoveActivity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MoveActivity.m; sourceTree = "<group>"; };
 		6968D99F186EEE0000831442 /* NewAlbumActivity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewAlbumActivity.h; sourceTree = "<group>"; };
 		6968D9A0186EEE0000831442 /* NewAlbumActivity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewAlbumActivity.m; sourceTree = "<group>"; };
+		6968D9A4186EF7DB00831442 /* AlbumSelectionController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlbumSelectionController.h; sourceTree = "<group>"; };
+		6968D9A5186EF7DB00831442 /* AlbumSelectionController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AlbumSelectionController.m; sourceTree = "<group>"; };
 		696ECBD91850551F00F54DB6 /* AllPhotosController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AllPhotosController.h; sourceTree = "<group>"; };
 		696ECBDA1850551F00F54DB6 /* AllPhotosController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AllPhotosController.m; sourceTree = "<group>"; };
 		697C83A8186DC57A00823990 /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FacebookSDK.framework; path = ../FacebookSDK.framework; sourceTree = "<group>"; };
@@ -698,6 +701,15 @@
 			path = Activity;
 			sourceTree = "<group>";
 		};
+		6968D9A3186EF7DB00831442 /* AlbumSelection */ = {
+			isa = PBXGroup;
+			children = (
+				6968D9A4186EF7DB00831442 /* AlbumSelectionController.h */,
+				6968D9A5186EF7DB00831442 /* AlbumSelectionController.m */,
+			);
+			path = AlbumSelection;
+			sourceTree = "<group>";
+		};
 		696ECBD71850550000F54DB6 /* AllPhotos */ = {
 			isa = PBXGroup;
 			children = (
@@ -871,6 +883,7 @@
 				78685D5A1848F9F0002D2BAA /* AddFace */,
 				78685D6718497983002D2BAA /* Invitation */,
 				7856F6F41849D1FE00A17349 /* AlbumPage */,
+				6968D9A3186EF7DB00831442 /* AlbumSelection */,
 				7856F6F81849DAC000A17349 /* IndividualGallery */,
 				78A80529184F7ABE008E81B3 /* FullScreenPhoto */,
 				696ECBD71850550000F54DB6 /* AllPhotos */,
@@ -1779,6 +1792,7 @@
 				7805A64718658BA000B234C1 /* SVProgressHUD.m in Sources */,
 				78A8053D184F80E5008E81B3 /* SCTTransitionViewController.m in Sources */,
 				6968D9A1186EEE0000831442 /* MoveActivity.m in Sources */,
+				6968D9A6186EF7DB00831442 /* AlbumSelectionController.m in Sources */,
 				69C39FE518606CBD001EDDFA /* SDWebImageDownloaderOperation.m in Sources */,
 				78A80540184F80E5008E81B3 /* SCTTiltRight.m in Sources */,
 				69C39FCE18606B39001EDDFA /* SDWebImageDownloader.m in Sources */,
