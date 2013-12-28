@@ -34,6 +34,8 @@
 
 - (void)updateCell:(NSDictionary *)photo {
     
+    [self showSelectIcon:NO];
+    
     NSString *imagePath = [photo objectForKey:@"AssetURL"];
     
     if (imagePath && ![imagePath isEqualToString:@""])

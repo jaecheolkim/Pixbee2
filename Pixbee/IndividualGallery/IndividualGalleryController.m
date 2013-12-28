@@ -26,9 +26,12 @@
 @property (strong, nonatomic) NSArray *photos;
 @property (strong, nonatomic) NSDictionary *user;
 @property (strong, nonatomic) FBFriendController *friendPopup;
+@property (strong, nonatomic) IBOutlet UIButton *importView;
+@property (strong, nonatomic) IBOutlet UIButton *shareButton;
 
 - (IBAction)editButtonClickHandler:(id)sender;
 - (IBAction)albumButtonClickHandler:(id)sender;
+- (IBAction)shareButtonClickHandler:(id)sender;
 
 @end
 
@@ -63,6 +66,14 @@
     [self.collectionView reloadData];
     [self.userProfileView.borderView removeFromSuperview];
     self.userProfileView.borderView = nil;
+    
+//    if (self.photos && [self.photos count] <= 10) {
+        self.importView.titleLabel.lineBreakMode = NSLineBreakByWordWrapping;
+        self.importView.titleLabel.textAlignment = NSTextAlignmentCenter;
+
+        NSString *buttonTitle = [NSString stringWithFormat:@"Message Here\nPlease import\nmore %@'s Photo", [self.user objectForKey:@"UserName"]];
+        self.importView.titleLabel.text = buttonTitle;
+//    }
 }
 
 - (void)didReceiveMemoryWarning
@@ -125,6 +136,10 @@
     NSDictionary *photo = [self.photos objectAtIndex:indexPath.row];
     
     [cell updateCell:photo];
+    
+    if ([selectedPhotos containsObject:indexPath]) {
+        [cell showSelectIcon:YES];
+    }
 
     cell.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"photo-frame-2.png"]];
     cell.selectedBackgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"photo-frame-selected.png"]];
@@ -143,13 +158,26 @@
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
     if (self.collectionView.allowsMultipleSelection) {
-        NSDictionary *photo = [self.photos objectAtIndex:indexPath.row];
-        [selectedPhotos addObject:photo];
+        [selectedPhotos addObject:indexPath];
         
         // UI
         GalleryViewCell *cell = (GalleryViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
         [cell showSelectIcon:YES];
         [cell setNeedsDisplay];
+        
+        unsigned long selectcount = [selectedPhotos count];
+        [UIView animateWithDuration:0.3
+                         animations:^{
+                             if (selectcount > 0) {
+                                 self.navigationItem.title = [NSString stringWithFormat:@"%lu Photo Selected", selectcount];
+                             }
+                             else {
+                                 self.navigationItem.title = @"Album";
+                             }
+                         }
+                         completion:^(BOOL finished){
+                             
+                         }];
     }
     else {
         self.selectedCell = (GalleryViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
@@ -187,8 +215,21 @@
 - (void)collectionView:(UICollectionView *)collectionView didDeselectItemAtIndexPath:(NSIndexPath *)indexPath
 {
     if (self.collectionView.allowsMultipleSelection) {
-        NSDictionary *photo = [self.photos objectAtIndex:indexPath.row];
-        [selectedPhotos removeObject:photo];
+        [selectedPhotos removeObject:indexPath];
+        
+        unsigned long selectcount = [selectedPhotos count];
+        [UIView animateWithDuration:0.3
+                         animations:^{
+                             if (selectcount > 0) {
+                                 self.navigationItem.title = [NSString stringWithFormat:@"%lu Photo Selected", selectcount];
+                             }
+                             else {
+                                 self.navigationItem.title = @"Album";
+                             }
+                         }
+                         completion:^(BOOL finished){
+                             
+                         }];
     }
     
     // UI
@@ -324,23 +365,41 @@
     
     if (self.collectionView.allowsMultipleSelection) {
         self.navigationItem.rightBarButtonItem.title = @"Close";
+        [UIView animateWithDuration:0.3
+                         animations:^{
+                             self.shareButton.alpha = 1.0;
+                         }
+                         completion:^(BOOL finished){
+                             
+                         }];
+        
     }
     else {
         self.navigationItem.rightBarButtonItem.title = @"Select";
         
-        for (NSDictionary *photo in selectedPhotos) {
-            int index = [self.photos indexOfObject:photo];
-            
-            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:0] ;
+        for (NSIndexPath *indexPath in selectedPhotos) {
             GalleryViewCell *cell = (GalleryViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
             [cell showSelectIcon:NO];
+            [cell setNeedsDisplay];
         }
         
         [selectedPhotos removeAllObjects];
+        
+        [UIView animateWithDuration:0.3
+                         animations:^{
+                             self.shareButton.alpha = 0.0;
+                             self.navigationItem.title = @"Album";
+                         }
+                         completion:^(BOOL finished){
+                             
+                         }];
     }
 }
 
 - (IBAction)albumButtonClickHandler:(id)sender {
+}
+
+- (IBAction)shareButtonClickHandler:(id)sender {
 }
 
 - (IBAction)backButtonClickHandler:(id)sender {
