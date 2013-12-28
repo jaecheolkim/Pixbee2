@@ -11,5 +11,6 @@
 @interface ALLPhotosView : UIView
 
 @property (strong, nonatomic) IBOutlet UILabel *countLabel;
+@property (strong, nonatomic) IBOutlet UIImageView *albumIcon;
 
 @end
