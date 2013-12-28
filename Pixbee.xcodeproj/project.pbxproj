@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		695B37F9186DF7A900FC7D72 /* libPBFaceLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 695B37F8186DF7A900FC7D72 /* libPBFaceLib.a */; };
 		695B37FB186DF88800FC7D72 /* PBFaceLib.mm in Sources */ = {isa = PBXBuildFile; fileRef = 695B37FA186DF88800FC7D72 /* PBFaceLib.mm */; };
 		696ECBDB1850551F00F54DB6 /* AllPhotosController.m in Sources */ = {isa = PBXBuildFile; fileRef = 696ECBDA1850551F00F54DB6 /* AllPhotosController.m */; };
 		697C83AB186DC57A00823990 /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 697C83A8186DC57A00823990 /* FacebookSDK.framework */; };
@@ -161,7 +160,7 @@
 		78C1EB4B186B0A790072E7DB /* flash_camera_selcet@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 78C1EB07186B0A780072E7DB /* flash_camera_selcet@2x.png */; };
 		78C1EB4C186B0A790072E7DB /* flash_camera@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 78C1EB08186B0A780072E7DB /* flash_camera@2x.png */; };
 		78C1EB4D186B0A790072E7DB /* hive_toalbum@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 78C1EB09186B0A780072E7DB /* hive_toalbum@2x.png */; };
-		78C1EB4E186B0A790072E7DB /* hive@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 78C1EB0A186B0A780072E7DB /* hive@2x.png */; };
+		78C1EB4E186B0A790072E7DB /* hive0@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 78C1EB0A186B0A780072E7DB /* hive0@2x.png */; };
 		78C1EB4F186B0A790072E7DB /* hive20@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 78C1EB0B186B0A780072E7DB /* hive20@2x.png */; };
 		78C1EB50186B0A790072E7DB /* hive40@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 78C1EB0C186B0A780072E7DB /* hive40@2x.png */; };
 		78C1EB51186B0A790072E7DB /* hive60@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 78C1EB0D186B0A780072E7DB /* hive60@2x.png */; };
@@ -264,7 +263,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		695B37F8186DF7A900FC7D72 /* libPBFaceLib.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libPBFaceLib.a; sourceTree = "<group>"; };
 		695B37FA186DF88800FC7D72 /* PBFaceLib.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PBFaceLib.mm; sourceTree = "<group>"; };
 		696ECBD91850551F00F54DB6 /* AllPhotosController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AllPhotosController.h; sourceTree = "<group>"; };
 		696ECBDA1850551F00F54DB6 /* AllPhotosController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AllPhotosController.m; sourceTree = "<group>"; };
@@ -507,7 +505,7 @@
 		78C1EB07186B0A780072E7DB /* flash_camera_selcet@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "flash_camera_selcet@2x.png"; sourceTree = "<group>"; };
 		78C1EB08186B0A780072E7DB /* flash_camera@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "flash_camera@2x.png"; sourceTree = "<group>"; };
 		78C1EB09186B0A780072E7DB /* hive_toalbum@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "hive_toalbum@2x.png"; sourceTree = "<group>"; };
-		78C1EB0A186B0A780072E7DB /* hive@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "hive@2x.png"; sourceTree = "<group>"; };
+		78C1EB0A186B0A780072E7DB /* hive0@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "hive0@2x.png"; sourceTree = "<group>"; };
 		78C1EB0B186B0A780072E7DB /* hive20@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "hive20@2x.png"; sourceTree = "<group>"; };
 		78C1EB0C186B0A780072E7DB /* hive40@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "hive40@2x.png"; sourceTree = "<group>"; };
 		78C1EB0D186B0A780072E7DB /* hive60@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "hive60@2x.png"; sourceTree = "<group>"; };
@@ -641,7 +639,6 @@
 				697C83AC186DC57A00823990 /* opencv2.framework in Frameworks */,
 				697C83AD186DC57A00823990 /* SDWebImage.framework in Frameworks */,
 				7805A5E7186589BE00B234C1 /* MobileCoreServices.framework in Frameworks */,
-				695B37F9186DF7A900FC7D72 /* libPBFaceLib.a in Frameworks */,
 				7805A5E5186589B300B234C1 /* MessageUI.framework in Frameworks */,
 				7805A5E3186589A200B234C1 /* libz.1.2.5.dylib in Frameworks */,
 				7805A5E11865899100B234C1 /* ImageIO.framework in Frameworks */,
@@ -1017,7 +1014,7 @@
 				78C1EB07186B0A780072E7DB /* flash_camera_selcet@2x.png */,
 				78C1EB08186B0A780072E7DB /* flash_camera@2x.png */,
 				78C1EB09186B0A780072E7DB /* hive_toalbum@2x.png */,
-				78C1EB0A186B0A780072E7DB /* hive@2x.png */,
+				78C1EB0A186B0A780072E7DB /* hive0@2x.png */,
 				78C1EB0B186B0A780072E7DB /* hive20@2x.png */,
 				78C1EB0C186B0A780072E7DB /* hive40@2x.png */,
 				78C1EB0D186B0A780072E7DB /* hive60@2x.png */,
@@ -1427,7 +1424,6 @@
 				695B37FA186DF88800FC7D72 /* PBFaceLib.mm */,
 				80D55210186C710000B54974 /* FaceDetectionViewController.h */,
 				80D55211186C710000B54974 /* FaceDetectionViewController.mm */,
-				695B37F8186DF7A900FC7D72 /* libPBFaceLib.a */,
 				80D55213186C710000B54974 /* PBFaceLib.h */,
 			);
 			path = FaceRecognition;
@@ -1571,7 +1567,7 @@
 				78C1EB43186B0A790072E7DB /* edit_select@2x.png in Resources */,
 				78C1EB68186B0A790072E7DB /* social_facebook@2x.png in Resources */,
 				78C1EB3A186B0A790072E7DB /* buttombar_toalbum@2x.png in Resources */,
-				78C1EB4E186B0A790072E7DB /* hive@2x.png in Resources */,
+				78C1EB4E186B0A790072E7DB /* hive0@2x.png in Resources */,
 				78C1EB4B186B0A790072E7DB /* flash_camera_selcet@2x.png in Resources */,
 				7805A6E41866E7B800B234C1 /* newalbum@2x.png in Resources */,
 				78C1EB72186B0A790072E7DB /* tagbox@2x.png in Resources */,

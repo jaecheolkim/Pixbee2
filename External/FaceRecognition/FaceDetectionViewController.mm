@@ -67,11 +67,13 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 @property (weak, nonatomic) IBOutlet UIImageView *hiveImageView;
 @property (weak, nonatomic) IBOutlet BasicBottomView *CameraBottomView;
 @property (nonatomic, retain) MBSwitch *cameraSwitch;
+@property (weak, nonatomic) IBOutlet UIButton *snapButton;
 
 - (IBAction)toggleFlash:(id)sender;
 - (IBAction)switchCameras:(id)sender;
 - (IBAction)closeCamera:(id)sender;
-- (IBAction)switchCameraVideo:(id)sender;
+- (IBAction)snapStillImage:(id)sender;
+
 
 @end
 
@@ -241,6 +243,27 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     } else {
         [self dismissViewControllerAnimated:YES completion:nil];
     }
+}
+
+- (IBAction)snapStillImage:(id)sender {
+    //dispatch_async([self sessionQueue], ^{
+		// Update the orientation on the still image output video connection before capturing.
+		[[stillImageOutput connectionWithMediaType:AVMediaTypeVideo] setVideoOrientation:[[(AVCaptureVideoPreviewLayer *)previewLayer connection] videoOrientation]];
+		
+		// Flash set to Auto for Still Capture
+		//[AVCamViewController setFlashMode:AVCaptureFlashModeAuto forDevice:[[self videoDeviceInput] device]];
+		
+		// Capture a still image.
+		[stillImageOutput captureStillImageAsynchronouslyFromConnection:[stillImageOutput connectionWithMediaType:AVMediaTypeVideo] completionHandler:^(CMSampleBufferRef imageDataSampleBuffer, NSError *error) {
+			
+			if (imageDataSampleBuffer)
+			{
+				NSData *imageData = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageDataSampleBuffer];
+				UIImage *image = [[UIImage alloc] initWithData:imageData];
+				[[[ALAssetsLibrary alloc] init] writeImageToSavedPhotosAlbum:[image CGImage] orientation:(ALAssetOrientation)[image imageOrientation] completionBlock:nil];
+			}
+		}];
+	//});
 }
 
 - (void)switchCameraVideo:(id)sender {
