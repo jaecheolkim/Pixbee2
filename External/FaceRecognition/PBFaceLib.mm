@@ -187,8 +187,9 @@ using namespace cv;
 #pragma mark Detect Operations
 - (NSArray*)detectFace:(CIImage*)ciImage options:(NSDictionary *)options
 {
-    
-	NSArray *features = [_faceDetector featuresInImage:ciImage options:options];
+    NSArray *features = nil;
+    if(_faceDetector && ciImage && options)
+        features = [_faceDetector featuresInImage:ciImage options:options];
     return features;
 }
 

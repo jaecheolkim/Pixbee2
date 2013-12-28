@@ -254,6 +254,7 @@
 		80D55214186C710000B54974 /* FaceDetectionViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 80D55211186C710000B54974 /* FaceDetectionViewController.mm */; };
 		80D55219186C713400B54974 /* MotionOrientation.m in Sources */ = {isa = PBXBuildFile; fileRef = 80D55218186C713400B54974 /* MotionOrientation.m */; };
 		80D5521B186C8E8200B54974 /* hive_line.png in Resources */ = {isa = PBXBuildFile; fileRef = 80D5521A186C8E8200B54974 /* hive_line.png */; };
+		80D5B5D2186F0541000CD8D7 /* PBFilterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 80D5B5D1186F0541000CD8D7 /* PBFilterViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -640,6 +641,8 @@
 		80D55217186C713400B54974 /* MotionOrientation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MotionOrientation.h; sourceTree = "<group>"; };
 		80D55218186C713400B54974 /* MotionOrientation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MotionOrientation.m; sourceTree = "<group>"; };
 		80D5521A186C8E8200B54974 /* hive_line.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = hive_line.png; sourceTree = "<group>"; };
+		80D5B5D0186F0541000CD8D7 /* PBFilterViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBFilterViewController.h; sourceTree = "<group>"; };
+		80D5B5D1186F0541000CD8D7 /* PBFilterViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBFilterViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -872,6 +875,7 @@
 		69ED32E218484EBB00127196 /* Pixbee */ = {
 			isa = PBXGroup;
 			children = (
+				80D5B5CF186F0527000CD8D7 /* 6.2FilterSelection */,
 				6968D999186EE88C00831442 /* Activity */,
 				69B1B30118587DB600774382 /* Intro */,
 				78A8051E184F799E008E81B3 /* Component */,
@@ -1512,6 +1516,15 @@
 			path = MotionOrientation;
 			sourceTree = "<group>";
 		};
+		80D5B5CF186F0527000CD8D7 /* 6.2FilterSelection */ = {
+			isa = PBXGroup;
+			children = (
+				80D5B5D0186F0541000CD8D7 /* PBFilterViewController.h */,
+				80D5B5D1186F0541000CD8D7 /* PBFilterViewController.m */,
+			);
+			path = 6.2FilterSelection;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1730,6 +1743,7 @@
 				7805A63F18658BA000B234C1 /* IDMCaptionView.m in Sources */,
 				80D2A119184A1E58008D29B2 /* ALAssetAdapter.m in Sources */,
 				69C39FE318606CBD001EDDFA /* NSData+GIF.m in Sources */,
+				80D5B5D2186F0541000CD8D7 /* PBFilterViewController.m in Sources */,
 				69C39FD118606B39001EDDFA /* UIButton+WebCache.m in Sources */,
 				695B37FB186DF88800FC7D72 /* PBFaceLib.mm in Sources */,
 				8081283D184D25F50000CF3E /* GlobalValues.m in Sources */,

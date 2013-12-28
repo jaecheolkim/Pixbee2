@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="4514" systemVersion="13B42" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="WQt-uJ-nhq">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="5037" systemVersion="13B42" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="WQt-uJ-nhq">
     <dependencies>
         <deployment defaultVersion="1536" identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3747"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
     </dependencies>
     <scenes>
         <!--1.2 Log-in-->
@@ -498,7 +498,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="107" height="28"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="8B0DA337-2C21-461C-8271-C98DD9EF29BB" translatesAutoresizingMaskIntoConstraints="NO" id="6aK-Ak-lFj">
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="B5DB3942-73F4-45BE-9129-E8FC05354DE5" translatesAutoresizingMaskIntoConstraints="NO" id="6aK-Ak-lFj">
                                                     <rect key="frame" x="0.0" y="0.0" width="28" height="29"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
@@ -531,6 +531,7 @@
                     <nil key="simulatedBottomBarMetrics"/>
                     <simulatedOrientationMetrics key="simulatedOrientationMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                    <size key="freeformSize" width="115" height="95"/>
                     <connections>
                         <outlet property="tableView" destination="nEz-t3-2uP" id="zQ3-FH-7QA"/>
                     </connections>
@@ -1052,6 +1053,9 @@
                                         <state key="normal" image="camerabutton.png">
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
+                                        <connections>
+                                            <action selector="snapStillImage:" destination="dri-x2-AEn" eventType="touchUpInside" id="eOd-fj-9Co"/>
+                                        </connections>
                                     </button>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="camera.png" translatesAutoresizingMaskIntoConstraints="NO" id="ZNs-qv-M9g">
                                         <rect key="frame" x="150" y="23" width="22" height="22"/>
@@ -1091,13 +1095,58 @@
                         <outlet property="hiveImageView" destination="kzk-8P-vOU" id="nea-YZ-qHH"/>
                         <outlet property="instructionsLabel" destination="dTV-e8-DDg" id="uqF-hq-lYD"/>
                         <outlet property="previewView" destination="sHS-iY-wPc" id="JvH-r4-GCa"/>
+                        <outlet property="snapButton" destination="lik-r0-KMe" id="Om7-r9-oZq"/>
                         <outlet property="switchButton" destination="1gu-Cw-a2g" id="Kzp-Rn-ft2"/>
                         <segue destination="LLs-kj-u87" kind="push" identifier="Segue6_1to2_2" id="vS4-Or-sA5"/>
+                        <segue destination="heH-6v-41U" kind="push" identifier="FilterSegue" id="520-aD-wC3"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="3pO-Qz-iU4" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-704" y="10"/>
+        </scene>
+        <!--Filter View Controller-->
+        <scene sceneID="XLU-Zs-Xvg">
+            <objects>
+                <viewController id="heH-6v-41U" customClass="PBFilterViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="6gf-QM-3sH"/>
+                        <viewControllerLayoutGuide type="bottom" id="fOU-7p-nH8"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="07G-Fy-qY4">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Qyk-n1-hCJ">
+                                <rect key="frame" x="31" y="81" width="258" height="348"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </imageView>
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="NRu-2f-h2r">
+                                <rect key="frame" x="0.0" y="460" width="320" height="108"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="color" keyPath="backgroundColor">
+                                        <color key="value" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </scrollView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="color" keyPath="backgroundColor">
+                                <color key="value" red="1" green="1" blue="0.40000000596046448" alpha="0.76000000000000001" colorSpace="calibratedRGB"/>
+                            </userDefinedRuntimeAttribute>
+                        </userDefinedRuntimeAttributes>
+                    </view>
+                    <navigationItem key="navigationItem" id="OuQ-nP-FMA"/>
+                    <connections>
+                        <outlet property="imageView" destination="Qyk-n1-hCJ" id="eYf-j3-6Rs"/>
+                        <outlet property="scrollView" destination="NRu-2f-h2r" id="sNb-bx-Mnb"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="uF3-se-5U9" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-704" y="727"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="Cr7-Vo-3hJ">
@@ -1433,7 +1482,7 @@ more Alex's Photo</string>
         </scene>
     </scenes>
     <resources>
-        <image name="8B0DA337-2C21-461C-8271-C98DD9EF29BB" width="628" height="152">
+        <image name="B5DB3942-73F4-45BE-9129-E8FC05354DE5" width="628" height="152">
             <mutableData key="keyedArchiveRepresentation">
 YnBsaXN0MDDUAQIDBAUGPj9YJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoK4HCBMU
 GR4fIyQsLzI4O1UkbnVsbNUJCgsMDQ4PEBESVk5TU2l6ZVYkY2xhc3NcTlNJbWFnZUZsYWdzVk5TUmVw
@@ -7892,10 +7941,10 @@ Bd3JAAAAAAAABAEAAAAAAAAAQgAAAAAAAAAAAAAAAAAF3cs
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="VxU-3R-aYF"/>
-        <segue reference="BdR-xl-ka0"/>
         <segue reference="10K-Ub-qmt"/>
+        <segue reference="BdR-xl-ka0"/>
         <segue reference="GxS-RG-54L"/>
         <segue reference="CMp-QN-D7K"/>
+        <segue reference="VxU-3R-aYF"/>
     </inferredMetricsTieBreakers>
 </document>

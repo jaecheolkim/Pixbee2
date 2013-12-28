@@ -19,6 +19,8 @@
 #import "BasicBottomView.h"
 #import "MBSwitch.h"
 
+#import "PBFilterViewController.h"
+
 #define CAPTURE_FPS 30
 
 
@@ -56,6 +58,10 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     
     NSArray *instructPoint;
     NSArray *instructStr;
+    
+    NSData *imageData;
+    
+    CIDetector *faceDetector;
 
 }
 @property (weak, nonatomic) IBOutlet UILabel *instructionsLabel;
@@ -89,7 +95,11 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     
     
     isReadyToScanFace = NO;
-    [FaceLib initDetector:CIDetectorAccuracyLow Tacking:YES];
+    //[FaceLib initDetector:CIDetectorAccuracyLow Tacking:YES];
+    
+    NSDictionary *detectorOptions = @{ CIDetectorAccuracy : CIDetectorAccuracyLow, CIDetectorTracking : @(YES) };
+	faceDetector = [CIDetector detectorOfType:CIDetectorTypeFace context:nil options:detectorOptions];
+
     
     if(self.faceMode == FaceModeRecognize)
         isFaceRecRedy = [FaceLib initRecognizer:LBPHFaceRecognizer models:[SQLManager getTrainModels]];
@@ -258,9 +268,11 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 			
 			if (imageDataSampleBuffer)
 			{
-				NSData *imageData = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageDataSampleBuffer];
-				UIImage *image = [[UIImage alloc] initWithData:imageData];
-				[[[ALAssetsLibrary alloc] init] writeImageToSavedPhotosAlbum:[image CGImage] orientation:(ALAssetOrientation)[image imageOrientation] completionBlock:nil];
+				imageData = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageDataSampleBuffer];
+                self.navigationController.navigationBarHidden = NO;
+                //[self performSegueWithIdentifier:SEGUE_GO_FILTER sender:self];
+//				UIImage *image = [[UIImage alloc] initWithData:imageData];
+//				[[[ALAssetsLibrary alloc] init] writeImageToSavedPhotosAlbum:[image CGImage] orientation:(ALAssetOrientation)[image imageOrientation] completionBlock:nil];
 			}
 		}];
 	//});
@@ -275,6 +287,18 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     [self performSegueWithIdentifier:SEGUE_6_1_TO_2_2 sender:self];
 
 }
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+//    if ([segue.identifier isEqualToString:SEGUE_GO_FILTER]){
+//        self.navigationController.navigationBarHidden = NO;
+//        UINavigationController *navi = segue.destinationViewController;
+//        PBFilterViewController *destination = [navi.viewControllers objectAtIndex:0];
+//        destination.imageData = imageData;
+//        
+//    }
+}
+
 
 #pragma mark - AV setup
 - (void)setupAVCapture
@@ -449,7 +473,8 @@ bail:
     
 	imageOptions = [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:exifOrientation] forKey:CIDetectorImageOrientation];
     
-    NSArray *features = [FaceLib detectFace:ciImage options:imageOptions];
+    //NSArray *features = [FaceLib detectFace:ciImage options:imageOptions];
+    NSArray *features = [faceDetector featuresInImage:ciImage options:imageOptions];
     
     CMFormatDescriptionRef fdesc = CMSampleBufferGetFormatDescription(sampleBuffer);
     CGRect clap = CMVideoFormatDescriptionGetCleanAperture(fdesc, false /*originIsTopLeft == false*/);

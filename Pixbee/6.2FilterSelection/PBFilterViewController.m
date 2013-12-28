@@ -9,19 +9,13 @@
 #import "PBFilterViewController.h"
 
 @interface PBFilterViewController ()
+@property (weak, nonatomic) IBOutlet UIImageView *imageView;
+@property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
 
 @end
 
 @implementation PBFilterViewController
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization
-    }
-    return self;
-}
 
 - (void)viewDidLoad
 {
@@ -32,6 +26,8 @@
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
+    UIImage *image = [[UIImage alloc] initWithData:_imageData];
+    [_imageView setImage:image];
     // Dispose of any resources that can be recreated.
 }
 

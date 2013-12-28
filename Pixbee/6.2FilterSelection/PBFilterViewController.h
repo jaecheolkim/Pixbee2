@@ -9,5 +9,6 @@
 #import <UIKit/UIKit.h>
 
 @interface PBFilterViewController : UIViewController
+@property (nonatomic, strong) NSData *imageData;
 
 @end

@@ -30,6 +30,7 @@
 
 #define SEGUE_FACEANALYZE                           @"SegueFaceAnalyze"
 #define SHOW_INFO_VIEW                              @"ShowInfoView"
+#define SEGUE_GO_FILTER                             @"FilterSegue"
 
 
 
