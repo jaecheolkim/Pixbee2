@@ -174,10 +174,10 @@
 // Called after the user changes the selection.
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.row % 2 == 0) {
-        [self performSegueWithIdentifier:SEGUE_4A_TO_6A sender:self];
+        [self performSegueWithIdentifier:SEGUE_3_1_TO_4_1 sender:self];
     }
     else {
-        [self performSegueWithIdentifier:@"Segue4Ato4_2" sender:self];
+        [self performSegueWithIdentifier:SEGUE_3_1_TO_4_2 sender:self];
     }
 }
 
@@ -209,12 +209,12 @@
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    if ([segue.identifier isEqualToString:SEGUE_4A_TO_6A] || [segue.identifier isEqualToString:@"Segue4Ato4_2"]) {
+    if ([segue.identifier isEqualToString:SEGUE_3_1_TO_4_1] || [segue.identifier isEqualToString:SEGUE_3_1_TO_4_2]) {
         NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
         IndividualGalleryController *destViewController = segue.destinationViewController;
         destViewController.usersPhotos = [self.usersPhotos objectAtIndex:indexPath.row];
     }
-    else if([segue.identifier isEqualToString:SEGUE_5A_TO_6D]){
+    else if([segue.identifier isEqualToString:SEGUE_3_1_TO_6_1]){
         AllPhotosController *destViewController = segue.destinationViewController;
         destViewController.photos = self.usersPhotos;
     }

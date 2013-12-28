@@ -149,7 +149,7 @@
 }
 
 - (IBAction)addButtonClickHandler:(id)sender {
-    [self performSegueWithIdentifier:SEGUE_3_TO_3A sender:self];
+    [self performSegueWithIdentifier:SEGUE_2_2_TO_1_4 sender:self];
 }
 
 - (IBAction)rightButtonClickHandler:(id)sender {
@@ -548,7 +548,7 @@
 //}
 //
 //- (IBAction)addButtonClickHandler:(id)sender {
-//    [self performSegueWithIdentifier:SEGUE_3_TO_3A sender:self];
+//    [self performSegueWithIdentifier:SEGUE_2_2_TO_1_4 sender:self];
 //}
 //
 //

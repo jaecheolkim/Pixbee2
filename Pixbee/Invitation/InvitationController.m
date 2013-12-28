@@ -29,6 +29,9 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
+    
+    // Uncomment to display a logo as the navigation bar title
+    self.navigationItem.titleView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"pixbee.png"]];
 }
 
 - (void)didReceiveMemoryWarning
@@ -40,7 +43,7 @@
 #pragma mark ButtonAction
 
 - (IBAction)skipButtonClickHandler:(id)sender {
-    [self performSegueWithIdentifier:SEGUE_3A_TO_4A sender:self];
+    [self performSegueWithIdentifier:SEGUE_1_4_TO_3_1 sender:self];
 }
 
 

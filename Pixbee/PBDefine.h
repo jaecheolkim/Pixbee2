@@ -11,19 +11,20 @@
 #define SEGUE_1_TO_2A                               @"Segue1to2A"
 #define SEGUE_2A_TO_3                               @"Segue2Ato3"
 #define SEGUE_2B_TO_5                               @"Segue2Bto5"
-#define SEGUE_3_TO_3A                               @"Segue3to3A"
-#define SEGUE_3A_TO_4A                              @"Segue3Ato4A"
-#define SEGUE_4A_TO_2B                              @"Segue4Ato2B"
-#define SEGUE_4A_TO_5A                              @"Segue4Ato5A"
-#define SEGUE_4A_TO_6A                              @"Segue4Ato6A"
-#define SEGUE_4A_TO_10A                             @"Segue4Ato10A"
-#define SEGUE_5A_TO_6D                              @"Segue5Ato6D"
-#define SEGUE_5A_TO_10A                             @"Segue5Ato10A"
-#define SEGUE_6A_TO_10A                             @"Segue6Ato10A"
+
+#define SEGUE_2_2_TO_1_4                            @"Segue2_2to1_4"
+#define SEGUE_1_4_TO_3_1                            @"Segue1_4to3_1"
+#define SEGUE_3_1_TO_4_1                            @"Segue3_1to4_1"
+#define SEGUE_3_1_TO_4_2                            @"Segue3_1to4_2"
+#define SEGUE_3_1_TO_6_1                            @"Segue3_1to6_1"
+#define SEGUE_6_1_TO_3_1                            @"Segue6_1to3_1"
+#define SEGUE_4_2_TO_3_1                            @"Segue4_2to6_1"
+#define SEGUE_4_1_TO_5_1                            @"Segue4_1to5_1"
+#define SEGUE_4_2_TO_5_1                            @"Segue4_2to5_1"
+#define SEGUE_6_1_TO_2_2                            @"Segue6_1to2_2"
+
+
 #define SEGUE_FACEANALYZE                           @"SegueFaceAnalyze"
-#define SEGUE_ADDINGFACETOALBUM                     @"SegueAddingFaceToAlbum"
-
-
 #define SHOW_INFO_VIEW                              @"ShowInfoView"
 
 

@@ -5,10 +5,10 @@
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3747"/>
     </dependencies>
     <scenes>
-        <!--1. Log-in-->
+        <!--1.2 Log-in-->
         <scene sceneID="ufC-wZ-h7g">
             <objects>
-                <viewController id="vXZ-lx-hvc" userLabel="1. Log-in" customClass="PBViewController" sceneMemberID="viewController">
+                <viewController id="vXZ-lx-hvc" userLabel="1.2 Log-in" customClass="PBViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="8XU-BZ-yjx"/>
                         <viewControllerLayoutGuide type="bottom" id="pwp-jf-pXg"/>
@@ -42,10 +42,10 @@
             </objects>
             <point key="canvasLocation" x="-1246" y="10"/>
         </scene>
-        <!--3. Adding Face To Album-->
+        <!--2.2. Adding Face To Album-->
         <scene sceneID="w1x-xb-SHf">
             <objects>
-                <viewController storyboardIdentifier="AddingFaceToAlbum" useStoryboardIdentifierAsRestorationIdentifier="YES" id="LLs-kj-u87" userLabel="3. Adding Face To Album" customClass="AddingFaceToAlbumController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="AddingFaceToAlbum" useStoryboardIdentifierAsRestorationIdentifier="YES" id="LLs-kj-u87" userLabel="2.2. Adding Face To Album" customClass="AddingFaceToAlbumController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="iCf-KL-WX6"/>
                         <viewControllerLayoutGuide type="bottom" id="z4v-Fj-RYV"/>
@@ -120,7 +120,7 @@
                                 <autoresizingMask key="autoresizingMask"/>
                             </imageView>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Name" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="dNC-uv-wJG">
-                                <rect key="frame" x="0.0" y="398" width="320" height="35"/>
+                                <rect key="frame" x="0.0" y="435" width="320" height="35"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
@@ -178,9 +178,7 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
-                    <navigationItem key="navigationItem" title="Pixbee" id="sJu-8N-3Qs">
-                        <barButtonItem key="backBarButtonItem" title="dddd" id="t59-BO-4ci"/>
-                    </navigationItem>
+                    <navigationItem key="navigationItem" id="sJu-8N-3Qs"/>
                     <connections>
                         <outlet property="ProgressGauge" destination="lpw-pu-uYc" id="RQP-nI-Uz7"/>
                         <outlet property="faceImageView" destination="HYb-eF-tY4" id="V1P-P8-RTc"/>
@@ -188,17 +186,17 @@
                         <outlet property="nameField" destination="dNC-uv-wJG" id="0Fm-qj-y1N"/>
                         <outlet property="photoView" destination="EdM-s9-rGm" id="aZ5-zG-UbJ"/>
                         <outlet property="progressView" destination="lgf-QQ-KLD" id="Btd-Yl-UiL"/>
-                        <segue destination="KFK-YT-ZKu" kind="push" identifier="Segue3to3A" customClass="SCTTiltRight" id="TPf-bc-2mJ"/>
+                        <segue destination="KFK-YT-ZKu" kind="push" identifier="Segue2_2to1_4" customClass="SCTTiltRight" id="TPf-bc-2mJ"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="YS9-0S-r9Y" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-183" y="10"/>
         </scene>
-        <!--4. Invitation-->
+        <!--1.4. Invitation-->
         <scene sceneID="Vpn-8O-fPo">
             <objects>
-                <viewController storyboardIdentifier="Invitation" useStoryboardIdentifierAsRestorationIdentifier="YES" id="KFK-YT-ZKu" userLabel="4. Invitation" customClass="InvitationController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="Invitation" useStoryboardIdentifierAsRestorationIdentifier="YES" id="KFK-YT-ZKu" userLabel="1.4. Invitation" customClass="InvitationController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="YjW-vx-VG9"/>
                         <viewControllerLayoutGuide type="bottom" id="Zy8-sz-txO"/>
@@ -236,17 +234,17 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <segue destination="5fn-Qj-G3E" kind="push" identifier="Segue3Ato4A" customClass="SCTTiltRight" id="BdR-xl-ka0"/>
+                        <segue destination="5fn-Qj-G3E" kind="push" identifier="Segue1_4to3_1" customClass="SCTTiltRight" id="BdR-xl-ka0"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="q9B-MI-KP8" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="395" y="10"/>
         </scene>
-        <!--5A. Album Page-->
+        <!--3.1. Album Page-->
         <scene sceneID="G65-gg-1kd">
             <objects>
-                <viewController storyboardIdentifier="AlbumPage" useStoryboardIdentifierAsRestorationIdentifier="YES" id="5fn-Qj-G3E" userLabel="5A. Album Page" customClass="AlbumPageController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="AlbumPage" useStoryboardIdentifierAsRestorationIdentifier="YES" id="5fn-Qj-G3E" userLabel="3.1. Album Page" customClass="AlbumPageController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="HFx-oz-gBi"/>
                         <viewControllerLayoutGuide type="bottom" id="wpo-Pv-fsL"/>
@@ -272,7 +270,7 @@
                                         <state key="selected" title="All Photos" image="allphoto_select.png"/>
                                         <connections>
                                             <action selector="allPhotosViewClickHandler:" destination="5fn-Qj-G3E" eventType="touchUpInside" id="tou-tO-68V"/>
-                                            <segue destination="eM8-Ev-WUw" kind="push" identifier="Segue5Ato6D" id="GxS-RG-54L"/>
+                                            <segue destination="eM8-Ev-WUw" kind="push" identifier="Segue3_1to6_1" id="GxS-RG-54L"/>
                                         </connections>
                                     </button>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="arrow.png" translatesAutoresizingMaskIntoConstraints="NO" id="8XY-vU-uEe">
@@ -463,8 +461,8 @@
                     <connections>
                         <outlet property="allPhotosView" destination="Seo-qS-sgu" id="es5-eX-dxg"/>
                         <outlet property="tableView" destination="moc-FK-iUa" id="00Q-0j-Ryd"/>
-                        <segue destination="cgv-md-euH" kind="push" identifier="Segue4Ato6A" customClass="SCTTiltRight" id="JJq-np-wa1"/>
-                        <segue destination="yBq-FD-dBD" kind="push" identifier="Segue4Ato4_2" id="zId-iR-cJo"/>
+                        <segue destination="cgv-md-euH" kind="push" identifier="Segue3_1to4_1" customClass="SCTTiltRight" id="JJq-np-wa1"/>
+                        <segue destination="yBq-FD-dBD" kind="push" identifier="Segue3_1Ato4_2" id="zId-iR-cJo"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="X8l-N9-92W" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -500,7 +498,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="107" height="28"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="0D4D4A83-E5B4-47E3-AD37-8917FF5F1BDE" translatesAutoresizingMaskIntoConstraints="NO" id="6aK-Ak-lFj">
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="4ADD4237-6CCE-4499-A61D-E76D33270592" translatesAutoresizingMaskIntoConstraints="NO" id="6aK-Ak-lFj">
                                                     <rect key="frame" x="0.0" y="0.0" width="28" height="29"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
@@ -740,17 +738,17 @@
                         <outlet property="collectionView" destination="tNn-dx-lsI" id="OKr-Ro-Vxu"/>
                         <outlet property="shareButton" destination="pI6-Kk-74h" id="u8S-XF-Xvs"/>
                         <outlet property="userProfileView" destination="55l-68-vXF" id="kzb-va-R1w"/>
-                        <segue destination="nCz-07-OTp" kind="custom" identifier="Segue6Ato10A" customClass="OpenPhotoSegue" id="VxU-3R-aYF"/>
+                        <segue destination="nCz-07-OTp" kind="custom" identifier="Segue4_1to5_1" customClass="OpenPhotoSegue" id="VxU-3R-aYF"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="2gx-ar-cbr" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1503" y="10"/>
         </scene>
-        <!--6D. All Photos-->
+        <!--4.3. All Photos-->
         <scene sceneID="LjN-qa-8oF">
             <objects>
-                <viewController id="eM8-Ev-WUw" userLabel="6D. All Photos" customClass="AllPhotosController" sceneMemberID="viewController">
+                <viewController id="eM8-Ev-WUw" userLabel="4.3. All Photos" customClass="AllPhotosController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="NR2-lH-C8h"/>
                         <viewControllerLayoutGuide type="bottom" id="UDG-hX-xOb"/>
@@ -858,7 +856,7 @@
                         <barButtonItem key="backBarButtonItem" title="xicon.png" id="B5a-H3-M4a"/>
                         <barButtonItem key="rightBarButtonItem" systemItem="done" id="zFy-oG-3T3">
                             <connections>
-                                <segue destination="5fn-Qj-G3E" kind="push" customClass="SCT3DFlip" id="qpe-jg-dnc"/>
+                                <segue destination="5fn-Qj-G3E" kind="push" identifier="Segue6_1to3_1" customClass="SCT3DFlip" id="qpe-jg-dnc"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -871,10 +869,10 @@
             </objects>
             <point key="canvasLocation" x="945" y="-892"/>
         </scene>
-        <!--10A. Full Screen Photo-->
+        <!--5.1. Full Screen Photo-->
         <scene sceneID="6X2-d7-cNe">
             <objects>
-                <viewController id="nCz-07-OTp" userLabel="10A. Full Screen Photo" customClass="FullScreenPhotoController" sceneMemberID="viewController">
+                <viewController id="nCz-07-OTp" userLabel="5.1. Full Screen Photo" customClass="FullScreenPhotoController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="CTi-xm-Jca"/>
                         <viewControllerLayoutGuide type="bottom" id="TeB-2B-h1P"/>
@@ -915,6 +913,7 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
+                    <navigationItem key="navigationItem" id="mpD-u6-ROX"/>
                     <connections>
                         <segue destination="Ngl-06-Bto" kind="unwind" unwindAction="UnwindFromFullScreenPhotoToIndividualGallery:" id="8oH-cI-KbP"/>
                     </connections>
@@ -947,10 +946,10 @@
             </objects>
             <point key="canvasLocation" x="-1737" y="10"/>
         </scene>
-        <!--Face Detection View Controller-->
+        <!--6.1. Face Detection View Controller-->
         <scene sceneID="6I5-NA-DuC">
             <objects>
-                <viewController id="dri-x2-AEn" customClass="FaceDetectionViewController" sceneMemberID="viewController">
+                <viewController id="dri-x2-AEn" userLabel="6.1. Face Detection View Controller" customClass="FaceDetectionViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="EvM-pv-QMp"/>
                         <viewControllerLayoutGuide type="bottom" id="uFC-5A-HJj"/>
@@ -1092,7 +1091,7 @@
                         <outlet property="instructionsLabel" destination="dTV-e8-DDg" id="uqF-hq-lYD"/>
                         <outlet property="previewView" destination="sHS-iY-wPc" id="JvH-r4-GCa"/>
                         <outlet property="switchButton" destination="1gu-Cw-a2g" id="Kzp-Rn-ft2"/>
-                        <segue destination="LLs-kj-u87" kind="push" identifier="SegueAddingFaceToAlbum" id="vS4-Or-sA5"/>
+                        <segue destination="LLs-kj-u87" kind="push" identifier="Segue6_1to2_2" id="vS4-Or-sA5"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="3pO-Qz-iU4" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -1240,6 +1239,9 @@ more Alex's Photo</string>
                                     </attributedString>
                                 </state>
                                 <state key="selected" backgroundImage="midbar.png"/>
+                                <connections>
+                                    <segue destination="eM8-Ev-WUw" kind="push" identifier="Segue4_2to6_1" id="qxE-Yu-N1x"/>
+                                </connections>
                             </button>
                             <collectionView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" showsHorizontalScrollIndicator="NO" minimumZoomScale="0.0" maximumZoomScale="0.0" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="Shb-YP-vTp">
                                 <rect key="frame" x="0.0" y="220" width="320" height="284"/>
@@ -1342,15 +1344,16 @@ more Alex's Photo</string>
                         <outlet property="importView" destination="YMJ-HI-sZ8" id="iJb-ks-hGJ"/>
                         <outlet property="shareButton" destination="v3d-fm-ULw" id="ZMB-vc-OuA"/>
                         <outlet property="userProfileView" destination="Gtf-GG-SkX" id="0Vy-l4-PqM"/>
+                        <segue destination="nCz-07-OTp" kind="custom" identifier="Segue4_2to5_1" customClass="OpenPhotoSegue" id="Zhm-J1-mzh"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Twf-hO-GTc" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1503" y="684"/>
+            <point key="canvasLocation" x="1503" y="727"/>
         </scene>
     </scenes>
     <resources>
-        <image name="0D4D4A83-E5B4-47E3-AD37-8917FF5F1BDE" width="628" height="152">
+        <image name="4ADD4237-6CCE-4499-A61D-E76D33270592" width="628" height="152">
             <mutableData key="keyedArchiveRepresentation">
 YnBsaXN0MDDUAQIDBAUGPj9YJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoK4HCBMU
 GR4fIyQsLzI4O1UkbnVsbNUJCgsMDQ4PEBESVk5TU2l6ZVYkY2xhc3NcTlNJbWFnZUZsYWdzVk5TUmVw
@@ -7808,7 +7811,9 @@ Bd3JAAAAAAAABAEAAAAAAAAAQgAAAAAAAAAAAAAAAAAF3cs
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
+        <segue reference="Zhm-J1-mzh"/>
         <segue reference="qpe-jg-dnc"/>
+        <segue reference="qxE-Yu-N1x"/>
         <segue reference="10K-Ub-qmt"/>
     </inferredMetricsTieBreakers>
 </document>

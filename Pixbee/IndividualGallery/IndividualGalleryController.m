@@ -181,7 +181,7 @@
     }
     else {
         self.selectedCell = (GalleryViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
-//        [self performSegueWithIdentifier:SEGUE_6A_TO_10A sender:self];
+//        [self performSegueWithIdentifier:SEGUE_4_1_TO_5_1 sender:self];
         
 //        NSMutableArray *idmPhotos = [NSMutableArray arrayWithCapacity:[self.photos count]];
 //        for (NSDictionary *photoinfo in self.photos) {
