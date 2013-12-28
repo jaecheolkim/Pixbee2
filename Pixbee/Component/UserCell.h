@@ -28,6 +28,10 @@
 @property (strong, nonatomic) IBOutlet UIImageView *lineView;
 @property (strong, nonatomic) IBOutlet UIButton *trashButton;
 
+// Selection
+@property (strong, nonatomic) IBOutlet UIImageView *checkIcon;
+
+
 - (IBAction)editButtonClickHandler:(id)sender;
 - (IBAction)deleteButtonClickHandler:(id)sender;
 - (IBAction)doneButtonClickHandler:(id)sender;
