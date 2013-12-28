@@ -15,6 +15,9 @@
 #import "SCTInclude.h"
 #import "IDMPhotoBrowser.h"
 #import "FBFriendController.h"
+#import "CopyActivity.h"
+#import "MoveActivity.h"
+#import "NewAlbumActivity.h"
 
 @interface IndividualGalleryController () <UICollectionViewDataSource, UICollectionViewDelegate, IDMPhotoBrowserDelegate, FBFriendControllerDelegate, UserCellDelegate>{
     NSMutableArray *selectedPhotos;
@@ -400,6 +403,53 @@
 }
 
 - (IBAction)shareButtonClickHandler:(id)sender {
+    
+    NSMutableArray *activityItems = [NSMutableArray arrayWithCapacity:[selectedPhotos count]];
+    
+    for (NSIndexPath *indexPath in selectedPhotos) {
+        NSDictionary *photo = [self.photos objectAtIndex:indexPath.row];
+        NSString *imagePath = [photo objectForKey:@"AssetURL"];
+        [activityItems addObject:[[SDImageCache sharedImageCache] imageFromMemoryCacheForKey:imagePath]];
+    }
+    
+    CopyActivity *copyActivity = [[CopyActivity alloc] init];
+    MoveActivity *moveActivity = [[MoveActivity alloc] init];
+    NewAlbumActivity *newalbumActivity = [[NewAlbumActivity alloc] init];
+    
+    NSArray *activitys = @[copyActivity, moveActivity, newalbumActivity];
+    
+    UIActivityViewController *activityController = [[UIActivityViewController alloc] initWithActivityItems:activityItems applicationActivities:activitys];
+    [activityController setExcludedActivityTypes:@[UIActivityTypePostToTwitter,
+                                                   UIActivityTypePostToWeibo,
+                                                   UIActivityTypePrint,
+                                                   UIActivityTypeCopyToPasteboard,
+                                                   UIActivityTypeAssignToContact,
+                                                   UIActivityTypeSaveToCameraRoll,
+                                                   UIActivityTypeAddToReadingList,
+                                                   UIActivityTypePostToFlickr,
+                                                   UIActivityTypePostToVimeo,
+                                                   UIActivityTypePostToTencentWeibo,
+                                                   UIActivityTypeAirDrop]];
+    
+    [self presentViewController:activityController
+                       animated:YES
+                     completion:nil];
+    
+    [activityController setCompletionHandler:^(NSString *act, BOOL done)
+     {
+         NSString *ServiceMsg = nil;
+         if ( [act isEqualToString:UIActivityTypeMail] )           ServiceMsg = @"Mail sended!";
+         if ( [act isEqualToString:UIActivityTypePostToTwitter] )  ServiceMsg = @"Post on twitter, ok!";
+         if ( [act isEqualToString:UIActivityTypePostToFacebook] ) ServiceMsg = @"Post on facebook, ok!";
+         if ( [act isEqualToString:UIActivityTypeMessage] )        ServiceMsg = @"SMS sended!";
+         if ( done )
+         {
+//             UIAlertView *Alert = [[UIAlertView alloc] initWithTitle:ServiceMsg message:@"" delegate:nil cancelButtonTitle:@"ok" otherButtonTitles:nil];
+//             [Alert show];
+//             [Alert release];
+         }
+     }];
+
 }
 
 - (IBAction)backButtonClickHandler:(id)sender {
