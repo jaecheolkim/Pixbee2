@@ -272,7 +272,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
                 self.navigationController.navigationBarHidden = NO;
                 
 
-                //[self performSegueWithIdentifier:SEGUE_GO_FILTER sender:self];
+                [self performSegueWithIdentifier:SEGUE_GO_FILTER sender:self];
 //				UIImage *image = [[UIImage alloc] initWithData:imageData];
 //				[[[ALAssetsLibrary alloc] init] writeImageToSavedPhotosAlbum:[image CGImage] orientation:(ALAssetOrientation)[image imageOrientation] completionBlock:nil];
 			}
@@ -292,13 +292,13 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-//    if ([segue.identifier isEqualToString:SEGUE_GO_FILTER]){
+    if ([segue.identifier isEqualToString:SEGUE_GO_FILTER]){
 //        self.navigationController.navigationBarHidden = NO;
 //        UINavigationController *navi = segue.destinationViewController;
-//        PBFilterViewController *destination = [navi.viewControllers objectAtIndex:0];
-//        destination.imageData = imageData;
-//        
-//    }
+        PBFilterViewController *destination = segue.destinationViewController;//[navi.viewControllers objectAtIndex:0];
+        destination.imageData = imageData;
+        
+    }
 }
 
 
