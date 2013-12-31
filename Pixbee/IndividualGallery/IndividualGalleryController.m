@@ -26,11 +26,12 @@
 @property (strong, nonatomic) IBOutlet UICollectionView *collectionView;
 @property (strong, nonatomic) IBOutlet UserCell *userProfileView;
 @property (strong, nonatomic) GalleryViewCell *selectedCell;
-@property (strong, nonatomic) NSArray *photos;
+@property (strong, nonatomic) NSMutableArray *photos;
 @property (strong, nonatomic) NSDictionary *user;
 @property (strong, nonatomic) FBFriendController *friendPopup;
 @property (strong, nonatomic) IBOutlet UIButton *importView;
 @property (strong, nonatomic) IBOutlet UIButton *shareButton;
+@property (strong, nonatomic) UIActivityViewController *activityController;
 
 - (IBAction)editButtonClickHandler:(id)sender;
 - (IBAction)albumButtonClickHandler:(id)sender;
@@ -416,8 +417,8 @@
     
     NSArray *activitys = @[copyActivity, moveActivity, newalbumActivity];
     
-    UIActivityViewController *activityController = [[UIActivityViewController alloc] initWithActivityItems:activityItems applicationActivities:activitys];
-    [activityController setExcludedActivityTypes:@[UIActivityTypePostToTwitter,
+    self.activityController = [[UIActivityViewController alloc] initWithActivityItems:activityItems applicationActivities:activitys];
+    [self.activityController setExcludedActivityTypes:@[UIActivityTypePostToTwitter,
                                                    UIActivityTypePostToWeibo,
                                                    UIActivityTypePrint,
                                                    UIActivityTypeCopyToPasteboard,
@@ -429,11 +430,44 @@
                                                    UIActivityTypePostToTencentWeibo,
                                                    UIActivityTypeAirDrop]];
     
-    [self presentViewController:activityController
-                       animated:YES
-                     completion:nil];
+//    UIView *tabView = [[UIView alloc] initWithFrame:CGRectMake(0, 150, 320, 20)];
+//    tabView.backgroundColor = [UIColor redColor];
+//    
+//    UIButton *shareButton = [[UIButton alloc] initWithFrame:CGRectMake(10, 0, 20, 20)];
+//    UIButton *deleteButton = [[UIButton alloc] initWithFrame:CGRectMake(290, -10, 32, 40)];
+//    [deleteButton setImage:[UIImage imageNamed:@"trash.png"] forState:UIControlStateNormal];
+//    
+//    shareButton.backgroundColor = [UIColor blueColor];
+//    deleteButton.backgroundColor = [UIColor blueColor];
+//    [tabView addSubview:shareButton];
+//    [tabView addSubview:deleteButton];
+//    
+//    [activityController.view addSubview:tabView];
     
-    [activityController setCompletionHandler:^(NSString *act, BOOL done) {
+    [self presentViewController:self.activityController
+                       animated:YES
+                     completion:^
+                    {
+                        NSLog(@"%@", self.activityController);
+                        
+                        UIView *tabView = [[UIView alloc] initWithFrame:CGRectMake(0, 250, 320, 30)];
+                        tabView.backgroundColor = [UIColor whiteColor];
+                        tabView.alpha = 0.9;
+
+                        UIButton *shareButton = [[UIButton alloc] initWithFrame:CGRectMake(10, 5, 20, 20)];
+                        UIButton *deleteButton = [[UIButton alloc] initWithFrame:CGRectMake(280, -5, 32, 40)];
+                        [deleteButton setImage:[UIImage imageNamed:@"trash.png"] forState:UIControlStateNormal];
+
+                        shareButton.backgroundColor = [UIColor blueColor];
+                        [tabView addSubview:shareButton];
+                        [tabView addSubview:deleteButton];
+                        [deleteButton addTarget:self action:@selector(deletePhotos:) forControlEvents:UIControlEventTouchUpInside];
+                        
+                        [self.activityController.view addSubview:tabView];
+                        
+                    }];
+    
+    [self.activityController setCompletionHandler:^(NSString *act, BOOL done) {
         if ( [act isEqualToString:@"com.pixbee.copySharing"] ) {
             if (self.importView) {
                 [self performSegueWithIdentifier:SEGUE_4_2_TO_3_2 sender:self];
@@ -459,7 +493,7 @@
              }
          }
         
-         
+        self.activityController = nil;
 //         if ( [act isEqualToString:UIActivityTypeMail] )           ServiceMsg = @"Mail sended!";
 //         if ( [act isEqualToString:UIActivityTypePostToTwitter] )  ServiceMsg = @"Post on twitter, ok!";
 //         if ( [act isEqualToString:UIActivityTypePostToFacebook] ) ServiceMsg = @"Post on facebook, ok!";
@@ -472,6 +506,28 @@
 //         }
      }];
 
+}
+
+- (void)deletePhotos:(id)sender {
+    
+    [self.activityController dismissViewControllerAnimated:YES completion:nil];
+    
+    [self.collectionView performBatchUpdates:^{
+        for (NSIndexPath *indexPath in selectedPhotos) {
+            // UI
+            GalleryViewCell *cell = (GalleryViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
+            [cell showSelectIcon:NO];
+            [self.photos removeObjectAtIndex:indexPath.row];
+        }
+        
+        [self.collectionView deleteItemsAtIndexPaths:selectedPhotos];
+    } completion:^(BOOL finished) {
+        self.activityController = nil;
+        NSLog(@"deletePhotos complete!");
+        [selectedPhotos removeAllObjects];
+    }];
+    
+    
 }
 
 - (IBAction)backButtonClickHandler:(id)sender {
