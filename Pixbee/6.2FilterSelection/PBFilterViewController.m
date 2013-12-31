@@ -9,6 +9,9 @@
 #import "PBFilterViewController.h"
 
 @interface PBFilterViewController ()
+{
+    UIView *selectedView;
+}
 @property (weak, nonatomic) IBOutlet UIImageView *imageView;
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
 
@@ -20,25 +23,37 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
+
+    _imageView.contentMode = UIViewContentModeScaleAspectFit;
     UIImage *image = [[UIImage alloc] initWithData:_imageData];
     [_imageView setImage:image];
-    
+    [self.view setBackgroundColor:[UIColor colorWithRed:0.98 green:0.96 blue:0.92 alpha:1.0]];
     [self loadFilterImages];
     
     // Do any additional setup after loading the view.
 }
 
+- (void)viewWillAppear:(BOOL)animated
+{
+	[super viewWillAppear:animated];
+    
+
+    
+}
+
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-    UIImage *image = [[UIImage alloc] initWithData:_imageData];
-    [_imageView setImage:image];
-    // Dispose of any resources that can be recreated.
 }
 
 -(void) loadFilterImages {
     _scrollView.backgroundColor = [UIColor blackColor];
+
+    selectedView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 88, 108)];
+    [selectedView setBackgroundColor:[UIColor colorWithRed:0.5 green:0.5 blue:0.5 alpha:0.7]];
+    [_scrollView addSubview:selectedView];
+    
     for(int i = 0; i < 6; i++) {
         UIButton * button = [UIButton buttonWithType:UIButtonTypeCustom];
         [button setBackgroundImage:[UIImage imageNamed:[NSString stringWithFormat:@"filter%d", i + 1]] forState:UIControlStateNormal];
@@ -85,14 +100,28 @@
 	[_scrollView setContentSize:CGSizeMake(10 + 6*(76+10), 108.0)];
 }
 
--(void) filterSelected:(UIButton *) sender {
+-(void) filterSelected:(UIButton*)sender {
     for(UIView *view in _scrollView.subviews){
         if([view isKindOfClass:[UIButton class]]){
             [(UIButton *)view setSelected:NO];
+            if(view.tag  == sender.tag) [(UIButton *)view setSelected:YES];
+        }
+        if([view isKindOfClass:[UILabel class]]){
+            [(UILabel *)view setTextColor:[UIColor colorWithWhite:0.97f alpha:1.0f]];
+            if(view.tag == sender.tag * 100) [(UILabel *)view setTextColor:[UIColor yellowColor]];
         }
     }
     
-    [sender setSelected:YES];
+    [UIView animateWithDuration:0.2
+                     animations:^{
+                         selectedView.center = CGPointMake(sender.center.x, 108/2);
+                         //selectedView.frame = CGRectMake(sender.tag * 90, 0, 88, 108);
+                     }
+                     completion:nil];
+
+
+
+    //[sender setSelected:YES];
 
     NSLog(@"selectedFilter = %d",(int)sender.tag);
 

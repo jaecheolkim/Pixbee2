@@ -193,45 +193,45 @@
     
 }
 
-- (void)calcFace:(ALAsset *)asset success:(void (^)(int count))success
-{
-    NSLog(@"Start...");
-    
-    __block CGImageRef cgImage;
-    __block CIImage *ciImage;
-    __block CIDetector *detector;
-    __block NSMutableArray *facesCount = [NSMutableArray array];
-    __block NSInteger counter = 0;
-    __block double workTime;
-    
-    CIContext *context = [CIContext contextWithOptions:nil];
-    NSDictionary *opts = @{ CIDetectorAccuracy : CIDetectorAccuracyLow };
-    detector = [CIDetector detectorOfType:CIDetectorTypeFace context:context options:opts];
-    
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        @autoreleasepool {
-            NSDate *date = [NSDate date];
-            cgImage = [asset aspectRatioThumbnail];
-            ciImage = [CIImage imageWithCGImage:cgImage];
-            
-            NSArray *fs = [detector featuresInImage:ciImage options:nil];
-            
-            counter = [fs count];
-            
-            [facesCount addObject:[NSString stringWithFormat:@"%d", (int)counter]];
-            
-            workTime = 0 - [date timeIntervalSinceNow];
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                NSLog(@"Find : %d, 걸린시간 : %f초", (int)counter, workTime);
-            });
-            
-            success((int)counter);
-            
-            
-        }
-    });
-}
+//- (void)calcFace:(ALAsset *)asset success:(void (^)(int count))success
+//{
+//    NSLog(@"Start...");
+//    
+//    __block CGImageRef cgImage;
+//    __block CIImage *ciImage;
+//    __block CIDetector *detector;
+//    __block NSMutableArray *facesCount = [NSMutableArray array];
+//    __block NSInteger counter = 0;
+//    __block double workTime;
+//    
+//    CIContext *context = [CIContext contextWithOptions:nil];
+//    NSDictionary *opts = @{ CIDetectorAccuracy : CIDetectorAccuracyLow };
+//    detector = [CIDetector detectorOfType:CIDetectorTypeFace context:context options:opts];
+//    
+//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+//        @autoreleasepool {
+//            NSDate *date = [NSDate date];
+//            cgImage = [asset aspectRatioThumbnail];
+//            ciImage = [CIImage imageWithCGImage:cgImage];
+//            
+//            NSArray *fs = [detector featuresInImage:ciImage options:nil];
+//            
+//            counter = [fs count];
+//            
+//            [facesCount addObject:[NSString stringWithFormat:@"%d", (int)counter]];
+//            
+//            workTime = 0 - [date timeIntervalSinceNow];
+//            
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//                NSLog(@"Find : %d, 걸린시간 : %f초", (int)counter, workTime);
+//            });
+//            
+//            success((int)counter);
+//            
+//            
+//        }
+//    });
+//}
 
 #pragma mark Album function
 //새로운 Group DB 추가.
@@ -385,124 +385,124 @@
 }
 
 
-- (CIImage *) featherEdgeFaceAt:(CIVector *)faceRect fromImage:(CIImage *)ciimage
-{
-    // Crop image to face
-    CIFilter *cropFilter = [CIFilter filterWithName:@"CICrop"];
-    [cropFilter setValue:ciimage forKey:@"inputImage"];
-    [cropFilter setValue:faceRect forKey:@"inputRectangle"];
-    
-    // Blur edges
-    CIFilter *featherEdge = [CIFilter filterWithName:@"FeatherEdgeFilter"];
-    [featherEdge setValue:[cropFilter valueForKey:@"outputImage"] forKey:@"inputImage"];
-    [featherEdge setValue:[NSNumber numberWithFloat:[faceRect W]/3.5] forKey:@"inputRadius"];
-    
-    return [featherEdge valueForKey:@"outputImage"];
-}
+//- (CIImage *) featherEdgeFaceAt:(CIVector *)faceRect fromImage:(CIImage *)ciimage
+//{
+//    // Crop image to face
+//    CIFilter *cropFilter = [CIFilter filterWithName:@"CICrop"];
+//    [cropFilter setValue:ciimage forKey:@"inputImage"];
+//    [cropFilter setValue:faceRect forKey:@"inputRectangle"];
+//    
+//    // Blur edges
+//    CIFilter *featherEdge = [CIFilter filterWithName:@"FeatherEdgeFilter"];
+//    [featherEdge setValue:[cropFilter valueForKey:@"outputImage"] forKey:@"inputImage"];
+//    [featherEdge setValue:[NSNumber numberWithFloat:[faceRect W]/3.5] forKey:@"inputRadius"];
+//    
+//    return [featherEdge valueForKey:@"outputImage"];
+//}
 
-- (void)checkFaces:(NSArray *)assets
-          success:(void (^)(NSArray *result))success
-{
-    NSLog(@"Start...");
-    __block NSInteger counter = 0;
-    __block double workTime;
-    _totalProcess = (int)[assets count];
-    _currentProcess = 0;
-
-    __block int PhotoID;
-    __block int FaceNo;
-    
-//    CIContext *context = [CIContext contextWithOptions:nil];
-//    NSDictionary *opts = @{ CIDetectorAccuracy : CIDetectorAccuracyLow };
-//    detector = [CIDetector detectorOfType:CIDetectorTypeFace context:context options:opts];
-    
-    //NSDate *date0 = [NSDate date];
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        @autoreleasepool {
-            for(int i = 0; i < (int)[assets count]; i++){
- 
-                NSDate *date = [NSDate date];
-                
-                ALAsset *photoAsset = [assets[i] objectForKey:@"Asset"];
-                
-                CGImageRef cgImage = [photoAsset aspectRatioThumbnail];
-                //CGColorSpaceRef colorSpace = CGImageGetColorSpace(cgImage);
-                CIImage *ciImage = [CIImage imageWithCGImage:cgImage];
-                
-//                NSArray *fs = [detector featuresInImage:ciImage options:@{CIDetectorSmile: @(YES),
-//                                                                          CIDetectorEyeBlink: @(YES),
-//                                                                          }];
-                
-                NSArray *fs = [FaceLib detectFace:ciImage options:@{CIDetectorSmile: @(YES),
-                                                                    CIDetectorEyeBlink: @(YES),
-                                                                    }];
-                counter = [fs count];
-                
-                //[facesCount addObject:[NSString stringWithFormat:@"%d", (int)counter]];
-                
-//                [self addAssetToDBWith:asset[i] withAssetGroup:assetGroup withFaceArray:fs];
-                
-                NSString *AssetURL = [photoAsset valueForProperty:ALAssetPropertyAssetURL];
-                NSString *GroupURL = [assets[i] objectForKey:@"GroupURL"];
-                
-                
-                //[_totalAssets addObject:@{@"AssetURL":AssetURL , @"GroupURL":GroupURL, @"faces":fs}];
-                if(counter) {
-                    [_faceAssets addObject:@{@"AssetURL":AssetURL , @"GroupURL":GroupURL, @"faces":fs}];
-                    
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        if ([[self delegate] respondsToSelector:@selector(updatePhotoGallery:)]) {
-                            [[self delegate] updatePhotoGallery:photoAsset];
-                        }
-                    });
-                    
-                    // 신규 포토 저장.
-                    // Save DB. [Photos]
-                    PhotoID = [SQLManager newPhotoWith:photoAsset withGroupAssetURL:GroupURL];
-                    
-                    for(CIFaceFeature *face in fs){
-                        if(PhotoID >= 0){
-                            // Save DB. [Faces]
-                            NSDictionary *faceDic = [FaceLib getFaceData:ciImage bound:face.bounds];
-                            if(faceDic){
-                                FaceNo = [SQLManager newFaceWith:PhotoID withFeature:face withInfo:faceDic];
-                                
-                                UIImage *faceImage = [faceDic objectForKey:@"faceImage"];
-                                NSDictionary *match = [FaceLib recognizeFaceFromUIImage:faceImage];
-                                NSLog(@"Match : %@", match);
-                                
-                            }
-                            
-                            //NSDictionary *match = [faceRecognizer recognizeFace:image];
-                        }
-
-                     }
-                }
-
-                workTime = 0 - [date timeIntervalSinceNow];
-                _currentProcess++;
-
-                dispatch_async(dispatch_get_main_queue(), ^{
-                	NSLog(@"time : %f초 || Current = %d / %d Total ....", workTime, _currentProcess, _totalProcess);
-//                    NSLog(@"Find : %d, 걸린시간 : %f초 || size = %@",
-//                          (int)counter, workTime, NSStringFromCGRect(ciImage.extent) );
-                    
-                    if ([[self delegate] respondsToSelector:@selector(updateProgressUI:currentProcess:)]) {
-                        [[self delegate] updateProgressUI:[NSNumber numberWithInt:_totalProcess] currentProcess:[NSNumber numberWithInt:_currentProcess]];
-                    }
-                });
-            }
-            
-            success(_faceAssets);
-            
-//            NSLog(@"===> Find : %d, 걸린시간 : %f초 || size = %@",
-//                  (int)[_faceAssets count], workTime = 0 - [date0 timeIntervalSinceNow], NSStringFromCGRect(ciImage.extent) );
-            
-        }
-    });
-    
-    
-}
+//- (void)checkFaces:(NSArray *)assets
+//          success:(void (^)(NSArray *result))success
+//{
+//    NSLog(@"Start...");
+//    __block NSInteger counter = 0;
+//    __block double workTime;
+//    _totalProcess = (int)[assets count];
+//    _currentProcess = 0;
+//
+//    __block int PhotoID;
+//    __block int FaceNo;
+//    
+////    CIContext *context = [CIContext contextWithOptions:nil];
+////    NSDictionary *opts = @{ CIDetectorAccuracy : CIDetectorAccuracyLow };
+////    detector = [CIDetector detectorOfType:CIDetectorTypeFace context:context options:opts];
+//    
+//    //NSDate *date0 = [NSDate date];
+//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+//        @autoreleasepool {
+//            for(int i = 0; i < (int)[assets count]; i++){
+// 
+//                NSDate *date = [NSDate date];
+//                
+//                ALAsset *photoAsset = [assets[i] objectForKey:@"Asset"];
+//                
+//                CGImageRef cgImage = [photoAsset aspectRatioThumbnail];
+//                //CGColorSpaceRef colorSpace = CGImageGetColorSpace(cgImage);
+//                CIImage *ciImage = [CIImage imageWithCGImage:cgImage];
+//                
+////                NSArray *fs = [detector featuresInImage:ciImage options:@{CIDetectorSmile: @(YES),
+////                                                                          CIDetectorEyeBlink: @(YES),
+////                                                                          }];
+//                
+//                NSArray *fs = [FaceLib detectFace:ciImage options:@{CIDetectorSmile: @(YES),
+//                                                                    CIDetectorEyeBlink: @(YES),
+//                                                                    }];
+//                counter = [fs count];
+//                
+//                //[facesCount addObject:[NSString stringWithFormat:@"%d", (int)counter]];
+//                
+////                [self addAssetToDBWith:asset[i] withAssetGroup:assetGroup withFaceArray:fs];
+//                
+//                NSString *AssetURL = [photoAsset valueForProperty:ALAssetPropertyAssetURL];
+//                NSString *GroupURL = [assets[i] objectForKey:@"GroupURL"];
+//                
+//                
+//                //[_totalAssets addObject:@{@"AssetURL":AssetURL , @"GroupURL":GroupURL, @"faces":fs}];
+//                if(counter) {
+//                    [_faceAssets addObject:@{@"AssetURL":AssetURL , @"GroupURL":GroupURL, @"faces":fs}];
+//                    
+//                    dispatch_async(dispatch_get_main_queue(), ^{
+//                        if ([[self delegate] respondsToSelector:@selector(updatePhotoGallery:)]) {
+//                            [[self delegate] updatePhotoGallery:photoAsset];
+//                        }
+//                    });
+//                    
+//                    // 신규 포토 저장.
+//                    // Save DB. [Photos]
+//                    PhotoID = [SQLManager newPhotoWith:photoAsset withGroupAssetURL:GroupURL];
+//                    
+//                    for(CIFaceFeature *face in fs){
+//                        if(PhotoID >= 0){
+//                            // Save DB. [Faces]
+//                            NSDictionary *faceDic = [FaceLib getFaceData:ciImage bound:face.bounds];
+//                            if(faceDic){
+//                                FaceNo = [SQLManager newFaceWith:PhotoID withFeature:face withInfo:faceDic];
+//                                
+//                                UIImage *faceImage = [faceDic objectForKey:@"faceImage"];
+//                                NSDictionary *match = [FaceLib recognizeFaceFromUIImage:faceImage];
+//                                NSLog(@"Match : %@", match);
+//                                
+//                            }
+//                            
+//                            //NSDictionary *match = [faceRecognizer recognizeFace:image];
+//                        }
+//
+//                     }
+//                }
+//
+//                workTime = 0 - [date timeIntervalSinceNow];
+//                _currentProcess++;
+//
+//                dispatch_async(dispatch_get_main_queue(), ^{
+//                	NSLog(@"time : %f초 || Current = %d / %d Total ....", workTime, _currentProcess, _totalProcess);
+////                    NSLog(@"Find : %d, 걸린시간 : %f초 || size = %@",
+////                          (int)counter, workTime, NSStringFromCGRect(ciImage.extent) );
+//                    
+//                    if ([[self delegate] respondsToSelector:@selector(updateProgressUI:currentProcess:)]) {
+//                        [[self delegate] updateProgressUI:[NSNumber numberWithInt:_totalProcess] currentProcess:[NSNumber numberWithInt:_currentProcess]];
+//                    }
+//                });
+//            }
+//            
+//            success(_faceAssets);
+//            
+////            NSLog(@"===> Find : %d, 걸린시간 : %f초 || size = %@",
+////                  (int)[_faceAssets count], workTime = 0 - [date0 timeIntervalSinceNow], NSStringFromCGRect(ciImage.extent) );
+//            
+//        }
+//    });
+//    
+//    
+//}
 
 - (void)loadAssets2:(ALAssetsGroup *)assetsGroup success:(void (^)(NSArray *result))success
 {
@@ -573,13 +573,13 @@
 }
 
 
-- (void)checkFacesNSave
-{
-    [[PBAssetsLibrary sharedInstance] checkFaces:_totalAssets success:^(NSArray *allAssets) {
-        
-        NSLog(@"==>CalcFaces : %d / %@",(int)[allAssets count], allAssets);
-    } ];
-}
+//- (void)checkFacesNSave
+//{
+//    [[PBAssetsLibrary sharedInstance] checkFaces:_totalAssets success:^(NSArray *allAssets) {
+//        
+//        NSLog(@"==>CalcFaces : %d / %@",(int)[allAssets count], allAssets);
+//    } ];
+//}
 
 
 - (void)checkFacesFor:(int)UserID usingEnumerationBlock:(void (^)(NSDictionary *processInfo))enumerationBlock completion:(void (^)(BOOL finished))completion {
@@ -638,10 +638,12 @@
                                     
                                         
                                         NSLog(@"Match : %@", match);
-                                        if([[match objectForKey:@"UserID"] intValue] == UserID && [[match objectForKey:@"confidence"] doubleValue] < 100.f){
+                                        if([[match objectForKey:@"UserID"] intValue] == UserID && [[match objectForKey:@"confidence"] doubleValue] < 50.f){
                                             int PhotoNo = [SQLManager newUserPhotosWith:[[match objectForKey:@"UserID"] intValue]
                                                                               withPhoto:PhotoID
                                                                                withFace:FaceNo];
+                                            
+                                            
                                         }
                                     }
 
@@ -672,105 +674,329 @@
 }
 
 
-- (void)checkFacesFor:(int)UserID usingEnumerationBlock:(void (^)(NSDictionary *processInfo, BOOL *stop))enumerationBlock
-{
-    NSLog(@"Start...");
-    __block NSInteger counter = 0;
-    __block double workTime;
-    _totalProcess = (int)[_totalAssets count];
-    _currentProcess = 0;
-    
-    __block int PhotoID;
-    __block int FaceNo;
-    __block BOOL stop = NO;
-    __block UIImage *faceImage;
-
-    [FaceLib initDetector:CIDetectorAccuracyLow Tacking:NO];
-    __block BOOL isFaceRecRedy = [FaceLib initRecognizer:LBPHFaceRecognizer models:[SQLManager getTrainModels]];
-    
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        @autoreleasepool {
-            for(int i = 0; i < (int)[_totalAssets count]; i++){
-                
-                if(stop) return ;
-                
-                NSDate *date = [NSDate date];
-                
-                ALAsset *photoAsset = [_totalAssets[i] objectForKey:@"Asset"];
-                
-                CGImageRef cgImage = [photoAsset aspectRatioThumbnail];
-                CIImage *ciImage = [CIImage imageWithCGImage:cgImage];
-                
-                NSArray *fs = [FaceLib detectFace:ciImage options:@{CIDetectorSmile: @(YES),
-                                                                    CIDetectorEyeBlink: @(YES),
-                                                                    }];
-                counter = [fs count];
-                
-                NSString *AssetURL = [photoAsset valueForProperty:ALAssetPropertyAssetURL];
-                NSString *GroupURL = [_totalAssets[i] objectForKey:@"GroupURL"];
- 
-                if(counter) {
-                    [_faceAssets addObject:@{@"AssetURL":AssetURL , @"GroupURL":GroupURL, @"faces":fs}];
-                    
-                    // 신규 포토 저장.
-                    // Save DB. [Photos]
-                    PhotoID = [SQLManager newPhotoWith:photoAsset withGroupAssetURL:GroupURL];
-                    
-                    for(CIFaceFeature *face in fs){
-                        if(PhotoID >= 0){
-                            // Save DB. [Faces]
-                            NSDictionary *faceDic = [FaceLib getFaceData:ciImage bound:face.bounds];
-                            if(faceDic){
-                                FaceNo = [SQLManager newFaceWith:PhotoID withFeature:face withInfo:faceDic];
-                                
-                                faceImage = [faceDic objectForKey:@"faceImage"];
-                                if(isFaceRecRedy){
-                                    NSDictionary *match = [FaceLib recognizeFaceFromUIImage:faceImage];
-                                    NSLog(@"Match : %@", match);
-                                    if([[match objectForKey:@"confidence"] floatValue] < 200.f && match != nil){
-                                        int PhotoNo = [SQLManager newUserPhotosWith:UserID withPhoto:PhotoID withFace:FaceNo];
-                                    }
-                                 }
-                           }
-
-                        }
-                        
-                    }
-                }
-                
-                workTime = 0 - [date timeIntervalSinceNow];
-                _currentProcess++;
-                
-                NSDictionary *processInfo = @{ @"Total" : @(_totalProcess), @"Current":@(_currentProcess),
-                                               @"Asset" : photoAsset, @"Face" : faceImage};
-                
-                enumerationBlock(processInfo, &stop);
-                
-//                dispatch_async(dispatch_get_main_queue(), ^{
+//- (void)checkFacesFor:(int)UserID usingEnumerationBlock:(void (^)(NSDictionary *processInfo, BOOL *stop))enumerationBlock
+//{
+//    NSLog(@"Start...");
+//    __block NSInteger counter = 0;
+//    __block double workTime;
+//    _totalProcess = (int)[_totalAssets count];
+//    _currentProcess = 0;
+//    
+//    __block int PhotoID;
+//    __block int FaceNo;
+//    __block BOOL stop = NO;
+//    __block UIImage *faceImage;
+//
+//    [FaceLib initDetector:CIDetectorAccuracyLow Tacking:NO];
+//    __block BOOL isFaceRecRedy = [FaceLib initRecognizer:LBPHFaceRecognizer models:[SQLManager getTrainModels]];
+//    
+//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+//        @autoreleasepool {
+//            for(int i = 0; i < (int)[_totalAssets count]; i++){
+//                
+//                if(stop) return ;
+//                
+//                NSDate *date = [NSDate date];
+//                
+//                ALAsset *photoAsset = [_totalAssets[i] objectForKey:@"Asset"];
+//                
+//                CGImageRef cgImage = [photoAsset aspectRatioThumbnail];
+//                CIImage *ciImage = [CIImage imageWithCGImage:cgImage];
+//                
+//                NSArray *fs = [FaceLib detectFace:ciImage options:@{CIDetectorSmile: @(YES),
+//                                                                    CIDetectorEyeBlink: @(YES),
+//                                                                    }];
+//                counter = [fs count];
+//                
+//                NSString *AssetURL = [photoAsset valueForProperty:ALAssetPropertyAssetURL];
+//                NSString *GroupURL = [_totalAssets[i] objectForKey:@"GroupURL"];
 // 
-//                	NSLog(@"time : %f초 || Current = %d / %d Total ....", workTime, _currentProcess, _totalProcess);
-//                    //                    NSLog(@"Find : %d, 걸린시간 : %f초 || size = %@",
-//                    //                          (int)counter, workTime, NSStringFromCGRect(ciImage.extent) );
+//                if(counter) {
+//                    [_faceAssets addObject:@{@"AssetURL":AssetURL , @"GroupURL":GroupURL, @"faces":fs}];
 //                    
-//                    if ([[self delegate] respondsToSelector:@selector(updateProgressUI:currentProcess:)]) {
-//                        [[self delegate] updateProgressUI:[NSNumber numberWithInt:_totalProcess] currentProcess:[NSNumber numberWithInt:_currentProcess]];
+//                    // 신규 포토 저장.
+//                    // Save DB. [Photos]
+//                    PhotoID = [SQLManager newPhotoWith:photoAsset withGroupAssetURL:GroupURL];
+//                    
+//                    for(CIFaceFeature *face in fs){
+//                        if(PhotoID >= 0){
+//                            // Save DB. [Faces]
+//                            NSDictionary *faceDic = [FaceLib getFaceData:ciImage bound:face.bounds];
+//                            if(faceDic){
+//                                FaceNo = [SQLManager newFaceWith:PhotoID withFeature:face withInfo:faceDic];
+//                                
+//                                faceImage = [faceDic objectForKey:@"faceImage"];
+//                                if(isFaceRecRedy){
+//                                    NSDictionary *match = [FaceLib recognizeFaceFromUIImage:faceImage];
+//                                    NSLog(@"Match : %@", match);
+//                                    if([[match objectForKey:@"confidence"] floatValue] < 200.f && match != nil){
+//                                        int PhotoNo = [SQLManager newUserPhotosWith:UserID withPhoto:PhotoID withFace:FaceNo];
+//                                    }
+//                                 }
+//                           }
+//
+//                        }
+//                        
 //                    }
-//                });
-                
-                
-            }
-            
-//            resultBlock(_faceAssets, &stop);
-            
-            //            NSLog(@"===> Find : %d, 걸린시간 : %f초 || size = %@",
-            //                  (int)[_faceAssets count], workTime = 0 - [date0 timeIntervalSinceNow], NSStringFromCGRect(ciImage.extent) );
-            
-        }
-    });
+//                }
+//                
+//                workTime = 0 - [date timeIntervalSinceNow];
+//                _currentProcess++;
+//                
+//                NSDictionary *processInfo = @{ @"Total" : @(_totalProcess), @"Current":@(_currentProcess),
+//                                               @"Asset" : photoAsset, @"Face" : faceImage};
+//                
+//                enumerationBlock(processInfo, &stop);
+//                
+////                dispatch_async(dispatch_get_main_queue(), ^{
+//// 
+////                	NSLog(@"time : %f초 || Current = %d / %d Total ....", workTime, _currentProcess, _totalProcess);
+////                    //                    NSLog(@"Find : %d, 걸린시간 : %f초 || size = %@",
+////                    //                          (int)counter, workTime, NSStringFromCGRect(ciImage.extent) );
+////                    
+////                    if ([[self delegate] respondsToSelector:@selector(updateProgressUI:currentProcess:)]) {
+////                        [[self delegate] updateProgressUI:[NSNumber numberWithInt:_totalProcess] currentProcess:[NSNumber numberWithInt:_currentProcess]];
+////                    }
+////                });
+//                
+//                
+//            }
+//            
+////            resultBlock(_faceAssets, &stop);
+//            
+//            //            NSLog(@"===> Find : %d, 걸린시간 : %f초 || size = %@",
+//            //                  (int)[_faceAssets count], workTime = 0 - [date0 timeIntervalSinceNow], NSStringFromCGRect(ciImage.extent) );
+//            
+//        }
+//    });
+//    
+//    
+//}
+
+- (NSString *)languegeCode
+{
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSArray *languages = [defaults objectForKey:@"AppleLanguages"];
+    NSString *languege = languages[0];
     
-    
+    if ([languege isEqualToString:@"ko"] ||
+        [languege isEqualToString:@"en"] ||
+        [languege isEqualToString:@"ja"] ||
+        [languege isEqualToString:@"es"] ||
+        [languege isEqualToString:@"de"]) {
+        
+        return languege;
+    }
+    else if ([languege isEqualToString:@"zh-Hans"]) {
+        return @"zh-CN";
+    }
+    else if ([languege isEqualToString:@"zh-Hant"]) {
+        return @"zh-TW";
+    }
+    else {
+        return @"en";
+    }
 }
 
+
+- (NSString *)getAddressFrom:(CLPlacemark*)place
+{
+//    CLLocation *location = [[CLLocation alloc] initWithLatitude:latitude longitude:longitude];
+//    CLGeocoder *geoCoder = [[CLGeocoder alloc] init];
+//    [geoCoder reverseGeocodeLocation:location completionHandler:^(NSArray *placemarks, NSError *err){
+//
+//     }];
+    
+//    if( nil == placemarks ) return;
+//    CLPlacemark *place = placemarks[0];
+    NSString * stringPlace = @"";
+    
+    NSString * currentLanguage = [self languegeCode];
+    NSLog(@"[[[[[ language code : %@", currentLanguage);
+    if ([currentLanguage isEqualToString:@"ko"])
+    {
+        if (place.country)
+        {
+            stringPlace = [NSString stringWithFormat:@"%@", place.country];
+        }
+        
+        if(place.subAdministrativeArea)
+        {
+            stringPlace = [NSString stringWithFormat:@"%@ %@", stringPlace, place.subAdministrativeArea];
+        }
+        
+        if(place.administrativeArea)
+        {
+            stringPlace = [NSString stringWithFormat:@"%@ %@", stringPlace, place.administrativeArea];
+        }
+        
+        if(place.subLocality)
+        {
+            stringPlace = [NSString stringWithFormat:@"%@ %@", stringPlace, place.subLocality];
+        }
+        
+        if(place.locality)
+        {
+            stringPlace = [NSString stringWithFormat:@"%@ %@", stringPlace, place.locality];
+        }
+        
+        if(place.thoroughfare)
+        {
+            stringPlace = [NSString stringWithFormat:@"%@ %@", stringPlace, place.thoroughfare];
+        }
+        
+        if(place.subThoroughfare)
+        {
+            stringPlace = [NSString stringWithFormat:@"%@ %@", stringPlace, place.subThoroughfare];
+        }
+        
+    }
+    else if ([currentLanguage isEqualToString:@"ja"])
+    {
+        if (place.country)
+        {
+            stringPlace = [NSString stringWithFormat:@"%@", place.country];
+        }
+        
+        if(place.subAdministrativeArea)
+        {
+            stringPlace = [NSString stringWithFormat:@"%@%@", stringPlace, place.subAdministrativeArea];
+        }
+        
+        if(place.administrativeArea)
+        {
+            stringPlace = [NSString stringWithFormat:@"%@%@", stringPlace, place.administrativeArea];
+        }
+        
+        if(place.subLocality)
+        {
+            stringPlace = [NSString stringWithFormat:@"%@%@", stringPlace, place.subLocality];
+        }
+        
+        if(place.locality)
+        {
+            stringPlace = [NSString stringWithFormat:@"%@%@", stringPlace, place.locality];
+        }
+        
+        if(place.thoroughfare)
+        {
+            stringPlace = [NSString stringWithFormat:@"%@%@", stringPlace, place.thoroughfare];
+        }
+        
+        if(place.subThoroughfare)
+        {
+            stringPlace = [NSString stringWithFormat:@"%@%@", stringPlace, place.subThoroughfare];
+        }
+    }
+    else if ([currentLanguage isEqualToString:@"zh"])
+    {
+        if (place.country)
+        {
+            stringPlace = [NSString stringWithFormat:@"%@", place.country];
+        }
+        
+        if(place.subAdministrativeArea)
+        {
+            stringPlace = [NSString stringWithFormat:@"%@, %@", stringPlace, place.subAdministrativeArea];
+        }
+        
+        if(place.administrativeArea)
+        {
+            stringPlace = [NSString stringWithFormat:@"%@, %@", stringPlace, place.administrativeArea];
+        }
+        
+        if(place.subLocality)
+        {
+            stringPlace = [NSString stringWithFormat:@"%@, %@", stringPlace, place.subLocality];
+        }
+        
+        if(place.locality)
+        {
+            stringPlace = [NSString stringWithFormat:@"%@, %@", stringPlace, place.locality];
+        }
+        
+        if(place.thoroughfare)
+        {
+            stringPlace = [NSString stringWithFormat:@"%@, %@", stringPlace, place.thoroughfare];
+        }
+        
+        if(place.subThoroughfare)
+        {
+            stringPlace = [NSString stringWithFormat:@"%@, %@", stringPlace, place.subThoroughfare];
+        }
+    }
+    else if ([currentLanguage isEqualToString:@"en"] || [currentLanguage isEqualToString:@"de"] || [currentLanguage isEqualToString:@"es"])
+    {
+        if(place.subThoroughfare)
+        {
+            stringPlace = [NSString stringWithFormat:@"%@", place.subThoroughfare];
+        }
+        
+        if(place.thoroughfare)
+        {
+            if(stringPlace && [stringPlace length] > 0)
+            {
+                stringPlace = [NSString stringWithFormat:@"%@, %@", stringPlace, place.thoroughfare];
+            } else {
+                stringPlace = [NSString stringWithFormat:@"%@", place.thoroughfare];
+            }
+        }
+        
+        if(place.locality)
+        {
+            if(stringPlace && [stringPlace length] > 0)
+            {
+                stringPlace = [NSString stringWithFormat:@"%@, %@", stringPlace, place.locality];
+            } else {
+                stringPlace = [NSString stringWithFormat:@"%@", place.locality];
+            }
+        }
+        
+        if(place.subLocality)
+        {
+            if(stringPlace && [stringPlace length] > 0)
+            {
+                stringPlace = [NSString stringWithFormat:@"%@, %@", stringPlace, place.subLocality];
+            }
+            else
+            {
+                stringPlace = [NSString stringWithFormat:@"%@", place.subLocality];
+            }
+        }
+        
+        if(place.administrativeArea)
+        {
+            if(stringPlace && [stringPlace length] > 0)
+            {
+                stringPlace = [NSString stringWithFormat:@"%@, %@", stringPlace, place.administrativeArea];
+            }
+            else
+            {
+                stringPlace = [NSString stringWithFormat:@"%@", place.administrativeArea];
+            }
+        }
+        
+        if(place.subAdministrativeArea)
+        {
+            if(stringPlace && [stringPlace length] > 0)
+            {
+                stringPlace = [NSString stringWithFormat:@"%@, %@", stringPlace, place.subAdministrativeArea];
+            }
+            else
+            {
+                stringPlace = [NSString stringWithFormat:@"%@", place.subAdministrativeArea];
+            }
+        }
+        
+        if(place.country)
+        {
+            stringPlace = [NSString stringWithFormat:@"%@, %@", stringPlace, place.country];
+        }
+    }
+ 
+    return stringPlace;
+
+}
 
 
 @end

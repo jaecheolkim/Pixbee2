@@ -35,16 +35,16 @@
 
 - (void)loadAssets:(ALAssetsGroup *)assetsGroup success:(void (^)(NSArray *result))success;
 
-- (void)calcFaces:(NSArray *)asset success:(void (^)(NSArray *result))success;
-- (void)calcFace:(ALAsset *)asset success:(void (^)(int count))success;
+//- (void)calcFaces:(NSArray *)asset success:(void (^)(NSArray *result))success;
+//- (void)calcFace:(ALAsset *)asset success:(void (^)(int count))success;
 
 #pragma mark Album function
 // 앨범사진 로컬 앨범DB로 동기화
 - (void)syncAlbumToDB;
 
 // 모든 Asset 뒤져서 얼굴 검출하고, DB에 저장.
-- (void)checkFacesNSave;
-- (void)checkFacesFor:(int)UserID usingEnumerationBlock:(void (^)(NSDictionary *processInfo, BOOL *stop))enumerationBlock;
+//- (void)checkFacesNSave;
+//- (void)checkFacesFor:(int)UserID usingEnumerationBlock:(void (^)(NSDictionary *processInfo, BOOL *stop))enumerationBlock;
 
 - (void)checkFacesFor:(int)UserID usingEnumerationBlock:(void (^)(NSDictionary *processInfo))enumerationBlock completion:(void (^)(BOOL finished))completion;
 

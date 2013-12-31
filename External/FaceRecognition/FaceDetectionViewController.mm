@@ -89,7 +89,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
+    
     instructPoint = @[NSStringFromCGPoint(CGPointMake(0, 0)),  ];
     
     
@@ -116,6 +116,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
         [self setupGuide];
         self.numPicsTaken = 0;
     } else {
+        [_closeButton setHidden:YES];
         [_hiveImageView setHidden:YES];
         [_instructionsLabel setHidden:YES];
         
@@ -139,9 +140,10 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 - (void)viewWillAppear:(BOOL)animated
 {
 	[super viewWillAppear:animated];
+    //[self.navigationController.navigationBar setBackgroundColor:[UIColor redColor]];
+    self.navigationController.navigationBarHidden = YES;
     
 	[self setupAVCapture];
-
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -251,7 +253,9 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     if(self.faceMode == FaceModeCollect){
         [self goNext];
     } else {
-        [self dismissViewControllerAnimated:YES completion:nil];
+        self.navigationController.navigationBarHidden = NO;
+        [self.navigationController popViewControllerAnimated:YES];
+        //[self dismissViewControllerAnimated:YES completion:nil];
     }
 }
 
