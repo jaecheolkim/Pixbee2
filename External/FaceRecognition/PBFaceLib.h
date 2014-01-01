@@ -47,7 +47,6 @@ typedef enum{
 
 - (cv::Mat)UIImageToMat:(UIImage *)image;
 - (UIImage*)MatToUIImage:(const cv::Mat&)image;
-
 @end
 
 @protocol PBFaceLibDelegate <NSObject>

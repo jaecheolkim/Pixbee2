@@ -16,7 +16,7 @@
 }
 @property (weak, nonatomic) IBOutlet UIImageView *imageView;
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
-
+@property (nonatomic, strong) NSArray *filters;
 @end
 
 @implementation PBFilterViewController
@@ -25,12 +25,28 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-    _imageView.contentMode = UIViewContentModeScaleAspectFit;
-    originalImage = [[UIImage alloc] initWithData:_imageData];
-    [_imageView setImage:originalImage];
+    self.navigationController.navigationItem.title = @"Filter";
     
     [self.view setBackgroundColor:[UIColor colorWithRed:0.98 green:0.96 blue:0.92 alpha:1.0]];
+    
+    _imageView.contentMode = UIViewContentModeScaleAspectFit;
+    originalImage = [self fixrotation:[[UIImage alloc] initWithData:_imageData]] ;
+    [_imageView setImage:originalImage];
+
+    self.filters = @[@"Original",
+                   @"CILinearToSRGBToneCurve",
+                   @"CIPhotoEffectChrome",
+                   @"CIPhotoEffectFade",
+                   @"CIPhotoEffectInstant",
+                   @"CIBloom",
+                   @"CIPhotoEffectMono",
+                   @"CIPhotoEffectNoir",
+                   @"CIPhotoEffectProcess",
+                   @"CIPhotoEffectTonal",
+                   @"CIPhotoEffectTransfer",
+                   @"CISRGBToneCurveToLinear",
+                   ];
+    
     [self loadFilterImages];
     
     // Do any additional setup after loading the view.
@@ -39,9 +55,6 @@
 - (void)viewWillAppear:(BOOL)animated
 {
 	[super viewWillAppear:animated];
-    self.navigationController.title = @"Filter";
-
-    
 }
 
 
@@ -128,7 +141,29 @@
     NSLog(@"selectedFilter = %d",(int)sender.tag);
     
     // Process Filter
-    // PostImage에 넣을 예정. 
+    if ((int)sender.tag == 0) {
+        
+        [_imageView setImage:originalImage];
+        
+        return;
+    }
+    CIImage *ciImage = [CIImage imageWithCGImage:originalImage.CGImage];
+    //CIImage *ciImage = [[CIImage alloc] initWithImage:originalImage];
+    
+    CIFilter *filter = [CIFilter filterWithName:self.filters[(int)sender.tag]
+                                  keysAndValues:kCIInputImageKey, ciImage, nil];
+    [filter setDefaults];
+    
+    CIContext *context = [CIContext contextWithOptions:nil];
+    CIImage *outputImage = [filter outputImage];
+    CGImageRef cgImage = [context createCGImage:outputImage
+                                       fromRect:[outputImage extent]];
+    
+    postImage = [UIImage imageWithCGImage:cgImage];
+    
+    [_imageView setImage:[UIImage imageWithCGImage:cgImage]];
+    
+    CGImageRelease(cgImage);
 
 }
 
@@ -142,5 +177,82 @@
     // Pass the selected object to the new view controller.
 }
 */
-
+- (UIImage *)fixrotation:(UIImage *)image
+{
+    
+    
+    if (image.imageOrientation == UIImageOrientationUp) return image;
+    CGAffineTransform transform = CGAffineTransformIdentity;
+    
+    switch (image.imageOrientation) {
+        case UIImageOrientationDown:
+        case UIImageOrientationDownMirrored:
+            transform = CGAffineTransformTranslate(transform, image.size.width, image.size.height);
+            transform = CGAffineTransformRotate(transform, M_PI);
+            break;
+            
+        case UIImageOrientationLeft:
+        case UIImageOrientationLeftMirrored:
+            transform = CGAffineTransformTranslate(transform, image.size.width, 0);
+            transform = CGAffineTransformRotate(transform, M_PI_2);
+            break;
+            
+        case UIImageOrientationRight:
+        case UIImageOrientationRightMirrored:
+            transform = CGAffineTransformTranslate(transform, 0, image.size.height);
+            transform = CGAffineTransformRotate(transform, -M_PI_2);
+            break;
+        case UIImageOrientationUp:
+        case UIImageOrientationUpMirrored:
+            break;
+    }
+    
+    switch (image.imageOrientation) {
+        case UIImageOrientationUpMirrored:
+        case UIImageOrientationDownMirrored:
+            transform = CGAffineTransformTranslate(transform, image.size.width, 0);
+            transform = CGAffineTransformScale(transform, -1, 1);
+            break;
+            
+        case UIImageOrientationLeftMirrored:
+        case UIImageOrientationRightMirrored:
+            transform = CGAffineTransformTranslate(transform, image.size.height, 0);
+            transform = CGAffineTransformScale(transform, -1, 1);
+            break;
+        case UIImageOrientationUp:
+        case UIImageOrientationDown:
+        case UIImageOrientationLeft:
+        case UIImageOrientationRight:
+            break;
+    }
+    
+    // Now we draw the underlying CGImage into a new context, applying the transform
+    // calculated above.
+    CGContextRef ctx = CGBitmapContextCreate(NULL, image.size.width, image.size.height,
+                                             CGImageGetBitsPerComponent(image.CGImage), 0,
+                                             CGImageGetColorSpace(image.CGImage),
+                                             CGImageGetBitmapInfo(image.CGImage));
+    CGContextConcatCTM(ctx, transform);
+    switch (image.imageOrientation) {
+        case UIImageOrientationLeft:
+        case UIImageOrientationLeftMirrored:
+        case UIImageOrientationRight:
+        case UIImageOrientationRightMirrored:
+            // Grr...
+            CGContextDrawImage(ctx, CGRectMake(0,0,image.size.height,image.size.width), image.CGImage);
+            break;
+            
+        default:
+            CGContextDrawImage(ctx, CGRectMake(0,0,image.size.width,image.size.height), image.CGImage);
+            break;
+    }
+    
+    // And now we just create a new UIImage from the drawing context
+    CGImageRef cgimg = CGBitmapContextCreateImage(ctx);
+    UIImage *img = [UIImage imageWithCGImage:cgimg];
+    CGContextRelease(ctx);
+    CGImageRelease(cgimg);
+    return img;
+    
+}
 @end
