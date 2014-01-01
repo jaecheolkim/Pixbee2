@@ -11,6 +11,8 @@
 @interface PBFilterViewController ()
 {
     UIView *selectedView;
+    UIImage *originalImage; // 원본 이미지
+    UIImage *postImage;     // 필터 처리된 이미지.
 }
 @property (weak, nonatomic) IBOutlet UIImageView *imageView;
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
@@ -25,8 +27,9 @@
     [super viewDidLoad];
     
     _imageView.contentMode = UIViewContentModeScaleAspectFit;
-    UIImage *image = [[UIImage alloc] initWithData:_imageData];
-    [_imageView setImage:image];
+    originalImage = [[UIImage alloc] initWithData:_imageData];
+    [_imageView setImage:originalImage];
+    
     [self.view setBackgroundColor:[UIColor colorWithRed:0.98 green:0.96 blue:0.92 alpha:1.0]];
     [self loadFilterImages];
     
@@ -115,7 +118,6 @@
     [UIView animateWithDuration:0.2
                      animations:^{
                          selectedView.center = CGPointMake(sender.center.x, 108/2);
-                         //selectedView.frame = CGRectMake(sender.tag * 90, 0, 88, 108);
                      }
                      completion:nil];
 
@@ -124,6 +126,9 @@
     //[sender setSelected:YES];
 
     NSLog(@"selectedFilter = %d",(int)sender.tag);
+    
+    // Process Filter
+    // PostImage에 넣을 예정. 
 
 }
 
