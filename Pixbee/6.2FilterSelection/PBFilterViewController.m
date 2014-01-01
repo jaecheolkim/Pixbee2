@@ -23,7 +23,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-
+    
     _imageView.contentMode = UIViewContentModeScaleAspectFit;
     UIImage *image = [[UIImage alloc] initWithData:_imageData];
     [_imageView setImage:image];
@@ -36,7 +36,7 @@
 - (void)viewWillAppear:(BOOL)animated
 {
 	[super viewWillAppear:animated];
-    
+    self.navigationController.title = @"Filter";
 
     
 }
