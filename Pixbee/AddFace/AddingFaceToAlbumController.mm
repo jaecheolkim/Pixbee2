@@ -106,8 +106,9 @@
               
               int totalV = [[processInfo objectForKey:@"Total"] intValue];
               int currentV = [[processInfo objectForKey:@"Current"] intValue];
+              int matchV = [[processInfo objectForKey:@"Match"] intValue];
               [self.progressView setProgress:((float)currentV/(float)totalV) animated:YES];
-              [self.ProgressGauge setText:[NSString stringWithFormat:@"%d", currentV]];
+              [self.ProgressGauge setText:[NSString stringWithFormat:@"%d", matchV]];
               
               _faceImageView.image = [processInfo objectForKey:@"Face"];
           });

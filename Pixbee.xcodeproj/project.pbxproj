@@ -13,9 +13,6 @@
 		6968D9A2186EEE0000831442 /* NewAlbumActivity.m in Sources */ = {isa = PBXBuildFile; fileRef = 6968D9A0186EEE0000831442 /* NewAlbumActivity.m */; };
 		6968D9A6186EF7DB00831442 /* AlbumSelectionController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6968D9A5186EF7DB00831442 /* AlbumSelectionController.m */; };
 		696ECBDB1850551F00F54DB6 /* AllPhotosController.m in Sources */ = {isa = PBXBuildFile; fileRef = 696ECBDA1850551F00F54DB6 /* AllPhotosController.m */; };
-		697C83AB186DC57A00823990 /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 697C83A8186DC57A00823990 /* FacebookSDK.framework */; };
-		697C83AC186DC57A00823990 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 697C83A9186DC57A00823990 /* opencv2.framework */; };
-		697C83AD186DC57A00823990 /* SDWebImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 697C83AA186DC57A00823990 /* SDWebImage.framework */; };
 		697C83DE186DF2FA00823990 /* MBSwitch.m in Sources */ = {isa = PBXBuildFile; fileRef = 697C83DD186DF2FA00823990 /* MBSwitch.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		69B1B2FD18587D9200774382 /* IntroControll.m in Sources */ = {isa = PBXBuildFile; fileRef = 69B1B2F818587D9200774382 /* IntroControll.m */; };
 		69B1B2FE18587D9200774382 /* IntroModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 69B1B2FA18587D9200774382 /* IntroModel.m */; };
@@ -261,6 +258,9 @@
 		80D5B624186F340D000CD8D7 /* filter4@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 80D5B61E186F340D000CD8D7 /* filter4@2x.png */; };
 		80D5B625186F340D000CD8D7 /* filter5@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 80D5B61F186F340D000CD8D7 /* filter5@2x.png */; };
 		80D5B626186F340D000CD8D7 /* filter6@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 80D5B620186F340D000CD8D7 /* filter6@2x.png */; };
+		80D5B62D18759293000CD8D7 /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 80D5B62A18759293000CD8D7 /* FacebookSDK.framework */; };
+		80D5B62E18759293000CD8D7 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 80D5B62B18759293000CD8D7 /* opencv2.framework */; };
+		80D5B62F18759293000CD8D7 /* SDWebImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 80D5B62C18759293000CD8D7 /* SDWebImage.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -655,6 +655,9 @@
 		80D5B61E186F340D000CD8D7 /* filter4@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "filter4@2x.png"; sourceTree = "<group>"; };
 		80D5B61F186F340D000CD8D7 /* filter5@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "filter5@2x.png"; sourceTree = "<group>"; };
 		80D5B620186F340D000CD8D7 /* filter6@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "filter6@2x.png"; sourceTree = "<group>"; };
+		80D5B62A18759293000CD8D7 /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FacebookSDK.framework; path = ../../../FacebookSDK.framework; sourceTree = "<group>"; };
+		80D5B62B18759293000CD8D7 /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = opencv2.framework; path = ../../../opencv2.framework; sourceTree = "<group>"; };
+		80D5B62C18759293000CD8D7 /* SDWebImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDWebImage.framework; path = ../../../SDWebImage.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -662,9 +665,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				697C83AB186DC57A00823990 /* FacebookSDK.framework in Frameworks */,
-				697C83AC186DC57A00823990 /* opencv2.framework in Frameworks */,
-				697C83AD186DC57A00823990 /* SDWebImage.framework in Frameworks */,
+				80D5B62D18759293000CD8D7 /* FacebookSDK.framework in Frameworks */,
+				80D5B62E18759293000CD8D7 /* opencv2.framework in Frameworks */,
+				80D5B62F18759293000CD8D7 /* SDWebImage.framework in Frameworks */,
 				7805A5E7186589BE00B234C1 /* MobileCoreServices.framework in Frameworks */,
 				7805A5E5186589B300B234C1 /* MessageUI.framework in Frameworks */,
 				7805A5E3186589A200B234C1 /* libz.1.2.5.dylib in Frameworks */,
@@ -858,6 +861,9 @@
 		69ED32DB18484EBB00127196 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				80D5B62A18759293000CD8D7 /* FacebookSDK.framework */,
+				80D5B62B18759293000CD8D7 /* opencv2.framework */,
+				80D5B62C18759293000CD8D7 /* SDWebImage.framework */,
 				697C83A8186DC57A00823990 /* FacebookSDK.framework */,
 				697C83A9186DC57A00823990 /* opencv2.framework */,
 				697C83AA186DC57A00823990 /* SDWebImage.framework */,

@@ -588,6 +588,7 @@
     __block double workTime;
     _totalProcess = (int)[_totalAssets count];
     _currentProcess = 0;
+    _matchCount = 0;
     
     __block int PhotoID;
     __block int FaceNo;
@@ -638,11 +639,11 @@
                                     
                                         
                                         NSLog(@"Match : %@", match);
-                                        if([[match objectForKey:@"UserID"] intValue] == UserID && [[match objectForKey:@"confidence"] doubleValue] < 50.f){
+                                        if([[match objectForKey:@"UserID"] intValue] == UserID && [[match objectForKey:@"confidence"] doubleValue] < 70.f){
                                             int PhotoNo = [SQLManager newUserPhotosWith:[[match objectForKey:@"UserID"] intValue]
                                                                               withPhoto:PhotoID
                                                                                withFace:FaceNo];
-                                            
+                                            if(PhotoNo) _matchCount++;
                                             
                                         }
                                     }
@@ -659,7 +660,7 @@
                 _currentProcess++;
                 
                 if (faceImage) {
-                    NSDictionary *processInfo = @{ @"Total" : @(_totalProcess), @"Current":@(_currentProcess),
+                    NSDictionary *processInfo = @{ @"Total" : @(_totalProcess), @"Current":@(_currentProcess), @"Match":@(_matchCount),
                                                    @"Asset" : photoAsset, @"Face" : faceImage};
                     
                     enumerationBlock(processInfo);

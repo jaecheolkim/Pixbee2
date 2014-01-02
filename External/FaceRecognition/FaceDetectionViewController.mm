@@ -844,7 +844,7 @@ bail:
         if(confidence < 50.f){
             recognisedFaces[[NSNumber numberWithInt:trackingID]] = [SQLManager getUserName:UserID];
         }
-        else if(confidence > 50.f && confidence < 70.f){
+        else if(confidence > 50.f && confidence < 60.f){
             NSString *name = [NSString stringWithFormat:@"? %@", [SQLManager getUserName:UserID]];
             recognisedFaces[[NSNumber numberWithInt:trackingID]] = name;
         }
@@ -863,7 +863,7 @@ bail:
     NSString *searchChar = @"?";
     NSRange rang =[name rangeOfString:searchChar options:NSCaseInsensitiveSearch];
     BOOL mayBe = FALSE;
-    if (rang.length == [searchChar length]) mayBe = TRUE;
+    if (rang.length == [searchChar length] || [name isEqualToString:@"Unknown"]) mayBe = TRUE;
     
     UIView *view = [[UIView alloc] initWithFrame:rect];
     view.layer.contents = (id)guideImage.CGImage;

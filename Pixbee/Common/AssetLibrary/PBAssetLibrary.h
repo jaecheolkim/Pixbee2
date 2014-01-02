@@ -21,6 +21,7 @@
 @property (nonatomic, strong) NSMutableArray *faceAssets;
 @property (nonatomic) int totalProcess;
 @property (nonatomic) int currentProcess;
+@property (nonatomic) int matchCount;
 @property (nonatomic) BOOL faceProcessStop;
 
 +(PBAssetsLibrary*)sharedInstance;
