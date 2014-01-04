@@ -52,6 +52,30 @@
     // unless the user manually generated the content earlier in the workflow of your app,
     // can be against the Platform policies: https://developers.facebook.com/policy
     
+    if ([FBSession.activeSession.permissions indexOfObject:@"publish_actions"] == NSNotFound) {
+        // if we don't already have the permission, then we request it now
+        [FBSession.activeSession requestNewPublishPermissions:@[@"publish_actions"]
+                                              defaultAudience:FBSessionDefaultAudienceFriends
+                                            completionHandler:^(FBSession *session, NSError *error) {
+                                                if (!error) {
+                                                    [self posting];
+                                                } else if (error.fberrorCategory != FBErrorCategoryUserCancelled){
+                                                    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Permission denied"
+                                                                                                        message:@"Unable to get permission to post"
+                                                                                                       delegate:nil
+                                                                                              cancelButtonTitle:@"OK"
+                                                                                              otherButtonTitles:nil];
+                                                    [alertView show];
+                                                }
+                                            }];
+    } else {
+        [self posting];
+    }
+    
+}
+
+
+- (void)posting{
     // Put together the dialog parameters
     NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:
                                    @"Sharing Tutorial", @"name",
@@ -76,6 +100,5 @@
                               }
                           }];
 }
-
 
 @end

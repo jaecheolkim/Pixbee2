@@ -54,6 +54,8 @@
 		69ED330618484EBB00127196 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 69ED330418484EBB00127196 /* InfoPlist.strings */; };
 		69ED330818484EBB00127196 /* PixbeeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 69ED330718484EBB00127196 /* PixbeeTests.m */; };
 		69F5A8F31877DC780054A640 /* SettingController.m in Sources */ = {isa = PBXBuildFile; fileRef = 69F5A8F21877DC780054A640 /* SettingController.m */; };
+		69F5A8F9187847A60054A640 /* AccountCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 69F5A8F8187847A60054A640 /* AccountCell.m */; };
+		69F5A8FC187847B70054A640 /* SegmentCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 69F5A8FB187847B70054A640 /* SegmentCell.m */; };
 		7805A5DF1865897D00B234C1 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7805A5DE1865897D00B234C1 /* Security.framework */; };
 		7805A5E11865899100B234C1 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7805A5E01865899100B234C1 /* ImageIO.framework */; };
 		7805A5E3186589A200B234C1 /* libz.1.2.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7805A5E2186589A200B234C1 /* libz.1.2.5.dylib */; };
@@ -365,6 +367,10 @@
 		69ED330718484EBB00127196 /* PixbeeTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PixbeeTests.m; sourceTree = "<group>"; };
 		69F5A8F11877DC780054A640 /* SettingController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingController.h; sourceTree = "<group>"; };
 		69F5A8F21877DC780054A640 /* SettingController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingController.m; sourceTree = "<group>"; };
+		69F5A8F7187847A60054A640 /* AccountCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccountCell.h; sourceTree = "<group>"; };
+		69F5A8F8187847A60054A640 /* AccountCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AccountCell.m; sourceTree = "<group>"; };
+		69F5A8FA187847B70054A640 /* SegmentCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SegmentCell.h; sourceTree = "<group>"; };
+		69F5A8FB187847B70054A640 /* SegmentCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SegmentCell.m; sourceTree = "<group>"; };
 		7805A5DE1865897D00B234C1 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		7805A5E01865899100B234C1 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
 		7805A5E2186589A200B234C1 /* libz.1.2.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.1.2.5.dylib; path = usr/lib/libz.1.2.5.dylib; sourceTree = SDKROOT; };
@@ -1231,6 +1237,10 @@
 				78A9A2CD186A5DDC00D6C20B /* FriendCell.h */,
 				78A9A2CE186A5DDC00D6C20B /* FriendCell.m */,
 				78A9A2CF186A5DDC00D6C20B /* FriendCell.xib */,
+				69F5A8F7187847A60054A640 /* AccountCell.h */,
+				69F5A8F8187847A60054A640 /* AccountCell.m */,
+				69F5A8FA187847B70054A640 /* SegmentCell.h */,
+				69F5A8FB187847B70054A640 /* SegmentCell.m */,
 			);
 			path = Component;
 			sourceTree = "<group>";
@@ -1787,6 +1797,7 @@
 				69C39FE818606CBD001EDDFA /* UIImage+WebP.m in Sources */,
 				80D2A11D184A1E58008D29B2 /* ASImageScrollView.m in Sources */,
 				7805A63E18658BA000B234C1 /* DCStatusBarOverlay.m in Sources */,
+				69F5A8F9187847A60054A640 /* AccountCell.m in Sources */,
 				78564EDF1869F259000FB03C /* FPPopoverKeyboardResponsiveController.m in Sources */,
 				7805A66D18659ECC00B234C1 /* UIImageView+AFNetworking.m in Sources */,
 				7805A66A18659ECC00B234C1 /* AFPropertyListRequestOperation.m in Sources */,
@@ -1845,6 +1856,7 @@
 				80D55214186C710000B54974 /* FaceDetectionViewController.mm in Sources */,
 				78C156DD186491A5007BA1DF /* FPTouchView.m in Sources */,
 				78A8052C184F7ABE008E81B3 /* FullScreenPhotoController.m in Sources */,
+				69F5A8FC187847B70054A640 /* SegmentCell.m in Sources */,
 				7856F6EC1849CD9B00A17349 /* OpenPhotoSegue.m in Sources */,
 				69F5A8F31877DC780054A640 /* SettingController.m in Sources */,
 				78C1EAEF186AD68E0072E7DB /* UIView+SubviewHunting.m in Sources */,
