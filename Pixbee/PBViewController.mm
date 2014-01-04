@@ -93,7 +93,7 @@
  
     NSLog(@"Default user name = %@ / id = %d", GlobalValue.userName, UserID);
 
-    NSLog(@"========================GLOBAL_VALUE user : %@", [GlobalValues sharedInstance].userName );
+    NSLog(@"========================GLOBAL_VALUE user : %@", GlobalValue.userName );
     
     NSLog(@"====> loginViewShowingLoggedInUser:");
 }

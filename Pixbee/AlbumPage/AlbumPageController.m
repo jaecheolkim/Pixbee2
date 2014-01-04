@@ -227,7 +227,10 @@
     
     controller.delegate = self;
     CGPoint convertedPoint = [self.view convertPoint:((UIButton *)sender).center fromView:((UIButton *)sender).superview];
-    [controller appearPopup:convertedPoint reverse:NO];
+    int x = convertedPoint.x - 140;
+    int y = convertedPoint.y + 14;
+
+    [controller appearPopup:CGPointMake(x, y) reverse:NO];
     
     self.friendPopup = controller;
 }
@@ -278,11 +281,11 @@
     }
 }
 
-#pragma mark FBFriendControllerDelegate
-
 - (void)searchFriend:(UserCell *)cell name:(NSString *)name {
     [self.friendPopup handleSearchForTerm:name];
 }
+
+#pragma mark FBFriendControllerDelegate
 
 - (void)selectedFBFriend:(NSDictionary *)friend {
     self.editCell.userName.text = [friend objectForKey:@"name"];

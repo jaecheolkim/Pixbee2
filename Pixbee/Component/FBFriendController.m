@@ -64,9 +64,7 @@
 
 - (void)appearPopup:(CGPoint)point reverse:(BOOL)reverse{
 
-    int x = point.x - 140;
-    int y = point.y + 14;
-    [self.view setFrame:CGRectMake(x, y, 115, 95)];
+    [self.view setFrame:CGRectMake(point.x, point.y, 115, 95)];
     
     if (self.delegate) {
         

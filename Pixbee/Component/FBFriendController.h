@@ -25,6 +25,6 @@
 
 @protocol FBFriendControllerDelegate <NSObject>
 
-- (void)selectedFBFriend:(NSDictionary *)friend;
+- (void)selectedFBFriend:(NSDictionary *)friendinfo;
 
 @end

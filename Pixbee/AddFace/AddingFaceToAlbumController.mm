@@ -12,8 +12,9 @@
 #import "SwapImageView.h"
 #import "PBFaceLib.h"
 #import "UIView+Hexagon.h"
+#import "FBFriendController.h"
 
-@interface AddingFaceToAlbumController () <PBAssetsLibraryDelegate, SBPageFlowViewDelegate, SBPageFlowViewDataSource>
+@interface AddingFaceToAlbumController () <PBAssetsLibraryDelegate, SBPageFlowViewDelegate, SBPageFlowViewDataSource, FBFriendControllerDelegate, UITextFieldDelegate>
 {
     // 만약 현재 얼굴 검출중인데 멈추고 싶으면 isActive를 No로 해주면 됨..
     BOOL isActive;
@@ -26,6 +27,7 @@
 @property (strong, nonatomic) IBOutlet DACircularProgressView *progressView;
 @property (strong, nonatomic) IBOutlet UITextField *nameField;
 @property (strong, nonatomic) IBOutlet UILabel *ProgressGauge;
+@property (strong, nonatomic) FBFriendController *friendPopup;
 
 @property (weak, nonatomic) IBOutlet UIImageView *faceImageView;
 
@@ -55,6 +57,19 @@
 {
     [super viewDidLoad];
     
+    //KEYBOARD OBSERVERS
+    /************************/
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardWillShow:)
+                                                 name:UIKeyboardWillShowNotification
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardWillHide:)
+                                                 name:UIKeyboardWillHideNotification
+                                               object:nil];
+    /************************/
+    
     // Uncomment to display a logo as the navigation bar title
     self.navigationItem.titleView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"pixbee.png"]];
 
@@ -77,8 +92,8 @@
     self.flowView.minimumPageAlpha = 0.5;
     self.flowView.minimumPageScale = 0.5;
 
-    
-
+    self.nameField.text = GlobalValue.userName;
+    [self.nameField addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -302,6 +317,73 @@
     h = h * scale;
     
     return CGRectMake((rect.size.width - w)/2, (rect.size.height - h)/2, w, h);
+}
+
+
+- (void)textFieldDidBeginEditing:(UITextField *)textField {
+    if (self.friendPopup == nil) {
+        [self popover:nil];
+    }
+}
+
+- (void)textFieldDidEndEditing:(UITextField *)textField {
+    [self.friendPopup disAppearPopup];
+    self.friendPopup = nil;
+}
+
+-(void)textFieldDidChange:(id)sender {
+    // whatever you wanted to do
+    [self.friendPopup handleSearchForTerm:self.nameField.text];
+}
+
+#pragma mark FBFriendControllerDelegate
+
+- (void)selectedFBFriend:(NSDictionary *)friendinfo {
+    self.nameField.text = [friendinfo objectForKey:@"name"];
+    // DB에 저장하는 부분 추가
+    [self.nameField resignFirstResponder];
+}
+
+
+-(void)keyboardWillShow:(NSNotification*)notification {
+    NSDictionary *info = notification.userInfo;
+    CGRect keyboardRect = [[info valueForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue];
+    int keyboardHeight = keyboardRect.size.height;
+    float duration = [[info valueForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
+    
+    CGRect rect = self.view.frame;
+    [UIView animateWithDuration:duration
+                     animations:^{
+                         [self.view setFrame:CGRectMake(rect.origin.x, -keyboardHeight, rect.size.width, rect.size.height)];
+                     }
+                     completion:^(BOOL finished){
+                         
+                     }];
+}
+
+-(void)keyboardWillHide:(NSNotification*)notification {
+    int keyboardHeight = 0.0;
+    NSDictionary *info = notification.userInfo;
+    float duration = [[info valueForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
+    CGRect rect = self.view.frame;
+    [UIView animateWithDuration:duration
+                     animations:^{
+                         [self.view setFrame:CGRectMake(rect.origin.x, keyboardHeight, rect.size.width, rect.size.height)];
+                     }
+                     completion:^(BOOL finished){
+                         
+                     }];
+}
+
+-(void)popover:(id)sender
+{
+    FBFriendController *controller = (FBFriendController *)[self.storyboard instantiateViewControllerWithIdentifier:@"FBFriendController"];
+    
+    controller.delegate = self;
+    CGPoint convertedPoint = CGPointMake(15, 473);
+    [controller appearPopup:convertedPoint reverse:NO];
+    
+    self.friendPopup = controller;
 }
 
 @end
