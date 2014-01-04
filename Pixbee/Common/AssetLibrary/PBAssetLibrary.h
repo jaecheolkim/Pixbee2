@@ -41,7 +41,7 @@
 
 #pragma mark Album function
 // 앨범사진 로컬 앨범DB로 동기화
-- (void)syncAlbumToDB;
+- (void)syncAlbumToDB:(void (^)(NSArray *results))result;
 
 // 모든 Asset 뒤져서 얼굴 검출하고, DB에 저장.
 //- (void)checkFacesNSave;

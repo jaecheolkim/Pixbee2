@@ -12,10 +12,14 @@
 #import "FaceDetectionViewController.h"
 
 @interface PBViewController () <FBHelperDelegate>
-
+{
+    BOOL alreadyChecked;
+    BOOL alreadyPushed;
+}
 // 객체
 @property (strong, nonatomic) IBOutlet UIView *viewFBLoginViewArea;
 @property (strong, nonatomic) IBOutlet UIImageView *PixbeeLogo;
+@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *indicator;
 
 @end
 
@@ -26,42 +30,16 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-//	// Do any additional setup after loading the view, typically from a nib.
-//    
-//    // Create Login View so that the app will be granted "status_update" permission.
-//    FBLoginView *loginview = [[FBLoginView alloc] init];
-//    loginview.readPermissions = @[@"basic_info", @"read_stream"];
-//    
-//    CGRect lvFrame = loginview.frame;
-//    CGSize lvSize = lvFrame.size;
-//    CGRect viewFrame = self.view.frame;
-//    
-//    float position_x = (viewFrame.size.width - lvSize.width) / 2;
-//    float position_y = (viewFrame.size.height - lvSize.height) / 2 + 130; //25;
-//    
-//    lvFrame = CGRectMake(position_x, position_y, lvSize.width, lvSize.height);
-//    loginview.frame = lvFrame;
-//    
-//#ifdef __IPHONE_7_0
-//#ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
-//#if __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_7_0
-//    if ([self respondsToSelector:@selector(setEdgesForExtendedLayout:)]) {
-//        loginview.frame = lvFrame;
-//    }
-//#endif
-//#endif
-//#endif
-//    loginview.delegate = [FBHelper sharedInstance];
-//    [FBHelper sharedInstance].delegate = self;
-//    
-//    [self.view addSubview:loginview];
-//    
-//    [loginview sizeToFit];
     
-    // Do any additional setup after loading the view.
-
     FBHELPER.delegate = self;
     [FBHELPER loadFBLoginView:self.viewFBLoginViewArea];
+    
+    if(GlobalValue.userName) {
+        alreadyChecked = YES;
+        [_viewFBLoginViewArea setHidden:YES];
+        [_indicator startAnimating];
+        [self checkNewPhotos];
+    }
 }
 
 - (void)didReceiveMemoryWarning
@@ -78,6 +56,44 @@
     self.PixbeeLogo = nil;
     
     [super viewDidUnload];
+}
+
+- (void)checkNewPhotos
+{
+    //Check new photos and go main dashboard
+    [AssetLib syncAlbumToDB:^(NSArray *result) {
+        //NSLog(@"Result = %@", result);
+        if(result.count > 0  && result != nil){
+            ALAsset *lastAsset = [[result objectAtIndex:result.count-1] objectForKey:@"Asset"];
+            NSURL *assetURL = [lastAsset valueForProperty:ALAssetPropertyAssetURL];
+            
+            NSLog(@"Last Asset URL = %@", assetURL.absoluteString);
+            
+            if(![GlobalValue.lastAssetURL isEqualToString:assetURL.absoluteString]) {
+                //New Asset found
+                
+                NSLog(@" ============== new asset found!");
+            }
+            
+            GlobalValue.lastAssetURL = assetURL.absoluteString;
+        }
+
+        [self goNext];
+    }];
+    
+}
+
+- (void)goNext
+{
+    [_indicator stopAnimating];
+    if(alreadyPushed) return;
+    
+    self.navigationController.navigationBarHidden = NO;
+    alreadyPushed = YES;
+    if(alreadyChecked)
+        [self performSegueWithIdentifier:SEGUE_1_2_TO_3_1 sender:self];
+    else
+        [self performSegueWithIdentifier:SEGUE_FACEANALYZE sender:self];
 }
 
 #pragma mark FBHelperDelegate
@@ -104,7 +120,8 @@
 }
 
 - (void)FBHandleError {
-    [self performSegueWithIdentifier:SEGUE_FACEANALYZE sender:self];
+    
+    //[self performSegueWithIdentifier:SEGUE_FACEANALYZE sender:self];
 }
 
 - (void)getFBFriend {
@@ -129,7 +146,9 @@
                                   NSDictionary *data = (NSDictionary *)result;
                                   NSArray *friends = [data objectForKey:@"data"];
                                   FBHELPER.friends = friends;
-                                  [self performSegueWithIdentifier:SEGUE_FACEANALYZE sender:self];
+                                  
+                                  [self goNext];
+                                  //[self performSegueWithIdentifier:SEGUE_FACEANALYZE sender:self];
                               }];
 
     });
@@ -143,19 +162,23 @@
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    NSArray *result = [SQLManager getUserInfo:GlobalValue.userName];
-    NSDictionary *user = [result objectAtIndex:0];
-    NSNumber *userID = [user objectForKey:@"UserID"];
-    
-    if(userID) {
-        UINavigationController *navi = segue.destinationViewController;
-        FaceDetectionViewController *destination = [navi.viewControllers objectAtIndex:0];
-//        //UINavigationController *navi = segue.destinationViewController;
-//        FaceDetectionViewController *destination = segue.destinationViewController;
-        destination.userID = [userID intValue]; //[NSNumber numberWithInt:100];
-        destination.userName = GlobalValue.userName;
-        destination.faceMode = FaceModeCollect;
+    if ([segue.identifier isEqualToString:SEGUE_FACEANALYZE]) {
+        
+        NSArray *result = [SQLManager getUserInfo:GlobalValue.userName];
+        NSDictionary *user = [result objectAtIndex:0];
+        NSNumber *userID = [user objectForKey:@"UserID"];
+        
+        if(userID) {
+            UINavigationController *navi = segue.destinationViewController;
+            FaceDetectionViewController *destination = [navi.viewControllers objectAtIndex:0];
+            //        //UINavigationController *navi = segue.destinationViewController;
+            //        FaceDetectionViewController *destination = segue.destinationViewController;
+            destination.userID = [userID intValue]; //[NSNumber numberWithInt:100];
+            destination.userName = GlobalValue.userName;
+            destination.faceMode = FaceModeCollect;
+        }
     }
+
 }
 
 

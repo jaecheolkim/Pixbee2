@@ -64,7 +64,7 @@
 //    NSArray *result = [SQLManager getUserInfo:GlobalValue.userName];
 //    NSLog(@"getAllUsers = %@", result);
     
-    [AssetLib syncAlbumToDB];
+    
     // Override point for customization after application launch.
     return YES;
 }

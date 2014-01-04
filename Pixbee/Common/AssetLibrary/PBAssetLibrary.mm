@@ -545,21 +545,22 @@
 }
 
 // 앨범사진 로컬 앨범DB로 동기화
-- (void)syncAlbumToDB
+- (void)syncAlbumToDB:(void (^)(NSArray *results))result
 {
     [[PBAssetsLibrary sharedInstance] loadAssetGroup: ^(NSArray *resultGropus)
      {
          NSLog(@"=== Result Groups : %@", resultGropus);
          [[PBAssetsLibrary sharedInstance] assetGroupsToDB:resultGropus]; //그룹 리스트 DB로 저장/
-         NSString *query = @"SELECT * FROM Groups;";
-         NSArray *result = [SQLManager getRowsForQuery:query];
-         
-         NSLog(@"===> result : %@", result);
+//         NSString *query = @"SELECT * FROM Groups;";
+//         NSArray *result = [SQLManager getRowsForQuery:query];
+//         
+//         NSLog(@"===> result : %@", result);
          
          [[PBAssetsLibrary sharedInstance] loadAssets3:resultGropus success:^(NSArray *resultAssets) { //각 그룹별 Assets  뽑아냄.
  
              [_totalAssets addObjectsFromArray:resultAssets];
              
+             result(resultAssets);
              //NSLog(@"Total Assets = %d / %@", (int)[_totalAssets count], _totalAssets);
 
 

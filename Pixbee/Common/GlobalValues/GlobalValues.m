@@ -10,6 +10,7 @@
 #import "GlobalValues.h"
 
 #define  KEY_USERNAME           @"userName"
+#define  KEY_LASTASSETURL       @"lastAssetURL"
 
 @interface GlobalValues ()
 @end
@@ -50,6 +51,19 @@
 {
     
     return [self readObjectFromDefault:KEY_USERNAME];
+}
+
+
+- (void)setLastAssetURL:(NSString *)lastAssetURL
+{
+    [self writeObjectToDefault:lastAssetURL withKey:KEY_LASTASSETURL];
+}
+
+
+- (NSString *)lastAssetURL
+{
+    
+    return [self readObjectFromDefault:KEY_LASTASSETURL];
 }
 
 
