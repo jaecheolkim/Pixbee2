@@ -53,6 +53,7 @@
 		69ED32FE18484EBB00127196 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 69ED32E018484EBB00127196 /* UIKit.framework */; };
 		69ED330618484EBB00127196 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 69ED330418484EBB00127196 /* InfoPlist.strings */; };
 		69ED330818484EBB00127196 /* PixbeeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 69ED330718484EBB00127196 /* PixbeeTests.m */; };
+		69F5A8F31877DC780054A640 /* SettingController.m in Sources */ = {isa = PBXBuildFile; fileRef = 69F5A8F21877DC780054A640 /* SettingController.m */; };
 		7805A5DF1865897D00B234C1 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7805A5DE1865897D00B234C1 /* Security.framework */; };
 		7805A5E11865899100B234C1 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7805A5E01865899100B234C1 /* ImageIO.framework */; };
 		7805A5E3186589A200B234C1 /* libz.1.2.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7805A5E2186589A200B234C1 /* libz.1.2.5.dylib */; };
@@ -362,6 +363,8 @@
 		69ED330318484EBB00127196 /* PixbeeTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "PixbeeTests-Info.plist"; sourceTree = "<group>"; };
 		69ED330518484EBB00127196 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		69ED330718484EBB00127196 /* PixbeeTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PixbeeTests.m; sourceTree = "<group>"; };
+		69F5A8F11877DC780054A640 /* SettingController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingController.h; sourceTree = "<group>"; };
+		69F5A8F21877DC780054A640 /* SettingController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingController.m; sourceTree = "<group>"; };
 		7805A5DE1865897D00B234C1 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		7805A5E01865899100B234C1 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
 		7805A5E2186589A200B234C1 /* libz.1.2.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.1.2.5.dylib; path = usr/lib/libz.1.2.5.dylib; sourceTree = SDKROOT; };
@@ -906,6 +909,7 @@
 				7856F6F81849DAC000A17349 /* IndividualGallery */,
 				78A80529184F7ABE008E81B3 /* FullScreenPhoto */,
 				696ECBD71850550000F54DB6 /* AllPhotos */,
+				69F5A8F01877DC530054A640 /* Setting */,
 				69ED32EB18484EBB00127196 /* PBAppDelegate.h */,
 				69ED32EC18484EBB00127196 /* PBAppDelegate.m */,
 				69ED32EE18484EBB00127196 /* Main.storyboard */,
@@ -946,6 +950,15 @@
 				69ED330418484EBB00127196 /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		69F5A8F01877DC530054A640 /* Setting */ = {
+			isa = PBXGroup;
+			children = (
+				69F5A8F11877DC780054A640 /* SettingController.h */,
+				69F5A8F21877DC780054A640 /* SettingController.m */,
+			);
+			path = Setting;
 			sourceTree = "<group>";
 		};
 		7805A60D18658BA000B234C1 /* DCIntrospect */ = {
@@ -1833,6 +1846,7 @@
 				78C156DD186491A5007BA1DF /* FPTouchView.m in Sources */,
 				78A8052C184F7ABE008E81B3 /* FullScreenPhotoController.m in Sources */,
 				7856F6EC1849CD9B00A17349 /* OpenPhotoSegue.m in Sources */,
+				69F5A8F31877DC780054A640 /* SettingController.m in Sources */,
 				78C1EAEF186AD68E0072E7DB /* UIView+SubviewHunting.m in Sources */,
 				7805A6F01866F41300B234C1 /* BasicBottomView.m in Sources */,
 				80D2A11B184A1E58008D29B2 /* ASGalleryPage.m in Sources */,
