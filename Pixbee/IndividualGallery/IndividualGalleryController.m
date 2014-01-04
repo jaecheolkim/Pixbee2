@@ -343,6 +343,10 @@
 - (void)selectedFBFriend:(NSDictionary *)friend {
     self.userProfileView.userName.text = [friend objectForKey:@"name"];
     self.userProfileView.inputName.text = @"";
+    NSString *picurl = [[[friend objectForKey:@"picture"] objectForKey:@"data"] objectForKey:@"url"];
+    
+    [self.userProfileView.userImage setImageWithURL:[NSURL URLWithString:picurl]
+                            placeholderImage:[UIImage imageNamed:@"placeholder.png"]];
     
     [self.userProfileView doneButtonClickHandler:nil];
     // DB에 저장하는 부분 추가

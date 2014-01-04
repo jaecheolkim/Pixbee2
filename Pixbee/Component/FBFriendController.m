@@ -53,7 +53,7 @@
     if(cell == nil)
     {
         NSArray *nib = [[NSBundle mainBundle] loadNibNamed:CellIdentifier owner:self options:nil];
-    	cell = (FriendCell *)[nib objectAtIndex:0];
+        cell = (FriendCell *)[nib objectAtIndex:0];
     }
     
     NSDictionary *friend = [self.searchFriends objectAtIndex:indexPath.row];
@@ -81,19 +81,13 @@
         [UIView animateWithDuration:0.3
                          animations:^{
                              self.view.alpha = 1.0;
-                             if (reverse) {
-                                 
-                             }
-                             else {
-                                 
-                             }
-                         }
+                        }
                          completion:^(BOOL finished){
 
                          }];
 
         
-            }
+    }
 }
 
 - (void)disAppearPopup {

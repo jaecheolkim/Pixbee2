@@ -476,7 +476,7 @@
                         <viewControllerLayoutGuide type="top" id="3kv-uL-gDn"/>
                         <viewControllerLayoutGuide type="bottom" id="On9-gj-EcZ"/>
                     </layoutGuides>
-                    <view key="view" contentMode="scaleAspectFit" id="Wdq-bG-S4V">
+                    <view key="view" contentMode="scaleToFill" id="Wdq-bG-S4V">
                         <rect key="frame" x="0.0" y="0.0" width="115" height="95"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
@@ -486,7 +486,7 @@
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                             </imageView>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="nEz-t3-2uP">
-                                <rect key="frame" x="4" y="12" width="107" height="79"/>
+                                <rect key="frame" x="4" y="11" width="107" height="79"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
@@ -497,7 +497,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="107" height="28"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="0C88D8B9-A06E-436C-AEA9-B86B553501DE" translatesAutoresizingMaskIntoConstraints="NO" id="6aK-Ak-lFj">
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="5A6C55E1-AFDC-4F86-B293-19C34B80825F" translatesAutoresizingMaskIntoConstraints="NO" id="6aK-Ak-lFj">
                                                     <rect key="frame" x="0.0" y="0.0" width="28" height="29"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
@@ -532,6 +532,7 @@
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <connections>
                         <outlet property="tableView" destination="nEz-t3-2uP" id="zQ3-FH-7QA"/>
+                        <outlet property="view" destination="Wdq-bG-S4V" id="ixI-Ls-dGg"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ZPe-rL-CBk" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -1493,7 +1494,7 @@ more Alex's Photo</string>
         </scene>
     </scenes>
     <resources>
-        <image name="0C88D8B9-A06E-436C-AEA9-B86B553501DE" width="628" height="152">
+        <image name="5A6C55E1-AFDC-4F86-B293-19C34B80825F" width="628" height="152">
             <mutableData key="keyedArchiveRepresentation">
 YnBsaXN0MDDUAQIDBAUGPj9YJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoK4HCBMU
 GR4fIyQsLzI4O1UkbnVsbNUJCgsMDQ4PEBESVk5TU2l6ZVYkY2xhc3NcTlNJbWFnZUZsYWdzVk5TUmVw

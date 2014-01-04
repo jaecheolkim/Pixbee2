@@ -74,8 +74,13 @@
     NSDictionary *users1 = [[self.usersPhotos objectAtIndex:0] copy];
     NSDictionary *users2 = [[self.usersPhotos objectAtIndex:0] copy];
     NSDictionary *users3 = [[self.usersPhotos objectAtIndex:0] copy];
+    NSDictionary *users4 = [[self.usersPhotos objectAtIndex:0] copy];
+    NSDictionary *users5 = [[self.usersPhotos objectAtIndex:0] copy];
+    NSDictionary *users6 = [[self.usersPhotos objectAtIndex:0] copy];
+    NSDictionary *users7 = [[self.usersPhotos objectAtIndex:0] copy];
+    NSDictionary *users8 = [[self.usersPhotos objectAtIndex:0] copy];
     
-    NSMutableArray *newuser = [NSMutableArray arrayWithObjects:users, users1, users3, users2, nil];
+    NSMutableArray *newuser = [NSMutableArray arrayWithObjects:users, users1, users3, users2, users3, users4, users5, users6, users7, users8, nil];
     self.usersPhotos = newuser;
    
     [self calAllPhotos];
@@ -295,6 +300,11 @@
     self.editCell.userName.text = [friend objectForKey:@"name"];
     self.editCell.inputName.text = @"";
     
+    NSString *picurl = [[[friend objectForKey:@"picture"] objectForKey:@"data"] objectForKey:@"url"];
+    
+    [self.editCell.userImage setImageWithURL:[NSURL URLWithString:picurl]
+                     placeholderImage:[UIImage imageNamed:@"placeholder.png"]];
+    
     [self.editCell doneButtonClickHandler:nil];
     // DB에 저장하는 부분 추가
 }
@@ -322,9 +332,46 @@
     NSDictionary *info = notification.userInfo;
     CGRect keyboardRect = [[info valueForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue];
     _keyboardHeight = keyboardRect.size.height;
+    
+    CGPoint point = CGPointMake(self.friendPopup.view.frame.origin.x, self.friendPopup.view.frame.origin.y + self.friendPopup.view.frame.size.height);
+    
+    int ksy = keyboardRect.origin.y;
+
+    if (keyboardRect.origin.y == self.view.frame.size.height) {
+        ksy = keyboardRect.origin.y - _keyboardHeight;
+    }
+
+    if (point.y > ksy) {
+        int gap = point.y - ksy;
+        NSDictionary *info = notification.userInfo;
+        float duration = [[info valueForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
+
+       NSLog(@"CGRectContainsPoint(keyboardRect = %@, point = %@)", NSStringFromCGRect(keyboardRect),NSStringFromCGPoint(point));
+        
+        CGRect rect = self.view.frame;
+        [UIView animateWithDuration:duration
+                         animations:^{
+                             [self.view setFrame:CGRectMake(rect.origin.x, -gap, rect.size.width, rect.size.height)];
+                         }
+                         completion:^(BOOL finished){
+                             
+                         }];
+
+    }
 }
 
 -(void)keyboardWillHide:(NSNotification*)notification {
     _keyboardHeight = 0.0;
+    
+    CGRect rect = self.view.frame;
+    NSDictionary *info = notification.userInfo;
+    float duration = [[info valueForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
+    [UIView animateWithDuration:duration
+                     animations:^{
+                         [self.view setFrame:CGRectMake(rect.origin.x, _keyboardHeight, rect.size.width, rect.size.height)];
+                     }
+                     completion:^(BOOL finished){
+                         
+                     }];
 }
 @end
