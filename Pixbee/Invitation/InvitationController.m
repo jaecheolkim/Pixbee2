@@ -11,6 +11,7 @@
 @interface InvitationController ()
 
 - (IBAction)skipButtonClickHandler:(id)sender;
+- (IBAction)shareButtonClickHandler:(id)sender;
 
 @end
 
@@ -44,6 +45,36 @@
 
 - (IBAction)skipButtonClickHandler:(id)sender {
     [self performSegueWithIdentifier:SEGUE_1_4_TO_3_1 sender:self];
+}
+
+- (IBAction)shareButtonClickHandler:(id)sender {
+    // NOTE: pre-filling fields associated with Facebook posts,
+    // unless the user manually generated the content earlier in the workflow of your app,
+    // can be against the Platform policies: https://developers.facebook.com/policy
+    
+    // Put together the dialog parameters
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                   @"Sharing Tutorial", @"name",
+                                   @"Build great social apps and get more installs.", @"caption",
+                                   @"Allow your users to share stories on Facebook from your app using the iOS SDK.", @"description",
+                                   @"https://developers.facebook.com/docs/ios/share/", @"link",
+                                   @"http://i.imgur.com/g3Qc1HN.png", @"picture",
+                                   nil];
+    
+    // Make the request
+    [FBRequestConnection startWithGraphPath:@"/me/feed"
+                                 parameters:params
+                                 HTTPMethod:@"POST"
+                          completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
+                              if (!error) {
+                                  // Link posted successfully to Facebook
+                                  NSLog([NSString stringWithFormat:@"result: %@", result]);
+                              } else {
+                                  // An error occurred, we need to handle the error
+                                  // See: https://developers.facebook.com/docs/ios/errors
+                                  NSLog([NSString stringWithFormat:@"%@", error.description]);
+                              }
+                          }];
 }
 
 

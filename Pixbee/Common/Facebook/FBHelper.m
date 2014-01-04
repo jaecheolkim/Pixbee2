@@ -58,9 +58,10 @@
 - (void)loadFBLoginView:(UIView *)_view {
     
     // Create Login View so that the app will be granted "status_update" permission.
-    FBLoginView *loginview = [[FBLoginView alloc] init];
+    FBLoginView *loginview = [[FBLoginView alloc] initWithPublishPermissions: @[@"publish_actions"] defaultAudience:FBSessionDefaultAudienceEveryone];
     
     loginview.readPermissions = @[@"basic_info", @"read_stream", @"user_friends"];
+//    loginview.publishPermissions = @[@"publish_actions"];
     
     CGRect lvFrame = loginview.frame;
     
