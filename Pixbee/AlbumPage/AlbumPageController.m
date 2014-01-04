@@ -173,7 +173,11 @@
 
 // Called after the user changes the selection.
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.row % 2 == 0) {
+    
+    NSDictionary *users = [self.usersPhotos objectAtIndex:indexPath.row];
+    NSArray *photos = [users objectForKey:@"photos"];
+    
+    if ([photos count] > 5) {
         [self performSegueWithIdentifier:SEGUE_3_1_TO_4_1 sender:self];
     }
     else {
