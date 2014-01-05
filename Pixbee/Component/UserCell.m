@@ -112,7 +112,7 @@
     
     // 사용자 이미지
     [self.userImage setImageWithURL:[NSURL URLWithString:[user objectForKey:@"UserProfile"]]
-                   placeholderImage:[UIImage imageNamed:@"placeholder.png"]];
+                   placeholderImage:[UIImage imageNamed:@"photo_profile_hive"]]; //photo_profile_hive //placeholder.png
     
     // 사용자 이름
     [self.userName setText:[user objectForKey:@"UserName"]];

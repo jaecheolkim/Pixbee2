@@ -12,26 +12,28 @@
 
 - (void)configureLayerForHexagon
 {
+    UIImage *maskImage = [UIImage imageNamed:@"photo_profile_hive"];
+    
     CAShapeLayer *maskLayer = [CAShapeLayer layer];
     maskLayer.fillRule = kCAFillRuleEvenOdd;
     maskLayer.frame = self.bounds;
-    
-    CGFloat width = self.frame.size.width;
-    CGFloat height = self.frame.size.height;
-    CGFloat hPadding = width * 1 / 8 / 2;
-    
-    UIBezierPath *path = [UIBezierPath bezierPath];
-    [path moveToPoint:CGPointMake(width/2, 0)];
-    [path addLineToPoint:CGPointMake(width - hPadding, height / 4)];
-    [path addLineToPoint:CGPointMake(width - hPadding, height * 3 / 4)];
-    [path addLineToPoint:CGPointMake(width - hPadding, height / 4)];
-    [path addLineToPoint:CGPointMake(width - hPadding, height * 3 / 4)];
-    [path addLineToPoint:CGPointMake(width / 2, height)];
-    [path addLineToPoint:CGPointMake(hPadding, height * 3 / 4)];
-    [path addLineToPoint:CGPointMake(hPadding, height / 4)];
-    [path closePath];
-    [path fill];
-    maskLayer.path = path.CGPath;
+    maskLayer.contents = (__bridge id)([maskImage CGImage]);
+//    CGFloat width = self.frame.size.width;
+//    CGFloat height = self.frame.size.height;
+//    CGFloat hPadding = width * 1 / 8 / 2;
+//    
+//    UIBezierPath *path = [UIBezierPath bezierPath];
+//    [path moveToPoint:CGPointMake(width/2, 0)];
+//    [path addLineToPoint:CGPointMake(width - hPadding, height / 4)];
+//    [path addLineToPoint:CGPointMake(width - hPadding, height * 3 / 4)];
+//    [path addLineToPoint:CGPointMake(width - hPadding, height / 4)];
+//    [path addLineToPoint:CGPointMake(width - hPadding, height * 3 / 4)];
+//    [path addLineToPoint:CGPointMake(width / 2, height)];
+//    [path addLineToPoint:CGPointMake(hPadding, height * 3 / 4)];
+//    [path addLineToPoint:CGPointMake(hPadding, height / 4)];
+//    [path closePath];
+//    [path fill];
+//    maskLayer.path = path.CGPath;
     
     self.layer.mask = maskLayer;
 }

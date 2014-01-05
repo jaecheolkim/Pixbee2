@@ -9,6 +9,15 @@
 #import <Foundation/Foundation.h>
 #define GlobalValue [GlobalValues sharedInstance]
 
+static inline BOOL IsEmpty(id thing) {
+    return thing == nil
+    || ([thing respondsToSelector:@selector(length)]
+        && [(NSData *)thing length] == 0)
+    || ([thing respondsToSelector:@selector(count)]
+        && [(NSArray *)thing count] == 0);
+}
+
+
 @interface GlobalValues : NSObject
 @property (nonatomic, strong) NSString* userName;
 @property (nonatomic, strong) NSString* lastAssetURL;

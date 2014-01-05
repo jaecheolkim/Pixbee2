@@ -19,6 +19,7 @@
 @property (nonatomic, strong) ALAssetsLibrary *assetsLibrary;
 @property (nonatomic, strong) NSMutableArray *totalAssets;
 @property (nonatomic, strong) NSMutableArray *faceAssets;
+@property (nonatomic, strong) NSMutableArray *locationArray;
 @property (nonatomic) int totalProcess;
 @property (nonatomic) int currentProcess;
 @property (nonatomic) int matchCount;
@@ -38,6 +39,8 @@
 
 //- (void)calcFaces:(NSArray *)asset success:(void (^)(NSArray *result))success;
 //- (void)calcFace:(ALAsset *)asset success:(void (^)(int count))success;
+
+- (void)checkGeocode;
 
 #pragma mark Album function
 // 앨범사진 로컬 앨범DB로 동기화

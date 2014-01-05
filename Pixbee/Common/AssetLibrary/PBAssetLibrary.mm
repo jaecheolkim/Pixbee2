@@ -9,10 +9,13 @@
 #import "PBAssetLibrary.h"
 #import "PBFaceLib.h"
 
+
 @interface PBAssetsLibrary ()
 {
     CIDetector *detector;
 }
+@property (nonatomic, strong) CLGeocoder *geocoder;
+
 @end
 
 @implementation PBAssetsLibrary
@@ -37,6 +40,8 @@
         _assetsLibrary = [[ALAssetsLibrary alloc] init];
         _faceAssets = [NSMutableArray array];
         _totalAssets = [NSMutableArray array];
+        _locationArray = [NSMutableArray array];
+        _geocoder = [[CLGeocoder alloc] init];
         
     }
     return self;
@@ -509,9 +514,37 @@
     
     NSMutableArray *assets = [[NSMutableArray alloc] init];
     
+    __block int locationGroup = 0;
+    __block CLLocation *oldLocation = [[CLLocation alloc] initWithLatitude:0 longitude:0];
+    //__block NSDate *oldDate;
+    
     ALAssetsGroupEnumerationResultsBlock assetsEnumerationBlock = ^(ALAsset *result, NSUInteger index, BOOL *stop) {
         
         if (result) {
+            //ALAssetPropertyLocation : CLLocation
+            //ALAssetPropertyDate : NSDate
+            
+            CLLocation *newLocation = [result valueForProperty:ALAssetPropertyLocation];
+            if(newLocation != nil){
+                CLLocationDistance distance = [newLocation distanceFromLocation:oldLocation];
+
+                if(distance > 1000){ //1km 반경이 넘으면 주소 refresh
+                    oldLocation = newLocation;
+                    [_locationArray addObject:newLocation];
+                    
+                    locationGroup++;
+                    //[self reverseGeocode:newLocation group:locationGroup];
+                }
+                
+                NSLog(@"LocationGroup : %d || Distance : %f || NEW Longitude = %f / Latitude = %f || OLD Longitude = %f / Latitude = %f ",
+                      locationGroup, distance, newLocation.coordinate.longitude, newLocation.coordinate.latitude, oldLocation.coordinate.longitude, oldLocation.coordinate.latitude );
+            
+
+
+            }
+
+
+            
             [assets addObject:@{@"Asset":result, @"GroupURL":[assetsGroup valueForProperty:ALAssetsGroupPropertyURL]} ];
             
         } else {
@@ -800,6 +833,159 @@
     }
 }
 
+- (void)checkGeocode
+{
+    if(!IsEmpty(_locationArray)){
+        for(int i = 0; i < _locationArray.count; i++)
+        {
+            int locationGroup = i;
+            CLLocation *location = [_locationArray objectAtIndex:i];
+            [_geocoder reverseGeocodeLocation:location completionHandler:^(NSArray *placemarks, NSError *error) {
+                if (! error) {
+                    NSLog(@"Places: %@", placemarks);
+                    for (CLPlacemark *placemark in placemarks) {
+                        NSLog(@"country: %@", [placemark country]);
+                        NSLog(@"administrativeArea: %@", [placemark administrativeArea]);
+                        NSLog(@"subAdministrativeArea: %@", [placemark subAdministrativeArea]);
+                        NSLog(@"region: %@", [placemark region]);
+                        NSLog(@"Locality: %@", [placemark locality]);
+                        NSLog(@"subLocality: %@", [placemark subLocality]);
+                        NSLog(@"Thoroughfare: %@", [placemark thoroughfare]);
+                        NSLog(@"subThoroughfare: %@", [placemark subThoroughfare]);
+                        NSLog(@"Name: %@", [placemark name]);
+                        NSLog(@"Desc: %@", placemark);
+                        NSLog(@"addressDictionary: %@", [placemark addressDictionary]);
+                        NSArray *areasOfInterest = [placemark areasOfInterest];
+                        for (id area in areasOfInterest) {
+                            NSLog(@"Class: %@", [area class]);
+                            NSLog(@"AREA: %@", area);
+                        }
+                        NSString *divider = @"";
+                        NSString *descriptiveString = @"";
+                        if (! IsEmpty([placemark subThoroughfare])) {
+                            descriptiveString = [descriptiveString stringByAppendingFormat:@"%@", [placemark subThoroughfare]];
+                            divider = @", ";
+                        }
+                        if (! IsEmpty([placemark thoroughfare])) {
+                            if (! IsEmpty(descriptiveString))
+                                divider = @" ";
+                            descriptiveString = [descriptiveString stringByAppendingFormat:@"%@%@", divider, [placemark thoroughfare]];
+                            divider = @", ";
+                        }
+                        
+                        if (! IsEmpty([placemark subLocality])) {
+                            descriptiveString = [descriptiveString stringByAppendingFormat:@"%@%@", divider, [placemark subLocality]];
+                            divider = @", ";
+                        }
+                        
+                        if (! IsEmpty([placemark locality]) && (IsEmpty([placemark subLocality]) || ! [[placemark subLocality] isEqualToString:[placemark locality]])) {
+                            descriptiveString = [descriptiveString stringByAppendingFormat:@"%@%@", divider, [placemark locality]];
+                            divider = @", ";
+                        }
+                        
+                        if (! IsEmpty([placemark administrativeArea])) {
+                            descriptiveString = [descriptiveString stringByAppendingFormat:@"%@%@", divider, [placemark administrativeArea]];
+                            divider = @", ";
+                        }
+                        
+                        if (! IsEmpty([placemark ISOcountryCode])) {
+                            descriptiveString = [descriptiveString stringByAppendingFormat:@"%@%@", divider, [placemark ISOcountryCode]];
+                            divider = @", ";
+                        }
+                        
+                        if (! IsEmpty([placemark name])) {
+                            descriptiveString = [NSString stringWithString:[placemark name]];
+                        }
+                        
+                        NSLog(@"Location Group : %d || Smart place: %@",locationGroup, descriptiveString);
+                        
+                    }
+                    /*
+                     Place: (
+                     "301 Geary St, 301 Geary St, San Francisco, CA  94102-1801, United States @ <+37.78711200,-122.40846000> +/- 100.00m"
+                     )
+                     */
+                }
+            }];
+
+        }
+    }
+
+}
+
+- (void)reverseGeocode:(CLLocation *)location group:(int)locationGroup {
+//    if ([_geocoder isGeocoding])
+//        return;
+    
+    [_geocoder reverseGeocodeLocation:location completionHandler:^(NSArray *placemarks, NSError *error) {
+        if (! error) {
+            NSLog(@"Places: %@", placemarks);
+            for (CLPlacemark *placemark in placemarks) {
+                NSLog(@"country: %@", [placemark country]);
+                NSLog(@"administrativeArea: %@", [placemark administrativeArea]);
+                NSLog(@"subAdministrativeArea: %@", [placemark subAdministrativeArea]);
+                NSLog(@"region: %@", [placemark region]);
+                NSLog(@"Locality: %@", [placemark locality]);
+                NSLog(@"subLocality: %@", [placemark subLocality]);
+                NSLog(@"Thoroughfare: %@", [placemark thoroughfare]);
+                NSLog(@"subThoroughfare: %@", [placemark subThoroughfare]);
+                NSLog(@"Name: %@", [placemark name]);
+                NSLog(@"Desc: %@", placemark);
+                NSLog(@"addressDictionary: %@", [placemark addressDictionary]);
+                NSArray *areasOfInterest = [placemark areasOfInterest];
+                for (id area in areasOfInterest) {
+                    NSLog(@"Class: %@", [area class]);
+                    NSLog(@"AREA: %@", area);
+                }
+                NSString *divider = @"";
+                NSString *descriptiveString = @"";
+                if (! IsEmpty([placemark subThoroughfare])) {
+                    descriptiveString = [descriptiveString stringByAppendingFormat:@"%@", [placemark subThoroughfare]];
+                    divider = @", ";
+                }
+                if (! IsEmpty([placemark thoroughfare])) {
+                    if (! IsEmpty(descriptiveString))
+                        divider = @" ";
+                    descriptiveString = [descriptiveString stringByAppendingFormat:@"%@%@", divider, [placemark thoroughfare]];
+                    divider = @", ";
+                }
+                
+                if (! IsEmpty([placemark subLocality])) {
+                    descriptiveString = [descriptiveString stringByAppendingFormat:@"%@%@", divider, [placemark subLocality]];
+                    divider = @", ";
+                }
+                
+                if (! IsEmpty([placemark locality]) && (IsEmpty([placemark subLocality]) || ! [[placemark subLocality] isEqualToString:[placemark locality]])) {
+                    descriptiveString = [descriptiveString stringByAppendingFormat:@"%@%@", divider, [placemark locality]];
+                    divider = @", ";
+                }
+                
+                if (! IsEmpty([placemark administrativeArea])) {
+                    descriptiveString = [descriptiveString stringByAppendingFormat:@"%@%@", divider, [placemark administrativeArea]];
+                    divider = @", ";
+                }
+                
+                if (! IsEmpty([placemark ISOcountryCode])) {
+                    descriptiveString = [descriptiveString stringByAppendingFormat:@"%@%@", divider, [placemark ISOcountryCode]];
+                    divider = @", ";
+                }
+                
+                if (! IsEmpty([placemark name])) {
+                    descriptiveString = [NSString stringWithString:[placemark name]];
+                }
+                
+                NSLog(@"Location Group : %d || Smart place: %@",locationGroup, descriptiveString);
+                
+            }
+            /*
+             Place: (
+             "301 Geary St, 301 Geary St, San Francisco, CA  94102-1801, United States @ <+37.78711200,-122.40846000> +/- 100.00m"
+             )
+             */
+        }
+    }];
+    
+}
 
 - (NSString *)getAddressFrom:(CLPlacemark*)place
 {

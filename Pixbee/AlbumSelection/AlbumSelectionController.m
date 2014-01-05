@@ -45,7 +45,7 @@
 
     
     self.usersPhotos = [[SQLManager getAllUserPhotos] mutableCopy];
-    NSLog(@"usersPhotos: %@",_usersPhotos);
+    //NSLog(@"usersPhotos: %@",_usersPhotos);
     
     NSDictionary *users = [[self.usersPhotos objectAtIndex:0] copy];
     NSDictionary *users1 = [[self.usersPhotos objectAtIndex:0] copy];
