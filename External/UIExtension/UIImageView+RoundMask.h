@@ -11,6 +11,5 @@
 @interface UIImageView (RoundMask)
 
 - (void)roundMask:(UIImage *)_image;
-- (UIImage*)maskImage:(UIImage *)image withMask:(UIImage *)maskImage;
 
 @end

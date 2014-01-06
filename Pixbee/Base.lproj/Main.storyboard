@@ -508,7 +508,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="107" height="28"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="A4DBE12A-FD02-4274-9D0D-64D42F05A10C" translatesAutoresizingMaskIntoConstraints="NO" id="6aK-Ak-lFj">
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="AA5AD6CD-97F1-41E7-ACD0-84BD474E5258" translatesAutoresizingMaskIntoConstraints="NO" id="6aK-Ak-lFj">
                                                     <rect key="frame" x="0.0" y="0.0" width="28" height="29"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
@@ -1220,6 +1220,10 @@
                                 <rect key="frame" x="129" y="460" width="62" height="56"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uiZ-gw-wHx">
+                                <rect key="frame" x="0.0" y="437" width="320" height="67"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            </scrollView>
                             <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oja-Kt-JRx" customClass="BasicBottomView">
                                 <rect key="frame" x="0.0" y="498" width="320" height="70"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -1273,6 +1277,7 @@
                         <outlet property="CameraBottomView" destination="oja-Kt-JRx" id="N6j-bT-e4x"/>
                         <outlet property="closeButton" destination="ARB-yI-jgk" id="M2n-O6-UHa"/>
                         <outlet property="faceImageView" destination="Zkt-wk-y7C" id="KQw-nq-msI"/>
+                        <outlet property="faceListScrollView" destination="uiZ-gw-wHx" id="Gwr-nN-X5E"/>
                         <outlet property="faceView" destination="txv-P5-Vrr" id="sJs-Zd-pUP"/>
                         <outlet property="flashButton" destination="AYT-uL-AcR" id="RcD-mm-kJH"/>
                         <outlet property="hiveImageView" destination="kzk-8P-vOU" id="nea-YZ-qHH"/>
@@ -1286,7 +1291,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="3pO-Qz-iU4" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-704" y="10"/>
+            <point key="canvasLocation" x="-710" y="3"/>
         </scene>
         <!--Filter View Controller-->
         <scene sceneID="rs9-kO-diB">
@@ -1695,7 +1700,7 @@ more Alex's Photo</string>
         </scene>
     </scenes>
     <resources>
-        <image name="A4DBE12A-FD02-4274-9D0D-64D42F05A10C" width="628" height="152">
+        <image name="AA5AD6CD-97F1-41E7-ACD0-84BD474E5258" width="628" height="152">
             <mutableData key="keyedArchiveRepresentation">
 YnBsaXN0MDDUAQIDBAUGPj9YJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoK4HCBMU
 GR4fIyQsLzI4O1UkbnVsbNUJCgsMDQ4PEBESVk5TU2l6ZVYkY2xhc3NcTlNJbWFnZUZsYWdzVk5TUmVw

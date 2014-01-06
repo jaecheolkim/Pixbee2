@@ -20,6 +20,7 @@
 #import "MBSwitch.h"
 
 #import "PBFilterViewController.h"
+#import "UIImage+Addon.h"
 
 #define CAPTURE_FPS 30
 
@@ -74,6 +75,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 @property (weak, nonatomic) IBOutlet BasicBottomView *CameraBottomView;
 @property (nonatomic, retain) MBSwitch *cameraSwitch;
 @property (weak, nonatomic) IBOutlet UIButton *snapButton;
+@property (weak, nonatomic) IBOutlet UIScrollView *faceListScrollView;
 
 - (IBAction)toggleFlash:(id)sender;
 - (IBAction)switchCameras:(id)sender;
@@ -106,6 +108,10 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     processing = @{}.mutableCopy;
     
     guideImage = [UIImage imageNamed:@"hive_line"];
+ 
+    [_faceListScrollView setBackgroundColor:[UIColor blackColor]];
+    [_faceListScrollView setAlpha:0.7];
+    [_faceListScrollView setHidden:YES];
     
     if(self.faceMode == FaceModeCollect){
         self.navigationController.navigationBarHidden = YES;
@@ -138,7 +144,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 {
 	[super viewWillAppear:animated];
     //[self.navigationController.navigationBar setBackgroundColor:[UIColor redColor]];
-    //self.navigationController.navigationBarHidden = YES;
+    self.navigationController.navigationBarHidden = YES;
     
 	[self setupAVCapture];
 }
@@ -304,6 +310,47 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     }
 }
 
+- (void)addNewFaceIcon:(int)UserID
+{
+    [_faceListScrollView setHidden:NO];
+    
+    int faceCount = (int)_faceListScrollView.subviews.count;
+    
+    UIImage *profileImage = [UIImage maskImage:faceImageView.image
+                                      withMask:[UIImage imageNamed:@"photo_profile_hive.png"]];
+
+    UIButton * button = [UIButton buttonWithType:UIButtonTypeCustom];
+    [button addTarget:self action:@selector(imageTouch:withEvent:) forControlEvents:UIControlEventTouchDown];
+    [button addTarget:self action:@selector(imageMoved:withEvent:) forControlEvents:UIControlEventTouchDragInside];
+    [button setImage:profileImage forState:UIControlStateNormal];
+    button.frame = CGRectMake(10+faceCount*60, 9.0f, 50.0f, 50.0f);
+    button.tag = UserID;
+    [_faceListScrollView addSubview:button];
+    
+    NSLog(@"facecount = %d / frame = %@",faceCount, NSStringFromCGRect(button.frame));
+    
+    [_faceListScrollView setContentSize:CGSizeMake(10 + faceCount*60 + 50, 67.0)];
+//    [_faceListScrollView setContentOffset:button.frame.origin animated:YES];
+    
+}
+
+- (IBAction) imageTouch:(id) sender withEvent:(UIEvent *) event
+{
+    CGPoint point = [[[event allTouches] anyObject] locationInView:self.view];
+    UIButton *copyButton = sender;
+    [self.view addSubview:copyButton];
+    copyButton.center = point;
+    
+    //[(UIButton*)sender setEnabled:NO];
+}
+
+
+- (IBAction) imageMoved:(id) sender withEvent:(UIEvent *) event
+{
+    CGPoint point = [[[event allTouches] anyObject] locationInView:self.view];
+    UIControl *control = sender;
+    control.center = point;
+}
 
 #pragma mark - AV setup
 - (void)setupAVCapture
@@ -832,6 +879,12 @@ bail:
     if(match == nil) return;
     
     int UserID = [[match objectForKey:@"UserID"] intValue];
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        
+    [self addNewFaceIcon:UserID];
+        
+    });
     
     NSLog(@"trackingID : %d / match: %@", trackingID, match);
     

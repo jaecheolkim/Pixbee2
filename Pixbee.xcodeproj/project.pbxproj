@@ -265,6 +265,7 @@
 		80D5B62D18759293000CD8D7 /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 80D5B62A18759293000CD8D7 /* FacebookSDK.framework */; };
 		80D5B62E18759293000CD8D7 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 80D5B62B18759293000CD8D7 /* opencv2.framework */; };
 		80D5B62F18759293000CD8D7 /* SDWebImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 80D5B62C18759293000CD8D7 /* SDWebImage.framework */; };
+		80F9DD8E187B299800A1BF21 /* UIImage+Addon.m in Sources */ = {isa = PBXBuildFile; fileRef = 80F9DD8D187B299800A1BF21 /* UIImage+Addon.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -670,6 +671,8 @@
 		80D5B62A18759293000CD8D7 /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FacebookSDK.framework; path = ../../../FacebookSDK.framework; sourceTree = "<group>"; };
 		80D5B62B18759293000CD8D7 /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = opencv2.framework; path = ../../../opencv2.framework; sourceTree = "<group>"; };
 		80D5B62C18759293000CD8D7 /* SDWebImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDWebImage.framework; path = ../../../SDWebImage.framework; sourceTree = "<group>"; };
+		80F9DD8C187B299800A1BF21 /* UIImage+Addon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Addon.h"; sourceTree = "<group>"; };
+		80F9DD8D187B299800A1BF21 /* UIImage+Addon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Addon.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1488,6 +1491,8 @@
 				80D2A113184A1E58008D29B2 /* UIButton+Bootstrap.m */,
 				80D2A114184A1E58008D29B2 /* UIImageView+RoundMask.h */,
 				80D2A115184A1E58008D29B2 /* UIImageView+RoundMask.m */,
+				80F9DD8C187B299800A1BF21 /* UIImage+Addon.h */,
+				80F9DD8D187B299800A1BF21 /* UIImage+Addon.m */,
 			);
 			path = UIExtension;
 			sourceTree = "<group>";
@@ -1834,6 +1839,7 @@
 				7805A66518659ECC00B234C1 /* AFHTTPClient.m in Sources */,
 				69B1B2FF18587D9200774382 /* IntroView.m in Sources */,
 				7805A6B118668AD700B234C1 /* UserAddView.m in Sources */,
+				80F9DD8E187B299800A1BF21 /* UIImage+Addon.m in Sources */,
 				78C156DB186491A5007BA1DF /* FPPopoverController.m in Sources */,
 				7805A66718659ECC00B234C1 /* AFImageRequestOperation.m in Sources */,
 				78A8053F184F80E5008E81B3 /* SCTPushLeft.m in Sources */,
