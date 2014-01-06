@@ -91,16 +91,13 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     [super viewDidLoad];
     
     instructPoint = @[NSStringFromCGPoint(CGPointMake(0, 0)),  ];
-    
-    
-    
+
     isReadyToScanFace = NO;
     //[FaceLib initDetector:CIDetectorAccuracyLow Tacking:YES];
     
     NSDictionary *detectorOptions = @{ CIDetectorAccuracy : CIDetectorAccuracyLow, CIDetectorTracking : @(YES) };
 	faceDetector = [CIDetector detectorOfType:CIDetectorTypeFace context:nil options:detectorOptions];
 
-    
     if(self.faceMode == FaceModeRecognize)
         isFaceRecRedy = [FaceLib initRecognizer:LBPHFaceRecognizer models:[SQLManager getTrainModels]];
     
@@ -141,7 +138,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 {
 	[super viewWillAppear:animated];
     //[self.navigationController.navigationBar setBackgroundColor:[UIColor redColor]];
-    self.navigationController.navigationBarHidden = YES;
+    //self.navigationController.navigationBarHidden = YES;
     
 	[self setupAVCapture];
 }
@@ -250,9 +247,14 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 {
     [self teardownAVCapture];
     
-    if(self.faceMode == FaceModeCollect){
+    if(self.faceMode == FaceModeCollect && [_segueid isEqualToString:SEGUE_FACEANALYZE])
+    {
         [self goNext];
+        
     } else {
+        if([_segueid isEqualToString:SEGUE_3_1_TO_6_1]) {
+            // Check face DB
+        }
         self.navigationController.navigationBarHidden = NO;
         [self.navigationController popViewControllerAnimated:YES];
         //[self dismissViewControllerAnimated:YES completion:nil];
@@ -276,9 +278,9 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
                 self.navigationController.navigationBarHidden = NO;
                 
 
-                [self performSegueWithIdentifier:SEGUE_GO_FILTER sender:self];
-//				UIImage *image = [[UIImage alloc] initWithData:imageData];
-//				[[[ALAssetsLibrary alloc] init] writeImageToSavedPhotosAlbum:[image CGImage] orientation:(ALAssetOrientation)[image imageOrientation] completionBlock:nil];
+//                [self performSegueWithIdentifier:SEGUE_GO_FILTER sender:self];
+				UIImage *image = [[UIImage alloc] initWithData:imageData];
+				[[[ALAssetsLibrary alloc] init] writeImageToSavedPhotosAlbum:[image CGImage] orientation:(ALAssetOrientation)[image imageOrientation] completionBlock:nil];
 			}
 		}];
 	//});
@@ -291,15 +293,12 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 {
     self.navigationController.navigationBarHidden = NO;
     [self performSegueWithIdentifier:SEGUE_6_1_TO_2_2 sender:self];
-
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     if ([segue.identifier isEqualToString:SEGUE_GO_FILTER]){
-//        self.navigationController.navigationBarHidden = NO;
-//        UINavigationController *navi = segue.destinationViewController;
-        PBFilterViewController *destination = segue.destinationViewController;//[navi.viewControllers objectAtIndex:0];
+        PBFilterViewController *destination = segue.destinationViewController;
         destination.imageData = imageData;
         
     }
@@ -491,14 +490,15 @@ bail:
         
         if ([features count]) {
             feature = [features objectAtIndex:0];
-            
-//            dispatch_async(dispatch_get_main_queue(), ^(void) {
-//                [self drawFaceBoxeForFeature:feature forVideoBox:clap orientation:curDeviceOrientation];
-//            });
         }
         
         if (self.frameNum == 15) { //매 0.5초마다 검사.
-            if(ciImage && feature) [self collectFace:feature inImage:ciImage ofUserID:_UserID];
+            if(ciImage && [features count] == 1)
+                [self collectFace:feature inImage:ciImage ofUserID:_UserID];
+            else if(ciImage && [features count] > 1 ) {
+#warning 한명 이상은 얼굴 등록 할 수 없음 메시지 뿌려주기
+                
+            }
             self.frameNum = 1;
         }
         else {
@@ -749,7 +749,7 @@ bail:
 - (void)collectFace:(CIFaceFeature *)feature inImage:(CIImage *)ciImage ofUserID:(int)UserID
 {
     if(_numPicsTaken > 10) return;
-    
+ 
     if(feature.hasLeftEyePosition && feature.hasRightEyePosition){
         UIImageOrientation imageOrient = [[MotionOrientation sharedInstance] currentImageOrientationWithFrontCamera:isUsingFrontFacingCamera MirrorFlip:NO];
         BOOL isLandScape = [[MotionOrientation sharedInstance] deviceIsLandscape];

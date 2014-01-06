@@ -12,6 +12,7 @@
 #import "UserAddView.h"
 #import "SCTInclude.h"
 #import "IndividualGalleryController.h"
+#import "FaceDetectionViewController.h"
 #import "AllPhotosController.h"
 #import "FBFriendController.h"
 #import "UIView+SubviewHunting.h"
@@ -217,16 +218,34 @@
     
 }
 
+//SEGUE_3_1_TO_6_1 // add new face tab from camera
+//SEGUE_3_1_TO_4_3 // add new face tab from album
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([segue.identifier isEqualToString:SEGUE_3_1_TO_4_1] || [segue.identifier isEqualToString:SEGUE_3_1_TO_4_2]) {
         NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
         IndividualGalleryController *destViewController = segue.destinationViewController;
         destViewController.usersPhotos = [self.usersPhotos objectAtIndex:indexPath.row];
     }
-    else if([segue.identifier isEqualToString:SEGUE_3_1_TO_6_1]){
+    else if([segue.identifier isEqualToString:SEGUE_3_1_TO_4_3]){
         AllPhotosController *destViewController = segue.destinationViewController;
         destViewController.photos = self.usersPhotos;
     }
+    
+    else if ([segue.identifier isEqualToString:SEGUE_3_1_TO_6_1]) { // add new face tab from camera
+        
+        NSArray *result = [SQLManager getUserInfo:GlobalValue.userName];
+        NSDictionary *user = [result objectAtIndex:0];
+        NSNumber *userID = [user objectForKey:@"UserID"];
+        
+        if(userID) {
+            FaceDetectionViewController *destination = segue.destinationViewController;
+            destination.userID = [userID intValue];
+            destination.userName = GlobalValue.userName;
+            destination.faceMode = FaceModeCollect;
+            destination.segueid = SEGUE_3_1_TO_6_1;
+        }
+    }
+
 }
 
 -(void)popover:(id)sender
@@ -316,10 +335,14 @@
         // Camera
         case 0:
             NSLog(@"Camera Clicked");
+            [self performSegueWithIdentifier:SEGUE_3_1_TO_6_1 sender:self];
+            //PopCamera
             break;
         // From Photo Album
         case 1:
             NSLog(@"From Photo Album Clicked");
+            [self performSegueWithIdentifier:SEGUE_3_1_TO_4_3 sender:self];
+            //Segue3_1to6_1
             break;
         // Cancel
         case 2:
@@ -374,4 +397,8 @@
                          
                      }];
 }
+
+
+
+
 @end

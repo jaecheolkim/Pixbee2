@@ -177,6 +177,7 @@
             destination.userID = [userID intValue]; //[NSNumber numberWithInt:100];
             destination.userName = GlobalValue.userName;
             destination.faceMode = FaceModeCollect;
+            destination.segueid = SEGUE_FACEANALYZE;
         }
     }
 

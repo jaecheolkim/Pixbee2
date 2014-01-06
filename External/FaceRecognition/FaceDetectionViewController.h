@@ -18,5 +18,6 @@ typedef enum{
 @property (nonatomic, strong) NSString *UserName;
 @property (nonatomic) int UserID;
 @property (nonatomic) FaceMode faceMode;
+@property (nonatomic, strong) NSString *segueid;
 @end
 

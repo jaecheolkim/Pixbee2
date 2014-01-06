@@ -206,6 +206,7 @@
 		78C1EB75186B0A790072E7DB /* trash_select@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 78C1EB32186B0A790072E7DB /* trash_select@2x.png */; };
 		78C1EB76186B0A790072E7DB /* xicon_select@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 78C1EB33186B0A790072E7DB /* xicon_select@2x.png */; };
 		78C950AA185D5FA60041E8DD /* SBPageFlowView.m in Sources */ = {isa = PBXBuildFile; fileRef = 78C950A9185D5FA60041E8DD /* SBPageFlowView.m */; };
+		8010C1FD187A8A7100EB7FF6 /* PBUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 8010C1FC187A8A7100EB7FF6 /* PBUtil.m */; };
 		801B35DA18561B9600EEB9F3 /* SMShadowedLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 801B35D718561B9600EEB9F3 /* SMShadowedLayer.m */; };
 		801B35DB18561B9600EEB9F3 /* SMTransformLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 801B35D918561B9600EEB9F3 /* SMTransformLayer.m */; };
 		801B35DF18561BC400EEB9F3 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 801B35DE18561BC400EEB9F3 /* ViewController.m */; };
@@ -576,6 +577,8 @@
 		78C1EB33186B0A790072E7DB /* xicon_select@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "xicon_select@2x.png"; sourceTree = "<group>"; };
 		78C950A8185D5FA60041E8DD /* SBPageFlowView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBPageFlowView.h; sourceTree = "<group>"; };
 		78C950A9185D5FA60041E8DD /* SBPageFlowView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBPageFlowView.m; sourceTree = "<group>"; };
+		8010C1FB187A8A7100EB7FF6 /* PBUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBUtil.h; sourceTree = "<group>"; };
+		8010C1FC187A8A7100EB7FF6 /* PBUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBUtil.m; sourceTree = "<group>"; };
 		801B35D618561B9600EEB9F3 /* SMShadowedLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMShadowedLayer.h; sourceTree = "<group>"; };
 		801B35D718561B9600EEB9F3 /* SMShadowedLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMShadowedLayer.m; sourceTree = "<group>"; };
 		801B35D818561B9600EEB9F3 /* SMTransformLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMTransformLayer.h; sourceTree = "<group>"; };
@@ -1197,6 +1200,8 @@
 		78685D5E18495EB1002D2BAA /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				8010C1FB187A8A7100EB7FF6 /* PBUtil.h */,
+				8010C1FC187A8A7100EB7FF6 /* PBUtil.m */,
 				8081283A184D25F50000CF3E /* GlobalValues */,
 				80D2A17E184B7B54008D29B2 /* AssetLibrary */,
 				80D2A181184B7B54008D29B2 /* DB */,
@@ -1905,6 +1910,7 @@
 				7856F72C1849FA1100A17349 /* GalleryViewCell.m in Sources */,
 				80D2A11C184A1E58008D29B2 /* ASGalleryViewController.m in Sources */,
 				7805A6761866725F00B234C1 /* UIView+Hexagon.m in Sources */,
+				8010C1FD187A8A7100EB7FF6 /* PBUtil.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
