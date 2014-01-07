@@ -266,6 +266,7 @@
 		80D5B62E18759293000CD8D7 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 80D5B62B18759293000CD8D7 /* opencv2.framework */; };
 		80D5B62F18759293000CD8D7 /* SDWebImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 80D5B62C18759293000CD8D7 /* SDWebImage.framework */; };
 		80F9DD8E187B299800A1BF21 /* UIImage+Addon.m in Sources */ = {isa = PBXBuildFile; fileRef = 80F9DD8D187B299800A1BF21 /* UIImage+Addon.m */; };
+		80F9DD91187B9BA300A1BF21 /* UIButton+FaceIcon.m in Sources */ = {isa = PBXBuildFile; fileRef = 80F9DD90187B9BA300A1BF21 /* UIButton+FaceIcon.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -673,6 +674,8 @@
 		80D5B62C18759293000CD8D7 /* SDWebImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDWebImage.framework; path = ../../../SDWebImage.framework; sourceTree = "<group>"; };
 		80F9DD8C187B299800A1BF21 /* UIImage+Addon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Addon.h"; sourceTree = "<group>"; };
 		80F9DD8D187B299800A1BF21 /* UIImage+Addon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Addon.m"; sourceTree = "<group>"; };
+		80F9DD8F187B9BA300A1BF21 /* UIButton+FaceIcon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIButton+FaceIcon.h"; sourceTree = "<group>"; };
+		80F9DD90187B9BA300A1BF21 /* UIButton+FaceIcon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIButton+FaceIcon.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1493,6 +1496,8 @@
 				80D2A115184A1E58008D29B2 /* UIImageView+RoundMask.m */,
 				80F9DD8C187B299800A1BF21 /* UIImage+Addon.h */,
 				80F9DD8D187B299800A1BF21 /* UIImage+Addon.m */,
+				80F9DD8F187B9BA300A1BF21 /* UIButton+FaceIcon.h */,
+				80F9DD90187B9BA300A1BF21 /* UIButton+FaceIcon.m */,
 			);
 			path = UIExtension;
 			sourceTree = "<group>";
@@ -1889,6 +1894,7 @@
 				69C39FCC18606B39001EDDFA /* SDImageCache.m in Sources */,
 				80D2A189184B7B54008D29B2 /* FBHelper.m in Sources */,
 				69ED32E918484EBB00127196 /* main.m in Sources */,
+				80F9DD91187B9BA300A1BF21 /* UIButton+FaceIcon.m in Sources */,
 				7805A63B18658BA000B234C1 /* DCCrossHairView.m in Sources */,
 				6968D99C186EE8B700831442 /* CopyActivity.m in Sources */,
 				7805A64518658BA000B234C1 /* IDMZoomingScrollView.m in Sources */,
