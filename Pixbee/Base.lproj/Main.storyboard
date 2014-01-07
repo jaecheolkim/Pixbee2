@@ -508,7 +508,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="107" height="28"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="AA5AD6CD-97F1-41E7-ACD0-84BD474E5258" translatesAutoresizingMaskIntoConstraints="NO" id="6aK-Ak-lFj">
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="D3A2C48C-858E-4490-AEDC-EB184E961E35" translatesAutoresizingMaskIntoConstraints="NO" id="6aK-Ak-lFj">
                                                     <rect key="frame" x="0.0" y="0.0" width="28" height="29"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
@@ -1220,7 +1220,7 @@
                                 <rect key="frame" x="129" y="460" width="62" height="56"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
-                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uiZ-gw-wHx">
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" bounces="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uiZ-gw-wHx">
                                 <rect key="frame" x="0.0" y="437" width="320" height="67"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             </scrollView>
@@ -1700,7 +1700,7 @@ more Alex's Photo</string>
         </scene>
     </scenes>
     <resources>
-        <image name="AA5AD6CD-97F1-41E7-ACD0-84BD474E5258" width="628" height="152">
+        <image name="D3A2C48C-858E-4490-AEDC-EB184E961E35" width="628" height="152">
             <mutableData key="keyedArchiveRepresentation">
 YnBsaXN0MDDUAQIDBAUGPj9YJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoK4HCBMU
 GR4fIyQsLzI4O1UkbnVsbNUJCgsMDQ4PEBESVk5TU2l6ZVYkY2xhc3NcTlNJbWFnZUZsYWdzVk5TUmVw

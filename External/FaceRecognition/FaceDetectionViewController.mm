@@ -316,19 +316,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     [_faceListScrollView setHidden:NO];
     
     int faceCount = (int)_faceListScrollView.subviews.count;
-    
-//    UIImage *profileImage = [UIImage maskImage:faceImageView.image
-//                                      withMask:[UIImage imageNamed:@"photo_profile_hive.png"]];
-//
-//    UIButton * button = [UIButton buttonWithType:UIButtonTypeCustom];
-//    [button addTarget:self action:@selector(imageTouch:withEvent:) forControlEvents:UIControlEventTouchDown];
-//    [button addTarget:self action:@selector(imageMoved:withEvent:) forControlEvents:UIControlEventTouchDragInside];
-//    [button addTarget:self action:@selector(imageEnd:withEvent:) forControlEvents:UIControlEventTouchUpInside];
-//    
-//    [button setImage:profileImage forState:UIControlStateNormal];
-//    button.frame = CGRectMake(10+faceCount*60, 9.0f, 50.0f, 50.0f);
-//    button.tag = UserID;
-    
+
     UIButton_FaceIcon* button = [UIButton_FaceIcon buttonWithType:UIButtonTypeCustom];
     [button addTarget:self action:@selector(imageTouch:withEvent:) forControlEvents:UIControlEventTouchDown];
     [button addTarget:self action:@selector(imageMoved:withEvent:) forControlEvents:UIControlEventTouchDragInside];
@@ -352,19 +340,20 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 //
 - (void) imageTouch:(id) sender withEvent:(UIEvent *) event
 {
+    if(_faceListScrollView.dragging || _faceListScrollView.decelerating) return;
+    
     CGPoint point = [[[event allTouches] anyObject] locationInView:self.view];
     UIButton_FaceIcon *button0 = (UIButton_FaceIcon*)sender;
     [self.view addSubview:button0];
-    button0.center = point;
     button0.originRect = button0.frame;
+    button0.center = point;
     
     [UIView animateWithDuration:0.2 animations:^{
+        button0.frame = CGRectMake(button0.frame.origin.x, button0.frame.origin.y - 50, 100, 100);
         [button0 setImage:nil forState:UIControlStateNormal];
         [button0 setBackgroundImage:button0.profileImage forState:UIControlStateNormal];
-        button0.frame.size = CGSizeMake(250, 250);
     }];
-    
-    //UIButton_FaceIcon *button0 = (UIButton_FaceIcon*)sender;
+
     int index = button0.index;
     
     // Face Icon 재정렬
@@ -382,45 +371,32 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     }
 }
 
-
 - (void) imageMoved:(id)sender withEvent:(UIEvent *) event
 {
+    if(_faceListScrollView.dragging || _faceListScrollView.decelerating) return;
+    
     CGPoint point = [[[event allTouches] anyObject] locationInView:self.view];
     UIControl *control = sender;
     control.center = point;
 }
 
-
 - (void) imageEnd:(id) sender withEvent:(UIEvent *) event
 {
+    if(_faceListScrollView.dragging || _faceListScrollView.decelerating) return;
+    
     CGPoint point = [[[event allTouches] anyObject] locationInView:self.view];
     
+    UIButton_FaceIcon *button0 = (UIButton_FaceIcon*)sender;
+
+
     if(!CGRectContainsPoint (_faceListScrollView.frame, point)){
         NSLog(@"---------------Drag End Outside");
         [sender removeFromSuperview];
     } else {
         NSLog(@"---------------Drag End Inside");
-        UIButton_FaceIcon *button0 = (UIButton_FaceIcon*)sender;
+        
         int index = button0.index;
 
-//        for(UIView *view in _faceListScrollView.subviews){
-//            if([view isKindOfClass:[UIButton class]]){
-//                UIButton_FaceIcon *button = (UIButton_FaceIcon*)view;
-//                if(button.index >= index){
-//                    button.index = button.index + 1;
-//                    [UIView animateWithDuration:0.2 animations:^{
-//                        button.frame = CGRectMake(10+button.index*60, 9.0f, 50.0f, 50.0f);
-//                        button.originRect = button.frame;
-//                    } completion:^(BOOL finished) {
-//                        [button0 setImage:button.profileImage forState:UIControlStateNormal];
-//                        [button0 setBackgroundImage:nil forState:UIControlStateNormal];
-//                        button0.frame = CGRectMake(10+index*60, 9.0f, 50.0f, 50.0f);;
-//                        [_faceListScrollView addSubview:button0];
-//                    }];
-//                }
-//            }
-//        }
-        
         for(UIView *view in _faceListScrollView.subviews){
             if([view isKindOfClass:[UIButton class]]){
                 UIButton_FaceIcon *button = (UIButton_FaceIcon*)view;
@@ -433,9 +409,10 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
                 }
             }
         }
+        
+        button0.frame = CGRectMake(10+index*60, 9.0f, 50.0f, 50.0f);
         [button0 setImage:button0.profileImage forState:UIControlStateNormal];
         [button0 setBackgroundImage:nil forState:UIControlStateNormal];
-        button0.frame = CGRectMake(10+index*60, 9.0f, 50.0f, 50.0f);;
         [_faceListScrollView addSubview:button0];
     }
 }
@@ -655,7 +632,6 @@ bail:
             }
         }
     }
-
 
 }
 
