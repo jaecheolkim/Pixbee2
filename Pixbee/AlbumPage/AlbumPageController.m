@@ -226,21 +226,23 @@
         IndividualGalleryController *destViewController = segue.destinationViewController;
         destViewController.usersPhotos = [self.usersPhotos objectAtIndex:indexPath.row];
     }
-    else if([segue.identifier isEqualToString:SEGUE_3_1_TO_4_3]){
+    else if([segue.identifier isEqualToString:SEGUE_3_1_TO_4_3]){ // add new face tab from Album
         AllPhotosController *destViewController = segue.destinationViewController;
         destViewController.photos = self.usersPhotos;
     }
     
     else if ([segue.identifier isEqualToString:SEGUE_3_1_TO_6_1]) { // add new face tab from camera
         
-        NSArray *result = [SQLManager getUserInfo:GlobalValue.userName];
+        //int UserID = [SQLManager newUser];
+        NSArray *result = [SQLManager newUser];
         NSDictionary *user = [result objectAtIndex:0];
-        NSNumber *userID = [user objectForKey:@"UserID"];
+        NSString *UserName = [user objectForKey:@"UserName"];
+        int UserID = [[user objectForKey:@"UserID"] intValue];
         
-        if(userID) {
+        if(UserID) {
             FaceDetectionViewController *destination = segue.destinationViewController;
-            destination.userID = [userID intValue];
-            destination.userName = GlobalValue.userName;
+            destination.UserID = UserID;
+            destination.UserName = UserName;
             destination.faceMode = FaceModeCollect;
             destination.segueid = SEGUE_3_1_TO_6_1;
         }

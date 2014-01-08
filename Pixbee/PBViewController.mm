@@ -165,17 +165,13 @@
 {
     if ([segue.identifier isEqualToString:SEGUE_FACEANALYZE]) {
         
-        NSArray *result = [SQLManager getUserInfo:GlobalValue.userName];
-        NSDictionary *user = [result objectAtIndex:0];
-        NSNumber *userID = [user objectForKey:@"UserID"];
-        
-        if(userID) {
+        int UserID = [SQLManager getUserID:GlobalValue.userName];
+
+        if(UserID) {
             UINavigationController *navi = segue.destinationViewController;
             FaceDetectionViewController *destination = [navi.viewControllers objectAtIndex:0];
-            //        //UINavigationController *navi = segue.destinationViewController;
-            //        FaceDetectionViewController *destination = segue.destinationViewController;
-            destination.userID = [userID intValue]; //[NSNumber numberWithInt:100];
-            destination.userName = GlobalValue.userName;
+            destination.UserID = UserID;
+            destination.UserName = GlobalValue.userName;
             destination.faceMode = FaceModeCollect;
             destination.segueid = SEGUE_FACEANALYZE;
         }

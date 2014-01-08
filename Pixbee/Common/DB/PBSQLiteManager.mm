@@ -460,39 +460,42 @@
 }
 
 
+#warning TODO
+// 1. Users : 새로운 사용자 추가하기 - Unknown
+// 2. Users : Update
+
 #pragma mark Users Table
 
 //새로운 User 추가.
-- (int)newUserWithName:(NSString *)UserName
+- (NSArray *)newUser
 {
-    int UserID = -1;
-
-    NSString *query = [NSString stringWithFormat:@"SELECT UserID, UserName FROM Users WHERE UserName = '%@';", UserName];
+    //int UserID = -1;
+    NSString *UserName = GlobalValue.userName;
+    if(UserName == nil) UserName = @"Unknown";
+    
+    NSString *query = @"SELECT * FROM Users WHERE UserName LIKE 'Unknown%';";
     NSArray *result = [SQLManager getRowsForQuery:query];
     NSLog(@"[Users] QUERY result = %@", result);
     if([result count] > 0 && result != nil)
     {
-        UserID = [[[result objectAtIndex:0] objectForKey:@"UserID"] intValue];
-        return UserID;
-    }
- 
-    if(![result count]){
-        NSString *sqlStr = [NSString stringWithFormat:@"INSERT INTO Users (UserName) VALUES ('%@');", UserName];
-        NSError *error = [SQLManager doQuery:sqlStr];
-        if (error != nil) {
-            NSLog(@"Error: %@",[error localizedDescription]);
-        }
-    }
-
-    result = [SQLManager getRowsForQuery:query];
-    NSLog(@"[Users] INSERT result = %@", result);
-    if([result count] > 0 && result != nil)
-    {
-        UserID = [[[result objectAtIndex:0] objectForKey:@"UserID"] intValue];
+        UserName = [NSString stringWithFormat:@"Unknown%d", (int)[result count]];
     }
     
-    return UserID;
+    NSString *sqlStr = [NSString stringWithFormat:@"INSERT INTO Users (UserName) VALUES ('%@');", UserName];
+    NSError *error = [SQLManager doQuery:sqlStr];
+    if (error != nil) {
+        NSLog(@"Error: %@",[error localizedDescription]);
+    }
+    
+    query = [NSString stringWithFormat:@"SELECT * FROM Users WHERE UserName = '%@';", UserName];
+    result = [SQLManager getRowsForQuery:query];
+    
+    NSLog(@"[Users] INSERT result = %@", result);
+    
+    return result;
 }
+
+
 
 // facebook user 정보 포함된 새로운 User 추가.
 - (int)newUserWithFBUser:(id<FBGraphUser>)user
@@ -564,9 +567,10 @@
 }
 
 // 해당 User 정보 가져오기.
-- (NSArray *)getUserInfo:(NSString *)UserName
+- (NSArray *)getUserInfo:(int)UserID
 {
-    NSString *query = [NSString stringWithFormat:@"SELECT UserID, UserName, GUID, UserNick, UserProfile, fbID, fbName, fbProfile, timestamp FROM Users WHERE UserName = '%@';", UserName];
+    //int UserID = [SQLManager getUserID:GlobalValue.userName];
+    NSString *query = [NSString stringWithFormat:@"SELECT UserID, UserName, GUID, UserNick, UserProfile, fbID, fbName, fbProfile, timestamp FROM Users WHERE UserID = %d;", UserID];
     NSArray *result = [SQLManager getRowsForQuery:query];
     return result;
 }
@@ -579,21 +583,120 @@
     return result;
 }
 
+/*
+for (id param in params ) {
+    count++;
+    if ([param isKindOfClass:[NSString class]] )
+        sqlite3_bind_text(statement, count, [param UTF8String], -1, SQLITE_TRANSIENT);
+    if ([param isKindOfClass:[NSNumber class]] ) {
+        if (!strcmp([param objCType], "f"))
+            sqlite3_bind_double(statement, count, [param doubleValue]);
+        else if (!strcmp([param objCType], "i"))
+            sqlite3_bind_int(statement, count, [param intValue]);
+        else
+            NSLog(@"unknown NSNumber");
+    }
+}
+ 
+ NSString *createUsersTable = @"CREATE TABLE IF NOT EXISTS 'Users' ('UserID' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE , 'UserName' TEXT, 'GUID' TEXT, 'UserNick' TEXT, 'UserProfile' TEXT, 'fbID' TEXT, 'fbName' TEXT, 'fbProfile' TEXT, 'timestamp' DATETIME DEFAULT CURRENT_TIMESTAMP);";
+
+ NSString *query = @"UPDATE users SET password = ? WHERE user = ?;";
+ NSArray *params = @[@"tets", @"1191" ];
+ NSError *error = [[PBSQLiteManager sharedInstance] doUpdateQuery:query withParams:params];
+
+     //UPDATE tbl_4 SET city=(SELECT tbl_3.city FROM tbl_3 WHERE tbl_4.idnum =tbl_3.idnum), state = (SELECT tbl_3.state FROM tbl_3 WHERE tbl_4.idnum = tbl_3.idnum)
+ 
+ */
 
 
-// 해당 User의 인식용 얼굴 데이터 모두 삭제.
-- (BOOL)forgetAllFacesForUserID:(int)UserID
+// Users 테이블 업데이트
+// Param muset inclue belows
+// NSDictionary *params = @{ @"UserID" : @(UserID), ... };
+// 'UserName' TEXT, 'GUID' TEXT, 'UserNick' TEXT, 'UserProfile' TEXT, 'fbID' TEXT, 'fbName' TEXT, 'fbProfile' TEXT,
+// Ex) NSDictionary *params = @{ @"UserID" : @(UserID), @"UserName" : @"Test User" };
+- (NSArray *)updateUser:(NSDictionary*)params
 {
-    // const char* deleteSQL = "DELETE FROM FaceData WHERE UserID = ?";
-    // sqlite3_stmt *statement;
-    // sqlite3 *sqlDB = [SQLManager getDBContext];
-    // if (sqlite3_prepare_v2(sqlDB, deleteSQL, -1, &statement, nil) == SQLITE_OK) {
-    //     sqlite3_bind_int(statement, 1, UserID);
-    //     sqlite3_step(statement);
-    // }
+    if(IsEmpty(params)) return nil ;
     
-    // sqlite3_finalize(statement);
+    NSString *updateParam = nil;
+    NSString *whereParam = nil;
+    int index = 0;
+    int UserID;
+    
+    NSArray *keys = params.allKeys;
+    //NSArray *values = params.allValues;
+    
+    for(NSString*key in keys){
+//        NSString *key = [keys objectAtIndex:0];
+//        NSString *value = [values objectAtIndex:0];
+        
+        if([key isEqualToString:@"UserID"]) {
+            UserID = [[params objectForKey:@"UserID"] intValue];
+            whereParam = [NSString stringWithFormat:@" UserID = %d ", UserID];
+        } else {
 
+            NSString *keyNvalue = [NSString stringWithFormat:@" %@ = '%@' ", key, [params objectForKey:key]];
+            if(index > 0)
+                updateParam = [NSString stringWithFormat:@" %@ , %@ ", updateParam, keyNvalue];
+            else
+                updateParam = keyNvalue;
+        }
+        index++;
+    }
+
+    if(IsEmpty(updateParam) || IsEmpty(whereParam)) return nil;
+    
+    NSString *query = [NSString stringWithFormat:@"UPDATE Users SET %@ WHERE %@ ;", updateParam, whereParam];
+
+//	NSError *error = [[PBSQLiteManager sharedInstance] doUpdateQuery:query withParams:params];
+//    
+//	if (error != nil) {
+//		NSLog(@"Error: %@",[error localizedDescription]);
+//	}
+    
+    NSError *error = [SQLManager doQuery:query];
+    if (error != nil) {
+        NSLog(@"Error: %@",[error localizedDescription]);
+    }
+	
+    query = [NSString stringWithFormat:@"SELECT * FROM Users WHERE UserID = %d;", UserID];
+    NSArray *result = [[PBSQLiteManager sharedInstance] getRowsForQuery:query];
+    
+    NSLog(@"result : %@", result);
+    
+    return result;
+    
+}
+
+
+// 해당 UserID의 Users 데이터 모두 삭제.
+// 해당 UserID의 FaceData 데이터 모두 삭제.
+// 해당 UserID의 UserPhotos 데이터 모두 삭제.
+- (BOOL)deleteUser:(int)UserID
+{
+    BOOL success = YES;
+    NSString *sqlStr = [NSString stringWithFormat:@"DELETE FROM Users WHERE UserID = %d", UserID];
+    NSLog(@"delete qury :: %@", sqlStr);
+    NSError *error = [SQLManager doQuery:sqlStr];
+    if (error != nil) {
+    	NSLog(@"Error: %@",[error localizedDescription]);
+        success = NO;
+    }
+    
+    if(success){
+        success = [self deleteAllFacesForUserID:UserID];
+    }
+    if(success){
+        success = [self deleteAllUserPhotosForUserID:UserID];
+    }
+    
+    return success;
+}
+
+
+// 해당 UserID의 FaceData 데이터 모두 삭제.
+- (BOOL)deleteAllFacesForUserID:(int)UserID
+{
     BOOL success = YES;
     NSString *sqlStr = [NSString stringWithFormat:@"DELETE FROM FaceData WHERE UserID = %d", UserID];
     NSLog(@"delete qury :: %@", sqlStr);
@@ -603,6 +706,21 @@
         success = NO;
     }
 
+    return success;
+}
+
+// 해당 UserID의 UserPhotos 데이터 모두 삭제.
+- (BOOL)deleteAllUserPhotosForUserID:(int)UserID
+{
+    BOOL success = YES;
+    NSString *sqlStr = [NSString stringWithFormat:@"DELETE FROM UserPhotos WHERE UserID = %d", UserID];
+    NSLog(@"delete qury :: %@", sqlStr);
+    NSError *error = [SQLManager doQuery:sqlStr];
+    if (error != nil) {
+    	NSLog(@"Error: %@",[error localizedDescription]);
+        success = NO;
+    }
+    
     return success;
 }
 

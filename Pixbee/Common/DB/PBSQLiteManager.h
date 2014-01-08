@@ -34,19 +34,38 @@ enum errorCodes {
 - (NSString*)getDatabaseDump;
 
 #pragma mark Users Table
-// 새로운 User 추가.
-- (int)newUserWithName:(NSString *)UserName;
+// 새로운 Unknown User 생성.
+- (NSArray *)newUser;
+// FB로그인 사용자용 newUser
 - (int)newUserWithFBUser:(id<FBGraphUser>)user;
+
+
+// Users 테이블 업데이트
+// Param muset inclue belows
+// NSDictionary *params = @{ @"UserID" : @(UserID), ... };
+// 'UserName' TEXT, 'GUID' TEXT, 'UserNick' TEXT, 'UserProfile' TEXT, 'fbID' TEXT, 'fbName' TEXT, 'fbProfile' TEXT,
+// Ex) NSDictionary *params = @{ @"UserID" : @(UserID), @"UserName" : @"Test User" };
+//[SQLManager updateUser:@{ @"UserID" : @(1), @"UserName" : @"Test User", @"UserProfile" : @"http://graph.facebook.com/100004326285149/picture?type=large" }];
+- (NSArray *)updateUser:(NSDictionary*)params;
+
+
+
+// 해당 UserID의 Users 데이터 모두 삭제.
+// 해당 UserID의 FaceData 데이터 모두 삭제.
+// 해당 UserID의 UserPhotos 데이터 모두 삭제.
+- (BOOL)deleteUser:(int)UserID;
+
+
 // 해당 User ID 가져오기.
 - (int)getUserID:(NSString *)UserName;
 // 해당 User Name 가져오기.
 - (NSString*)getUserName:(int)UserID;
 // 해당 User 정보 가져오기.
-- (NSArray *)getUserInfo:(NSString *)UserName;
+- (NSArray *)getUserInfo:(int)UserID;
 // 모든 등록된 User 정보 가져오기
 - (NSArray*)getAllUsers;
 // 해당 User의 인식용 얼굴 데이터 모두 삭제.
-- (BOOL)forgetAllFacesForUserID:(int)UserID;
+- (BOOL)deleteAllFacesForUserID:(int)UserID;
 
 #pragma mark FaceData Table
 // 해당 User의 인식용 얼굴 데이터 개수 조사.

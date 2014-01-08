@@ -46,25 +46,9 @@
     }
     
     [self.window makeKeyAndVisible];
+
     
-    
-    
-    
-//    //추후에 facebook user name을 넣자.
-//    if(!GlobalValue.userName)
-//        [GlobalValue setUserName:@"test user"];
-//    
-//    [SQLManager newUserWithName:GlobalValue.userName];
-//    
-//    NSLog(@"Default user name = %@", GlobalValue.userName);
-    
-//    NSArray *result = [SQLManager getAllUsers];
-//    NSLog(@"getAllUsers = %@", result);
-    
-//    NSArray *result = [SQLManager getUserInfo:GlobalValue.userName];
-//    NSLog(@"getAllUsers = %@", result);
-    
-    
+//    [SQLManager updateUser:@{ @"UserID" : @(1), @"UserName" : @"Test User", @"UserProfile" : @"http://graph.facebook.com/100004326285149/picture?type=large" }];
     // Override point for customization after application launch.
     return YES;
 }

@@ -9,5 +9,6 @@
 #import <UIKit/UIKit.h>
 
 @interface AddingFaceToAlbumController : UIViewController
-
+@property (nonatomic, strong) NSString *UserName;
+@property (nonatomic) int UserID;
 @end

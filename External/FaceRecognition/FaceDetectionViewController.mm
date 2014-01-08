@@ -20,8 +20,10 @@
 #import "MBSwitch.h"
 
 #import "PBFilterViewController.h"
+#import "AddingFaceToAlbumController.h"
 //#import "UIImage+Addon.h"
 #import "UIButton+FaceIcon.h"
+
 
 #define CAPTURE_FPS 30
 
@@ -124,9 +126,9 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
         [_hiveImageView setHidden:YES];
         [_instructionsLabel setHidden:YES];
         
-        self.cameraSwitch = [[MBSwitch alloc] initWithFrame:CGRectMake(248, 41, 61.0, 12.0)];
-        [_cameraSwitch setOnTintColor:[UIColor colorWithRed:0.23f green:0.35f blue:0.60f alpha:1.00f]];
-        [_cameraSwitch setTintColor:[UIColor colorWithRed:0.91f green:0.30f blue:0.24f alpha:1.00f]];
+        self.cameraSwitch = [[MBSwitch alloc] initWithFrame:CGRectMake(248, 41, 61.0, 18.0)]; //12
+//        [_cameraSwitch setOnTintColor:[UIColor colorWithRed:0.23f green:0.35f blue:0.60f alpha:1.00f]];
+//        [_cameraSwitch setTintColor:[UIColor colorWithRed:0.91f green:0.30f blue:0.24f alpha:1.00f]];
         [self.CameraBottomView addSubview:_cameraSwitch];
         [_cameraSwitch addTarget:self action:@selector(switchCameraVideo:) forControlEvents:UIControlEventValueChanged];
     }
@@ -308,6 +310,11 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
         PBFilterViewController *destination = segue.destinationViewController;
         destination.imageData = imageData;
         
+    }
+    else if([segue.identifier isEqualToString:SEGUE_6_1_TO_2_2]){
+        AddingFaceToAlbumController *destination = segue.destinationViewController;
+        destination.UserName = self.UserName;
+        destination.UserID = self.UserID;
     }
 }
 
@@ -944,11 +951,7 @@ bail:
     
     int UserID = [[match objectForKey:@"UserID"] intValue];
     
-    dispatch_async(dispatch_get_main_queue(), ^{
-        
-    [self addNewFaceIcon:UserID];
-        
-    });
+
     
     NSLog(@"trackingID : %d / match: %@", trackingID, match);
     
@@ -968,6 +971,12 @@ bail:
         else {
            recognisedFaces[[NSNumber numberWithInt:trackingID]] = @"Unknown";
         }
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            
+            [self addNewFaceIcon:UserID];
+            
+        });
 
     }
 
