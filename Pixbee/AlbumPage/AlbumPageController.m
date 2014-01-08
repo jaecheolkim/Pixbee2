@@ -69,20 +69,20 @@
 
     
     self.usersPhotos = [[SQLManager getAllUserPhotos] mutableCopy];
-    //NSLog(@"usersPhotos: %@",_usersPhotos);
+    NSLog(@"usersPhotos: %@",_usersPhotos);
     
-    NSDictionary *users = [[self.usersPhotos objectAtIndex:0] copy];
-    NSDictionary *users1 = [[self.usersPhotos objectAtIndex:0] copy];
-    NSDictionary *users2 = [[self.usersPhotos objectAtIndex:0] copy];
-    NSDictionary *users3 = [[self.usersPhotos objectAtIndex:0] copy];
-    NSDictionary *users4 = [[self.usersPhotos objectAtIndex:0] copy];
-    NSDictionary *users5 = [[self.usersPhotos objectAtIndex:0] copy];
-    NSDictionary *users6 = [[self.usersPhotos objectAtIndex:0] copy];
-    NSDictionary *users7 = [[self.usersPhotos objectAtIndex:0] copy];
-    NSDictionary *users8 = [[self.usersPhotos objectAtIndex:0] copy];
-    
-    NSMutableArray *newuser = [NSMutableArray arrayWithObjects:users, users1, users3, users2, users3, users4, users5, users6, users7, users8, nil];
-    self.usersPhotos = newuser;
+//    NSDictionary *users = [[self.usersPhotos objectAtIndex:0] copy];
+//    NSDictionary *users1 = [[self.usersPhotos objectAtIndex:0] copy];
+//    NSDictionary *users2 = [[self.usersPhotos objectAtIndex:0] copy];
+//    NSDictionary *users3 = [[self.usersPhotos objectAtIndex:0] copy];
+//    NSDictionary *users4 = [[self.usersPhotos objectAtIndex:0] copy];
+//    NSDictionary *users5 = [[self.usersPhotos objectAtIndex:0] copy];
+//    NSDictionary *users6 = [[self.usersPhotos objectAtIndex:0] copy];
+//    NSDictionary *users7 = [[self.usersPhotos objectAtIndex:0] copy];
+//    NSDictionary *users8 = [[self.usersPhotos objectAtIndex:0] copy];
+//    
+//    NSMutableArray *newuser = [NSMutableArray arrayWithObjects:users, users1, users3, users2, users3, users4, users5, users6, users7, users8, nil];
+//    self.usersPhotos = newuser;
    
     [self calAllPhotos];
     

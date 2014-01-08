@@ -726,6 +726,7 @@ for (id param in params ) {
 
 #pragma mark FaceData Table
 // 해당 User의 인식용 얼굴 데이터 개수 조사.
+
 - (NSInteger)numberOfFacesForUserID:(int)UserID
 {
     const char* selectSQL = "SELECT COUNT(*) FROM FaceData WHERE UserID = ?";
@@ -804,13 +805,12 @@ static inline NSDate* convertDouble2Date(double date){ return [NSDate dateWithTi
     NSString *query = [NSString stringWithFormat:@"SELECT PhotoID FROM Photos WHERE AssetURL = '%@';", AssetURL];
     NSArray *result = [SQLManager getRowsForQuery:query];
     NSLog(@"[Photos] QUERY result = %@", result);
-    if([result count] > 0 && result != nil)
+    if(!IsEmpty(result)) //[result count] > 0 && result != nil)
     {
-        PhotoID = [[[result objectAtIndex:0] objectForKey:@"PhotoID"] intValue];
-        return PhotoID;
+        return [[[result objectAtIndex:0] objectForKey:@"PhotoID"] intValue];
     }
-
-    if(![result count]){
+    else
+    {
         double Date = convertDate2Double([asset valueForProperty:ALAssetPropertyDate]);
         //[[asset valueForProperty:ALAssetPropertyDate] timeIntervalSince1970]
         NSString *AssetType = [asset valueForProperty:ALAssetPropertyType];

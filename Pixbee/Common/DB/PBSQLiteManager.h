@@ -41,14 +41,12 @@ enum errorCodes {
 
 
 // Users 테이블 업데이트
-// Param muset inclue belows
+// Param must inclue belows
 // NSDictionary *params = @{ @"UserID" : @(UserID), ... };
 // 'UserName' TEXT, 'GUID' TEXT, 'UserNick' TEXT, 'UserProfile' TEXT, 'fbID' TEXT, 'fbName' TEXT, 'fbProfile' TEXT,
 // Ex) NSDictionary *params = @{ @"UserID" : @(UserID), @"UserName" : @"Test User" };
 //[SQLManager updateUser:@{ @"UserID" : @(1), @"UserName" : @"Test User", @"UserProfile" : @"http://graph.facebook.com/100004326285149/picture?type=large" }];
 - (NSArray *)updateUser:(NSDictionary*)params;
-
-
 
 // 해당 UserID의 Users 데이터 모두 삭제.
 // 해당 UserID의 FaceData 데이터 모두 삭제.

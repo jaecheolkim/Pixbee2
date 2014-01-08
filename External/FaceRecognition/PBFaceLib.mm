@@ -59,34 +59,44 @@ using namespace cv;
 - (BOOL)initRecognizer:(PBFaceRecognizer)recognizerType models:(NSArray*)models
 {
     //if(_faceRecognizer) [self setFaceRecognizer:nil];
-    
-    
-    currentRecognizerType = recognizerType;
-    
-    switch (recognizerType) {
-        case EigenFaceRecognizer:
-            //_faceRecognizer = [[CustomFaceRecognizer alloc] initWithEigenFaceRecognizer];
-            unknownPersonThreshold = 0.5f;
-            _model = cv::createEigenFaceRecognizer();
-            break;
-        case FisherFaceRecognizer:
-            //_faceRecognizer = [[CustomFaceRecognizer alloc] initWithFisherFaceRecognizer];
-            unknownPersonThreshold = 0.7f;
-            _model = cv::createFisherFaceRecognizer();
-            break;
-        case LBPHFaceRecognizer:
-            //_faceRecognizer = [[CustomFaceRecognizer alloc] initWithLBPHFaceRecognizer];
-            unknownPersonThreshold = 0.6f;
-            _model = cv::createLBPHFaceRecognizer();
-            break;
-        default:
-            break;
-    }
-    
+
     if(models == nil) return NO;
     
+    if(_model == nullptr) {
+        switch (recognizerType) {
+            case EigenFaceRecognizer:
+                //_faceRecognizer = [[CustomFaceRecognizer alloc] initWithEigenFaceRecognizer];
+                unknownPersonThreshold = 0.5f;
+                _model = cv::createEigenFaceRecognizer();
+                break;
+            case FisherFaceRecognizer:
+                //_faceRecognizer = [[CustomFaceRecognizer alloc] initWithFisherFaceRecognizer];
+                unknownPersonThreshold = 0.7f;
+                _model = cv::createFisherFaceRecognizer();
+                break;
+            case LBPHFaceRecognizer:
+                //_faceRecognizer = [[CustomFaceRecognizer alloc] initWithLBPHFaceRecognizer];
+                unknownPersonThreshold = 0.6f;
+                _model = cv::createLBPHFaceRecognizer();
+                break;
+            default:
+                break;
+        }
+        
+        currentRecognizerType = recognizerType;
+        
+        return [self trainModel:models];
+        
+    } else {
+        NSLog(@"already exist model");
+        return [self updateModel:models];
+    }
+
+    
+    
+    
     //return [_faceRecognizer trainModel:models];
-    return [self trainModel:models];
+    
 }
 
 - (cv::Mat)dataToMat:(NSData *)data width:(NSNumber *)width height:(NSNumber *)height
@@ -118,6 +128,34 @@ using namespace cv;
     
     if (images.size() > 0 && labels.size() > 0) {
         _model->train(images, labels);
+        return YES;
+    }
+    else {
+        return NO;
+    }
+}
+
+- (BOOL)updateModel:(NSArray *)models
+{
+    std::vector<cv::Mat> images;
+    std::vector<int> labels;
+    
+    for(NSDictionary *model in models){
+        int UserID = [[model objectForKey:@"UserID"] intValue];
+        NSData *imageData = [model objectForKey:@"imageData"];
+        
+        // Then convert NSData to a cv::Mat. Images are standardized into 100x100
+        cv::Mat faceData = [self dataToMat:imageData
+                                     width:[NSNumber numberWithInt:100]
+                                    height:[NSNumber numberWithInt:100]];
+        // Put this image into the model
+        images.push_back(faceData);
+        labels.push_back(UserID);
+        
+    }
+    
+    if (images.size() > 0 && labels.size() > 0) {
+        _model->update(images, labels);
         return YES;
     }
     else {

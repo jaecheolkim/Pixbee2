@@ -295,7 +295,12 @@
     __block UIImage *faceImage;
     
     [FaceLib initDetector:CIDetectorAccuracyLow Tacking:NO];
-    __block BOOL isFaceRecRedy = [FaceLib initRecognizer:LBPHFaceRecognizer models:[SQLManager getTrainModels]];
+
+    __block BOOL isFaceRecRedy;
+    NSArray *trainModel = [SQLManager getTrainModels];
+    if(!IsEmpty(trainModel)){
+        isFaceRecRedy = [FaceLib initRecognizer:LBPHFaceRecognizer models:trainModel];
+    }
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         @autoreleasepool {
@@ -322,7 +327,7 @@
                     [_faceAssets addObject:@{@"AssetURL":AssetURL , @"GroupURL":GroupURL, @"faces":fs}];
                     
                     // 신규 포토 저장.
-                    // Save DB. [Photos]
+                    // Save DB. [Photos] 얼굴이 검출된 사진만 Photos Table에 저장.
                     PhotoID = [SQLManager newPhotoWith:photoAsset withGroupAssetURL:GroupURL];
                     
                     for(CIFaceFeature *face in fs){
@@ -336,8 +341,6 @@
                                 if(isFaceRecRedy){
                                     NSDictionary *match = [FaceLib recognizeFaceFromUIImage:faceImage];
                                     if(match != nil){
-                                    
-                                        
                                         NSLog(@"Match : %@", match);
                                         if([[match objectForKey:@"UserID"] intValue] == UserID && [[match objectForKey:@"confidence"] doubleValue] < 60.f){
                                             int PhotoNo = [SQLManager newUserPhotosWith:[[match objectForKey:@"UserID"] intValue]

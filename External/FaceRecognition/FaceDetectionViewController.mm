@@ -103,8 +103,13 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     NSDictionary *detectorOptions = @{ CIDetectorAccuracy : CIDetectorAccuracyLow, CIDetectorTracking : @(YES) };
 	faceDetector = [CIDetector detectorOfType:CIDetectorTypeFace context:nil options:detectorOptions];
 
-    if(self.faceMode == FaceModeRecognize)
-        isFaceRecRedy = [FaceLib initRecognizer:LBPHFaceRecognizer models:[SQLManager getTrainModels]];
+    if(self.faceMode == FaceModeRecognize) {
+        NSArray *trainModel = [SQLManager getTrainModels];
+        if(!IsEmpty(trainModel)){
+            isFaceRecRedy = [FaceLib initRecognizer:LBPHFaceRecognizer models:trainModel];
+        }
+    }
+    
     
 
     recognisedFaces = @{}.mutableCopy;
@@ -887,8 +892,6 @@ bail:
             
             sqlite3_finalize(statement);
 
-            self.numPicsTaken++;
-            
             dispatch_async(dispatch_get_main_queue(), ^{
                 UIImage *faceImage = [FaceLib MatToUIImage:cvImage];
                 if(faceImage) [faceImageView setImage:faceImage];
@@ -905,6 +908,7 @@ bail:
                 }
             });
             
+            self.numPicsTaken++;
 
             
         }

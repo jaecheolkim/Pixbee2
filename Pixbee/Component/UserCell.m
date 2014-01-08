@@ -111,8 +111,15 @@
     
     
     // 사용자 이미지
-    [self.userImage setImageWithURL:[NSURL URLWithString:[user objectForKey:@"UserProfile"]]
-                   placeholderImage:[UIImage imageNamed:@"photo_profile_hive"]]; //photo_profile_hive //placeholder.png
+    if(IsEmpty([user objectForKey:@"UserProfile"])) {
+        int UserID = [[user objectForKey:@"UserID"] intValue];
+        
+    } else {
+        NSString *urlSting = [user objectForKey:@"UserProfile"];
+        [self.userImage setImageWithURL:[NSURL URLWithString:urlSting]
+                       placeholderImage:[UIImage imageNamed:@"photo_profile_hive"]]; //photo_profile_hive //placeholder.png
+    }
+
     
     // 사용자 이름
     [self.userName setText:[user objectForKey:@"UserName"]];
