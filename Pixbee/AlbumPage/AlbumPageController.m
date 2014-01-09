@@ -289,7 +289,17 @@
 }
 
 - (void)doneUserCell:(UserCell *)cell {
-    //[self.editCell.inputName resignFirstResponder];
+    NSString *inputUserName = cell.inputName.text;
+    NSString *cellUserName = [cell.user objectForKey:@"UserName"];
+    int cellUserID = [[cell.user objectForKey:@"UserID"] intValue];
+    
+    if(![cellUserName isEqualToString:inputUserName] && !IsEmpty(inputUserName)){
+        //Update DB
+        NSArray *result = [SQLManager updateUser:@{ @"UserID" : @(cellUserID), @"UserName" :inputUserName}];
+        if(!IsEmpty(result))
+            cell.userName.text = inputUserName;
+    }
+    NSLog(@"Input text : %@", cell.inputName.text);
     [self.tableView setEditing:NO];
     [self.tableView setScrollEnabled:YES];
     self.editCell = nil;
@@ -313,7 +323,7 @@
 - (void)deleteSelectedCell
 {
     
-    NSIndexPath *indexPath = [self.tableView indexPathForCell:self.editCell];
+    NSIndexPath *indexPath = editIndexPath; //[self.tableView indexPathForCell:self.editCell];
     
     NSDictionary *users = [self.usersPhotos objectAtIndex:indexPath.row];
     NSDictionary *user = [users objectForKey:@"user"];

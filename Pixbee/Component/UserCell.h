@@ -31,6 +31,7 @@
 // Selection
 @property (strong, nonatomic) IBOutlet UIImageView *checkIcon;
 
+@property (nonatomic, retain) NSDictionary *user;
 
 - (IBAction)editButtonClickHandler:(id)sender;
 - (IBAction)deleteButtonClickHandler:(id)sender;

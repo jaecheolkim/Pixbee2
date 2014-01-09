@@ -24,6 +24,7 @@
 @synthesize editButton;
 @synthesize countLabel;
 @synthesize arrowIcon;
+@synthesize user;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
@@ -108,6 +109,7 @@
      fbProfile		:  페북 프로필 사진 	(default = nil)	: blob
      timestamp      :  생성일자		: datetime
      */
+    [self setUser:user];
     
     int UserID = [[user objectForKey:@"UserID"] intValue];
     
