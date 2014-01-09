@@ -265,6 +265,7 @@
 		80D5B62D18759293000CD8D7 /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 80D5B62A18759293000CD8D7 /* FacebookSDK.framework */; };
 		80D5B62E18759293000CD8D7 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 80D5B62B18759293000CD8D7 /* opencv2.framework */; };
 		80D5B62F18759293000CD8D7 /* SDWebImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 80D5B62C18759293000CD8D7 /* SDWebImage.framework */; };
+		80E36396187E45E000A5DF57 /* profile.png in Resources */ = {isa = PBXBuildFile; fileRef = 80E36395187E45E000A5DF57 /* profile.png */; };
 		80F9DD8E187B299800A1BF21 /* UIImage+Addon.m in Sources */ = {isa = PBXBuildFile; fileRef = 80F9DD8D187B299800A1BF21 /* UIImage+Addon.m */; };
 		80F9DD91187B9BA300A1BF21 /* UIButton+FaceIcon.m in Sources */ = {isa = PBXBuildFile; fileRef = 80F9DD90187B9BA300A1BF21 /* UIButton+FaceIcon.m */; };
 /* End PBXBuildFile section */
@@ -672,6 +673,7 @@
 		80D5B62A18759293000CD8D7 /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FacebookSDK.framework; path = ../../../FacebookSDK.framework; sourceTree = "<group>"; };
 		80D5B62B18759293000CD8D7 /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = opencv2.framework; path = ../../../opencv2.framework; sourceTree = "<group>"; };
 		80D5B62C18759293000CD8D7 /* SDWebImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDWebImage.framework; path = ../../../SDWebImage.framework; sourceTree = "<group>"; };
+		80E36395187E45E000A5DF57 /* profile.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = profile.png; sourceTree = "<group>"; };
 		80F9DD8C187B299800A1BF21 /* UIImage+Addon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Addon.h"; sourceTree = "<group>"; };
 		80F9DD8D187B299800A1BF21 /* UIImage+Addon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Addon.m"; sourceTree = "<group>"; };
 		80F9DD8F187B9BA300A1BF21 /* UIButton+FaceIcon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIButton+FaceIcon.h"; sourceTree = "<group>"; };
@@ -1073,6 +1075,7 @@
 		7856F6F11849D1B700A17349 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				80E36395187E45E000A5DF57 /* profile.png */,
 				80D5B61A186F340D000CD8D7 /* filter */,
 				80D5521A186C8E8200B54974 /* hive_line.png */,
 				78C1EAF0186B0A780072E7DB /* addfacetab_select@2x.png */,
@@ -1747,6 +1750,7 @@
 				78C1EB42186B0A790072E7DB /* controller@2x.png in Resources */,
 				7805A6D71866E7B800B234C1 /* camera@2x.png in Resources */,
 				7805A6E31866E7B800B234C1 /* move@2x.png in Resources */,
+				80E36396187E45E000A5DF57 /* profile.png in Resources */,
 				7805A6D51866E7B800B234C1 /* Backbutton@2x.png in Resources */,
 				78C1EB70186B0A790072E7DB /* social_twitter@2x.png in Resources */,
 				78C1EB47186B0A790072E7DB /* facehive@2x.png in Resources */,

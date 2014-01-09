@@ -20,6 +20,8 @@
 @interface AlbumPageController () <UITableViewDelegate, UITableViewDataSource, FBFriendControllerDelegate, UserCellDelegate, UIActionSheetDelegate> {
     CGFloat _keyboardHeight;
     NSIndexPath *editIndexPath;
+    
+    int ActionSheetType;
 }
 
 @property (strong, nonatomic) IBOutlet UserAddView *addUserView;
@@ -196,7 +198,13 @@
 }
 
 - (IBAction)userAddViewClickHandler:(id)sender {
-    UIActionSheet *popupQuery = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Camera", @"From Photo Album", nil];
+    ActionSheetType = 100;
+
+    UIActionSheet *popupQuery = [[UIActionSheet alloc] initWithTitle:nil
+                                                            delegate:self
+                                                   cancelButtonTitle:@"Cancel"
+                                              destructiveButtonTitle:nil
+                                                   otherButtonTitles:@"Camera", @"From Photo Album", nil];
 	[popupQuery showInView:self.view];
 }
 
@@ -281,25 +289,55 @@
 }
 
 - (void)doneUserCell:(UserCell *)cell {
+    //[self.editCell.inputName resignFirstResponder];
     [self.tableView setEditing:NO];
     [self.tableView setScrollEnabled:YES];
     self.editCell = nil;
 }
 
 - (void)deleteUserCell:(UserCell *)cell {
-    [self doneUserCell:cell];
+    [self.editCell.inputName resignFirstResponder];
     
-    NSIndexPath *indexPath = [self.tableView indexPathForCell:cell];
-    NSArray *deleteIndexPaths = @[indexPath];
+    
+    
+    ActionSheetType = 200;
+    UIActionSheet *deleteMenu = [[UIActionSheet alloc] initWithTitle:nil
+                                 delegate:self
+                                 cancelButtonTitle:NSLocalizedString(@"Cancel", @"")
+								 destructiveButtonTitle:NSLocalizedString(@"Delete selected FaceTag", @"")
+								 otherButtonTitles:nil];
+	[deleteMenu showInView:self.view];
 
-    [self.usersPhotos removeObjectAtIndex:indexPath.row];
-   
-    [self.tableView beginUpdates];
-    [self.tableView deleteRowsAtIndexPaths:deleteIndexPaths withRowAnimation:UITableViewRowAnimationFade];
-    [self.tableView endUpdates];
-    
-    // 여기도 DB 업데이트 
 }
+
+- (void)deleteSelectedCell
+{
+    
+    NSIndexPath *indexPath = [self.tableView indexPathForCell:self.editCell];
+    
+    NSDictionary *users = [self.usersPhotos objectAtIndex:indexPath.row];
+    NSDictionary *user = [users objectForKey:@"user"];
+    int UserID = [[user objectForKey:@"UserID"] intValue];
+    
+    if([SQLManager deleteUser:UserID]){
+        
+        NSArray *deleteIndexPaths = @[indexPath];
+        
+        [self.usersPhotos removeObjectAtIndex:indexPath.row];
+        
+        [self.tableView beginUpdates];
+        [self.tableView deleteRowsAtIndexPaths:deleteIndexPaths withRowAnimation:UITableViewRowAnimationFade];
+        [self.tableView endUpdates];
+    } else {
+        NSLog(@"Can't delete Users db row..");
+#warning Error message 뿌려주기
+    }
+    
+    [self.tableView setEditing:NO];
+    [self.tableView setScrollEnabled:YES];
+    self.editCell = nil;
+}
+
 
 - (void)frientList:(UserCell *)cell appear:(BOOL)show {
     if (show) {
@@ -333,24 +371,34 @@
 #pragma mark UIActionSheetDelegate
 // Called when a button is clicked. The view will be automatically dismissed after this call returns
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
-    switch (buttonIndex) {
-        // Camera
-        case 0:
-            NSLog(@"Camera Clicked");
-            [self performSegueWithIdentifier:SEGUE_3_1_TO_6_1 sender:self];
-            //PopCamera
-            break;
-        // From Photo Album
-        case 1:
-            NSLog(@"From Photo Album Clicked");
-            [self performSegueWithIdentifier:SEGUE_3_1_TO_4_3 sender:self];
-            //Segue3_1to6_1
-            break;
-        // Cancel
-        case 2:
-            NSLog(@"Cancel Clicked");
-            break;
+    if(ActionSheetType == 200){
+        
+        NSLog(@"Button index = %d", (int)buttonIndex);
+        if(buttonIndex == 0) {
+            [self deleteSelectedCell];
+        }
+        
+    } else if(ActionSheetType == 100){
+        switch (buttonIndex) {
+                // Camera
+            case 0:
+                NSLog(@"Camera Clicked");
+                [self performSegueWithIdentifier:SEGUE_3_1_TO_6_1 sender:self];
+                //PopCamera
+                break;
+                // From Photo Album
+            case 1:
+                NSLog(@"From Photo Album Clicked");
+                [self performSegueWithIdentifier:SEGUE_3_1_TO_4_3 sender:self];
+                //Segue3_1to6_1
+                break;
+                // Cancel
+            case 2:
+                NSLog(@"Cancel Clicked");
+                break;
+        }
     }
+
 }
 
 -(void)keyboardWillShow:(NSNotification*)notification {

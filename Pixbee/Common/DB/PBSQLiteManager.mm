@@ -8,6 +8,8 @@
 
 #import "PBSQLiteManager.h"
 #import "PBFaceLib.h"
+#import "SDImageCache.h"
+#import "UIImage+Addon.h"
 
 @interface PBSQLiteManager ()
 {
@@ -538,6 +540,23 @@
     return UserID;
 }
 
+// 해당 User의 Profile 이미지 가져오기
+- (UIImage *)getUserProfileImage:(int)UserID
+{
+#warning 프로필 이미지 가져오기 추가 필요
+    
+    NSString *imagePath = [NSString stringWithFormat:@"profileImage%d",UserID];
+    UIImage *profileImage = [[SDImageCache sharedImageCache] imageFromMemoryCacheForKey:imagePath];
+    if(IsEmpty(profileImage)) {
+        UIImage *image = [UIImage imageNamed:@"profile"];
+        profileImage = [UIImage maskImage:image withMask:[UIImage imageNamed:@"photo_profile_hive@2x.png"]];
+        [[SDImageCache sharedImageCache] storeImage:profileImage forKey:imagePath toDisk:YES];
+    }
+    return profileImage;
+}
+
+#warning profile 수정하기 추가 필요
+
 // 해당 User ID 가져오기.
 - (int)getUserID:(NSString *)UserName
 {
@@ -624,12 +643,9 @@ for (id param in params ) {
     int UserID;
     
     NSArray *keys = params.allKeys;
-    //NSArray *values = params.allValues;
-    
+
     for(NSString*key in keys){
-//        NSString *key = [keys objectAtIndex:0];
-//        NSString *value = [values objectAtIndex:0];
-        
+
         if([key isEqualToString:@"UserID"]) {
             UserID = [[params objectForKey:@"UserID"] intValue];
             whereParam = [NSString stringWithFormat:@" UserID = %d ", UserID];

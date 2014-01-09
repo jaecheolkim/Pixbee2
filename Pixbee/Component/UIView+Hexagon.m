@@ -12,7 +12,7 @@
 
 - (void)configureLayerForHexagon
 {
-    UIImage *maskImage = [UIImage imageNamed:@"photo_profile_hive"];
+    UIImage *maskImage = [UIImage imageNamed:@"photo_profile_hive@2x.png"];
     
     CAShapeLayer *maskLayer = [CAShapeLayer layer];
     maskLayer.fillRule = kCAFillRuleEvenOdd;

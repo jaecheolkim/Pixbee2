@@ -36,7 +36,8 @@
     CGImageRef maskImageRef = [mask_Image CGImage];
     
     // create a bitmap graphics context the size of the image
-    CGContextRef mainViewContentContext = CGBitmapContextCreate (NULL, mask_Image.size.width, mask_Image.size.height, 8, 0, colorSpace, kCGImageAlphaPremultipliedLast);
+    CGContextRef mainViewContentContext = CGBitmapContextCreate (NULL, mask_Image.size.width, mask_Image.size.height, 8, 0, colorSpace, kCGImageAlphaPremultipliedFirst);
+    CGColorSpaceRelease( colorSpace );
     
     if (mainViewContentContext==NULL)
         return NULL;
@@ -49,6 +50,10 @@
     
     CGRect rect1 = {{0, 0}, {mask_Image.size.width, mask_Image.size.height}};
     CGRect rect2 = {{-((image.size.width*widthratio)-mask_Image.size.width)/2 , -((image.size.height*heightratio)-mask_Image.size.height)/2}, {image.size.width*widthratio, image.size.height*heightratio}};
+    
+    CGContextSetShouldAntialias(mainViewContentContext, YES);
+    CGContextSetAllowsAntialiasing(mainViewContentContext, YES);
+    CGContextSetInterpolationQuality(mainViewContentContext, kCGInterpolationHigh);
     
     CGContextClipToMask(mainViewContentContext, rect1, maskImageRef);
     CGContextDrawImage(mainViewContentContext, rect2, image.CGImage);

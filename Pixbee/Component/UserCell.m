@@ -109,15 +109,20 @@
      timestamp      :  생성일자		: datetime
      */
     
+    int UserID = [[user objectForKey:@"UserID"] intValue];
     
     // 사용자 이미지
     if(IsEmpty([user objectForKey:@"UserProfile"])) {
-        int UserID = [[user objectForKey:@"UserID"] intValue];
-        
+        [self.userImage setImage:[SQLManager getUserProfileImage:UserID]];
     } else {
         NSString *urlSting = [user objectForKey:@"UserProfile"];
-        [self.userImage setImageWithURL:[NSURL URLWithString:urlSting]
-                       placeholderImage:[UIImage imageNamed:@"photo_profile_hive"]]; //photo_profile_hive //placeholder.png
+        if ([urlSting hasPrefix:@"http"]){
+            [self.userImage setImageWithURL:[NSURL URLWithString:urlSting]
+                           placeholderImage:[UIImage imageNamed:@"photo_profile_hive@2x.png"]];
+        }
+        else if([urlSting hasSuffix:@"png"]) {
+            [self.userImage setImage:[SQLManager getUserProfileImage:UserID]];
+        }
     }
 
     
