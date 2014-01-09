@@ -472,8 +472,7 @@
 - (NSArray *)newUser
 {
     //int UserID = -1;
-    NSString *UserName = GlobalValue.userName;
-    if(UserName == nil) UserName = @"Unknown";
+    NSString *UserName = @"Unknown";
     
     NSString *query = @"SELECT * FROM Users WHERE UserName LIKE 'Unknown%';";
     NSArray *result = [SQLManager getRowsForQuery:query];
@@ -652,7 +651,7 @@ for (id param in params ) {
         } else {
 
             NSString *keyNvalue = [NSString stringWithFormat:@" %@ = '%@' ", key, [params objectForKey:key]];
-            if(index > 0)
+            if(index > 0 && !IsEmpty(updateParam))
                 updateParam = [NSString stringWithFormat:@" %@ , %@ ", updateParam, keyNvalue];
             else
                 updateParam = keyNvalue;

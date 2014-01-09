@@ -21,6 +21,7 @@ static inline BOOL IsEmpty(id thing) {
 
 @interface GlobalValues : NSObject
 @property (nonatomic, strong) NSString* userName;
+@property (nonatomic) int UserID;
 @property (nonatomic, strong) NSString* lastAssetURL;
 
 + (GlobalValues*) sharedInstance;

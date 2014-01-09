@@ -13,8 +13,7 @@
 
 @interface PBViewController () <FBHelperDelegate>
 {
-    BOOL alreadyChecked;
-    BOOL alreadyPushed;
+    BOOL isFirstVisit;
 }
 // 객체
 @property (strong, nonatomic) IBOutlet UIView *viewFBLoginViewArea;
@@ -34,12 +33,7 @@
     FBHELPER.delegate = self;
     [FBHELPER loadFBLoginView:self.viewFBLoginViewArea];
     
-    if(GlobalValue.userName) {
-        alreadyChecked = YES;
-        [_viewFBLoginViewArea setHidden:YES];
-        [_indicator startAnimating];
-        [self checkNewPhotos];
-    }
+    [_indicator setHidesWhenStopped:YES];
 }
 
 - (void)didReceiveMemoryWarning
@@ -60,6 +54,9 @@
 
 - (void)checkNewPhotos
 {
+    [_viewFBLoginViewArea setHidden:YES];
+    [_indicator startAnimating];
+    
     //Check new photos and go main dashboard
     [AssetLib syncAlbumToDB:^(NSArray *result) {
         //NSLog(@"Result = %@", result);
@@ -87,32 +84,34 @@
 - (void)goNext
 {
     [_indicator stopAnimating];
-    if(alreadyPushed) return;
     
     self.navigationController.navigationBarHidden = NO;
-    alreadyPushed = YES;
-    if(alreadyChecked)
+ 
+    if(!isFirstVisit)
         [self performSegueWithIdentifier:SEGUE_1_2_TO_3_1 sender:self];
     else
         [self performSegueWithIdentifier:SEGUE_FACEANALYZE sender:self];
 }
 
 #pragma mark FBHelperDelegate
+
+//맨 마지막에 호출 됨.
 - (void)FBLoginFetchedUserInfo:(id<FBGraphUser>)user
 {
     NSLog(@"====== FB Loged in... user :%@", user );
-    
-
     NSLog(@"========================FB Loged user : %@", user.name );
-    GlobalValue.userName = user.name;
     
-    int UserID = [SQLManager newUserWithFBUser:user];
- 
-    NSLog(@"Default user name = %@ / id = %d", GlobalValue.userName, UserID);
+    if(!GlobalValue.userName) {
+        int UserID = [SQLManager newUserWithFBUser:user];
+        
+        GlobalValue.userName = user.name;
+        GlobalValue.UserID = UserID;
+        NSLog(@"Default user name = %@ / id = %d", GlobalValue.userName, UserID);
+        isFirstVisit = YES;
+    }
 
-    NSLog(@"========================GLOBAL_VALUE user : %@", GlobalValue.userName );
-    
-    NSLog(@"====> loginViewShowingLoggedInUser:");
+    [self checkNewPhotos];
+
 }
 
 - (void)FBLogedInUser
@@ -148,7 +147,7 @@
                                   NSArray *friends = [data objectForKey:@"data"];
                                   FBHELPER.friends = friends;
                                   
-                                  [self goNext];
+                                  //[self goNext];
                                   //[self performSegueWithIdentifier:SEGUE_FACEANALYZE sender:self];
                               }];
 

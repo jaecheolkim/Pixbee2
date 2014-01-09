@@ -9,6 +9,7 @@
 #import <objc/runtime.h>
 #import "GlobalValues.h"
 
+#define  KEY_USERID             @"userID"
 #define  KEY_USERNAME           @"userName"
 #define  KEY_LASTASSETURL       @"lastAssetURL"
 
@@ -53,6 +54,15 @@
     return [self readObjectFromDefault:KEY_USERNAME];
 }
 
+- (void)setUserID:(int)UserID
+{
+    [self writeObjectToDefault:[NSString stringWithFormat:@"%d",UserID] withKey:KEY_USERID];
+}
+
+- (int)UserID
+{
+    return [[self readObjectFromDefault:KEY_USERID] intValue];
+}
 
 - (void)setLastAssetURL:(NSString *)lastAssetURL
 {

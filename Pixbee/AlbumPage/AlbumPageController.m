@@ -366,17 +366,45 @@
 #pragma mark FBFriendControllerDelegate
 
 - (void)selectedFBFriend:(NSDictionary *)friend {
-    self.editCell.userName.text = [friend objectForKey:@"name"];
-    self.editCell.inputName.text = @"";
+    NSDictionary *user = self.editCell.user;
     
-    NSString *picurl = [[[friend objectForKey:@"picture"] objectForKey:@"data"] objectForKey:@"url"];
+    int cellUserID = [[user objectForKey:@"UserID"] intValue];
+    NSString *cellUserName = [user objectForKey:@"UserName"];
+    NSString *cellfbID = [user objectForKey:@"fbID"];
     
-    [self.editCell.userImage setImageWithURL:[NSURL URLWithString:picurl]
-                     placeholderImage:[UIImage imageNamed:@"placeholder.png"]];
+    NSString *fbUserName = [friend objectForKey:@"name"];
+    NSString *fbID = [friend objectForKey:@"id"];
+    NSString *fbProfile = [[[friend objectForKey:@"picture"] objectForKey:@"data"] objectForKey:@"url"];
+
     
-    [self.editCell doneButtonClickHandler:nil];
+    if(GlobalValue.UserID != cellUserID && ![fbID isEqualToString:cellfbID])
+    {  // 로그인 한 사용자는 페북 계정을 cell에서 바꿀 수 없음.
+        
+        
+        NSArray *result = [SQLManager updateUser:@{ @"UserID" : @(cellUserID), @"UserName" : fbUserName,
+                                                  @"UserNick" : fbUserName,  @"UserProfile" : fbProfile,
+                                                  @"fbID" : fbID, @"fbName" : fbUserName,
+                                                  @"fbProfile" : fbProfile }];
+
+        if(!IsEmpty(result)) {
+            self.editCell.userName.text = fbUserName;
+            self.editCell.inputName.text = @"";
+            
+            [self.editCell.userImage setImageWithURL:[NSURL URLWithString:fbProfile]
+                                    placeholderImage:[UIImage imageNamed:@"placeholder.png"]];
+            
+            [self.editCell doneButtonClickHandler:nil];
+        }
+
+
+    }
+        
+    
+
+    
     // DB에 저장하는 부분 추가
-}
+    
+ }
 
 #pragma mark UIActionSheetDelegate
 // Called when a button is clicked. The view will be automatically dismissed after this call returns
