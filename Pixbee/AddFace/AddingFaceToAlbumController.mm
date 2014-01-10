@@ -122,6 +122,8 @@
               int totalV = [[processInfo objectForKey:@"Total"] intValue];
               int currentV = [[processInfo objectForKey:@"Current"] intValue];
               int matchV = [[processInfo objectForKey:@"Match"] intValue];
+              NSLog(@"currentV = %d / totalV = %d / matchV = %d", currentV, totalV, matchV);
+              
               [self.progressView setProgress:((float)currentV/(float)totalV) animated:YES];
               [self.ProgressGauge setText:[NSString stringWithFormat:@"%d", matchV]];
               
@@ -148,7 +150,8 @@
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-    AssetLib.faceProcessStop = YES;
+    // 중간에 얼굴 스캔 멈춰서 주석 담.
+    //AssetLib.faceProcessStop = YES;
     // Dispose of any resources that can be recreated.
 }
 
@@ -272,13 +275,13 @@
 }
 
 - (void)didScrollToPage:(NSInteger)pageNumber inFlowView:(SBPageFlowView *)flowView {
-    NSLog(@"Scrolled to page # %d", pageNumber);
+//    NSLog(@"Scrolled to page # %d", pageNumber);
     _currentPage = pageNumber;
 }
 
 - (void)didSelectItemAtIndex:(NSInteger)index inFlowView:(SBPageFlowView *)flowView
 {
-    NSLog(@"didSelectItemAtIndex: %d", index);
+//    NSLog(@"didSelectItemAtIndex: %d", index);
     
     UIAlertView  *alert = [[UIAlertView alloc] initWithTitle:@""
                                                      message:[NSString stringWithFormat:@"您当前选择的是第 %d 个图片",index]

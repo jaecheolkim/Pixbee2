@@ -320,11 +320,11 @@
                                                                     }];
                 counter = [fs count];
                 
-                NSString *AssetURL = [photoAsset valueForProperty:ALAssetPropertyAssetURL];
+//                NSString *AssetURL = [photoAsset valueForProperty:ALAssetPropertyAssetURL];
                 NSString *GroupURL = [_totalAssets[i] objectForKey:@"GroupURL"];
                 
                 if(counter) {
-                    [_faceAssets addObject:@{@"AssetURL":AssetURL , @"GroupURL":GroupURL, @"faces":fs}];
+//                    [_faceAssets addObject:@{@"AssetURL":AssetURL , @"GroupURL":GroupURL, @"faces":fs}];
                     
                     // 신규 포토 저장.
                     // Save DB. [Photos] 얼굴이 검출된 사진만 Photos Table에 저장.
@@ -362,12 +362,12 @@
                 workTime = 0 - [date timeIntervalSinceNow];
                 _currentProcess++;
                 
-                if (faceImage) {
+                //if (faceImage) {
                     NSDictionary *processInfo = @{ @"Total" : @(_totalProcess), @"Current":@(_currentProcess), @"Match":@(_matchCount),
                                                    @"Asset" : photoAsset, @"Face" : faceImage};
                     
                     enumerationBlock(processInfo);
-                }
+                //}
             }
             
             completion(YES);

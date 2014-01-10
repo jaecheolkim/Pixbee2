@@ -101,7 +101,7 @@
     NSLog(@"====== FB Loged in... user :%@", user );
     NSLog(@"========================FB Loged user : %@", user.name );
     
-    if(!GlobalValue.userName) {
+    if(IsEmpty(GlobalValue.userName)) {
         int UserID = [SQLManager newUserWithFBUser:user];
         
         GlobalValue.userName = user.name;
@@ -165,7 +165,7 @@
     if ([segue.identifier isEqualToString:SEGUE_FACEANALYZE]) {
         
         int UserID = [SQLManager getUserID:GlobalValue.userName];
-
+        
         if(UserID) {
             UINavigationController *navi = segue.destinationViewController;
             FaceDetectionViewController *destination = [navi.viewControllers objectAtIndex:0];

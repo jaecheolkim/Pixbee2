@@ -19,20 +19,20 @@
     [TestFlight takeOff:@"0d73a652-a45f-4b76-9fec-026bd931c1f7"];
     [SQLManager initDataBase];
 
-//    // Uncomment to change the background color of navigation bar
-//    [[UINavigationBar appearance] setBarTintColor:UIColorFromRGB(0xffcf0e)];
-    
-    // Uncomment to change the color of back button
-    [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
-    
-    // Uncomment to assign a custom backgroung image
-    [[UINavigationBar appearance] setBackgroundImage:[UIImage imageNamed:@"topbar@2x.png"] forBarMetrics:UIBarMetricsDefault];
-    
-    // Uncomment to change the back indicator image
-    
-    [[UINavigationBar appearance] setBackIndicatorImage:[UIImage imageNamed:@"back_btn.png"]];
-    [[UINavigationBar appearance] setBackIndicatorTransitionMaskImage:[UIImage imageNamed:@"back_btn.png"]];
-    
+//////    // Uncomment to change the background color of navigation bar
+//////    [[UINavigationBar appearance] setBarTintColor:UIColorFromRGB(0xffcf0e)];
+////    
+////    // Uncomment to change the color of back button
+////    [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
+////    
+////    // Uncomment to assign a custom backgroung image
+//    [[UINavigationBar appearance] setBackgroundImage:[UIImage imageNamed:@"topbar@2x.png"] forBarMetrics:UIBarMetricsDefault];
+//    
+//    // Uncomment to change the back indicator image
+//    
+//    [[UINavigationBar appearance] setBackIndicatorImage:[UIImage imageNamed:@"back_btn.png"]];
+//    [[UINavigationBar appearance] setBackIndicatorTransitionMaskImage:[UIImage imageNamed:@"back_btn.png"]];
+//    
     
 
 //    self.window = [[UIWindow alloc] initWithFrame:UIScreen.mainScreen.bounds];

@@ -289,7 +289,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 			if (imageDataSampleBuffer)
 			{
 				imageData = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageDataSampleBuffer];
-                self.navigationController.navigationBarHidden = NO;
+                //self.navigationController.navigationBarHidden = NO;
                 
 
 //                [self performSegueWithIdentifier:SEGUE_GO_FILTER sender:self];
