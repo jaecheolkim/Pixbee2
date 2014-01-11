@@ -98,14 +98,7 @@
 }
 
 - (void) calAllPhotos {
-    int allphotocount = 0;
-    if (self.usersPhotos) {
-        for (NSDictionary *user in self.usersPhotos) {
-            NSArray *photos = [user objectForKey:@"photos"];
-            allphotocount += [photos count];
-        }
-    }
-    
+    int allphotocount = [[PBAssetsLibrary sharedInstance].totalAssets count];
     self.allPhotosView.countLabel.text = [NSString stringWithFormat:@"%d", allphotocount];
 }
 
