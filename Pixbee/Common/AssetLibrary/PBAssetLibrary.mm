@@ -280,8 +280,8 @@
      }];
 }
 
-//- (void)checkFaces:(ALAsset*)photoAsset user:(int)userID
-//{
+- (void)saveNewPhotoToDB:(ALAsset*)photoAsset user:(int)userID
+{
 //    CGImageRef cgImage = [photoAsset aspectRatioThumbnail];
 //    CIImage *ciImage = [CIImage imageWithCGImage:cgImage];
 //    
@@ -328,7 +328,7 @@
 //            
 //        }
 //    }
-//}
+}
 
 - (void)checkFacesFor:(int)UserID usingEnumerationBlock:(void (^)(NSDictionary *processInfo))enumerationBlock completion:(void (^)(BOOL finished))completion {
     NSLog(@"Start...");

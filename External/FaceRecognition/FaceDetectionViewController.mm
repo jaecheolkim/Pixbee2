@@ -310,7 +310,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
                      }
                      
                      dispatch_async(dispatch_get_main_queue(), ^(void) {
-                         
+                         [self performSegueWithIdentifier:SEGUE_GO_FILTER sender:self];
                          // Do something on main thread.
                      });
 
@@ -325,7 +325,12 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     ALAssetsLibraryAssetForURLResultBlock resultBlock = ^(ALAsset *asset)
     {
         NSLog(@"success load ALAsset.... ");
-        UIImage *image = [UIImage imageWithCGImage:[asset thumbnail]];
+        //UIImage *image = [UIImage imageWithCGImage:[asset thumbnail]];
+        for(id user in users){
+            int userID = [user intValue];
+            [AssetLib saveNewPhotoToDB:asset user:userID];
+        }
+        
     };
     
     ALAssetsLibraryAccessFailureBlock failureBlock  = ^(NSError *error)
