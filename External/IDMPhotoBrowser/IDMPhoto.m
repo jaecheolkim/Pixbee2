@@ -191,7 +191,7 @@ caption = _caption;
         ALAssetRepresentation *rep = [myasset defaultRepresentation];
         CGImageRef iref = [rep fullResolutionImage];
         if (iref) {
-            UIImage *largeimage = [UIImage imageWithCGImage:iref];
+            UIImage *largeimage = [UIImage imageWithCGImage:iref scale:1.0 orientation:0];
             self.underlyingImage = largeimage;
             [self performSelectorOnMainThread:@selector(imageLoadingComplete) withObject:nil waitUntilDone:NO];
         }

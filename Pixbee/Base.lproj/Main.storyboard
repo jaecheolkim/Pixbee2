@@ -97,7 +97,7 @@
                                     <outlet property="outView" destination="2Y8-OK-U66" id="TsE-GY-ADb"/>
                                 </connections>
                             </view>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2Cv-T4-kAT">
+                            <button opaque="NO" alpha="0.0" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2Cv-T4-kAT">
                                 <rect key="frame" x="282" y="261" width="36" height="42"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" image="right_toalbum.png">
@@ -107,7 +107,7 @@
                                     <action selector="rightButtonClickHandler:" destination="LLs-kj-u87" eventType="touchUpInside" id="vwZ-DA-Ury"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lL5-ps-TUE">
+                            <button opaque="NO" alpha="0.0" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lL5-ps-TUE">
                                 <rect key="frame" x="1" y="261" width="36" height="42"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" image="left_toalbum.png">
@@ -192,9 +192,11 @@
                         <outlet property="ProgressGauge" destination="lpw-pu-uYc" id="RQP-nI-Uz7"/>
                         <outlet property="faceImageView" destination="HYb-eF-tY4" id="V1P-P8-RTc"/>
                         <outlet property="flowView" destination="lhb-FL-PtZ" id="Mxx-ou-QVp"/>
+                        <outlet property="leftButton" destination="lL5-ps-TUE" id="umq-VN-wLn"/>
                         <outlet property="nameField" destination="dNC-uv-wJG" id="0Fm-qj-y1N"/>
                         <outlet property="photoView" destination="EdM-s9-rGm" id="aZ5-zG-UbJ"/>
                         <outlet property="progressView" destination="lgf-QQ-KLD" id="Btd-Yl-UiL"/>
+                        <outlet property="rightButton" destination="2Cv-T4-kAT" id="GsS-W9-h5H"/>
                         <segue destination="KFK-YT-ZKu" kind="push" identifier="Segue2_2to1_4" customClass="SCTTiltRight" id="TPf-bc-2mJ"/>
                     </connections>
                 </viewController>
@@ -282,7 +284,7 @@
                                         <state key="selected" title="All Photos" image="allphoto_select.png"/>
                                         <connections>
                                             <action selector="allPhotosViewClickHandler:" destination="5fn-Qj-G3E" eventType="touchUpInside" id="tou-tO-68V"/>
-                                            <segue destination="eM8-Ev-WUw" kind="push" identifier="Segue3_1to4_3" id="GxS-RG-54L"/>
+                                            <segue destination="eM8-Ev-WUw" kind="custom" identifier="Segue3_1to4_3" customClass="SCTPushLeft" id="GxS-RG-54L"/>
                                         </connections>
                                     </button>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="arrow.png" translatesAutoresizingMaskIntoConstraints="NO" id="8XY-vU-uEe">
@@ -469,7 +471,7 @@
                     <connections>
                         <outlet property="allPhotosView" destination="Seo-qS-sgu" id="es5-eX-dxg"/>
                         <outlet property="tableView" destination="moc-FK-iUa" id="00Q-0j-Ryd"/>
-                        <segue destination="cgv-md-euH" kind="push" identifier="Segue3_1to4_1" customClass="SCTTiltRight" id="JJq-np-wa1"/>
+                        <segue destination="cgv-md-euH" kind="custom" identifier="Segue3_1to4_1" customClass="SCTTiltRight" id="JJq-np-wa1"/>
                         <segue destination="yBq-FD-dBD" kind="push" identifier="Segue3_1to4_2" id="zId-iR-cJo"/>
                         <segue destination="dri-x2-AEn" kind="push" identifier="Segue3_1to6_1" id="UfP-cN-bC5"/>
                     </connections>
@@ -507,7 +509,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="107" height="28"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="9D4BE621-1B7F-40D7-AEF3-9BAF743488A5" translatesAutoresizingMaskIntoConstraints="NO" id="6aK-Ak-lFj">
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="709664FC-DA73-4765-B8A3-AAB4B169F7D4" translatesAutoresizingMaskIntoConstraints="NO" id="6aK-Ak-lFj">
                                                     <rect key="frame" x="0.0" y="0.0" width="28" height="29"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
@@ -1711,7 +1713,7 @@ more Alex's Photo</string>
         </scene>
     </scenes>
     <resources>
-        <image name="9D4BE621-1B7F-40D7-AEF3-9BAF743488A5" width="628" height="152">
+        <image name="709664FC-DA73-4765-B8A3-AAB4B169F7D4" width="628" height="152">
             <mutableData key="keyedArchiveRepresentation">
 YnBsaXN0MDDUAQIDBAUGPj9YJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoK4HCBMU
 GR4fIyQsLzI4O1UkbnVsbNUJCgsMDQ4PEBESVk5TU2l6ZVYkY2xhc3NcTlNJbWFnZUZsYWdzVk5TUmVw

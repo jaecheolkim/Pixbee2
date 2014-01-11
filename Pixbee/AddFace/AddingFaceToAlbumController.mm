@@ -27,7 +27,9 @@
 @property (strong, nonatomic) IBOutlet DACircularProgressView *progressView;
 @property (strong, nonatomic) IBOutlet UITextField *nameField;
 @property (strong, nonatomic) IBOutlet UILabel *ProgressGauge;
+@property (strong, nonatomic) IBOutlet UIButton *leftButton;
 @property (strong, nonatomic) FBFriendController *friendPopup;
+@property (strong, nonatomic) IBOutlet UIButton *rightButton;
 
 @property (weak, nonatomic) IBOutlet UIImageView *faceImageView;
 
@@ -132,12 +134,17 @@
       }
                  completion:^(BOOL finished){
                      dispatch_async(dispatch_get_main_queue(), ^{
+                         
+                         self.assets = AssetLib.faceAssets;
+                         
                          [self.flowView reloadData];
                          // Wait one second and then fade in the view
                          [UIView animateWithDuration:0.3
                                           animations:^{
                                               self.photoView.alpha = 0.0;
                                               self.flowView.alpha = 1.0;
+                                              self.leftButton.alpha = 1.0;
+                                              self.rightButton.alpha = 1.0;
                                           }
                                           completion:nil];
                      });

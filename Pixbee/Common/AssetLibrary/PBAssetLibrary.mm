@@ -402,8 +402,10 @@
                                             int PhotoNo = [SQLManager newUserPhotosWith:[[match objectForKey:@"UserID"] intValue]
                                                                               withPhoto:PhotoID
                                                                                withFace:FaceNo];
-                                            if(PhotoNo) _matchCount++;
-                                            
+                                            if(PhotoNo) {
+                                                [_faceAssets addObject:photoAsset];
+                                                _matchCount++;
+                                            }
                                         }
                                     }
                                     

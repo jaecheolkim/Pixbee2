@@ -18,6 +18,7 @@
 #import "CopyActivity.h"
 #import "MoveActivity.h"
 #import "NewAlbumActivity.h"
+#import "DeleteActivity.h"
 
 @interface IndividualGalleryController () <UICollectionViewDataSource, UICollectionViewDelegate, IDMPhotoBrowserDelegate, FBFriendControllerDelegate, UserCellDelegate>{
     NSMutableArray *selectedPhotos;
@@ -48,10 +49,6 @@
         // Custom initialization
     }
     return self;
-}
-
-- (void)awakeFromNib {
-    
 }
 
 - (void)viewDidLoad
@@ -197,8 +194,8 @@
         
         NSMutableArray *idmPhotos = [NSMutableArray arrayWithCapacity:1];
         NSDictionary *photoinfo = [self.photos objectAtIndex:indexPath.row];
-            NSString *photo = [photoinfo objectForKey:@"AssetURL"];
-            [idmPhotos addObject:photo];
+        NSString *photo = [photoinfo objectForKey:@"AssetURL"];
+        [idmPhotos addObject:photo];
         
         // Create and setup browser
         IDMPhotoBrowser *browser = [[IDMPhotoBrowser alloc] initWithPhotoURLs:idmPhotos animatedFromView:self.selectedCell]; // using initWithPhotos:animatedFromView: method to use the zoom-in animation
@@ -425,8 +422,9 @@
     CopyActivity *copyActivity = [[CopyActivity alloc] init];
     MoveActivity *moveActivity = [[MoveActivity alloc] init];
     NewAlbumActivity *newalbumActivity = [[NewAlbumActivity alloc] init];
+    DeleteActivity *deleteActivity = [[DeleteActivity alloc] init];
     
-    NSArray *activitys = @[copyActivity, moveActivity, newalbumActivity];
+    NSArray *activitys = @[copyActivity, moveActivity, newalbumActivity, deleteActivity];
     
     self.activityController = [[UIActivityViewController alloc] initWithActivityItems:activityItems applicationActivities:activitys];
     [self.activityController setExcludedActivityTypes:@[UIActivityTypePostToTwitter,
@@ -459,22 +457,22 @@
                        animated:YES
                      completion:^
                     {
-                        NSLog(@"%@", self.activityController);
-                        
-                        UIView *tabView = [[UIView alloc] initWithFrame:CGRectMake(0, 250, 320, 30)];
-                        tabView.backgroundColor = [UIColor whiteColor];
-                        tabView.alpha = 0.9;
-
-                        UIButton *shareButton = [[UIButton alloc] initWithFrame:CGRectMake(10, 5, 20, 20)];
-                        UIButton *deleteButton = [[UIButton alloc] initWithFrame:CGRectMake(280, -5, 32, 40)];
-                        [deleteButton setImage:[UIImage imageNamed:@"trash.png"] forState:UIControlStateNormal];
-
-                        shareButton.backgroundColor = [UIColor blueColor];
-                        [tabView addSubview:shareButton];
-                        [tabView addSubview:deleteButton];
-                        [deleteButton addTarget:self action:@selector(deletePhotos:) forControlEvents:UIControlEventTouchUpInside];
-                        
-                        [self.activityController.view addSubview:tabView];
+//                        NSLog(@"%@", self.activityController);
+//                        
+//                        UIView *tabView = [[UIView alloc] initWithFrame:CGRectMake(0, 250, 320, 30)];
+//                        tabView.backgroundColor = [UIColor whiteColor];
+//                        tabView.alpha = 0.9;
+//
+//                        UIButton *shareButton = [[UIButton alloc] initWithFrame:CGRectMake(10, 5, 20, 20)];
+//                        UIButton *deleteButton = [[UIButton alloc] initWithFrame:CGRectMake(280, -5, 32, 40)];
+//                        [deleteButton setImage:[UIImage imageNamed:@"trash.png"] forState:UIControlStateNormal];
+//
+//                        shareButton.backgroundColor = [UIColor blueColor];
+//                        [tabView addSubview:shareButton];
+//                        [tabView addSubview:deleteButton];
+//                        [deleteButton addTarget:self action:@selector(deletePhotos:) forControlEvents:UIControlEventTouchUpInside];
+//                        
+//                        [self.activityController.view addSubview:tabView];
                         
                     }];
     
@@ -496,6 +494,14 @@
              }
          }
          else if ( [act isEqualToString:@"com.pixbee.newAlbumSharing"] ) {
+             if (self.importView) {
+                 [self performSegueWithIdentifier:SEGUE_4_2_TO_3_2 sender:self];
+             }
+             else {
+                 [self performSegueWithIdentifier:SEGUE_4_1_TO_3_2 sender:self];
+             }
+         }
+         else if ( [act isEqualToString:@"com.pixbee.deleteSharing"] ) {
              if (self.importView) {
                  [self performSegueWithIdentifier:SEGUE_4_2_TO_3_2 sender:self];
              }
