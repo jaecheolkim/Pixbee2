@@ -58,8 +58,6 @@ using namespace cv;
 
 - (BOOL)initRecognizer:(PBFaceRecognizer)recognizerType models:(NSArray*)models
 {
-    //if(_faceRecognizer) [self setFaceRecognizer:nil];
-    
     if(_model == nullptr) {
         switch (recognizerType) {
             case EigenFaceRecognizer:

@@ -13,6 +13,7 @@
 @interface PBAssetsLibrary ()
 {
     CIDetector *detector;
+    BOOL isFaceRecRedy;
 }
 @property (nonatomic, strong) CLGeocoder *geocoder;
 
@@ -282,52 +283,61 @@
 
 - (void)saveNewPhotoToDB:(ALAsset*)photoAsset user:(int)userID
 {
-//    CGImageRef cgImage = [photoAsset aspectRatioThumbnail];
-//    CIImage *ciImage = [CIImage imageWithCGImage:cgImage];
-//    
-//    NSArray *fs = [FaceLib detectFace:ciImage options:@{CIDetectorSmile: @(YES),
-//                                                        CIDetectorEyeBlink: @(YES),
-//                                                        }];
-//    int counter = [fs count];
-//    
-//    //                NSString *AssetURL = [photoAsset valueForProperty:ALAssetPropertyAssetURL];
-//    NSString *GroupURL = [_totalAssets[i] objectForKey:@"GroupURL"];
-//    
-//    if(counter) {
-//        //                    [_faceAssets addObject:@{@"AssetURL":AssetURL , @"GroupURL":GroupURL, @"faces":fs}];
-//        
-//        // 신규 포토 저장.
-//        // Save DB. [Photos] 얼굴이 검출된 사진만 Photos Table에 저장.
-//        int PhotoID = [SQLManager newPhotoWith:photoAsset withGroupAssetURL:GroupURL];
-//        
-//        for(CIFaceFeature *face in fs){
-//            if(PhotoID >= 0){
-//                // Save DB. [Faces]
-//                NSDictionary *faceDic = [FaceLib getFaceData:ciImage bound:face.bounds];
-//                if(faceDic){
-//                    int FaceNo = [SQLManager newFaceWith:PhotoID withFeature:face withInfo:faceDic];
-//                    
-//                    UIImage *faceImage = [faceDic objectForKey:@"faceImage"];
-//                    if(isFaceRecRedy){
-//                        NSDictionary *match = [FaceLib recognizeFaceFromUIImage:faceImage];
-//                        if(match != nil){
-//                            NSLog(@"Match : %@", match);
-//                            if([[match objectForKey:@"UserID"] intValue] == userID && [[match objectForKey:@"confidence"] doubleValue] < 60.f){
-//                                int PhotoNo = [SQLManager newUserPhotosWith:[[match objectForKey:@"UserID"] intValue]
-//                                                                  withPhoto:PhotoID
-//                                                                   withFace:FaceNo];
-//                                if(PhotoNo) _matchCount++;
-//                                
-//                            }
-//                        }
-//                        
-//                    }
-//                }
-//                
-//            }
-//            
-//        }
-//    }
+    if(!isFaceRecRedy){
+        [FaceLib initDetector:CIDetectorAccuracyLow Tacking:NO];
+        
+        //__block BOOL isFaceRecRedy;
+        NSArray *trainModel = [SQLManager getTrainModels];
+        if(!IsEmpty(trainModel)){
+            isFaceRecRedy = [FaceLib initRecognizer:LBPHFaceRecognizer models:trainModel];
+        }
+    }
+    CGImageRef cgImage = [photoAsset aspectRatioThumbnail];
+    CIImage *ciImage = [CIImage imageWithCGImage:cgImage];
+    
+    NSArray *fs = [FaceLib detectFace:ciImage options:@{CIDetectorSmile: @(YES),
+                                                        CIDetectorEyeBlink: @(YES),
+                                                        }];
+    int counter = (int)[fs count];
+    
+    //                NSString *AssetURL = [photoAsset valueForProperty:ALAssetPropertyAssetURL];
+    NSString *GroupURL = @""; //[_totalAssets[i] objectForKey:@"GroupURL"];
+    
+    if(counter) {
+        //                    [_faceAssets addObject:@{@"AssetURL":AssetURL , @"GroupURL":GroupURL, @"faces":fs}];
+        
+        // 신규 포토 저장.
+        // Save DB. [Photos] 얼굴이 검출된 사진만 Photos Table에 저장.
+        int PhotoID = [SQLManager newPhotoWith:photoAsset withGroupAssetURL:GroupURL];
+        
+        for(CIFaceFeature *face in fs){
+            if(PhotoID >= 0){
+                // Save DB. [Faces]
+                NSDictionary *faceDic = [FaceLib getFaceData:ciImage bound:face.bounds];
+                if(faceDic){
+                    int FaceNo = [SQLManager newFaceWith:PhotoID withFeature:face withInfo:faceDic];
+                    
+                    UIImage *faceImage = [faceDic objectForKey:@"faceImage"];
+                    if(isFaceRecRedy){
+                        NSDictionary *match = [FaceLib recognizeFaceFromUIImage:faceImage];
+                        if(match != nil){
+                            NSLog(@"Match : %@", match);
+                            if([[match objectForKey:@"UserID"] intValue] == userID && [[match objectForKey:@"confidence"] doubleValue] < 60.f){
+                                int PhotoNo = [SQLManager newUserPhotosWith:[[match objectForKey:@"UserID"] intValue]
+                                                                  withPhoto:PhotoID
+                                                                   withFace:FaceNo];
+                                if(PhotoNo) _matchCount++;
+                                
+                            }
+                        }
+                        
+                    }
+                }
+                
+            }
+            
+        }
+    }
 }
 
 - (void)checkFacesFor:(int)UserID usingEnumerationBlock:(void (^)(NSDictionary *processInfo))enumerationBlock completion:(void (^)(BOOL finished))completion {
@@ -336,15 +346,16 @@
     _totalProcess = (int)[_totalAssets count];
     _currentProcess = 0;
     _matchCount = 0;
-
-    [FaceLib initDetector:CIDetectorAccuracyLow Tacking:NO];
-
-    __block BOOL isFaceRecRedy;
-    NSArray *trainModel = [SQLManager getTrainModels];
-    if(!IsEmpty(trainModel)){
-        isFaceRecRedy = [FaceLib initRecognizer:LBPHFaceRecognizer models:trainModel];
+    
+    if(!isFaceRecRedy){
+        [FaceLib initDetector:CIDetectorAccuracyLow Tacking:NO];
+        
+        NSArray *trainModel = [SQLManager getTrainModels];
+        if(!IsEmpty(trainModel)){
+            isFaceRecRedy = [FaceLib initRecognizer:LBPHFaceRecognizer models:trainModel];
+        }
     }
-      dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         @autoreleasepool {
             
             UIImage *faceImage;
@@ -363,13 +374,13 @@
                 NSArray *fs = [FaceLib detectFace:ciImage options:@{CIDetectorSmile: @(YES),
                                                                     CIDetectorEyeBlink: @(YES),
                                                                     }];
-                int counter = [fs count];
+                int counter = (int)[fs count];
                 
-//                NSString *AssetURL = [photoAsset valueForProperty:ALAssetPropertyAssetURL];
+                //                NSString *AssetURL = [photoAsset valueForProperty:ALAssetPropertyAssetURL];
                 NSString *GroupURL = [_totalAssets[i] objectForKey:@"GroupURL"];
                 
                 if(counter) {
-//                    [_faceAssets addObject:@{@"AssetURL":AssetURL , @"GroupURL":GroupURL, @"faces":fs}];
+                    //                    [_faceAssets addObject:@{@"AssetURL":AssetURL , @"GroupURL":GroupURL, @"faces":fs}];
                     
                     // 신규 포토 저장.
                     // Save DB. [Photos] 얼굴이 검출된 사진만 Photos Table에 저장.
@@ -395,7 +406,7 @@
                                             
                                         }
                                     }
-
+                                    
                                 }
                             }
                             
