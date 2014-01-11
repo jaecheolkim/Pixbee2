@@ -19,7 +19,7 @@
     [TestFlight takeOff:@"0d73a652-a45f-4b76-9fec-026bd931c1f7"];
     [SQLManager initDataBase];
 
-//////    // Uncomment to change the background color of navigation bar
+//    // Uncomment to change the background color of navigation bar
 //////    [[UINavigationBar appearance] setBarTintColor:UIColorFromRGB(0xffcf0e)];
 ////    
 ////    // Uncomment to change the color of back button

@@ -24,7 +24,7 @@
 @synthesize editButton;
 @synthesize countLabel;
 @synthesize arrowIcon;
-@synthesize user;
+//@synthesize user;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {

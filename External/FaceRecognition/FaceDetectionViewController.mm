@@ -66,6 +66,8 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     NSData *imageData;
     
     CIDetector *faceDetector;
+    
+    NSMutableArray *selectedUsers;
 
 }
 @property (weak, nonatomic) IBOutlet UILabel *instructionsLabel;
@@ -114,6 +116,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 
     recognisedFaces = @{}.mutableCopy;
     processing = @{}.mutableCopy;
+    selectedUsers = @{}.mutableCopy;
     
     guideImage = [UIImage imageNamed:@"hive_line"];
  
@@ -132,8 +135,6 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
         [_instructionsLabel setHidden:YES];
         
         self.cameraSwitch = [[MBSwitch alloc] initWithFrame:CGRectMake(248, 41, 61.0, 18.0)]; //12
-//        [_cameraSwitch setOnTintColor:[UIColor colorWithRed:0.23f green:0.35f blue:0.60f alpha:1.00f]];
-//        [_cameraSwitch setTintColor:[UIColor colorWithRed:0.91f green:0.30f blue:0.24f alpha:1.00f]];
         [self.CameraBottomView addSubview:_cameraSwitch];
         [_cameraSwitch addTarget:self action:@selector(switchCameraVideo:) forControlEvents:UIControlEventValueChanged];
     }
@@ -293,11 +294,49 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
                 
 
 //                [self performSegueWithIdentifier:SEGUE_GO_FILTER sender:self];
-				UIImage *image = [[UIImage alloc] initWithData:imageData];
-				[[[ALAssetsLibrary alloc] init] writeImageToSavedPhotosAlbum:[image CGImage] orientation:(ALAssetOrientation)[image imageOrientation] completionBlock:nil];
+//				UIImage *image = [[UIImage alloc] initWithData:imageData];
+//				[[[ALAssetsLibrary alloc] init] writeImageToSavedPhotosAlbum:[image CGImage] orientation:(ALAssetOrientation)[image imageOrientation] completionBlock:nil];
+                
+                [[[ALAssetsLibrary alloc] init] writeImageDataToSavedPhotosAlbum:imageData metadata:nil completionBlock:^(NSURL *assetURL, NSError *error2)
+                 {
+                     //             report_memory(@"After writing to library");
+                     if (error2) {
+                         NSLog(@"ERROR: the image failed to be written");
+                     }
+                     else {
+                         NSLog(@"PHOTO SAVED - assetURL: %@", assetURL);
+                         
+                         [self savePhoto:assetURL users:selectedUsers];
+                     }
+                     
+                     dispatch_async(dispatch_get_main_queue(), ^(void) {
+                         
+                         // Do something on main thread.
+                     });
+
+                 }];
 			}
 		}];
 	//});
+}
+
+- (void)savePhoto:(NSURL *)assetURL users:(NSArray*)users
+{
+    ALAssetsLibraryAssetForURLResultBlock resultBlock = ^(ALAsset *asset)
+    {
+        NSLog(@"success load ALAsset.... ");
+        UIImage *image = [UIImage imageWithCGImage:[asset thumbnail]];
+    };
+    
+    ALAssetsLibraryAccessFailureBlock failureBlock  = ^(NSError *error)
+    {
+        NSLog(@"Unresolved error: %@, %@", error, [error localizedDescription]);
+    };
+    
+    [AssetLib.assetsLibrary assetForURL:assetURL
+                            resultBlock:resultBlock
+                           failureBlock:failureBlock];
+
 }
 
 - (void)switchCameraVideo:(id)sender {
@@ -328,6 +367,14 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     [_faceListScrollView setHidden:NO];
     
     int faceCount = (int)_faceListScrollView.subviews.count;
+    
+//    // 동일 사용자 중복
+//    for(UIView *view in _faceListScrollView.subviews){
+//        if([view isKindOfClass:[UIButton class]]){
+//            UIButton_FaceIcon *button = (UIButton_FaceIcon*)view;
+//            if(button.UserID == UserID) return;
+//        }
+//    }
 
     UIButton_FaceIcon* button = [UIButton_FaceIcon buttonWithType:UIButtonTypeCustom];
     [button addTarget:self action:@selector(imageTouch:withEvent:) forControlEvents:UIControlEventTouchDown];
@@ -341,6 +388,8 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     button.originRect = button.frame;
     
     [_faceListScrollView addSubview:button];
+    
+    [selectedUsers addObject:@(UserID)];
     
     NSLog(@"facecount = %d / frame = %@",faceCount, NSStringFromCGRect(button.frame));
     
@@ -381,6 +430,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
             }
         }
     }
+    
 }
 
 - (void) imageMoved:(id)sender withEvent:(UIEvent *) event

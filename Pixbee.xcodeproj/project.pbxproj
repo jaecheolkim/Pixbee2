@@ -265,6 +265,8 @@
 		80E3639E18805A2B00A5DF57 /* image1@2x.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 80E3639918805A2B00A5DF57 /* image1@2x.jpg */; };
 		80E3639F18805A2B00A5DF57 /* image2@2x.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 80E3639A18805A2B00A5DF57 /* image2@2x.jpg */; };
 		80E363A018805A2B00A5DF57 /* image5@2x.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 80E3639B18805A2B00A5DF57 /* image5@2x.jpg */; };
+		80E363A51880D60100A5DF57 /* stop_video@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 80E363A31880D60100A5DF57 /* stop_video@2x.png */; };
+		80E363A61880D60100A5DF57 /* video@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 80E363A41880D60100A5DF57 /* video@2x.png */; };
 		80F9DD8E187B299800A1BF21 /* UIImage+Addon.m in Sources */ = {isa = PBXBuildFile; fileRef = 80F9DD8D187B299800A1BF21 /* UIImage+Addon.m */; };
 		80F9DD91187B9BA300A1BF21 /* UIButton+FaceIcon.m in Sources */ = {isa = PBXBuildFile; fileRef = 80F9DD90187B9BA300A1BF21 /* UIButton+FaceIcon.m */; };
 /* End PBXBuildFile section */
@@ -672,6 +674,8 @@
 		80E3639918805A2B00A5DF57 /* image1@2x.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "image1@2x.jpg"; sourceTree = "<group>"; };
 		80E3639A18805A2B00A5DF57 /* image2@2x.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "image2@2x.jpg"; sourceTree = "<group>"; };
 		80E3639B18805A2B00A5DF57 /* image5@2x.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "image5@2x.jpg"; sourceTree = "<group>"; };
+		80E363A31880D60100A5DF57 /* stop_video@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "stop_video@2x.png"; sourceTree = "<group>"; };
+		80E363A41880D60100A5DF57 /* video@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "video@2x.png"; sourceTree = "<group>"; };
 		80F9DD8C187B299800A1BF21 /* UIImage+Addon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Addon.h"; sourceTree = "<group>"; };
 		80F9DD8D187B299800A1BF21 /* UIImage+Addon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Addon.m"; sourceTree = "<group>"; };
 		80F9DD8F187B9BA300A1BF21 /* UIButton+FaceIcon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIButton+FaceIcon.h"; sourceTree = "<group>"; };
@@ -1063,6 +1067,8 @@
 		7856F6F11849D1B700A17349 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				80E363A31880D60100A5DF57 /* stop_video@2x.png */,
+				80E363A41880D60100A5DF57 /* video@2x.png */,
 				80E36395187E45E000A5DF57 /* profile.png */,
 				80D5B61A186F340D000CD8D7 /* filter */,
 				80D5521A186C8E8200B54974 /* hive_line.png */,
@@ -1738,6 +1744,7 @@
 				78C1EB41186B0A790072E7DB /* controller_bar@2x.png in Resources */,
 				78C1EB52186B0A790072E7DB /* hive80@2x.png in Resources */,
 				78C1EB42186B0A790072E7DB /* controller@2x.png in Resources */,
+				80E363A51880D60100A5DF57 /* stop_video@2x.png in Resources */,
 				7805A6D71866E7B800B234C1 /* camera@2x.png in Resources */,
 				7805A6E31866E7B800B234C1 /* move@2x.png in Resources */,
 				80E36396187E45E000A5DF57 /* profile.png in Resources */,
@@ -1764,6 +1771,7 @@
 				7805A6D41866E7B800B234C1 /* arrow@2x.png in Resources */,
 				78C1EB66186B0A790072E7DB /* setting_select@2x.png in Resources */,
 				78C1EB4D186B0A790072E7DB /* hive_toalbum@2x.png in Resources */,
+				80E363A61880D60100A5DF57 /* video@2x.png in Resources */,
 				78C1EB69186B0A790072E7DB /* social_instagram_act@2x.png in Resources */,
 				78C1EB6B186B0A790072E7DB /* social_mail_act@2x.png in Resources */,
 				78C1EB60186B0A790072E7DB /* photo_profilelist@2x.png in Resources */,

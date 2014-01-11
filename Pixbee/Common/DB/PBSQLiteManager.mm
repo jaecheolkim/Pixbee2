@@ -1030,7 +1030,7 @@ static inline NSDate* convertDouble2Date(double date){ return [NSDate dateWithTi
         int userID = [[user objectForKey:@"UserID"] intValue];
         //SELECT U.UserID, U.PhotoID, P.AssetURL FROM UserPhotos AS U  JOIN Photos As P ON U.PhotoID = P.PhotoID WHERE U.UserID = 1
         //NSString *query = [NSString stringWithFormat:@"SELECT UserID, PhotoID, AssetURL FROM UserPhotos NATURAL JOIN Photos WHERE UserID = %d",userID];
-        NSString *query = [NSString stringWithFormat:@"SELECT U.UserID, U.PhotoID, P.AssetURL FROM UserPhotos AS U  JOIN Photos As P ON U.PhotoID = P.PhotoID WHERE U.UserID = %d",userID];
+        NSString *query = [NSString stringWithFormat:@"SELECT U.UserID, U.PhotoID, U.FaceNo, P.AssetURL FROM UserPhotos AS U  JOIN Photos As P ON U.PhotoID = P.PhotoID WHERE U.UserID = %d",userID];
         NSArray *result = [SQLManager getRowsForQuery:query];
 
         [usersPhotos addObject:@{@"user":user,@"photos":result}];
