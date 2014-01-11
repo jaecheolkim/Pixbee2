@@ -11,6 +11,7 @@
 #import "TotalGalleryViewCell.h"
 #import "GalleryHeaderView.h"
 #import "PBAssetLibrary.h"
+#import "PBFilterViewController.h"
 
 @interface AllPhotosController () <UICollectionViewDataSource, UICollectionViewDelegate>{
         NSMutableArray *selectedPhotos;
@@ -21,6 +22,7 @@
 @property (strong, nonatomic) IBOutlet UIButton *editButton;
 @property (strong, nonatomic) IBOutlet UIButton *shotButton;
 @property (strong, nonatomic) TotalGalleryViewCell *selectedCell;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *doneButton;
 
 - (IBAction)DoneClickedHandler:(id)sender;
 @end
@@ -40,6 +42,10 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
+    if([self.preIdentifier isEqualToString:SEGUE_6_1_TO_4_4]){
+        //Change Done button to Share button
+        self.doneButton.title = @"Share";
+    }
     selectedPhotos = [NSMutableArray array];
     [self calAllPhotos];
 }
@@ -215,8 +221,26 @@
 
 - (IBAction)DoneClickedHandler:(id)sender {
     // DB작업 후 화면 전환.
-    [self.navigationController popViewControllerAnimated:YES];
+    if([self.preIdentifier isEqualToString:SEGUE_6_1_TO_4_4]){
+        [self performSegueWithIdentifier:SEGUE_GO_FILTER sender:self];
+    }
+    else {
+        [self.navigationController popViewControllerAnimated:YES];
+    }
+    
 }
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    if ([segue.identifier isEqualToString:SEGUE_GO_FILTER]){
+        self.navigationController.navigationBarHidden = NO;
+        PBFilterViewController *destination = segue.destinationViewController;
+#warning  호석과장님 아래에 imageData에 NSData 이미지 (jpeg) 집어 넣으면 되...
+        destination.imageData = nil;
+        
+    }
+}
+
 
 
 @end

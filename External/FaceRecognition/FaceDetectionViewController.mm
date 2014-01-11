@@ -21,7 +21,7 @@
 
 #import "PBFilterViewController.h"
 #import "AddingFaceToAlbumController.h"
-//#import "UIImage+Addon.h"
+#import "AllPhotosController.h"
 #import "UIButton+FaceIcon.h"
 
 
@@ -116,7 +116,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 
     recognisedFaces = @{}.mutableCopy;
     processing = @{}.mutableCopy;
-    selectedUsers = @{}.mutableCopy;
+    selectedUsers = [NSMutableArray array];
     
     guideImage = [UIImage imageNamed:@"hive_line"];
  
@@ -130,7 +130,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
         [self setupGuide];
         self.numPicsTaken = 0;
     } else {
-        [_closeButton setHidden:YES];
+        //[_closeButton setHidden:YES];
         [_hiveImageView setHidden:YES];
         [_instructionsLabel setHidden:YES];
         
@@ -276,6 +276,11 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     }
 }
 
+- (IBAction)goGallery:(id)sender {
+     self.navigationController.navigationBarHidden = NO;
+    [self performSegueWithIdentifier:SEGUE_6_1_TO_4_4 sender:self];
+}
+
 - (IBAction)snapStillImage:(id)sender {
     //dispatch_async([self sessionQueue], ^{
 		// Update the orientation on the still image output video connection before capturing.
@@ -309,10 +314,10 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
                          [self savePhoto:assetURL users:selectedUsers];
                      }
                      
-                     dispatch_async(dispatch_get_main_queue(), ^(void) {
-                         [self performSegueWithIdentifier:SEGUE_GO_FILTER sender:self];
-                         // Do something on main thread.
-                     });
+//                     dispatch_async(dispatch_get_main_queue(), ^(void) {
+//                         [self performSegueWithIdentifier:SEGUE_GO_FILTER sender:self];
+//                         // Do something on main thread.
+//                     });
 
                  }];
 			}
@@ -366,6 +371,12 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
         destination.UserName = self.UserName;
         destination.UserID = self.UserID;
     }
+    else if([segue.identifier isEqualToString:SEGUE_6_1_TO_4_4]){
+        AllPhotosController *destination = segue.destinationViewController;
+        destination.preIdentifier = SEGUE_6_1_TO_4_4;
+
+    }
+
 }
 
 - (void)addNewFaceIcon:(int)UserID
@@ -394,8 +405,8 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     button.originRect = button.frame;
     
     [_faceListScrollView addSubview:button];
-    
-    //[selectedUsers addObject:@(UserID)];
+
+    [selectedUsers addObject:@(UserID)];
     
     NSLog(@"facecount = %d / frame = %@",faceCount, NSStringFromCGRect(button.frame));
     
