@@ -310,7 +310,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
                      }
                      
                      dispatch_async(dispatch_get_main_queue(), ^(void) {
-                         
+                         [self performSegueWithIdentifier:SEGUE_GO_FILTER sender:self];
                          // Do something on main thread.
                      });
 

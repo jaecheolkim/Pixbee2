@@ -282,52 +282,52 @@
 
 - (void)saveNewPhotoToDB:(ALAsset*)photoAsset user:(int)userID
 {
-    CGImageRef cgImage = [photoAsset aspectRatioThumbnail];
-    CIImage *ciImage = [CIImage imageWithCGImage:cgImage];
-    
-    NSArray *fs = [FaceLib detectFace:ciImage options:@{CIDetectorSmile: @(YES),
-                                                        CIDetectorEyeBlink: @(YES),
-                                                        }];
-    int counter = [fs count];
-    
-    //                NSString *AssetURL = [photoAsset valueForProperty:ALAssetPropertyAssetURL];
-    NSString *GroupURL = [_totalAssets[i] objectForKey:@"GroupURL"];
-    
-    if(counter) {
-        //                    [_faceAssets addObject:@{@"AssetURL":AssetURL , @"GroupURL":GroupURL, @"faces":fs}];
-        
-        // 신규 포토 저장.
-        // Save DB. [Photos] 얼굴이 검출된 사진만 Photos Table에 저장.
-        int PhotoID = [SQLManager newPhotoWith:photoAsset withGroupAssetURL:GroupURL];
-        
-        for(CIFaceFeature *face in fs){
-            if(PhotoID >= 0){
-                // Save DB. [Faces]
-                NSDictionary *faceDic = [FaceLib getFaceData:ciImage bound:face.bounds];
-                if(faceDic){
-                    int FaceNo = [SQLManager newFaceWith:PhotoID withFeature:face withInfo:faceDic];
-                    
-                    UIImage *faceImage = [faceDic objectForKey:@"faceImage"];
-                    if(isFaceRecRedy){
-                        NSDictionary *match = [FaceLib recognizeFaceFromUIImage:faceImage];
-                        if(match != nil){
-                            NSLog(@"Match : %@", match);
-                            if([[match objectForKey:@"UserID"] intValue] == userID && [[match objectForKey:@"confidence"] doubleValue] < 60.f){
-                                int PhotoNo = [SQLManager newUserPhotosWith:[[match objectForKey:@"UserID"] intValue]
-                                                                  withPhoto:PhotoID
-                                                                   withFace:FaceNo];
-                                if(PhotoNo) _matchCount++;
-                                
-                            }
-                        }
-                        
-                    }
-                }
-                
-            }
-            
-        }
-    }
+//    CGImageRef cgImage = [photoAsset aspectRatioThumbnail];
+//    CIImage *ciImage = [CIImage imageWithCGImage:cgImage];
+//    
+//    NSArray *fs = [FaceLib detectFace:ciImage options:@{CIDetectorSmile: @(YES),
+//                                                        CIDetectorEyeBlink: @(YES),
+//                                                        }];
+//    int counter = [fs count];
+//    
+//    //                NSString *AssetURL = [photoAsset valueForProperty:ALAssetPropertyAssetURL];
+//    NSString *GroupURL = [_totalAssets[i] objectForKey:@"GroupURL"];
+//    
+//    if(counter) {
+//        //                    [_faceAssets addObject:@{@"AssetURL":AssetURL , @"GroupURL":GroupURL, @"faces":fs}];
+//        
+//        // 신규 포토 저장.
+//        // Save DB. [Photos] 얼굴이 검출된 사진만 Photos Table에 저장.
+//        int PhotoID = [SQLManager newPhotoWith:photoAsset withGroupAssetURL:GroupURL];
+//        
+//        for(CIFaceFeature *face in fs){
+//            if(PhotoID >= 0){
+//                // Save DB. [Faces]
+//                NSDictionary *faceDic = [FaceLib getFaceData:ciImage bound:face.bounds];
+//                if(faceDic){
+//                    int FaceNo = [SQLManager newFaceWith:PhotoID withFeature:face withInfo:faceDic];
+//                    
+//                    UIImage *faceImage = [faceDic objectForKey:@"faceImage"];
+//                    if(isFaceRecRedy){
+//                        NSDictionary *match = [FaceLib recognizeFaceFromUIImage:faceImage];
+//                        if(match != nil){
+//                            NSLog(@"Match : %@", match);
+//                            if([[match objectForKey:@"UserID"] intValue] == userID && [[match objectForKey:@"confidence"] doubleValue] < 60.f){
+//                                int PhotoNo = [SQLManager newUserPhotosWith:[[match objectForKey:@"UserID"] intValue]
+//                                                                  withPhoto:PhotoID
+//                                                                   withFace:FaceNo];
+//                                if(PhotoNo) _matchCount++;
+//                                
+//                            }
+//                        }
+//                        
+//                    }
+//                }
+//                
+//            }
+//            
+//        }
+//    }
 }
 
 - (void)checkFacesFor:(int)UserID usingEnumerationBlock:(void (^)(NSDictionary *processInfo))enumerationBlock completion:(void (^)(BOOL finished))completion {
