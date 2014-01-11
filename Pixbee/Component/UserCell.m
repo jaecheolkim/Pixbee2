@@ -130,7 +130,6 @@
     
     // 사용자 이름
     [self.userName setText:[user objectForKey:@"UserName"]];
-    [self.inputName setText:@""];
     
     // 사용자 사진
     [self.countLabel setText:[NSString stringWithFormat:@"%ld", (unsigned long)count]];
@@ -145,7 +144,7 @@
         [self.delegate editUserCell:self];
     }
     
-    [self.inputName becomeFirstResponder];
+    [self.inputName setPlaceholder:[self.user objectForKey:@"UserName"]];
 }
 
 - (IBAction)doneButtonClickHandler:(id)sender {
@@ -168,6 +167,7 @@
 }
 
 - (void)textFieldDidBeginEditing:(UITextField *)textField {
+    [self.inputName setText:@""];
     if([self.delegate respondsToSelector:@selector(editUserCell:)])
     {
         [self.delegate frientList:self appear:YES];

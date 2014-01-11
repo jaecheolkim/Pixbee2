@@ -474,8 +474,7 @@
 }
 
 - (BOOL)canPerformUnwindSegueAction:(SEL)action fromViewController:(UIViewController *)fromViewController withSender:(id)sender {
-    
-    return [super canPerformUnwindSegueAction:action fromViewController:fromViewController withSender:sender];
+    return YES;
 }
 
 

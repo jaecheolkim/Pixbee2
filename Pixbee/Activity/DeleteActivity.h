@@ -1,5 +1,5 @@
 //
-//  MoveActivity.h
+//  DeleteActivity.h
 //  Pixbee
 //
 //  Created by skplanet on 2013. 12. 28..
@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface MoveActivity : UIActivity
+@interface DeleteActivity : UIActivity
 
 @end

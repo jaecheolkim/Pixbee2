@@ -14,6 +14,7 @@
 		6968D9A6186EF7DB00831442 /* AlbumSelectionController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6968D9A5186EF7DB00831442 /* AlbumSelectionController.m */; };
 		696ECBDB1850551F00F54DB6 /* AllPhotosController.m in Sources */ = {isa = PBXBuildFile; fileRef = 696ECBDA1850551F00F54DB6 /* AllPhotosController.m */; };
 		697C83DE186DF2FA00823990 /* MBSwitch.m in Sources */ = {isa = PBXBuildFile; fileRef = 697C83DD186DF2FA00823990 /* MBSwitch.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		698B1EA81881197D00BBBBA7 /* DeleteActivity.m in Sources */ = {isa = PBXBuildFile; fileRef = 698B1EA71881197D00BBBBA7 /* DeleteActivity.m */; };
 		69A6C9531880F2C200CAABA1 /* TotalGalleryViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 69A6C9521880F2C200CAABA1 /* TotalGalleryViewCell.m */; };
 		69B1B2FD18587D9200774382 /* IntroControll.m in Sources */ = {isa = PBXBuildFile; fileRef = 69B1B2F818587D9200774382 /* IntroControll.m */; };
 		69B1B2FE18587D9200774382 /* IntroModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 69B1B2FA18587D9200774382 /* IntroModel.m */; };
@@ -299,6 +300,8 @@
 		697C83AA186DC57A00823990 /* SDWebImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDWebImage.framework; path = ../SDWebImage.framework; sourceTree = "<group>"; };
 		697C83DC186DF2FA00823990 /* MBSwitch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBSwitch.h; sourceTree = "<group>"; };
 		697C83DD186DF2FA00823990 /* MBSwitch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MBSwitch.m; sourceTree = "<group>"; };
+		698B1EA61881197D00BBBBA7 /* DeleteActivity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeleteActivity.h; sourceTree = "<group>"; };
+		698B1EA71881197D00BBBBA7 /* DeleteActivity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeleteActivity.m; sourceTree = "<group>"; };
 		69A6C9511880F2C200CAABA1 /* TotalGalleryViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TotalGalleryViewCell.h; sourceTree = "<group>"; };
 		69A6C9521880F2C200CAABA1 /* TotalGalleryViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TotalGalleryViewCell.m; sourceTree = "<group>"; };
 		69B1B2F718587D9200774382 /* IntroControll.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntroControll.h; sourceTree = "<group>"; };
@@ -731,6 +734,8 @@
 		6968D999186EE88C00831442 /* Activity */ = {
 			isa = PBXGroup;
 			children = (
+				698B1EA61881197D00BBBBA7 /* DeleteActivity.h */,
+				698B1EA71881197D00BBBBA7 /* DeleteActivity.m */,
 				6968D99D186EEE0000831442 /* MoveActivity.h */,
 				6968D99E186EEE0000831442 /* MoveActivity.m */,
 				6968D99F186EEE0000831442 /* NewAlbumActivity.h */,
@@ -1867,6 +1872,7 @@
 				697C83DE186DF2FA00823990 /* MBSwitch.m in Sources */,
 				807E75C81851576100B1AD7E /* THBinder.m in Sources */,
 				69C39FCB18606B39001EDDFA /* MKAnnotationView+WebCache.m in Sources */,
+				698B1EA81881197D00BBBBA7 /* DeleteActivity.m in Sources */,
 				80D2A123184A1E58008D29B2 /* NSOperation+AS.m in Sources */,
 				7805A6B418668B7100B234C1 /* ALLPhotosView.m in Sources */,
 				69C39FD518606B39001EDDFA /* UIImage+RoundedCorner.m in Sources */,
