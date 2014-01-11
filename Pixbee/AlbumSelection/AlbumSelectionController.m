@@ -20,7 +20,6 @@
 
 - (IBAction)doneButtonClickHandler:(id)sender;
 - (IBAction)xButtonClickHandler:(id)sender;
-
 - (IBAction)UnwindFromIndividualGalleryToAlbumPage:(UIStoryboardSegue *)segue;
 
 @end

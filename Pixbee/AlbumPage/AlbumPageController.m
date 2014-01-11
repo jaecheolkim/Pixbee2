@@ -34,8 +34,6 @@
 - (IBAction)allPhotosViewClickHandler:(id)sender;
 - (IBAction)userAddViewClickHandler:(id)sender;
 
-- (IBAction)UnwindFromIndividualGalleryToAlbumPage:(UIStoryboardSegue *)segue;
-
 @end
 
 @implementation AlbumPageController
@@ -100,14 +98,7 @@
 }
 
 - (void) calAllPhotos {
-    int allphotocount = 0;
-    if (self.usersPhotos) {
-        for (NSDictionary *user in self.usersPhotos) {
-            NSArray *photos = [user objectForKey:@"photos"];
-            allphotocount += [photos count];
-        }
-    }
-    
+    int allphotocount = [[PBAssetsLibrary sharedInstance].totalAssets count];
     self.allPhotosView.countLabel.text = [NSString stringWithFormat:@"%d", allphotocount];
 }
 
@@ -208,10 +199,6 @@
 	[popupQuery showInView:self.view];
 }
 
-- (IBAction)UnwindFromIndividualGalleryToAlbumPage:(UIStoryboardSegue *)segue{
-    
-}
-
 - (IBAction)dismiss:(UIButton *)sender {
     [self dismissCustomSegueViewControllerWithCompletion:^(BOOL finished) {
         NSLog(@"Dismiss complete!");
@@ -237,6 +224,7 @@
     else if([segue.identifier isEqualToString:SEGUE_3_1_TO_4_3]){ // add new face tab from Album
         AllPhotosController *destViewController = segue.destinationViewController;
         destViewController.photos = self.usersPhotos;
+        destViewController.preIdentifier = segue.identifier;
     }
     
     else if ([segue.identifier isEqualToString:SEGUE_3_1_TO_6_1]) { // add new face tab from camera
@@ -485,7 +473,20 @@
                      }];
 }
 
+- (BOOL)canPerformUnwindSegueAction:(SEL)action fromViewController:(UIViewController *)fromViewController withSender:(id)sender {
+    
+    return [super canPerformUnwindSegueAction:action fromViewController:fromViewController withSender:sender];
+}
 
 
+// We need to over-ride this method from UIViewController to provide a custom segue for unwinding
+- (UIStoryboardSegue *)segueForUnwindingToViewController:(UIViewController *)toViewController fromViewController:(UIViewController *)fromViewController identifier:(NSString *)identifier {
+    
+    if ([identifier isEqualToString:SEGUE_3_1_TO_4_3]) {
+        NSLog(@"dddddd");
+    }
+
+    return [super segueForUnwindingToViewController:toViewController fromViewController:fromViewController identifier:identifier];
+}
 
 @end
