@@ -175,8 +175,13 @@
     
     NSDictionary *users = [self.usersPhotos objectAtIndex:indexPath.row];
     NSArray *photos = [users objectForKey:@"photos"];
-    
+
     if ([photos count] > 5) {
+//        IndividualGalleryController *destViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"IndividualGallery"];
+//        NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
+//        destViewController.usersPhotos = [self.usersPhotos objectAtIndex:indexPath.row];
+//        [self.navigationController pushViewController:destViewController animated:YES];
+        
         [self performSegueWithIdentifier:SEGUE_3_1_TO_4_1 sender:self];
     }
     else {

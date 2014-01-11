@@ -356,6 +356,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     if ([segue.identifier isEqualToString:SEGUE_GO_FILTER]){
+        self.navigationController.navigationBarHidden = NO;
         PBFilterViewController *destination = segue.destinationViewController;
         destination.imageData = imageData;
         
@@ -394,7 +395,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     
     [_faceListScrollView addSubview:button];
     
-    [selectedUsers addObject:@(UserID)];
+    //[selectedUsers addObject:@(UserID)];
     
     NSLog(@"facecount = %d / frame = %@",faceCount, NSStringFromCGRect(button.frame));
     

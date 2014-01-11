@@ -54,6 +54,8 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    
 	// Do any additional setup after loading the view.
     selectedPhotos = [NSMutableArray array];
     
@@ -77,6 +79,12 @@
 
     NSString *buttonTitle = [NSString stringWithFormat:@"Message Here\nPlease import\nmore %@'s Photo", [self.user objectForKey:@"UserName"]];
     self.importView.titleLabel.text = buttonTitle;
+}
+
+-(void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    self.navigationController.navigationBarHidden = NO;
 }
 
 - (void)didReceiveMemoryWarning
