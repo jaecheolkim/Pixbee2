@@ -50,6 +50,10 @@
     return self;
 }
 
+- (void)awakeFromNib {
+    
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -533,8 +537,6 @@
         NSLog(@"deletePhotos complete!");
         [selectedPhotos removeAllObjects];
     }];
-    
-    
 }
 
 - (IBAction)backButtonClickHandler:(id)sender {
@@ -543,13 +545,9 @@
     }];
 }
 
-
-- (IBAction)UnwindFromFullScreenPhotoToIndividualGallery:(UIStoryboardSegue *)segue{
-    
-}
-
 // We need to over-ride this method from UIViewController to provide a custom segue for unwinding
 - (UIStoryboardSegue *)segueForUnwindingToViewController:(UIViewController *)toViewController fromViewController:(UIViewController *)fromViewController identifier:(NSString *)identifier {
+
     // Instantiate a new CustomUnwindSegue
     OpenPhotoUnwindSegue *segue = [[OpenPhotoUnwindSegue alloc] initWithIdentifier:identifier source:fromViewController destination:toViewController];
     // Set the target point for the animation to the center of the button in this VC

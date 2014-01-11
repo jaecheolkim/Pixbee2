@@ -14,6 +14,7 @@
 		6968D9A6186EF7DB00831442 /* AlbumSelectionController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6968D9A5186EF7DB00831442 /* AlbumSelectionController.m */; };
 		696ECBDB1850551F00F54DB6 /* AllPhotosController.m in Sources */ = {isa = PBXBuildFile; fileRef = 696ECBDA1850551F00F54DB6 /* AllPhotosController.m */; };
 		697C83DE186DF2FA00823990 /* MBSwitch.m in Sources */ = {isa = PBXBuildFile; fileRef = 697C83DD186DF2FA00823990 /* MBSwitch.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		69A6C9531880F2C200CAABA1 /* TotalGalleryViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 69A6C9521880F2C200CAABA1 /* TotalGalleryViewCell.m */; };
 		69B1B2FD18587D9200774382 /* IntroControll.m in Sources */ = {isa = PBXBuildFile; fileRef = 69B1B2F818587D9200774382 /* IntroControll.m */; };
 		69B1B2FE18587D9200774382 /* IntroModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 69B1B2FA18587D9200774382 /* IntroModel.m */; };
 		69B1B2FF18587D9200774382 /* IntroView.m in Sources */ = {isa = PBXBuildFile; fileRef = 69B1B2FC18587D9200774382 /* IntroView.m */; };
@@ -298,6 +299,8 @@
 		697C83AA186DC57A00823990 /* SDWebImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDWebImage.framework; path = ../SDWebImage.framework; sourceTree = "<group>"; };
 		697C83DC186DF2FA00823990 /* MBSwitch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBSwitch.h; sourceTree = "<group>"; };
 		697C83DD186DF2FA00823990 /* MBSwitch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MBSwitch.m; sourceTree = "<group>"; };
+		69A6C9511880F2C200CAABA1 /* TotalGalleryViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TotalGalleryViewCell.h; sourceTree = "<group>"; };
+		69A6C9521880F2C200CAABA1 /* TotalGalleryViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TotalGalleryViewCell.m; sourceTree = "<group>"; };
 		69B1B2F718587D9200774382 /* IntroControll.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntroControll.h; sourceTree = "<group>"; };
 		69B1B2F818587D9200774382 /* IntroControll.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IntroControll.m; sourceTree = "<group>"; };
 		69B1B2F918587D9200774382 /* IntroModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntroModel.h; sourceTree = "<group>"; };
@@ -750,6 +753,8 @@
 		696ECBD71850550000F54DB6 /* AllPhotos */ = {
 			isa = PBXGroup;
 			children = (
+				69A6C9511880F2C200CAABA1 /* TotalGalleryViewCell.h */,
+				69A6C9521880F2C200CAABA1 /* TotalGalleryViewCell.m */,
 				696ECBD91850551F00F54DB6 /* AllPhotosController.h */,
 				696ECBDA1850551F00F54DB6 /* AllPhotosController.m */,
 			);
@@ -1808,6 +1813,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7805A66B18659ECC00B234C1 /* AFURLConnectionOperation.m in Sources */,
+				69A6C9531880F2C200CAABA1 /* TotalGalleryViewCell.m in Sources */,
 				80D2A19F184B7CBB008D29B2 /* PB_DBModel.m in Sources */,
 				69C39FE818606CBD001EDDFA /* UIImage+WebP.m in Sources */,
 				80D2A11D184A1E58008D29B2 /* ASImageScrollView.m in Sources */,
