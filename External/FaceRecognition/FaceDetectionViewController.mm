@@ -331,10 +331,11 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     {
         NSLog(@"success load ALAsset.... ");
         //UIImage *image = [UIImage imageWithCGImage:[asset thumbnail]];
-        for(id user in users){
-            int userID = [user intValue];
-            [AssetLib saveNewPhotoToDB:asset user:userID];
-        }
+        [AssetLib saveNewPhotoToDB:asset users:users];
+//        for(id user in users){
+//            int userID = [user intValue];
+//            [AssetLib saveNewPhotoToDB:asset users:users];
+//        }
         
     };
     

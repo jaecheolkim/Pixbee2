@@ -17,6 +17,7 @@
 @property (nonatomic,assign) id<PBAssetsLibraryDelegate> delegate;
 
 @property (nonatomic, strong) ALAssetsLibrary *assetsLibrary;
+@property (nonatomic, strong) ALAssetsGroup *currentAssetGroup;
 @property (nonatomic, strong) NSMutableArray *totalAssets;
 @property (nonatomic, strong) NSMutableArray *faceAssets;
 @property (nonatomic, strong) NSMutableArray *locationArray;
@@ -41,7 +42,7 @@
 - (void)syncAlbumToDB:(void (^)(NSArray *results))result;
 
 // 사진 정보 분석해서 DB에 저장 [ Photos / Faces / UserPhotos ];
-- (void)saveNewPhotoToDB:(ALAsset*)photoAsset user:(int)userID;
+- (void)saveNewPhotoToDB:(ALAsset*)photoAsset users:(NSArray*)users;
 
 - (void)checkFacesFor:(int)UserID usingEnumerationBlock:(void (^)(NSDictionary *processInfo))enumerationBlock completion:(void (^)(BOOL finished))completion;
 

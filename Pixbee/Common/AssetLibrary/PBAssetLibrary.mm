@@ -44,9 +44,58 @@
         _locationArray = [NSMutableArray array];
         _geocoder = [[CLGeocoder alloc] init];
         
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleAssetChangedNotifiation:) name:ALAssetsLibraryChangedNotification object:_assetsLibrary];
     }
     return self;
 }
+
+- (void) dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:ALAssetsLibraryChangedNotification object:nil];
+}
+
+#pragma mark - Notification handlers
+//In iOS 6.0 and later, the user information dictionary describes what changed:
+//If the user information dictionary is nil, reload all assets and asset groups.
+//If the user information dictionary an empty dictionary, there is no need to reload assets and asset groups.
+//If the user information dictionary is not empty, reload the effected assets and asset groups. For the keys used, see “Notification Keys.”
+//NSString * const ALAssetLibraryUpdatedAssetsKey;
+//NSString * const ALAssetLibraryInsertedAssetGroupsKey;
+//NSString * const ALAssetLibraryUpdatedAssetGroupsKey;
+//NSString * const ALAssetLibraryDeletedAssetGroupsKey;
+
+- (void) handleAssetChangedNotifiation:(NSNotification *)notification
+{
+    NSDictionary *userInfo = [notification userInfo];
+   if(userInfo != nil) {
+        NSLog(@"userInfo = %@", userInfo);
+        NSString *insertedGroupURLs = [userInfo objectForKey:ALAssetLibraryInsertedAssetGroupsKey];
+       if(!IsEmpty(insertedGroupURLs)){
+           NSURL *assetURL = [NSURL URLWithString:insertedGroupURLs];
+           if (assetURL) {
+               [self.assetsLibrary groupForURL:assetURL resultBlock:^(ALAssetsGroup *group) {
+                   self.currentAssetGroup = group;
+               } failureBlock:^(NSError *error) {
+                   
+               }];
+           }
+       }
+//        NSSet *insertedGroupURLs = [[notification userInfo] objectForKey:ALAssetLibraryInsertedAssetGroupsKey];
+//        NSURL *assetURL = [insertedGroupURLs anyObject];
+//        if (assetURL) {
+//            [self.assetsLibrary groupForURL:assetURL resultBlock:^(ALAssetsGroup *group) {
+//                self.currentAssetGroup = group;
+//            } failureBlock:^(NSError *error) {
+//                
+//            }];
+//        }
+
+    }
+    else if (userInfo == nil) {
+        NSLog(@"userInfo == nil");
+    }
+}
+
 
 -(void) loadAssetGroup:(void (^)(NSArray *result))success
                failure:(void (^)(NSError *error))failure
@@ -281,8 +330,9 @@
      }];
 }
 
-- (void)saveNewPhotoToDB:(ALAsset*)photoAsset user:(int)userID
+- (void)saveNewPhotoToDB:(ALAsset*)photoAsset users:(NSArray*)users
 {
+
     if(!isFaceRecRedy){
         [FaceLib initDetector:CIDetectorAccuracyLow Tacking:NO];
         
@@ -292,6 +342,7 @@
             isFaceRecRedy = [FaceLib initRecognizer:LBPHFaceRecognizer models:trainModel];
         }
     }
+    
     CGImageRef cgImage = [photoAsset aspectRatioThumbnail];
     CIImage *ciImage = [CIImage imageWithCGImage:cgImage];
     
@@ -300,12 +351,15 @@
                                                         }];
     int counter = (int)[fs count];
     
+    NSString *query = [NSString stringWithFormat:@"SELECT GroupURL FROM Groups WHERE GroupName = '%@';", @"Camera Roll"];
+    NSArray *result = [SQLManager getRowsForQuery:query];
     //                NSString *AssetURL = [photoAsset valueForProperty:ALAssetPropertyAssetURL];
-    NSString *GroupURL = @""; //[_totalAssets[i] objectForKey:@"GroupURL"];
-    
+    NSString *GroupURL = @"";
+    if(!IsEmpty(result)){
+        GroupURL = [[result objectAtIndex:0] objectForKey:@"GroupURL"];
+    }
+
     if(counter) {
-        //                    [_faceAssets addObject:@{@"AssetURL":AssetURL , @"GroupURL":GroupURL, @"faces":fs}];
-        
         // 신규 포토 저장.
         // Save DB. [Photos] 얼굴이 검출된 사진만 Photos Table에 저장.
         int PhotoID = [SQLManager newPhotoWith:photoAsset withGroupAssetURL:GroupURL];
@@ -322,13 +376,22 @@
                         NSDictionary *match = [FaceLib recognizeFaceFromUIImage:faceImage];
                         if(match != nil){
                             NSLog(@"Match : %@", match);
-                            if([[match objectForKey:@"UserID"] intValue] == userID && [[match objectForKey:@"confidence"] doubleValue] < 60.f){
-                                int PhotoNo = [SQLManager newUserPhotosWith:[[match objectForKey:@"UserID"] intValue]
-                                                                  withPhoto:PhotoID
-                                                                   withFace:FaceNo];
-                                if(PhotoNo) _matchCount++;
+                            
+                            for(id user in users){
+                                int userID = [user intValue];
                                 
+                                if([[match objectForKey:@"UserID"] intValue] == userID && [[match objectForKey:@"confidence"] doubleValue] < 60.f){
+                                    int PhotoNo = [SQLManager newUserPhotosWith:[[match objectForKey:@"UserID"] intValue]
+                                                                      withPhoto:PhotoID
+                                                                       withFace:FaceNo];
+                                    NSLog(@"PhotoNO = %d / UserID = %d", PhotoNo, userID);
+                                    [[NSNotificationCenter defaultCenter] postNotificationName:@"AlbumContentsViewEventHandler"
+                                                                                        object:self
+                                                                                      userInfo:@{@"Msg":@"changedGalleryDB"}];
+                                }
                             }
+                            
+
                         }
                         
                     }

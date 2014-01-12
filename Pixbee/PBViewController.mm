@@ -14,6 +14,8 @@
 @interface PBViewController () <FBHelperDelegate>
 {
     BOOL isFirstVisit;
+    BOOL isCalledCheckNewPhotos;
+    BOOL isCalledGoNext;
 }
 // 객체
 @property (strong, nonatomic) IBOutlet UIView *viewFBLoginViewArea;
@@ -29,6 +31,11 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
     
     FBHELPER.delegate = self;
     [FBHELPER loadFBLoginView:self.viewFBLoginViewArea];
@@ -54,6 +61,9 @@
 
 - (void)checkNewPhotos
 {
+    if(isCalledCheckNewPhotos) return;
+    isCalledCheckNewPhotos = YES;
+    
     [_viewFBLoginViewArea setHidden:YES];
     [_indicator startAnimating];
     
@@ -83,6 +93,10 @@
 
 - (void)goNext
 {
+    if(isCalledGoNext) return;
+    isCalledGoNext = YES;
+
+    
     [_indicator stopAnimating];
     
     self.navigationController.navigationBarHidden = NO;

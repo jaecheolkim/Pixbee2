@@ -54,6 +54,31 @@
     // Uncomment to display a logo as the navigation bar title
     self.navigationItem.titleView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"pixbee.png"]];
     
+
+    [self initialNotification];
+    
+    self.usersPhotos = [[SQLManager getAllUserPhotos] mutableCopy];
+    NSLog(@"usersPhotos: %@",_usersPhotos);
+    [self calAllPhotos];
+    
+    // 이전 버튼 제거
+    self.navigationItem.leftBarButtonItem = nil;
+    self.navigationItem.hidesBackButton=YES;
+}
+
+
+
+- (void)didReceiveMemoryWarning
+{
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+- (void)initialNotification
+{
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(AlbumContentsViewEventHandler:)
+												 name:@"AlbumContentsViewEventHandler" object:nil];
+    
     //KEYBOARD OBSERVERS
     /************************/
     [[NSNotificationCenter defaultCenter] addObserver:self
@@ -67,35 +92,34 @@
                                                object:nil];
     /************************/
 
-    
-    self.usersPhotos = [[SQLManager getAllUserPhotos] mutableCopy];
-    NSLog(@"usersPhotos: %@",_usersPhotos);
-    
-//    NSDictionary *users = [[self.usersPhotos objectAtIndex:0] copy];
-//    NSDictionary *users1 = [[self.usersPhotos objectAtIndex:0] copy];
-//    NSDictionary *users2 = [[self.usersPhotos objectAtIndex:0] copy];
-//    NSDictionary *users3 = [[self.usersPhotos objectAtIndex:0] copy];
-//    NSDictionary *users4 = [[self.usersPhotos objectAtIndex:0] copy];
-//    NSDictionary *users5 = [[self.usersPhotos objectAtIndex:0] copy];
-//    NSDictionary *users6 = [[self.usersPhotos objectAtIndex:0] copy];
-//    NSDictionary *users7 = [[self.usersPhotos objectAtIndex:0] copy];
-//    NSDictionary *users8 = [[self.usersPhotos objectAtIndex:0] copy];
-//    
-//    NSMutableArray *newuser = [NSMutableArray arrayWithObjects:users, users1, users3, users2, users3, users4, users5, users6, users7, users8, nil];
-//    self.usersPhotos = newuser;
-   
-    [self calAllPhotos];
-    
-    // 이전 버튼 제거
-    self.navigationItem.leftBarButtonItem = nil;
-    self.navigationItem.hidesBackButton=YES;
 }
 
-- (void)didReceiveMemoryWarning
+- (void)closeNotification
 {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+	[[NSNotificationCenter defaultCenter] removeObserver:self name:@"AlbumContentsViewEventHandler" object:nil];
 }
+
+
+
+
+- (void)AlbumContentsViewEventHandler:(NSNotification *)notification
+{
+    if([[[notification userInfo] objectForKey:@"Msg"] isEqualToString:@"changedGalleryDB"]) {
+        
+        self.usersPhotos = [[SQLManager getAllUserPhotos] mutableCopy];
+        NSLog(@"usersPhotos: %@",_usersPhotos);
+        [self calAllPhotos];
+        
+        [self.tableView reloadData];
+        
+        NSInteger section = [self.tableView numberOfSections] - 1;
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[self.tableView numberOfRowsInSection:section]-1 inSection:section];
+		
+        if(indexPath != nil)
+			[self.tableView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionBottom animated:NO];
+	}
+}
+
 
 - (void) calAllPhotos {
     int allphotocount = [[PBAssetsLibrary sharedInstance].totalAssets count];
