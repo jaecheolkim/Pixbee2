@@ -203,6 +203,7 @@
 		78C1EB76186B0A790072E7DB /* xicon_select@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 78C1EB33186B0A790072E7DB /* xicon_select@2x.png */; };
 		78C950AA185D5FA60041E8DD /* SBPageFlowView.m in Sources */ = {isa = PBXBuildFile; fileRef = 78C950A9185D5FA60041E8DD /* SBPageFlowView.m */; };
 		8010C1FD187A8A7100EB7FF6 /* PBUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 8010C1FC187A8A7100EB7FF6 /* PBUtil.m */; };
+		8013EAAB1882D608007075E7 /* noname@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8013EAAA1882D608007075E7 /* noname@2x.png */; };
 		801B35DA18561B9600EEB9F3 /* SMShadowedLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 801B35D718561B9600EEB9F3 /* SMShadowedLayer.m */; };
 		801B35DB18561B9600EEB9F3 /* SMTransformLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 801B35D918561B9600EEB9F3 /* SMTransformLayer.m */; };
 		801B35DF18561BC400EEB9F3 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 801B35DE18561BC400EEB9F3 /* ViewController.m */; };
@@ -583,6 +584,7 @@
 		78C950A9185D5FA60041E8DD /* SBPageFlowView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBPageFlowView.m; sourceTree = "<group>"; };
 		8010C1FB187A8A7100EB7FF6 /* PBUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBUtil.h; sourceTree = "<group>"; };
 		8010C1FC187A8A7100EB7FF6 /* PBUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBUtil.m; sourceTree = "<group>"; };
+		8013EAAA1882D608007075E7 /* noname@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "noname@2x.png"; sourceTree = "<group>"; };
 		801B35D618561B9600EEB9F3 /* SMShadowedLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMShadowedLayer.h; sourceTree = "<group>"; };
 		801B35D718561B9600EEB9F3 /* SMShadowedLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMShadowedLayer.m; sourceTree = "<group>"; };
 		801B35D818561B9600EEB9F3 /* SMTransformLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMTransformLayer.h; sourceTree = "<group>"; };
@@ -1077,6 +1079,7 @@
 		7856F6F11849D1B700A17349 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				8013EAAA1882D608007075E7 /* noname@2x.png */,
 				80E363A31880D60100A5DF57 /* stop_video@2x.png */,
 				80E363A41880D60100A5DF57 /* video@2x.png */,
 				80E36395187E45E000A5DF57 /* profile.png */,
@@ -1792,6 +1795,7 @@
 				80D5B622186F340D000CD8D7 /* filter2@2x.png in Resources */,
 				78C1EB5A186B0A790072E7DB /* list_select@2x.png in Resources */,
 				7805A6E51866E7B800B234C1 /* pixbee@2x.png in Resources */,
+				8013EAAB1882D608007075E7 /* noname@2x.png in Resources */,
 				69ED32F018484EBB00127196 /* Main.storyboard in Resources */,
 				78C1EB58186B0A790072E7DB /* keyboard@2x.png in Resources */,
 				7805A6DC1866E7B800B234C1 /* export@2x.png in Resources */,

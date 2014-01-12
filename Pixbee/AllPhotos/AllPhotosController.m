@@ -280,7 +280,15 @@
         self.navigationController.navigationBarHidden = NO;
         PBFilterViewController *destination = segue.destinationViewController;
 #warning  호석과장님 아래에 imageData에 NSData 이미지 (jpeg) 집어 넣으면 되...
-        destination.imageData = nil;
+        
+        NSMutableArray *photoDatas = [NSMutableArray array];
+        
+        for(NSIndexPath *indexPath in selectedPhotos){
+            NSDictionary *photo = [self.photos objectAtIndex:indexPath.row];
+            [photoDatas addObject:photo];
+        }
+        
+        destination.photos = photoDatas;
         
     }
 }

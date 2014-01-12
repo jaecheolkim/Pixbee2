@@ -25,12 +25,35 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    UIPageControl *pageControl;
+    
+    NSLog(@"photos = %@", _photos);
+    for(NSDictionary *photo in _photos) {
+        ALAsset *asset= [photo objectForKey:@"Asset"];
+        ALAssetRepresentation* representation = [asset defaultRepresentation];
+        
+        // Retrieve the image orientation from the ALAsset
+        UIImageOrientation orientation = UIImageOrientationUp;
+        NSNumber* orientationValue = [asset valueForProperty:@"ALAssetPropertyOrientation"];
+        if (orientationValue != nil) {
+            orientation = [orientationValue intValue];
+        }
+        
+        CGFloat scale  = 1;
+        originalImage = [UIImage imageWithCGImage:[representation fullResolutionImage]
+                                             scale:scale orientation:orientation];
+        
+        originalImage = [self fixrotation:originalImage] ;
+        [_imageView setImage:originalImage];
+    }
+    
+    
     self.navigationController.navigationItem.title = @"Filter";
     
     [self.view setBackgroundColor:[UIColor colorWithRed:0.98 green:0.96 blue:0.92 alpha:1.0]];
     
     _imageView.contentMode = UIViewContentModeScaleAspectFit;
-    originalImage = [self fixrotation:[[UIImage alloc] initWithData:_imageData]] ;
+    //originalImage = [self fixrotation:[[UIImage alloc] initWithData:_imageData]] ;
     [_imageView setImage:originalImage];
 
     self.filters = @[@"Original",

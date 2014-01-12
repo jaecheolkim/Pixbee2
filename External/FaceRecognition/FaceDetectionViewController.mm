@@ -281,48 +281,29 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     [self performSegueWithIdentifier:SEGUE_6_1_TO_4_4 sender:self];
 }
 
-- (IBAction)snapStillImage:(id)sender {
-    //dispatch_async([self sessionQueue], ^{
-		// Update the orientation on the still image output video connection before capturing.
-		[[stillImageOutput connectionWithMediaType:AVMediaTypeVideo] setVideoOrientation:[[(AVCaptureVideoPreviewLayer *)previewLayer connection] videoOrientation]];
-		
-		// Flash set to Auto for Still Capture
-		//[AVCamViewController setFlashMode:AVCaptureFlashModeAuto forDevice:[[self videoDeviceInput] device]];
-		
-		// Capture a still image.
-		[stillImageOutput captureStillImageAsynchronouslyFromConnection:[stillImageOutput connectionWithMediaType:AVMediaTypeVideo] completionHandler:^(CMSampleBufferRef imageDataSampleBuffer, NSError *error) {
-			
-			if (imageDataSampleBuffer)
-			{
-				imageData = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageDataSampleBuffer];
-                //self.navigationController.navigationBarHidden = NO;
-                
+- (IBAction)snapStillImage:(id)sender
+{
+    [[stillImageOutput connectionWithMediaType:AVMediaTypeVideo] setVideoOrientation:[[(AVCaptureVideoPreviewLayer *)previewLayer connection] videoOrientation]];
+    // Capture a still image.
+    [stillImageOutput captureStillImageAsynchronouslyFromConnection:[stillImageOutput connectionWithMediaType:AVMediaTypeVideo] completionHandler:^(CMSampleBufferRef imageDataSampleBuffer, NSError *error) {
+        
+        if (imageDataSampleBuffer)
+        {
+            imageData = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageDataSampleBuffer];
 
-//                [self performSegueWithIdentifier:SEGUE_GO_FILTER sender:self];
-//				UIImage *image = [[UIImage alloc] initWithData:imageData];
-//				[[[ALAssetsLibrary alloc] init] writeImageToSavedPhotosAlbum:[image CGImage] orientation:(ALAssetOrientation)[image imageOrientation] completionBlock:nil];
-                
-                [[[ALAssetsLibrary alloc] init] writeImageDataToSavedPhotosAlbum:imageData metadata:nil completionBlock:^(NSURL *assetURL, NSError *error2)
-                 {
-                     //             report_memory(@"After writing to library");
-                     if (error2) {
-                         NSLog(@"ERROR: the image failed to be written");
-                     }
-                     else {
-                         NSLog(@"PHOTO SAVED - assetURL: %@", assetURL);
-                         
-                         [self savePhoto:assetURL users:selectedUsers];
-                     }
+            [[[ALAssetsLibrary alloc] init] writeImageDataToSavedPhotosAlbum:imageData metadata:nil completionBlock:^(NSURL *assetURL, NSError *error2)
+             {
+                 if (error2) {
+                     NSLog(@"ERROR: the image failed to be written");
+                 }
+                 else {
+                     NSLog(@"PHOTO SAVED - assetURL: %@", assetURL);
                      
-//                     dispatch_async(dispatch_get_main_queue(), ^(void) {
-//                         [self performSegueWithIdentifier:SEGUE_GO_FILTER sender:self];
-//                         // Do something on main thread.
-//                     });
-
-                 }];
-			}
-		}];
-	//});
+                     [self savePhoto:assetURL users:selectedUsers];
+                 }
+             }];
+        }
+    }];
 }
 
 - (void)savePhoto:(NSURL *)assetURL users:(NSArray*)users
@@ -356,13 +337,14 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    if ([segue.identifier isEqualToString:SEGUE_GO_FILTER]){
-        self.navigationController.navigationBarHidden = NO;
-        PBFilterViewController *destination = segue.destinationViewController;
-        destination.imageData = imageData;
-        
-    }
-    else if([segue.identifier isEqualToString:SEGUE_6_1_TO_2_2]){
+//    if ([segue.identifier isEqualToString:SEGUE_GO_FILTER]){
+//        self.navigationController.navigationBarHidden = NO;
+//        PBFilterViewController *destination = segue.destinationViewController;
+//        destination.imageData = imageData;
+//        
+//    }
+//    else
+    if([segue.identifier isEqualToString:SEGUE_6_1_TO_2_2]){
         AddingFaceToAlbumController *destination = segue.destinationViewController;
         destination.UserName = self.UserName;
         destination.UserID = self.UserID;
