@@ -40,13 +40,13 @@
                         <outlet property="PixbeeLogo" destination="qik-qn-gRq" id="4nf-we-QGI"/>
                         <outlet property="indicator" destination="qb8-m8-uLT" id="lW3-sh-1kF"/>
                         <outlet property="viewFBLoginViewArea" destination="Y6c-gn-Kh1" id="0RT-jS-GnH"/>
-                        <segue destination="yxo-B7-XCy" kind="push" identifier="SegueFaceAnalyze" customClass="SCTTiltRight" id="m0e-6d-hsu"/>
                         <segue destination="5fn-Qj-G3E" kind="push" identifier="Segue1_2to3_1" id="b0A-hU-Ygo"/>
+                        <segue destination="yxo-B7-XCy" kind="modal" identifier="SegueFaceAnalyze" id="RFS-Cc-Rzr"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1266" y="10"/>
+            <point key="canvasLocation" x="-1766" y="16"/>
         </scene>
         <!--2.2. Adding Face To Album-->
         <scene sceneID="w1x-xb-SHf">
@@ -202,7 +202,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="YS9-0S-r9Y" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-183" y="10"/>
+            <point key="canvasLocation" x="-775" y="16"/>
         </scene>
         <!--1.4. Invitation-->
         <scene sceneID="Vpn-8O-fPo">
@@ -253,7 +253,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="q9B-MI-KP8" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="395" y="10"/>
+            <point key="canvasLocation" x="-257" y="16"/>
         </scene>
         <!--3.1. Album Page-->
         <scene sceneID="G65-gg-1kd">
@@ -478,7 +478,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="X8l-N9-92W" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="947" y="10"/>
+            <point key="canvasLocation" x="243" y="16"/>
         </scene>
         <!--Friend Controller-->
         <scene sceneID="krU-4v-oxd">
@@ -509,7 +509,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="107" height="28"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="A7B363B7-271E-4985-B46A-A8D245E1F20C" translatesAutoresizingMaskIntoConstraints="NO" id="6aK-Ak-lFj">
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="C5BE26DC-75D5-486C-9936-172E8DBB0491" translatesAutoresizingMaskIntoConstraints="NO" id="6aK-Ak-lFj">
                                                     <rect key="frame" x="0.0" y="0.0" width="28" height="29"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
@@ -550,7 +550,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ZPe-rL-CBk" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1064" y="744"/>
+            <point key="canvasLocation" x="346" y="722"/>
         </scene>
         <!--4.1. Individual Gallery-->
         <scene sceneID="rJ6-cA-OYb">
@@ -755,7 +755,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="2gx-ar-cbr" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1503" y="10"/>
+            <point key="canvasLocation" x="749" y="16"/>
         </scene>
         <!--4.3. All Photos-->
         <scene sceneID="LjN-qa-8oF">
@@ -880,11 +880,12 @@
                         <outlet property="allPhotosView" destination="r4b-rC-PeG" id="FTr-0D-MtG"/>
                         <outlet property="collectionView" destination="z3q-NC-tbc" id="5q0-di-hMP"/>
                         <outlet property="doneButton" destination="zFy-oG-3T3" id="dVc-6E-AV4"/>
+                        <segue destination="5Gf-iD-N8l" kind="push" identifier="FilterSegue" id="UDv-3T-119"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="jf0-sV-rOZ" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1503" y="-892"/>
+            <point key="canvasLocation" x="243" y="-860"/>
         </scene>
         <!--5.1. Full Screen Photo-->
         <scene sceneID="6X2-d7-cNe">
@@ -938,7 +939,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="qQW-vI-WuU" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="Ngl-06-Bto" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="2014" y="10"/>
+            <point key="canvasLocation" x="1362" y="16"/>
         </scene>
         <!--Setting Controller - Setting-->
         <scene sceneID="Tyo-DN-xH8">
@@ -1108,7 +1109,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="NNP-1C-gPX" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2509" y="-892"/>
+            <point key="canvasLocation" x="1362" y="-860"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="nyz-XG-GpP">
@@ -1131,7 +1132,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="mMP-7o-Gfa" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1737" y="10"/>
+            <point key="canvasLocation" x="-2191" y="16"/>
         </scene>
         <!--6.1. Face Detection View Controller-->
         <scene sceneID="6I5-NA-DuC">
@@ -1303,13 +1304,12 @@
                         <outlet property="snapButton" destination="lik-r0-KMe" id="d8f-o6-WDR"/>
                         <outlet property="switchButton" destination="1gu-Cw-a2g" id="Kzp-Rn-ft2"/>
                         <segue destination="LLs-kj-u87" kind="push" identifier="Segue6_1to2_2" id="vS4-Or-sA5"/>
-                        <segue destination="5Gf-iD-N8l" kind="push" identifier="FilterSegue" customClass="SCT3DFlip" id="G9a-sI-C8b"/>
                         <segue destination="eM8-Ev-WUw" kind="push" identifier="Segue6_1to4_4" id="ZQl-0o-EtY"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="3pO-Qz-iU4" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-729" y="10"/>
+            <point key="canvasLocation" x="-1306" y="16"/>
         </scene>
         <!--Filter View Controller-->
         <scene sceneID="rs9-kO-diB">
@@ -1342,7 +1342,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ljh-u2-PWo" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-704" y="737"/>
+            <point key="canvasLocation" x="-1306" y="733"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="Cr7-Vo-3hJ">
@@ -1363,7 +1363,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dre-lt-iGc" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-720" y="-790"/>
+            <point key="canvasLocation" x="-1306" y="-780"/>
         </scene>
         <!--4.2. Individual Gallery-->
         <scene sceneID="DBF-go-p9g">
@@ -1596,7 +1596,7 @@ more Alex's Photo</string>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Twf-hO-GTc" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1503" y="727"/>
+            <point key="canvasLocation" x="749" y="753"/>
         </scene>
         <!--3.2. Album Selection-->
         <scene sceneID="YAC-Si-iWA">
@@ -1695,7 +1695,7 @@ more Alex's Photo</string>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="h9F-1K-vOp" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2014" y="727"/>
+            <point key="canvasLocation" x="1362" y="753"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="FUo-Xn-XLk">
@@ -1714,11 +1714,11 @@ more Alex's Photo</string>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="24B-bU-hwF" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1983" y="-892"/>
+            <point key="canvasLocation" x="749" y="-860"/>
         </scene>
     </scenes>
     <resources>
-        <image name="A7B363B7-271E-4985-B46A-A8D245E1F20C" width="628" height="152">
+        <image name="C5BE26DC-75D5-486C-9936-172E8DBB0491" width="628" height="152">
             <mutableData key="keyedArchiveRepresentation">
 YnBsaXN0MDDUAQIDBAUGPj9YJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoK4HCBMU
 GR4fIyQsLzI4O1UkbnVsbNUJCgsMDQ4PEBESVk5TU2l6ZVYkY2xhc3NcTlNJbWFnZUZsYWdzVk5TUmVw
@@ -8177,10 +8177,10 @@ Bd3JAAAAAAAABAEAAAAAAAAAQgAAAAAAAAAAAAAAAAAF3cs
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="10K-Ub-qmt"/>
-        <segue reference="oBg-YQ-6ww"/>
-        <segue reference="Zhm-J1-mzh"/>
         <segue reference="tjK-aR-fac"/>
-        <segue reference="ZQl-0o-EtY"/>
+        <segue reference="oBg-YQ-6ww"/>
+        <segue reference="Re6-n5-khJ"/>
+        <segue reference="qxE-Yu-N1x"/>
+        <segue reference="Zhm-J1-mzh"/>
     </inferredMetricsTieBreakers>
 </document>
