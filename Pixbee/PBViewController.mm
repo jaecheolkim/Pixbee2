@@ -123,7 +123,7 @@
         NSLog(@"Default user name = %@ / id = %d", GlobalValue.userName, UserID);
         isFirstVisit = YES;
     }
-
+#warning 이상하게 이게 두번 호출되어서 다음 NavigationController 문제가 생겼음 (결국 Push를 두번 한 꼴.)
     [self checkNewPhotos];
 
 }
