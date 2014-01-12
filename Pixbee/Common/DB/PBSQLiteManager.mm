@@ -1061,5 +1061,65 @@ static inline NSDate* convertDouble2Date(double date){ return [NSDate dateWithTi
     return success;
 }
 
+//앨범 간 copy / Move / New Album / Delete   (DB)
+
+//사진 촬영 후 해당 사진을 UserPhotos에 저장.
+- (void)saveNewUserPhotoToDB:(ALAsset*)photoAsset users:(NSArray*)users
+{
+    
+    NSLog(@"Asset : %@ / Users : %@", photoAsset, users);
+    
+    NSString *query = [NSString stringWithFormat:@"SELECT GroupURL FROM Groups WHERE GroupName = '%@';", @"Camera Roll"];
+    NSArray *result = [SQLManager getRowsForQuery:query];
+    NSString *GroupURL = @"";
+    if(!IsEmpty(result)){
+        GroupURL = [[result objectAtIndex:0] objectForKey:@"GroupURL"];
+    }
+    
+    // 신규 포토 저장.
+    // Save DB. [Photos] 얼굴이 검출된 사진만 Photos Table에 저장.
+    int PhotoID = [SQLManager newPhotoWith:photoAsset withGroupAssetURL:GroupURL];
+    
+    if(PhotoID >= 0){
+        if(!IsEmpty(users)){
+            for(id user in users){
+                int userID = [user intValue];
+                
+                int PhotoNo = [SQLManager newUserPhotosWith:userID
+                                                  withPhoto:PhotoID
+                                                   withFace:-1];
+                NSLog(@"PhotoNO = %d / UserID = %d", PhotoNo, userID);
+                if(PhotoNo)
+                {
+                    [[NSNotificationCenter defaultCenter] postNotificationName:@"AlbumContentsViewEventHandler"
+                                                                        object:self
+                                                                      userInfo:@{@"Msg":@"changedGalleryDB"}];
+                }
+                
+                
+            }
+        } else {
+            int userID = GlobalValue.UserID;
+            
+            int PhotoNo = [SQLManager newUserPhotosWith:userID
+                                              withPhoto:PhotoID
+                                               withFace:-1];
+            NSLog(@"PhotoNO = %d / UserID = %d", PhotoNo, userID);
+            if(PhotoNo)
+            {
+                [[NSNotificationCenter defaultCenter] postNotificationName:@"AlbumContentsViewEventHandler"
+                                                                    object:self
+                                                                  userInfo:@{@"Msg":@"changedGalleryDB"}];
+            }
+        }
+        
+        
+        
+    }
+    
+}
+
+
+
 @end
 

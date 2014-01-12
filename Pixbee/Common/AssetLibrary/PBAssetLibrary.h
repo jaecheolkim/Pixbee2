@@ -41,9 +41,6 @@
 // 앨범사진 로컬 앨범DB로 동기화
 - (void)syncAlbumToDB:(void (^)(NSArray *results))result;
 
-// 사진 정보 분석해서 DB에 저장 [ Photos / Faces / UserPhotos ];
-- (void)saveNewPhotoToDB:(ALAsset*)photoAsset users:(NSArray*)users;
-
 - (void)checkFacesFor:(int)UserID usingEnumerationBlock:(void (^)(NSDictionary *processInfo))enumerationBlock completion:(void (^)(BOOL finished))completion;
 
 @end

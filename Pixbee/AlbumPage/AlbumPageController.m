@@ -57,13 +57,20 @@
 
     [self initialNotification];
     
-    self.usersPhotos = [[SQLManager getAllUserPhotos] mutableCopy];
-    NSLog(@"usersPhotos: %@",_usersPhotos);
-    [self calAllPhotos];
+//    self.usersPhotos = [[SQLManager getAllUserPhotos] mutableCopy];
+//    NSLog(@"usersPhotos: %@",_usersPhotos);
+//    [self calAllPhotos];
+    
+    [self reloadDB];
     
     // 이전 버튼 제거
     self.navigationItem.leftBarButtonItem = nil;
     self.navigationItem.hidesBackButton=YES;
+}
+
+- (void)dealloc
+{
+    [self closeNotification];
 }
 
 
@@ -106,23 +113,31 @@
 {
     if([[[notification userInfo] objectForKey:@"Msg"] isEqualToString:@"changedGalleryDB"]) {
         
-        self.usersPhotos = [[SQLManager getAllUserPhotos] mutableCopy];
-        NSLog(@"usersPhotos: %@",_usersPhotos);
-        [self calAllPhotos];
+        [self reloadDB];
         
-        [self.tableView reloadData];
-        
-        NSInteger section = [self.tableView numberOfSections] - 1;
-        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[self.tableView numberOfRowsInSection:section]-1 inSection:section];
-		
-        if(indexPath != nil)
-			[self.tableView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionBottom animated:NO];
 	}
+}
+
+- (void)reloadDB
+{
+    
+    self.usersPhotos = [[SQLManager getAllUserPhotos] mutableCopy];
+    NSLog(@"usersPhotos: %@",_usersPhotos);
+    [self calAllPhotos];
+    
+    [self.tableView reloadData];
+    
+    NSInteger section = [self.tableView numberOfSections] - 1;
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[self.tableView numberOfRowsInSection:section]-1 inSection:section];
+    
+    if(indexPath != nil)
+        [self.tableView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionBottom animated:NO];
+    
 }
 
 
 - (void) calAllPhotos {
-    int allphotocount = [[PBAssetsLibrary sharedInstance].totalAssets count];
+    int allphotocount = (int)[[PBAssetsLibrary sharedInstance].totalAssets count];
     self.allPhotosView.countLabel.text = [NSString stringWithFormat:@"%d", allphotocount];
 }
 

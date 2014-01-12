@@ -41,14 +41,43 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    [self initialNotification];
+    
 	// Do any additional setup after loading the view.
     if([self.preIdentifier isEqualToString:SEGUE_6_1_TO_4_4]){
         //Change Done button to Share button
         self.doneButton.title = @"Share";
     }
     selectedPhotos = [NSMutableArray array];
-    [self calAllPhotos];
+    [self reloadDB];
 }
+
+- (void)dealloc
+{
+    [self closeNotification];
+}
+
+- (void)initialNotification
+{
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(AlbumContentsViewEventHandler:)
+												 name:@"AlbumContentsViewEventHandler" object:nil];
+}
+
+- (void)closeNotification
+{
+	[[NSNotificationCenter defaultCenter] removeObserver:self name:@"AlbumContentsViewEventHandler" object:nil];
+}
+
+- (void)AlbumContentsViewEventHandler:(NSNotification *)notification
+{
+    if([[[notification userInfo] objectForKey:@"Msg"] isEqualToString:@"changedGalleryDB"]) {
+        
+        [self reloadDB];
+        [self goBottom];
+        
+	}
+}
+
 
 - (void)didReceiveMemoryWarning
 {
@@ -56,9 +85,15 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (void) calAllPhotos {
+- (void)viewDidLayoutSubviews
+{
+    [super viewDidLayoutSubviews];
+    [self goBottom];
+}
+
+- (void) reloadDB {
     self.photos = [PBAssetsLibrary sharedInstance].totalAssets;
-    int allphotocount = [self.photos count];
+    int allphotocount = (int)[self.photos count];
 //    if (self.photos) {
 //        for (NSDictionary *user in self.photos) {
 //            NSArray *photos = [user objectForKey:@"photos"];
@@ -69,6 +104,15 @@
     self.allPhotosView.countLabel.text = [NSString stringWithFormat:@"%d", allphotocount];
     self.collectionView.allowsMultipleSelection = YES;
     [self.collectionView reloadData];
+}
+
+- (void)goBottom
+{
+    NSInteger section = [self numberOfSectionsInCollectionView:_collectionView] - 1;
+    NSInteger item = [self collectionView:_collectionView numberOfItemsInSection:section] - 1;
+    NSIndexPath *lastIndexPath = [NSIndexPath indexPathForItem:item inSection:section];
+    [_collectionView scrollToItemAtIndexPath:lastIndexPath atScrollPosition:UICollectionViewScrollPositionBottom animated:NO];
+
 }
 
 #pragma mark -

@@ -331,12 +331,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     {
         NSLog(@"success load ALAsset.... ");
         //UIImage *image = [UIImage imageWithCGImage:[asset thumbnail]];
-        [AssetLib saveNewPhotoToDB:asset users:users];
-//        for(id user in users){
-//            int userID = [user intValue];
-//            [AssetLib saveNewPhotoToDB:asset users:users];
-//        }
-        
+        [SQLManager saveNewUserPhotoToDB:asset users:users];
     };
     
     ALAssetsLibraryAccessFailureBlock failureBlock  = ^(NSError *error)

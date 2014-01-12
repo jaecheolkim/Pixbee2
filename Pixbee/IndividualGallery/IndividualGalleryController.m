@@ -93,6 +93,22 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (void)viewDidLayoutSubviews
+{
+    [super viewDidLayoutSubviews];
+    [self goBottom];
+}
+
+- (void)goBottom
+{
+    NSInteger section = [self numberOfSectionsInCollectionView:_collectionView] - 1;
+    NSInteger item = [self collectionView:_collectionView numberOfItemsInSection:section] - 1;
+    NSIndexPath *lastIndexPath = [NSIndexPath indexPathForItem:item inSection:section];
+    [_collectionView scrollToItemAtIndexPath:lastIndexPath atScrollPosition:UICollectionViewScrollPositionBottom animated:NO];
+    
+}
+
+
 #pragma mark -
 #pragma mark PSTCollectionViewDataSource stuff
 

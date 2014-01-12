@@ -91,8 +91,9 @@ enum errorCodes {
 - (NSArray*)getUserPhotos:(int)UserID;
 - (BOOL)deleteUserPhoto:(int)UserID withPhoto:(int)PhotoID;
 
-
-
+// 사진 촬영 후 해당 사진을 UserPhotos에 저장.
+// 사진 정보 분석해서 DB에 저장 [ Photos / Faces / UserPhotos ];
+- (void)saveNewUserPhotoToDB:(ALAsset*)photoAsset users:(NSArray*)users;
 
 
 @end
