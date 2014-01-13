@@ -509,7 +509,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="107" height="28"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="864C24F6-7DAE-40FB-B1BD-68D9D39D2FC6" translatesAutoresizingMaskIntoConstraints="NO" id="6aK-Ak-lFj">
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="74A7229A-71A8-49BF-94BF-8ABEC6A82AB7" translatesAutoresizingMaskIntoConstraints="NO" id="6aK-Ak-lFj">
                                                     <rect key="frame" x="0.0" y="0.0" width="28" height="29"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
@@ -870,7 +870,7 @@
                     <toolbarItems/>
                     <navigationItem key="navigationItem" id="wna-du-LjV">
                         <barButtonItem key="backBarButtonItem" image="xicon.png" id="B5a-H3-M4a"/>
-                        <barButtonItem key="rightBarButtonItem" systemItem="done" id="zFy-oG-3T3">
+                        <barButtonItem key="rightBarButtonItem" title="Item" style="done" id="zFy-oG-3T3">
                             <connections>
                                 <action selector="DoneClickedHandler:" destination="eM8-Ev-WUw" id="6nU-Yj-xmW"/>
                             </connections>
@@ -1723,7 +1723,7 @@ more Alex's Photo</string>
         </scene>
     </scenes>
     <resources>
-        <image name="864C24F6-7DAE-40FB-B1BD-68D9D39D2FC6" width="628" height="152">
+        <image name="74A7229A-71A8-49BF-94BF-8ABEC6A82AB7" width="628" height="152">
             <mutableData key="keyedArchiveRepresentation">
 YnBsaXN0MDDUAQIDBAUGPj9YJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoK4HCBMU
 GR4fIyQsLzI4O1UkbnVsbNUJCgsMDQ4PEBESVk5TU2l6ZVYkY2xhc3NcTlNJbWFnZUZsYWdzVk5TUmVw
@@ -8182,8 +8182,8 @@ Bd3JAAAAAAAABAEAAAAAAAAAQgAAAAAAAAAAAAAAAAAF3cs
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="oBg-YQ-6ww"/>
         <segue reference="Re6-n5-khJ"/>
+        <segue reference="b0A-hU-Ygo"/>
         <segue reference="GxS-RG-54L"/>
         <segue reference="Zhm-J1-mzh"/>
         <segue reference="tjK-aR-fac"/>

@@ -11,5 +11,6 @@
 @interface AllPhotosController : UIViewController
 
 @property (strong, nonatomic) NSArray *photos;
-@property (strong, nonatomic) NSString *preIdentifier;
+@property (strong, nonatomic) NSString *segueIdentifier;
+@property (strong, nonatomic) NSString *operateIdentifier;
 @end

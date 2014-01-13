@@ -43,11 +43,16 @@
     [super viewDidLoad];
     [self initialNotification];
     
-	// Do any additional setup after loading the view.
-    if([self.preIdentifier isEqualToString:SEGUE_6_1_TO_4_4]){
-        //Change Done button to Share button
+    self.doneButton.enabled = NO;
+    NSLog(@"============================> Operation ID = %@", _operateIdentifier);
+    
+    if([_operateIdentifier isEqualToString:@"new facetab"] && !IsEmpty(_operateIdentifier)  ){
+        self.doneButton.title = @"Done";
+    } else {
         self.doneButton.title = @"Share";
     }
+
+    
     selectedPhotos = [NSMutableArray array];
     [self reloadDB];
 }
@@ -184,7 +189,7 @@
 {
     if (self.collectionView.allowsMultipleSelection) {
         [selectedPhotos addObject:indexPath];
-        
+        if(selectedPhotos.count) self.doneButton.enabled = YES;
         // UI
         TotalGalleryViewCell *cell = (TotalGalleryViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
         [cell showSelectIcon:YES];
@@ -243,6 +248,7 @@
         [selectedPhotos removeObject:indexPath];
         
         unsigned long selectcount = [selectedPhotos count];
+        if(!selectcount) self.doneButton.enabled = NO;
         [UIView animateWithDuration:0.3
                          animations:^{
                              if (selectcount > 0) {
@@ -265,12 +271,21 @@
 
 - (IBAction)DoneClickedHandler:(id)sender {
     // DB작업 후 화면 전환.
-    if([self.preIdentifier isEqualToString:SEGUE_6_1_TO_4_4]){
+    if([_operateIdentifier isEqualToString:@"new facetab"] && !IsEmpty(_operateIdentifier)  ){
+        // 새로운 Facetab 만들고 Main dashboard로 돌아가기
+        [self.navigationController popViewControllerAnimated:YES];
+    } else {
+        // 필터 화면으로 이동
         [self performSegueWithIdentifier:SEGUE_GO_FILTER sender:self];
     }
-    else {
-        [self.navigationController popViewControllerAnimated:YES];
-    }
+
+    
+//    if([self.segueIdentifier isEqualToString:SEGUE_6_1_TO_4_4]){
+//        [self performSegueWithIdentifier:SEGUE_GO_FILTER sender:self];
+//    }
+//    else {
+//        [self.navigationController popViewControllerAnimated:YES];
+//    }
     
 }
 

@@ -351,7 +351,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     }
     else if([segue.identifier isEqualToString:SEGUE_6_1_TO_4_4]){
         AllPhotosController *destination = segue.destinationViewController;
-        destination.preIdentifier = SEGUE_6_1_TO_4_4;
+        destination.segueIdentifier = SEGUE_6_1_TO_4_4;
 
     }
 

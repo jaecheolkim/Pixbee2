@@ -22,6 +22,8 @@
     NSIndexPath *editIndexPath;
     
     int ActionSheetType;
+    
+    NSString *operateIdentifier; // add new facetab -> all photos로 이동하는 구분자.
 }
 
 @property (strong, nonatomic) IBOutlet UserAddView *addUserView;
@@ -230,6 +232,7 @@
 
 
 - (IBAction)allPhotosViewClickHandler:(id)sender {
+    operateIdentifier = nil;
 }
 
 - (IBAction)userAddViewClickHandler:(id)sender {
@@ -268,7 +271,9 @@
     else if([segue.identifier isEqualToString:SEGUE_3_1_TO_4_3]){ // add new face tab from Album
         AllPhotosController *destViewController = segue.destinationViewController;
         destViewController.photos = self.usersPhotos;
-        destViewController.preIdentifier = segue.identifier;
+        destViewController.segueIdentifier = segue.identifier;
+        destViewController.operateIdentifier = operateIdentifier;
+
     }
     
     else if ([segue.identifier isEqualToString:SEGUE_3_1_TO_6_1]) { // add new face tab from camera
@@ -458,6 +463,7 @@
                 // From Photo Album
             case 1:
                 NSLog(@"From Photo Album Clicked");
+                operateIdentifier = @"new facetab";
                 [self performSegueWithIdentifier:SEGUE_3_1_TO_4_3 sender:self];
                 //Segue3_1to6_1
                 break;

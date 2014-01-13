@@ -213,7 +213,7 @@
     currentImageView = [_imageScrollView.subviews objectAtIndex:currentPage];
     originalImage = [_images objectAtIndex:currentPage];
     
-    [self moveFiler:(int)currentImageView.tag];
+    [self moveFilter:(int)currentImageView.tag];
     NSLog(@"---scrollViewDidEndDecelerating page : %d", currentPage);
 }
 
@@ -221,7 +221,7 @@
 #pragma mark -
 #pragma mark UI HANDLER
 
-- (void)moveFiler:(int)index
+- (void)moveFilter:(int)index
 {
     UIButton *selectedButton;
     
@@ -275,7 +275,7 @@
 
 
 -(void) filterSelected:(UIButton*)sender {
-    [self moveFiler:(int)sender.tag];
+    [self moveFilter:(int)sender.tag];
     [self applyFilter:(int)sender.tag];
 }
 
