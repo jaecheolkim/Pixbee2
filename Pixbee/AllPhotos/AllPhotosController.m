@@ -273,7 +273,49 @@
     // DB작업 후 화면 전환.
     if([_operateIdentifier isEqualToString:@"new facetab"] && !IsEmpty(_operateIdentifier)  ){
         // 새로운 Facetab 만들고 Main dashboard로 돌아가기
-        [self.navigationController popViewControllerAnimated:YES];
+        
+        if(selectedPhotos.count < 5){
+            [UIAlertView showWithTitle:@""
+                               message:@"5장 이상 등록!!"
+                     cancelButtonTitle:@"OK"
+                     otherButtonTitles:nil
+                              tapBlock:^(UIAlertView *alertView, NSInteger buttonIndex) {
+                                  if (buttonIndex == [alertView cancelButtonIndex]) {
+                                     [self.navigationController popViewControllerAnimated:YES];
+                                  }
+                              }];
+            
+        } else {
+            NSMutableArray *photoDatas = [NSMutableArray array];
+            
+            for(NSIndexPath *indexPath in selectedPhotos){
+                NSDictionary *photo = [self.photos objectAtIndex:indexPath.row];
+                [photoDatas addObject:photo];
+                NSLog(@"photo data = %@", photo);
+            }
+            
+            NSArray *result = [SQLManager newUser];
+            NSDictionary *user = [result objectAtIndex:0];
+            NSString *UserName = [user objectForKey:@"UserName"];
+            int UserID = [[user objectForKey:@"UserID"] intValue];
+
+#warning 추후에 얼굴 등록하는 프로세스 페이지 추가 필요.
+            
+            [UIAlertView showWithTitle:@""
+                               message:@"추후에 페이지 추가 예정..."
+                     cancelButtonTitle:@"OK"
+                     otherButtonTitles:nil
+                              tapBlock:^(UIAlertView *alertView, NSInteger buttonIndex) {
+                                  if (buttonIndex == [alertView cancelButtonIndex]) {
+                                      [self.navigationController popViewControllerAnimated:YES];
+                                  }
+                              }];
+        }
+        
+
+        
+        
+        
     } else {
         // 필터 화면으로 이동
         [self performSegueWithIdentifier:SEGUE_GO_FILTER sender:self];
