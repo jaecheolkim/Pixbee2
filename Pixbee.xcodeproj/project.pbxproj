@@ -270,6 +270,7 @@
 		80E363A018805A2B00A5DF57 /* image5@2x.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 80E3639B18805A2B00A5DF57 /* image5@2x.jpg */; };
 		80E363A51880D60100A5DF57 /* stop_video@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 80E363A31880D60100A5DF57 /* stop_video@2x.png */; };
 		80E363A61880D60100A5DF57 /* video@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 80E363A41880D60100A5DF57 /* video@2x.png */; };
+		80E3BE581884346200FF4C3D /* UIAlertView+Blocks.m in Sources */ = {isa = PBXBuildFile; fileRef = 80E3BE571884346200FF4C3D /* UIAlertView+Blocks.m */; };
 		80F9DD8E187B299800A1BF21 /* UIImage+Addon.m in Sources */ = {isa = PBXBuildFile; fileRef = 80F9DD8D187B299800A1BF21 /* UIImage+Addon.m */; };
 		80F9DD91187B9BA300A1BF21 /* UIButton+FaceIcon.m in Sources */ = {isa = PBXBuildFile; fileRef = 80F9DD90187B9BA300A1BF21 /* UIButton+FaceIcon.m */; };
 /* End PBXBuildFile section */
@@ -684,6 +685,9 @@
 		80E3639B18805A2B00A5DF57 /* image5@2x.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "image5@2x.jpg"; sourceTree = "<group>"; };
 		80E363A31880D60100A5DF57 /* stop_video@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "stop_video@2x.png"; sourceTree = "<group>"; };
 		80E363A41880D60100A5DF57 /* video@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "video@2x.png"; sourceTree = "<group>"; };
+		80E3BE561884346200FF4C3D /* UIAlertView+Blocks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIAlertView+Blocks.h"; sourceTree = "<group>"; };
+		80E3BE571884346200FF4C3D /* UIAlertView+Blocks.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIAlertView+Blocks.m"; sourceTree = "<group>"; };
+		80E3BE591884347F00FF4C3D /* UIExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIExtensions.h; sourceTree = "<group>"; };
 		80F9DD8C187B299800A1BF21 /* UIImage+Addon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Addon.h"; sourceTree = "<group>"; };
 		80F9DD8D187B299800A1BF21 /* UIImage+Addon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Addon.m"; sourceTree = "<group>"; };
 		80F9DD8F187B9BA300A1BF21 /* UIButton+FaceIcon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIButton+FaceIcon.h"; sourceTree = "<group>"; };
@@ -1498,6 +1502,8 @@
 		80D2A10E184A1E58008D29B2 /* UIExtension */ = {
 			isa = PBXGroup;
 			children = (
+				80E3BE561884346200FF4C3D /* UIAlertView+Blocks.h */,
+				80E3BE571884346200FF4C3D /* UIAlertView+Blocks.m */,
 				80D2A10F184A1E58008D29B2 /* FontAwesome.ttf */,
 				80D2A110184A1E58008D29B2 /* NSString+FontAwesome.h */,
 				80D2A111184A1E58008D29B2 /* NSString+FontAwesome.m */,
@@ -1509,6 +1515,7 @@
 				80F9DD8D187B299800A1BF21 /* UIImage+Addon.m */,
 				80F9DD8F187B9BA300A1BF21 /* UIButton+FaceIcon.h */,
 				80F9DD90187B9BA300A1BF21 /* UIButton+FaceIcon.m */,
+				80E3BE591884347F00FF4C3D /* UIExtensions.h */,
 			);
 			path = UIExtension;
 			sourceTree = "<group>";
@@ -1923,6 +1930,7 @@
 				7856F6F71849D29E00A17349 /* AlbumPageController.m in Sources */,
 				69C39FD018606B39001EDDFA /* SDWebImagePrefetcher.m in Sources */,
 				7805A63D18658BA000B234C1 /* DCIntrospect.m in Sources */,
+				80E3BE581884346200FF4C3D /* UIAlertView+Blocks.m in Sources */,
 				78C156E0186491F9007BA1DF /* FBFriendController.m in Sources */,
 				80D2A11A184A1E58008D29B2 /* ASGalleryAssetBase.m in Sources */,
 				80D2A124184A1E58008D29B2 /* DACircularProgressView.m in Sources */,

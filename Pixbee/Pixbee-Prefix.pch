@@ -26,6 +26,7 @@
     #import "PBAssetLibrary.h"
     #import "GlobalValues.h"
 
+    #import "UIExtensions.h"
 #endif
 
 #ifdef DEBUG
