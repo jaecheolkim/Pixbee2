@@ -320,15 +320,6 @@
         // 필터 화면으로 이동
         [self performSegueWithIdentifier:SEGUE_GO_FILTER sender:self];
     }
-
-    
-//    if([self.segueIdentifier isEqualToString:SEGUE_6_1_TO_4_4]){
-//        [self performSegueWithIdentifier:SEGUE_GO_FILTER sender:self];
-//    }
-//    else {
-//        [self.navigationController popViewControllerAnimated:YES];
-//    }
-    
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender

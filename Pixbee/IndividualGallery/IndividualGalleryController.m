@@ -20,7 +20,11 @@
 #import "NewAlbumActivity.h"
 #import "DeleteActivity.h"
 
-@interface IndividualGalleryController () <UICollectionViewDataSource, UICollectionViewDelegate, IDMPhotoBrowserDelegate, FBFriendControllerDelegate, UserCellDelegate>{
+@interface IndividualGalleryController ()
+<UICollectionViewDataSource, UICollectionViewDelegate,
+IDMPhotoBrowserDelegate, FBFriendControllerDelegate,
+UserCellDelegate>
+{
     NSMutableArray *selectedPhotos;
 }
 
@@ -55,6 +59,7 @@
 {
     [super viewDidLoad];
     
+    NSLog(@"UsersPhotos = %@", self.usersPhotos);
     
 	// Do any additional setup after loading the view.
     selectedPhotos = [NSMutableArray array];
@@ -439,6 +444,7 @@
     
     for (NSIndexPath *indexPath in selectedPhotos) {
         NSDictionary *photo = [self.photos objectAtIndex:indexPath.row];
+        NSLog(@"Selected Photo = %@", photo);
         NSString *imagePath = [photo objectForKey:@"AssetURL"];
         [activityItems addObject:[[SDImageCache sharedImageCache] imageFromMemoryCacheForKey:imagePath]];
     }
