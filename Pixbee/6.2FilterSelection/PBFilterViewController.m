@@ -7,30 +7,25 @@
 //
 
 #import "PBFilterViewController.h"
-
-#define CONTENT_VIEW_HEIGHT     376
-#define CONTENT_VIEW_SPACING    10
-#define SCROLL_VIEW_PADDING     20
-
-#define FIRST_PAGE              0
-#define LAST_PAGE               self.numberOfPages - 1
-
+#import "UIImage+Addon.h"
 
 @interface PBFilterViewController () <UIScrollViewDelegate>
 {
-    UIView *selectedView;
+
+    UIView *selectedView;   // 필터 스크롤뷰안에서 이동하는 선택되어진 뷰.
     UIImage *originalImage; // 원본 이미지
     UIImage *postImage;     // 필터 처리된 이미지.
+    
+    UIImageView *currentImageView; // 스크롤뷰 중에 현재 보여진 이미지뷰
+    int currentPage; // UIPageControl의 현재 페이지
 }
-@property (weak, nonatomic) IBOutlet UIImageView *imageView;
-@property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
-@property (weak, nonatomic) IBOutlet UIScrollView *imageScrollView;
-@property (weak, nonatomic) IBOutlet UIPageControl *imagePageControl;
-@property (nonatomic, strong) NSArray *filters;
-@property (nonatomic, strong) NSMutableArray *images;
-@property (nonatomic, assign) NSInteger numberOfPages;
-@property (nonatomic, assign) BOOL pageControlUsed;
+@property (weak, nonatomic) IBOutlet UIScrollView *scrollView; // 필터 스크롤뷰
+@property (weak, nonatomic) IBOutlet UIScrollView *imageScrollView; // 이미지 스크롤뷰
+@property (weak, nonatomic) IBOutlet UIPageControl *imagePageControl; // 이미지 페이지 컨트롤
+@property (nonatomic, strong) NSArray *filters; // 필터 리스트
+@property (nonatomic, strong) NSMutableArray *images; // 원본 이미지들.
 
+@property (nonatomic, assign) NSInteger numberOfPages; // 전체 페이지 = 원본 이미지 개수
 @end
 
 @implementation PBFilterViewController
@@ -43,58 +38,10 @@
     self.navigationController.navigationItem.title = @"Filter";
     
     [self.view setBackgroundColor:[UIColor colorWithRed:0.98 green:0.96 blue:0.92 alpha:1.0]];
-    
 
-//    _imageView.contentMode = UIViewContentModeScaleAspectFit;
-//    //originalImage = [self fixrotation:[[UIImage alloc] initWithData:_imageData]] ;
-//    [_imageView setImage:originalImage];
-
-    self.filters = @[@"Original",
-                   @"CILinearToSRGBToneCurve",
-                   @"CIPhotoEffectChrome",
-                   @"CIPhotoEffectFade",
-                   @"CIPhotoEffectInstant",
-                   @"CIBloom",
-                   @"CIPhotoEffectMono",
-                   @"CIPhotoEffectNoir",
-                   @"CIPhotoEffectProcess",
-                   @"CIPhotoEffectTonal",
-                   @"CIPhotoEffectTransfer",
-                   @"CISRGBToneCurveToLinear",
-                   ];
+    [self setUpFilters];
     
-    [self loadFilterImages];
-    
-    _images = [NSMutableArray array];
-    NSLog(@"photos = %@", _photos);
-    for(NSDictionary *photo in _photos) {
-        ALAsset *asset= [photo objectForKey:@"Asset"];
-        ALAssetRepresentation* representation = [asset defaultRepresentation];
-        
-        // Retrieve the image orientation from the ALAsset
-        UIImageOrientation orientation = UIImageOrientationUp;
-        NSNumber* orientationValue = [asset valueForProperty:@"ALAssetPropertyOrientation"];
-        if (orientationValue != nil) {
-            orientation = [orientationValue intValue];
-        }
-        
-        UIImage *image = [UIImage imageWithCGImage:[representation fullResolutionImage] scale:1.0 orientation:orientation];
-        image = [self fixrotation:image] ;
-        
-//        UIImage *image = [UIImage imageWithCGImage:[representation fullResolutionImage]
-//                                             scale:1.0
-//                                       orientation:UIImageOrientationUp];
-        
-        //[_imageView setImage:originalImage];
-        
-        [_images addObject:image];
-    }
-    
-    
-    _numberOfPages = _images.count;
-    _imagePageControl.numberOfPages = _numberOfPages;
-    _imagePageControl.currentPage = 0;
-    [_imagePageControl addTarget:self action:@selector(pageChangeValue:) forControlEvents:UIControlEventValueChanged];
+    [self setUpImages];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -109,42 +56,40 @@
     [super didReceiveMemoryWarning];
 }
 
+#pragma mark -
+#pragma mark return method
 
-- (void)setupContentViews
+#warning TO : 호석과장님 => 필터 처리된 모든 이미지 호출하는 함수.
+- (NSMutableArray*)getResultImages
 {
-    _imageScrollView.backgroundColor = [UIColor redColor];
-    _imageScrollView.delegate=self;
-    _imageScrollView.contentSize = CGSizeMake( _numberOfPages *  _imageScrollView.frame.size.width, _imageScrollView.frame.size.height) ;
-    
-    for( int i = 0; i < _numberOfPages; i++ )
-    {
-        UIImageView *imageView = [[UIImageView alloc] initWithImage:[_images objectAtIndex:i]];
-        imageView.contentMode = UIViewContentModeScaleAspectFit;
-        imageView.frame = CGRectMake( i * _imageScrollView.frame.size.width , 0, _imageScrollView.frame.size.width, _imageScrollView.frame.size.height);
-        [_imageScrollView addSubview:imageView];
+    NSMutableArray *results = [NSMutableArray array];
+    for(UIImageView *imageView in _imageScrollView.subviews){
+        [results addObject:imageView.image];
     }
+    return results;
 }
-
 
 #pragma mark -
-#pragma mark UIScrollViewDelegate
+#pragma mark SETUP UI
 
-//페이지 컨트롤 값이 변경될때, 스크롤뷰 위치 설정
-- (void) pageChangeValue:(id)sender {
-    UIPageControl *pControl = (UIPageControl *) sender;
-    [_imageScrollView setContentOffset:CGPointMake(pControl.currentPage*_imageScrollView.frame.size.width, 0) animated:YES];
-}
-
-//스크롤이 변경될때 page의 currentPage 설정
-- (void)scrollViewDidScroll:(UIScrollView *)sender {
-    CGFloat pageWidth = _imageScrollView.frame.size.width;
-    _imagePageControl.currentPage = floor((_imageScrollView.contentOffset.x - pageWidth / 3) / pageWidth) + 1;
-}
-
-
--(void) loadFilterImages {
+- (void)setUpFilters
+{
+    self.filters = @[@"Original",
+                     @"CILinearToSRGBToneCurve",
+                     @"CIPhotoEffectChrome",
+                     @"CIPhotoEffectFade",
+                     @"CIPhotoEffectInstant",
+                     @"CIBloom",
+                     @"CIPhotoEffectMono",
+                     @"CIPhotoEffectNoir",
+                     @"CIPhotoEffectProcess",
+                     @"CIPhotoEffectTonal",
+                     @"CIPhotoEffectTransfer",
+                     @"CISRGBToneCurveToLinear",
+                     ];
+    
     _scrollView.backgroundColor = [UIColor blackColor];
-
+    
     selectedView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 88, 108)];
     [selectedView setBackgroundColor:[UIColor colorWithRed:0.5 green:0.5 blue:0.5 alpha:0.7]];
     [_scrollView addSubview:selectedView];
@@ -193,43 +138,126 @@
         [_scrollView addSubview:label];
 	}
 	[_scrollView setContentSize:CGSizeMake(10 + 6*(76+10), 108.0)];
+
+
 }
 
--(void) filterSelected:(UIButton*)sender {
+- (void)setUpImages
+{
+    _images = [NSMutableArray array];
+    NSLog(@"photos = %@", _photos);
+    
+    for(NSDictionary *photo in _photos) {
+        ALAsset *asset= [photo objectForKey:@"Asset"];
+        ALAssetRepresentation* representation = [asset defaultRepresentation];
+        
+        // Retrieve the image orientation from the ALAsset
+        UIImageOrientation orientation = UIImageOrientationUp;
+        NSNumber* orientationValue = [asset valueForProperty:@"ALAssetPropertyOrientation"];
+        if (orientationValue != nil) {
+            orientation = [orientationValue intValue];
+        }
+        
+//        UIImage *image = [UIImage imageWithCGImage:[representation fullResolutionImage] scale:1.0 orientation:orientation];
+//        image = [image fixRotation] ;
+        
+        //fullResolutionImage 은 이미 로테이션 UIImageOrientationUp 되서 나옴.
+        UIImage *image = [UIImage imageWithCGImage:[representation fullScreenImage] scale:1.0 orientation:UIImageOrientationUp];
+        
+        [_images addObject:image];
+    }
+    
+    
+    _numberOfPages = _images.count;
+    _imagePageControl.numberOfPages = _numberOfPages;
+    [_imagePageControl addTarget:self action:@selector(pageChangeValue:) forControlEvents:UIControlEventValueChanged];
+}
+
+- (void)setupContentViews
+{
+    _imageScrollView.delegate=self;
+    _imageScrollView.contentSize = CGSizeMake( _numberOfPages *  _imageScrollView.frame.size.width, _imageScrollView.frame.size.height) ;
+    
+    for( int i = 0; i < _numberOfPages; i++ )
+    {
+        UIImageView *imageView = [[UIImageView alloc] initWithImage:[_images objectAtIndex:i]];
+        imageView.contentMode = UIViewContentModeScaleAspectFit;
+        imageView.frame = CGRectMake( i * _imageScrollView.frame.size.width , 0, _imageScrollView.frame.size.width, _imageScrollView.frame.size.height);
+        imageView.tag = 0;
+        [_imageScrollView addSubview:imageView];
+    }
+    
+    _imagePageControl.currentPage = 0;
+    currentPage = (int)_imagePageControl.currentPage;
+    currentImageView = [_imageScrollView.subviews objectAtIndex:currentPage];
+    originalImage = [_images objectAtIndex:currentPage];
+}
+
+
+#pragma mark -
+#pragma mark UIScrollViewDelegate
+
+- (void) pageChangeValue:(id)sender {
+    UIPageControl *pControl = (UIPageControl *) sender;
+    [_imageScrollView setContentOffset:CGPointMake(pControl.currentPage*_imageScrollView.frame.size.width, 0) animated:YES];
+}
+
+- (void)scrollViewDidScroll:(UIScrollView *)sender {
+    CGFloat pageWidth = _imageScrollView.frame.size.width;
+    _imagePageControl.currentPage = floor((_imageScrollView.contentOffset.x - pageWidth / 3) / pageWidth) + 1;
+}
+
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
+{
+    currentPage = (int)_imagePageControl.currentPage;
+    currentImageView = [_imageScrollView.subviews objectAtIndex:currentPage];
+    originalImage = [_images objectAtIndex:currentPage];
+    
+    [self moveFiler:(int)currentImageView.tag];
+    NSLog(@"---scrollViewDidEndDecelerating page : %d", currentPage);
+}
+
+
+#pragma mark -
+#pragma mark UI HANDLER
+
+- (void)moveFiler:(int)index
+{
+    UIButton *selectedButton;
+    
     for(UIView *view in _scrollView.subviews){
         if([view isKindOfClass:[UIButton class]]){
             [(UIButton *)view setSelected:NO];
-            if(view.tag  == sender.tag) [(UIButton *)view setSelected:YES];
+            if(view.tag  == index) {
+                selectedButton = (UIButton *)view;
+                [selectedButton setSelected:YES];
+            }
         }
         if([view isKindOfClass:[UILabel class]]){
             [(UILabel *)view setTextColor:[UIColor colorWithWhite:0.97f alpha:1.0f]];
-            if(view.tag == sender.tag * 100) [(UILabel *)view setTextColor:[UIColor yellowColor]];
+            if(view.tag == index * 100) [(UILabel *)view setTextColor:[UIColor yellowColor]];
         }
     }
     
     [UIView animateWithDuration:0.2
                      animations:^{
-                         selectedView.center = CGPointMake(sender.center.x, 108/2);
+                         selectedView.center = CGPointMake(selectedButton.center.x, 108/2);
                      }
                      completion:nil];
-
-
-
-    //[sender setSelected:YES];
-
-    NSLog(@"selectedFilter = %d",(int)sender.tag);
     
+}
+
+- (void)applyFilter:(int)index
+{
     // Process Filter
-    if ((int)sender.tag == 0) {
-        
-        [_imageView setImage:originalImage];
-        
+    currentImageView.tag = index;
+    
+    if (index == 0) {
+        [currentImageView setImage:originalImage];
         return;
     }
     CIImage *ciImage = [CIImage imageWithCGImage:originalImage.CGImage];
-    //CIImage *ciImage = [[CIImage alloc] initWithImage:originalImage];
-    
-    CIFilter *filter = [CIFilter filterWithName:self.filters[(int)sender.tag]
+    CIFilter *filter = [CIFilter filterWithName:self.filters[index]
                                   keysAndValues:kCIInputImageKey, ciImage, nil];
     [filter setDefaults];
     
@@ -240,10 +268,15 @@
     
     postImage = [UIImage imageWithCGImage:cgImage];
     
-    [_imageView setImage:[UIImage imageWithCGImage:cgImage]];
+    [currentImageView setImage:postImage];
     
     CGImageRelease(cgImage);
+}
 
+
+-(void) filterSelected:(UIButton*)sender {
+    [self moveFiler:(int)sender.tag];
+    [self applyFilter:(int)sender.tag];
 }
 
 /*
@@ -256,82 +289,5 @@
     // Pass the selected object to the new view controller.
 }
 */
-- (UIImage *)fixrotation:(UIImage *)image
-{
-    
-    
-    if (image.imageOrientation == UIImageOrientationUp) return image;
-    CGAffineTransform transform = CGAffineTransformIdentity;
-    
-    switch (image.imageOrientation) {
-        case UIImageOrientationDown:
-        case UIImageOrientationDownMirrored:
-            transform = CGAffineTransformTranslate(transform, image.size.width, image.size.height);
-            transform = CGAffineTransformRotate(transform, M_PI);
-            break;
-            
-        case UIImageOrientationLeft:
-        case UIImageOrientationLeftMirrored:
-            transform = CGAffineTransformTranslate(transform, image.size.width, 0);
-            transform = CGAffineTransformRotate(transform, M_PI_2);
-            break;
-            
-        case UIImageOrientationRight:
-        case UIImageOrientationRightMirrored:
-            transform = CGAffineTransformTranslate(transform, 0, image.size.height);
-            transform = CGAffineTransformRotate(transform, -M_PI_2);
-            break;
-        case UIImageOrientationUp:
-        case UIImageOrientationUpMirrored:
-            break;
-    }
-    
-    switch (image.imageOrientation) {
-        case UIImageOrientationUpMirrored:
-        case UIImageOrientationDownMirrored:
-            transform = CGAffineTransformTranslate(transform, image.size.width, 0);
-            transform = CGAffineTransformScale(transform, -1, 1);
-            break;
-            
-        case UIImageOrientationLeftMirrored:
-        case UIImageOrientationRightMirrored:
-            transform = CGAffineTransformTranslate(transform, image.size.height, 0);
-            transform = CGAffineTransformScale(transform, -1, 1);
-            break;
-        case UIImageOrientationUp:
-        case UIImageOrientationDown:
-        case UIImageOrientationLeft:
-        case UIImageOrientationRight:
-            break;
-    }
-    
-    // Now we draw the underlying CGImage into a new context, applying the transform
-    // calculated above.
-    CGContextRef ctx = CGBitmapContextCreate(NULL, image.size.width, image.size.height,
-                                             CGImageGetBitsPerComponent(image.CGImage), 0,
-                                             CGImageGetColorSpace(image.CGImage),
-                                             CGImageGetBitmapInfo(image.CGImage));
-    CGContextConcatCTM(ctx, transform);
-    switch (image.imageOrientation) {
-        case UIImageOrientationLeft:
-        case UIImageOrientationLeftMirrored:
-        case UIImageOrientationRight:
-        case UIImageOrientationRightMirrored:
-            // Grr...
-            CGContextDrawImage(ctx, CGRectMake(0,0,image.size.height,image.size.width), image.CGImage);
-            break;
-            
-        default:
-            CGContextDrawImage(ctx, CGRectMake(0,0,image.size.width,image.size.height), image.CGImage);
-            break;
-    }
-    
-    // And now we just create a new UIImage from the drawing context
-    CGImageRef cgimg = CGBitmapContextCreateImage(ctx);
-    UIImage *img = [UIImage imageWithCGImage:cgimg];
-    CGContextRelease(ctx);
-    CGImageRelease(cgimg);
-    return img;
-    
-}
+
 @end

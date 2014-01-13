@@ -10,5 +10,5 @@
 
 @interface UIImage (Addon)
 + (UIImage*)maskImage:(UIImage *)image withMask:(UIImage *)maskImage;
-
+- (UIImage*)fixRotation;
 @end
