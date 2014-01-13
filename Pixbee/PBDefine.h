@@ -21,6 +21,8 @@
 #define SEGUE_3_1_TO_6_1                            @"Segue3_1to6_1"
 #define SEGUE_6_1_TO_3_1                            @"Segue6_1to3_1"
 #define SEGUE_6_1_TO_4_4                            @"Segue6_1to4_4"
+#define SEGUE_6_2_TO_7_1                            @"Segue6_2to7_1"
+
 #define SEGUE_4_2_TO_3_1                            @"Segue4_2to6_1"
 #define SEGUE_4_1_TO_5_1                            @"Segue4_1to5_1"
 #define SEGUE_4_2_TO_5_1                            @"Segue4_2to5_1"

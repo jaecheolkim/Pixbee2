@@ -20,14 +20,14 @@
     [SQLManager initDataBase];
 
 //    // Uncomment to change the background color of navigation bar
-//////    [[UINavigationBar appearance] setBarTintColor:UIColorFromRGB(0xffcf0e)];
-////    
+//    [[UINavigationBar appearance] setBarTintColor:UIColorFromRGB(0xffcf0e)];
+////
 ////    // Uncomment to change the color of back button
 ////    [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
 ////    
 ////    // Uncomment to assign a custom backgroung image
-//    [[UINavigationBar appearance] setBackgroundImage:[UIImage imageNamed:@"topbar@2x.png"] forBarMetrics:UIBarMetricsDefault];
-//    
+    [[UINavigationBar appearance] setBackgroundImage:[UIImage imageNamed:@"topbar.png"] forBarMetrics:UIBarMetricsDefault];
+//
 //    // Uncomment to change the back indicator image
 //    
 //    [[UINavigationBar appearance] setBackIndicatorImage:[UIImage imageNamed:@"back_btn.png"]];
