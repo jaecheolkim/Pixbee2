@@ -8,7 +8,15 @@
 
 #import "PBFilterViewController.h"
 
-@interface PBFilterViewController ()
+#define CONTENT_VIEW_HEIGHT     376
+#define CONTENT_VIEW_SPACING    10
+#define SCROLL_VIEW_PADDING     20
+
+#define FIRST_PAGE              0
+#define LAST_PAGE               self.numberOfPages - 1
+
+
+@interface PBFilterViewController () <UIScrollViewDelegate>
 {
     UIView *selectedView;
     UIImage *originalImage; // 원본 이미지
@@ -16,7 +24,13 @@
 }
 @property (weak, nonatomic) IBOutlet UIImageView *imageView;
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
+@property (weak, nonatomic) IBOutlet UIScrollView *imageScrollView;
+@property (weak, nonatomic) IBOutlet UIPageControl *imagePageControl;
 @property (nonatomic, strong) NSArray *filters;
+@property (nonatomic, strong) NSMutableArray *images;
+@property (nonatomic, assign) NSInteger numberOfPages;
+@property (nonatomic, assign) BOOL pageControlUsed;
+
 @end
 
 @implementation PBFilterViewController
@@ -25,36 +39,15 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    UIPageControl *pageControl;
-    
-    NSLog(@"photos = %@", _photos);
-    for(NSDictionary *photo in _photos) {
-        ALAsset *asset= [photo objectForKey:@"Asset"];
-        ALAssetRepresentation* representation = [asset defaultRepresentation];
-        
-        // Retrieve the image orientation from the ALAsset
-        UIImageOrientation orientation = UIImageOrientationUp;
-        NSNumber* orientationValue = [asset valueForProperty:@"ALAssetPropertyOrientation"];
-        if (orientationValue != nil) {
-            orientation = [orientationValue intValue];
-        }
-        
-        CGFloat scale  = 1;
-        originalImage = [UIImage imageWithCGImage:[representation fullResolutionImage]
-                                             scale:scale orientation:orientation];
-        
-        originalImage = [self fixrotation:originalImage] ;
-        [_imageView setImage:originalImage];
-    }
-    
     
     self.navigationController.navigationItem.title = @"Filter";
     
     [self.view setBackgroundColor:[UIColor colorWithRed:0.98 green:0.96 blue:0.92 alpha:1.0]];
     
-    _imageView.contentMode = UIViewContentModeScaleAspectFit;
-    //originalImage = [self fixrotation:[[UIImage alloc] initWithData:_imageData]] ;
-    [_imageView setImage:originalImage];
+
+//    _imageView.contentMode = UIViewContentModeScaleAspectFit;
+//    //originalImage = [self fixrotation:[[UIImage alloc] initWithData:_imageData]] ;
+//    [_imageView setImage:originalImage];
 
     self.filters = @[@"Original",
                    @"CILinearToSRGBToneCurve",
@@ -72,12 +65,42 @@
     
     [self loadFilterImages];
     
-    // Do any additional setup after loading the view.
+    _images = [NSMutableArray array];
+    NSLog(@"photos = %@", _photos);
+    for(NSDictionary *photo in _photos) {
+        ALAsset *asset= [photo objectForKey:@"Asset"];
+        ALAssetRepresentation* representation = [asset defaultRepresentation];
+        
+        // Retrieve the image orientation from the ALAsset
+        UIImageOrientation orientation = UIImageOrientationUp;
+        NSNumber* orientationValue = [asset valueForProperty:@"ALAssetPropertyOrientation"];
+        if (orientationValue != nil) {
+            orientation = [orientationValue intValue];
+        }
+        
+        UIImage *image = [UIImage imageWithCGImage:[representation fullResolutionImage] scale:1.0 orientation:orientation];
+        image = [self fixrotation:image] ;
+        
+//        UIImage *image = [UIImage imageWithCGImage:[representation fullResolutionImage]
+//                                             scale:1.0
+//                                       orientation:UIImageOrientationUp];
+        
+        //[_imageView setImage:originalImage];
+        
+        [_images addObject:image];
+    }
+    
+    
+    _numberOfPages = _images.count;
+    _imagePageControl.numberOfPages = _numberOfPages;
+    _imagePageControl.currentPage = 0;
+    [_imagePageControl addTarget:self action:@selector(pageChangeValue:) forControlEvents:UIControlEventValueChanged];
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
 	[super viewWillAppear:animated];
+    [self setupContentViews];
 }
 
 
@@ -85,6 +108,39 @@
 {
     [super didReceiveMemoryWarning];
 }
+
+
+- (void)setupContentViews
+{
+    _imageScrollView.backgroundColor = [UIColor redColor];
+    _imageScrollView.delegate=self;
+    _imageScrollView.contentSize = CGSizeMake( _numberOfPages *  _imageScrollView.frame.size.width, _imageScrollView.frame.size.height) ;
+    
+    for( int i = 0; i < _numberOfPages; i++ )
+    {
+        UIImageView *imageView = [[UIImageView alloc] initWithImage:[_images objectAtIndex:i]];
+        imageView.contentMode = UIViewContentModeScaleAspectFit;
+        imageView.frame = CGRectMake( i * _imageScrollView.frame.size.width , 0, _imageScrollView.frame.size.width, _imageScrollView.frame.size.height);
+        [_imageScrollView addSubview:imageView];
+    }
+}
+
+
+#pragma mark -
+#pragma mark UIScrollViewDelegate
+
+//페이지 컨트롤 값이 변경될때, 스크롤뷰 위치 설정
+- (void) pageChangeValue:(id)sender {
+    UIPageControl *pControl = (UIPageControl *) sender;
+    [_imageScrollView setContentOffset:CGPointMake(pControl.currentPage*_imageScrollView.frame.size.width, 0) animated:YES];
+}
+
+//스크롤이 변경될때 page의 currentPage 설정
+- (void)scrollViewDidScroll:(UIScrollView *)sender {
+    CGFloat pageWidth = _imageScrollView.frame.size.width;
+    _imagePageControl.currentPage = floor((_imageScrollView.contentOffset.x - pageWidth / 3) / pageWidth) + 1;
+}
+
 
 -(void) loadFilterImages {
     _scrollView.backgroundColor = [UIColor blackColor];
