@@ -8,6 +8,7 @@
 
 #import "PBFilterViewController.h"
 #import "UIImage+Addon.h"
+#import "TagNShareViewController.h"
 
 @interface PBFilterViewController () <UIScrollViewDelegate>
 {
@@ -26,6 +27,9 @@
 @property (nonatomic, strong) NSMutableArray *images; // 원본 이미지들.
 
 @property (nonatomic, assign) NSInteger numberOfPages; // 전체 페이지 = 원본 이미지 개수
+
+- (IBAction)NextClickedHandler:(id)sender;
+
 @end
 
 @implementation PBFilterViewController
@@ -279,7 +283,7 @@
     [self applyFilter:(int)sender.tag];
 }
 
-/*
+
 #pragma mark - Navigation
 
 // In a storyboard-based application, you will often want to do a little preparation before navigation
@@ -287,7 +291,14 @@
 {
     // Get the new view controller using [segue destinationViewController].
     // Pass the selected object to the new view controller.
+    if ([segue.identifier isEqualToString:SEGUE_6_2_TO_7_1]) {
+        TagNShareViewController *destination = segue.destinationViewController;
+        destination.images = [self getResultImages];
+    }
 }
-*/
 
+
+- (IBAction)NextClickedHandler:(id)sender {
+    [self performSegueWithIdentifier:SEGUE_6_2_TO_7_1 sender:self];
+}
 @end
