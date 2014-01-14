@@ -303,11 +303,6 @@
             }
             
             [self.navigationController popViewControllerAnimated:YES];
-
-
-
-            
-
         }
         
 

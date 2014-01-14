@@ -293,6 +293,45 @@
 
 }
 
+//unwindSegue handler from AlbumSelectionController.
+- (IBAction)unwindToAlbumPageController:(UIStoryboardSegue *)unwindSegue
+{
+    UIViewController* sourceViewController = unwindSegue.sourceViewController;
+    
+    //만약에 copy or move operation을 진행하고 다른 user의 facetab을 선택하고 오면
+    if ([sourceViewController isKindOfClass:[IndividualGalleryController class]])
+    {
+        NSLog(@"unwindToAlbumPageController - from IndividualGalleryController");
+//        AlbumSelectionController *controller = (AlbumSelectionController *)unwindSegue.sourceViewController;
+//        NSString *destOperation = controller.operateIdentifier;
+//        NSDictionary *destUserInfo = controller.selectedUserInfo;
+//        //NSArray *destPhotos = controller.photos;
+//        
+//        int destUserID = [destUserInfo[@"UserID"] intValue];
+//        
+//        if(destUserID ==  [userInfo[@"UserID"] intValue]){
+//            NSLog(@"동일 유저에 대한 명령 취소..");
+//            return;
+//        }
+//        
+//        if([destOperation isEqualToString:@"com.pixbee.moveSharing"]) {
+//            [self movePhotos:destUserID];
+//        }
+//        else if ([destOperation isEqualToString:@"com.pixbee.copySharing"]) {
+//            [self copyPhotos:destUserID];
+//        }
+        
+    }
+    
+    else if([sourceViewController isKindOfClass:[AllPhotosController class]])
+    {
+        NSLog(@"unwindToAlbumPageController - from AllPhotosController");
+    }
+    
+    
+}
+
+
 -(void)popover:(id)sender
 {
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];

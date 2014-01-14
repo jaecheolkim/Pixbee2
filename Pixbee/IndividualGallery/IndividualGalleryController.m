@@ -120,8 +120,9 @@ UserCellDelegate>
 
 - (void)refreshSelectedPhotCountOnNavTilte
 {
+    _shareButton.enabled = NO;
     int selectcount = (int)[selectedPhotos count];
-    if(!selectcount) _shareButton.enabled = NO;
+    if(selectcount) _shareButton.enabled = YES;
     
     [UIView animateWithDuration:0.3
                      animations:^{
@@ -408,15 +409,16 @@ UserCellDelegate>
         }
         
         [selectedPhotos removeAllObjects];
+        [self refreshSelectedPhotCountOnNavTilte];
         
-        [UIView animateWithDuration:0.3
-                         animations:^{
-                             self.shareButton.alpha = 0.0;
-                             self.navigationItem.title = @"Album";
-                         }
-                         completion:^(BOOL finished){
-                             
-                         }];
+//        [UIView animateWithDuration:0.3
+//                         animations:^{
+//                             self.shareButton.alpha = 0.0;
+//                             self.navigationItem.title = @"Album";
+//                         }
+//                         completion:^(BOOL finished){
+//                             
+//                         }];
     }
 }
 
@@ -557,7 +559,31 @@ UserCellDelegate>
                               }
                           }];
     } else {
-        [self performSegueWithIdentifier:SEGUE_4_1_TO_3_2 sender:self];
+        
+        NSArray *result = [SQLManager newUser];
+        NSDictionary *user = [result objectAtIndex:0];
+        //NSString *UserName = [user objectForKey:@"UserName"];
+        __block int UserID = [[user objectForKey:@"UserID"] intValue];
+
+        for(NSIndexPath *indexPath in selectedPhotos){
+            NSDictionary *photo = [self.photos objectAtIndex:indexPath.row];
+            NSLog(@"photo data = %@", photo);
+
+            [AssetLib.assetsLibrary assetForURL:[NSURL URLWithString:photo[@"AssetURL"]]
+            resultBlock:^(ALAsset *asset) {
+                [SQLManager saveNewUserPhotoToDB:asset users:@[@(UserID)]];
+            }
+            failureBlock:^(NSError *error) {
+                NSLog(@"Unresolved error: %@, %@", error, [error localizedDescription]);
+            }];
+            
+            
+            //[photoDatas addObject:photo];
+            
+        }
+        
+        [self.navigationController popViewControllerAnimated:YES];
+        //[self performSegueWithIdentifier:SEGUE_4_1_TO_3_2 sender:self];
     }
 
 }
@@ -582,6 +608,7 @@ UserCellDelegate>
         self.activityController = nil;
         NSLog(@"Operation : %@ complete!", currentAction);
         [selectedPhotos removeAllObjects];
+        [self refreshSelectedPhotCountOnNavTilte];
     }];
 }
 
@@ -613,6 +640,7 @@ UserCellDelegate>
         self.activityController = nil;
         NSLog(@"Operation : %@ complete!", currentAction);
         [selectedPhotos removeAllObjects];
+        [self refreshSelectedPhotCountOnNavTilte];
     }];
 }
 
@@ -644,6 +672,7 @@ UserCellDelegate>
         self.activityController = nil;
         NSLog(@"deletePhotos complete!");
         [selectedPhotos removeAllObjects];
+        [self refreshSelectedPhotCountOnNavTilte];
     }];
 }
 
