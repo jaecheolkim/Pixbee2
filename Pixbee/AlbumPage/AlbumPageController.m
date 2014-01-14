@@ -302,25 +302,7 @@
     if ([sourceViewController isKindOfClass:[IndividualGalleryController class]])
     {
         NSLog(@"unwindToAlbumPageController - from IndividualGalleryController");
-//        AlbumSelectionController *controller = (AlbumSelectionController *)unwindSegue.sourceViewController;
-//        NSString *destOperation = controller.operateIdentifier;
-//        NSDictionary *destUserInfo = controller.selectedUserInfo;
-//        //NSArray *destPhotos = controller.photos;
-//        
-//        int destUserID = [destUserInfo[@"UserID"] intValue];
-//        
-//        if(destUserID ==  [userInfo[@"UserID"] intValue]){
-//            NSLog(@"동일 유저에 대한 명령 취소..");
-//            return;
-//        }
-//        
-//        if([destOperation isEqualToString:@"com.pixbee.moveSharing"]) {
-//            [self movePhotos:destUserID];
-//        }
-//        else if ([destOperation isEqualToString:@"com.pixbee.copySharing"]) {
-//            [self copyPhotos:destUserID];
-//        }
-        
+
     }
     
     else if([sourceViewController isKindOfClass:[AllPhotosController class]])

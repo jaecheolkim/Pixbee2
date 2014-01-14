@@ -313,6 +313,10 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
         NSLog(@"success load ALAsset.... ");
         //UIImage *image = [UIImage imageWithCGImage:[asset thumbnail]];
         [SQLManager saveNewUserPhotoToDB:asset users:users];
+        int count = (int)AssetLib.totalAssets.count;
+        NSString *GroupURL = [AssetLib.totalAssets[count-1] objectForKey:@"GroupURL"];
+        [AssetLib.totalAssets addObject:@{@"Asset":asset , @"GroupURL":GroupURL}];
+        NSLog(@"Last TotalAsset[%d] = %@", count, AssetLib.totalAssets[count-1]);
     };
     
     ALAssetsLibraryAccessFailureBlock failureBlock  = ^(NSError *error)
