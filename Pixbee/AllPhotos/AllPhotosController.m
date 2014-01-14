@@ -189,17 +189,18 @@
 {
     if (self.collectionView.allowsMultipleSelection) {
         [selectedPhotos addObject:indexPath];
-        if(selectedPhotos.count) self.doneButton.enabled = YES;
+        
         // UI
         TotalGalleryViewCell *cell = (TotalGalleryViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
         [cell showSelectIcon:YES];
         [cell setNeedsDisplay];
         
-        unsigned long selectcount = [selectedPhotos count];
+        int selectcount = (int)[selectedPhotos count];
+        if(selectedPhotos.count) self.doneButton.enabled = YES;
         [UIView animateWithDuration:0.3
                          animations:^{
                              if (selectcount > 0) {
-                                 self.navigationItem.title = [NSString stringWithFormat:@"%lu Photo Selected", selectcount];
+                                 self.navigationItem.title = [NSString stringWithFormat:@"%d Photo Selected", selectcount];
                              }
                              else {
                                  self.navigationItem.title = @"Album";
@@ -281,35 +282,32 @@
                      otherButtonTitles:nil
                               tapBlock:^(UIAlertView *alertView, NSInteger buttonIndex) {
                                   if (buttonIndex == [alertView cancelButtonIndex]) {
-                                     [self.navigationController popViewControllerAnimated:YES];
+                                     //[self.navigationController popViewControllerAnimated:YES];
                                   }
                               }];
             
         } else {
-            NSMutableArray *photoDatas = [NSMutableArray array];
+            //NSMutableArray *photoDatas = [NSMutableArray array];
+#warning 추후에 얼굴 등록하는 프로세스 페이지 추가 필요.
+            NSArray *result = [SQLManager newUser];
+            NSDictionary *user = [result objectAtIndex:0];
+            //NSString *UserName = [user objectForKey:@"UserName"];
+            int UserID = [[user objectForKey:@"UserID"] intValue];
             
             for(NSIndexPath *indexPath in selectedPhotos){
                 NSDictionary *photo = [self.photos objectAtIndex:indexPath.row];
-                [photoDatas addObject:photo];
                 NSLog(@"photo data = %@", photo);
+                [SQLManager saveNewUserPhotoToDB:photo[@"Asset"] users:@[@(UserID)]];
+                //[photoDatas addObject:photo];
+
             }
             
-            NSArray *result = [SQLManager newUser];
-            NSDictionary *user = [result objectAtIndex:0];
-            NSString *UserName = [user objectForKey:@"UserName"];
-            int UserID = [[user objectForKey:@"UserID"] intValue];
+            [self.navigationController popViewControllerAnimated:YES];
 
-#warning 추후에 얼굴 등록하는 프로세스 페이지 추가 필요.
+
+
             
-            [UIAlertView showWithTitle:@""
-                               message:@"추후에 페이지 추가 예정..."
-                     cancelButtonTitle:@"OK"
-                     otherButtonTitles:nil
-                              tapBlock:^(UIAlertView *alertView, NSInteger buttonIndex) {
-                                  if (buttonIndex == [alertView cancelButtonIndex]) {
-                                      [self.navigationController popViewControllerAnimated:YES];
-                                  }
-                              }];
+
         }
         
 
@@ -327,7 +325,6 @@
     if ([segue.identifier isEqualToString:SEGUE_GO_FILTER]){
         self.navigationController.navigationBarHidden = NO;
         PBFilterViewController *destination = segue.destinationViewController;
-#warning  호석과장님 아래에 imageData에 NSData 이미지 (jpeg) 집어 넣으면 되...
         
         NSMutableArray *photoDatas = [NSMutableArray array];
         

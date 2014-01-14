@@ -69,6 +69,7 @@ enum errorCodes {
 
 #pragma mark FaceData Table
 // 해당 User의 인식용 얼굴 데이터 개수 조사.
+
 - (NSInteger)numberOfFacesForUserID:(int)UserID;
 - (NSArray*)getTrainModels;
 - (void)setTrainModelForUserID:(int)UserID withFaceData:(NSData*)FaceData;

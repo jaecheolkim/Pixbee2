@@ -548,12 +548,12 @@ UserCellDelegate>
 - (void)newFaceTab {
     if(selectedPhotos.count < 5){
         [UIAlertView showWithTitle:@""
-                           message:@"5장 이상 등록!!"
+                           message:@"5장 이상 등록!! & 추후 구현"
                  cancelButtonTitle:@"OK"
                  otherButtonTitles:nil
                           tapBlock:^(UIAlertView *alertView, NSInteger buttonIndex) {
                               if (buttonIndex == [alertView cancelButtonIndex]) {
-                                  [self.navigationController popViewControllerAnimated:YES];
+                                  //[self.navigationController popViewControllerAnimated:YES];
                               }
                           }];
     } else {

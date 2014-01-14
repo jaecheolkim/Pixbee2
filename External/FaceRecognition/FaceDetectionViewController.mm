@@ -926,18 +926,10 @@ bail:
         if(cvImage.data != NULL){
             NSData *serialized = [FaceLib serializeCvMat:cvImage];
 
-            const char* insertSQL = "INSERT INTO FaceData (UserID, image) VALUES (?, ?)";
-            sqlite3_stmt *statement;
-            sqlite3 *sqlDB = [SQLManager getDBContext];
-            if (sqlite3_prepare_v2(sqlDB, insertSQL, -1, &statement, nil) == SQLITE_OK) {
-                sqlite3_bind_int(statement, 1, UserID);
-                sqlite3_bind_blob(statement, 2, serialized.bytes, serialized.length, SQLITE_TRANSIENT);
-                sqlite3_step(statement);
-            }
-            
-            sqlite3_finalize(statement);
-
             dispatch_async(dispatch_get_main_queue(), ^{
+                
+                [SQLManager setTrainModelForUserID:UserID withFaceData:serialized];
+                
                 UIImage *faceImage = [FaceLib MatToUIImage:cvImage];
                 if(faceImage) [faceImageView setImage:faceImage];
 

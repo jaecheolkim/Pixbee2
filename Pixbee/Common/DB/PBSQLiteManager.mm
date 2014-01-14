@@ -477,7 +477,7 @@
     NSString *query = @"SELECT * FROM Users WHERE UserName LIKE 'Unknown%';";
     NSArray *result = [SQLManager getRowsForQuery:query];
     NSLog(@"[Users] QUERY result = %@", result);
-    if([result count] > 0 && result != nil)
+    if(!IsEmpty(result))
     {
         UserName = [NSString stringWithFormat:@"Unknown%d", (int)[result count]];
     }

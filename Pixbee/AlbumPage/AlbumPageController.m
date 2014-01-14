@@ -277,7 +277,6 @@
     }
     
     else if ([segue.identifier isEqualToString:SEGUE_3_1_TO_6_1]) { // add new face tab from camera
-        //int UserID = [SQLManager newUser];
         NSArray *result = [SQLManager newUser];
         NSDictionary *user = [result objectAtIndex:0];
         NSString *UserName = [user objectForKey:@"UserName"];
