@@ -110,6 +110,8 @@
     
     self.selectedCell = (UserCell *)[tableView cellForRowAtIndexPath:indexPath];
     self.selectedCell.checkIcon.image = [UIImage imageNamed:@"check.png"];
+    _selectedUserInfo = self.selectedCell.user;
+    NSLog(@"Selected userPhotos = %@", _selectedUserInfo);
 }
 
 

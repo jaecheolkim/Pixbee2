@@ -9,5 +9,9 @@
 #import <UIKit/UIKit.h>
 
 @interface AlbumSelectionController : UIViewController
+@property (strong, nonatomic) NSArray *photos;
+@property (strong, nonatomic) NSString *segueIdentifier;
+@property (strong, nonatomic) NSString *operateIdentifier;
+@property (strong, nonatomic) NSDictionary *selectedUserInfo;
 
 @end

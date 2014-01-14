@@ -19,13 +19,15 @@
 #import "MoveActivity.h"
 #import "NewAlbumActivity.h"
 #import "DeleteActivity.h"
-
+#import "AlbumSelectionController.h"
 @interface IndividualGalleryController ()
 <UICollectionViewDataSource, UICollectionViewDelegate,
 IDMPhotoBrowserDelegate, FBFriendControllerDelegate,
 UserCellDelegate>
 {
     NSMutableArray *selectedPhotos;
+    NSDictionary *userInfo;
+    NSString *currentAction;
 }
 
 @property (strong, nonatomic) IBOutlet UICollectionView *collectionView;
@@ -59,7 +61,10 @@ UserCellDelegate>
 {
     [super viewDidLoad];
     
-    NSLog(@"UsersPhotos = %@", self.usersPhotos);
+    _shareButton.enabled = NO;
+    
+    userInfo = [self.usersPhotos objectForKey:@"user"];
+    NSLog(@"userInfo = %@", userInfo);
     
 	// Do any additional setup after loading the view.
     selectedPhotos = [NSMutableArray array];
@@ -110,6 +115,26 @@ UserCellDelegate>
     NSInteger item = [self collectionView:_collectionView numberOfItemsInSection:section] - 1;
     NSIndexPath *lastIndexPath = [NSIndexPath indexPathForItem:item inSection:section];
     [_collectionView scrollToItemAtIndexPath:lastIndexPath atScrollPosition:UICollectionViewScrollPositionBottom animated:NO];
+    
+}
+
+- (void)refreshSelectedPhotCountOnNavTilte
+{
+    int selectcount = (int)[selectedPhotos count];
+    if(!selectcount) _shareButton.enabled = NO;
+    
+    [UIView animateWithDuration:0.3
+                     animations:^{
+                         if (selectcount > 0) {
+                             self.navigationItem.title = [NSString stringWithFormat:@"%d Photo Selected", selectcount];
+                         }
+                         else {
+                             self.navigationItem.title = @"Album";
+                         }
+                     }
+                     completion:^(BOOL finished){
+                         
+                     }];
     
 }
 
@@ -179,13 +204,6 @@ UserCellDelegate>
     return cell;
 }
 
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    if([segue isKindOfClass:[OpenPhotoSegue class]]) {
-        // Set the start point for the animation to center of the button for the animation
-        CGPoint point2 = [self.view convertPoint:self.selectedCell.center fromView:self.collectionView];
-        ((OpenPhotoSegue *)segue).originatingPoint = point2;
-    }
-}
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -197,19 +215,7 @@ UserCellDelegate>
         [cell showSelectIcon:YES];
         [cell setNeedsDisplay];
         
-        unsigned long selectcount = [selectedPhotos count];
-        [UIView animateWithDuration:0.3
-                         animations:^{
-                             if (selectcount > 0) {
-                                 self.navigationItem.title = [NSString stringWithFormat:@"%lu Photo Selected", selectcount];
-                             }
-                             else {
-                                 self.navigationItem.title = @"Album";
-                             }
-                         }
-                         completion:^(BOOL finished){
-                             
-                         }];
+        [self refreshSelectedPhotCountOnNavTilte];
     }
     else {
         self.selectedCell = (GalleryViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
@@ -248,20 +254,7 @@ UserCellDelegate>
 {
     if (self.collectionView.allowsMultipleSelection) {
         [selectedPhotos removeObject:indexPath];
-        
-        unsigned long selectcount = [selectedPhotos count];
-        [UIView animateWithDuration:0.3
-                         animations:^{
-                             if (selectcount > 0) {
-                                 self.navigationItem.title = [NSString stringWithFormat:@"%lu Photo Selected", selectcount];
-                             }
-                             else {
-                                 self.navigationItem.title = @"Album";
-                             }
-                         }
-                         completion:^(BOOL finished){
-                             
-                         }];
+        [self refreshSelectedPhotCountOnNavTilte];
     }
     
     // UI
@@ -271,14 +264,6 @@ UserCellDelegate>
 }
 
 
-- (BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender
-{
-    if (self.collectionView.allowsMultipleSelection) {
-        return NO;
-    } else {
-        return YES;
-    }
-}
 
 //- (IBAction)shareButtonTouched:(id)sender {
 //    if (shareEnabled) {
@@ -449,6 +434,9 @@ UserCellDelegate>
         [activityItems addObject:[[SDImageCache sharedImageCache] imageFromMemoryCacheForKey:imagePath]];
     }
     
+    NSLog(@"selectedPhoto = %@", selectedPhotos);
+    NSLog(@"userInfo = %@",userInfo);
+    
     CopyActivity *copyActivity = [[CopyActivity alloc] init];
     MoveActivity *moveActivity = [[MoveActivity alloc] init];
     NewAlbumActivity *newalbumActivity = [[NewAlbumActivity alloc] init];
@@ -507,6 +495,7 @@ UserCellDelegate>
                     }];
     
     [self.activityController setCompletionHandler:^(NSString *act, BOOL done) {
+        currentAction = act;
         if ( [act isEqualToString:@"com.pixbee.copySharing"] ) {
             if (self.importView) {
                 [self performSegueWithIdentifier:SEGUE_4_2_TO_3_2 sender:self];
@@ -528,15 +517,16 @@ UserCellDelegate>
                  [self performSegueWithIdentifier:SEGUE_4_2_TO_3_2 sender:self];
              }
              else {
-                 [self performSegueWithIdentifier:SEGUE_4_1_TO_3_2 sender:self];
+                 [self newFaceTab];
              }
-         }
+             
+          }
          else if ( [act isEqualToString:@"com.pixbee.deleteSharing"] ) {
              if (self.importView) {
                  [self performSegueWithIdentifier:SEGUE_4_2_TO_3_2 sender:self];
              }
              else {
-                 [self performSegueWithIdentifier:SEGUE_4_1_TO_3_2 sender:self];
+                 [self deletePhotos];
              }
          }
         
@@ -555,7 +545,79 @@ UserCellDelegate>
 
 }
 
-- (void)deletePhotos:(id)sender {
+- (void)newFaceTab {
+    if(selectedPhotos.count < 5){
+        [UIAlertView showWithTitle:@""
+                           message:@"5장 이상 등록!!"
+                 cancelButtonTitle:@"OK"
+                 otherButtonTitles:nil
+                          tapBlock:^(UIAlertView *alertView, NSInteger buttonIndex) {
+                              if (buttonIndex == [alertView cancelButtonIndex]) {
+                                  [self.navigationController popViewControllerAnimated:YES];
+                              }
+                          }];
+    } else {
+        [self performSegueWithIdentifier:SEGUE_4_1_TO_3_2 sender:self];
+    }
+
+}
+
+- (void)copyPhotos:(int)destUserID
+{
+    [self.collectionView performBatchUpdates:^{
+        for (NSIndexPath *indexPath in selectedPhotos) {
+            // UI
+            GalleryViewCell *cell = (GalleryViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
+            [cell showSelectIcon:NO];
+            
+            NSDictionary *photo = [self.photos objectAtIndex:indexPath.row];
+            int photoID = [[photo objectForKey:@"PhotoID"] intValue];
+            int FaceNo = [[photo objectForKey:@"FaceNo"] intValue];
+            NSLog(@"photo = %@", photo);
+            
+            [SQLManager newUserPhotosWith:destUserID withPhoto:photoID withFace:FaceNo];
+
+        }
+    } completion:^(BOOL finished) {
+        self.activityController = nil;
+        NSLog(@"Operation : %@ complete!", currentAction);
+        [selectedPhotos removeAllObjects];
+    }];
+}
+
+- (void)movePhotos:(int)destUserID
+{
+    [self.collectionView performBatchUpdates:^{
+        for (NSIndexPath *indexPath in selectedPhotos) {
+            // UI
+            GalleryViewCell *cell = (GalleryViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
+            [cell showSelectIcon:NO];
+            
+            NSDictionary *photo = [self.photos objectAtIndex:indexPath.row];
+            int userID = [[photo objectForKey:@"UserID"] intValue];
+            int photoID = [[photo objectForKey:@"PhotoID"] intValue];
+            int FaceNo = [[photo objectForKey:@"FaceNo"] intValue];
+            NSLog(@"photo = %@", photo);
+            
+            [SQLManager newUserPhotosWith:destUserID withPhoto:photoID withFace:FaceNo];
+            
+            [SQLManager deleteUserPhoto:userID  withPhoto:photoID];
+            [self.photos removeObjectAtIndex:indexPath.row];
+        }
+        
+        [self.collectionView deleteItemsAtIndexPaths:selectedPhotos];
+
+        [self.userProfileView updateCell:self.user count:[self.photos count]];
+        
+    } completion:^(BOOL finished) {
+        self.activityController = nil;
+        NSLog(@"Operation : %@ complete!", currentAction);
+        [selectedPhotos removeAllObjects];
+    }];
+}
+
+- (void)deletePhotos
+{
     
     [self.activityController dismissViewControllerAnimated:YES completion:nil];
     
@@ -564,16 +626,92 @@ UserCellDelegate>
             // UI
             GalleryViewCell *cell = (GalleryViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
             [cell showSelectIcon:NO];
+            
+            NSDictionary *photo = [self.photos objectAtIndex:indexPath.row];
+            int userID = [[photo objectForKey:@"UserID"] intValue];
+            int photoID = [[photo objectForKey:@"PhotoID"] intValue];
+            NSLog(@"photo = %@", photo);
+            [SQLManager deleteUserPhoto:userID  withPhoto:photoID];
+            
             [self.photos removeObjectAtIndex:indexPath.row];
         }
         
         [self.collectionView deleteItemsAtIndexPaths:selectedPhotos];
+        
+        [self.userProfileView updateCell:self.user count:[self.photos count]];
+        
     } completion:^(BOOL finished) {
         self.activityController = nil;
         NSLog(@"deletePhotos complete!");
         [selectedPhotos removeAllObjects];
     }];
 }
+
+- (BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender
+{
+    if (self.collectionView.allowsMultipleSelection) {
+        return NO;
+    } else {
+        return YES;
+    }
+}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    if([segue isKindOfClass:[OpenPhotoSegue class]]) {
+        // Set the start point for the animation to center of the button for the animation
+        CGPoint point2 = [self.view convertPoint:self.selectedCell.center fromView:self.collectionView];
+        ((OpenPhotoSegue *)segue).originatingPoint = point2;
+    }
+    else if ([segue.identifier isEqualToString:SEGUE_4_1_TO_3_2]){
+        AlbumSelectionController *destination = segue.destinationViewController;
+
+        
+        NSMutableArray *photoDatas = [NSMutableArray array];
+        
+        for(NSIndexPath *indexPath in selectedPhotos){
+            NSDictionary *photo = [self.photos objectAtIndex:indexPath.row];
+            [photoDatas addObject:photo];
+        }
+        
+        destination.photos = photoDatas;
+        destination.operateIdentifier = currentAction;
+        
+    }
+}
+
+
+//unwindSegue handler from AlbumSelectionController.
+- (IBAction)unwindToIndividualGallery:(UIStoryboardSegue *)unwindSegue
+{
+    UIViewController* sourceViewController = unwindSegue.sourceViewController;
+    
+    //만약에 copy or move operation을 진행하고 다른 user의 facetab을 선택하고 오면
+    if ([sourceViewController isKindOfClass:[AlbumSelectionController class]])
+    {
+        AlbumSelectionController *controller = (AlbumSelectionController *)unwindSegue.sourceViewController;
+        NSString *destOperation = controller.operateIdentifier;
+        NSDictionary *destUserInfo = controller.selectedUserInfo;
+        //NSArray *destPhotos = controller.photos;
+        
+        int destUserID = [destUserInfo[@"UserID"] intValue];
+        
+        if(destUserID ==  [userInfo[@"UserID"] intValue]){
+            NSLog(@"동일 유저에 대한 명령 취소..");
+            return;
+        }
+        
+        if([destOperation isEqualToString:@"com.pixbee.moveSharing"]) {
+            [self movePhotos:destUserID];
+        }
+        else if ([destOperation isEqualToString:@"com.pixbee.copySharing"]) {
+            [self copyPhotos:destUserID];
+        }
+        
+    }
+
+
+}
+
 
 - (IBAction)backButtonClickHandler:(id)sender {
     [self dismissCustomSegueViewControllerWithCompletion:^(BOOL finished) {
