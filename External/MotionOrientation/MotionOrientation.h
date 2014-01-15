@@ -27,6 +27,7 @@ extern NSString* const kMotionOrientationKey;
 - (uint)exifOrientationFromUIOrientation:(UIImageOrientation)uiorientation;
 - (UIImageOrientation)imageOrientationFromEXIFOrientation:(uint)exiforientation;
 - (UIImageOrientation)currentImageOrientationWithFrontCamera:(BOOL)isUsingFrontCamera MirrorFlip:(BOOL)shouldMirrorFlip;
+- (double)degreeOrientation;
 - (BOOL)deviceIsLandscape;
 - (BOOL)deviceIsPortrait;
 

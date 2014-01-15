@@ -133,6 +133,27 @@ NSString* const kMotionOrientationKey = @"kMotionOrientationKey";
     return [self exifOrientationFromUIOrientation:[self currentImageOrientationWithFrontCamera:isUsingFrontCamera MirrorFlip:shouldMirrorFlip]];
 }
 
+- (double)degreeOrientation
+{
+    double degree = 0.0;
+    
+    if(self.deviceOrientation == UIDeviceOrientationPortrait
+       || self.deviceOrientation == UIDeviceOrientationFaceUp
+       || self.deviceOrientation == UIDeviceOrientationFaceDown){
+        degree = 0.00;
+    }
+    if(self.deviceOrientation == UIDeviceOrientationPortraitUpsideDown){
+        degree = 180.00;
+    }
+    if(self.deviceOrientation == UIDeviceOrientationLandscapeLeft){
+         degree = 90.00;
+    }
+    if(self.deviceOrientation == UIDeviceOrientationLandscapeRight){
+        degree = 270.00;
+    }
+    return degree;
+}
+
 - (BOOL)deviceIsLandscape
 {
     UIDeviceOrientation orientation = self.deviceOrientation; //[UIDevice currentDevice].orientation;

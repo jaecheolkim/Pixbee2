@@ -37,6 +37,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     IBOutlet UIView *faceView;
     IBOutlet UIImageView *faceImageView;
     
+    AVCaptureDeviceInput *deviceInput;
     AVCaptureVideoPreviewLayer *previewLayer;
     AVCaptureStillImageOutput *stillImageOutput;
     AVCaptureVideoDataOutput *videoDataOutput;
@@ -45,6 +46,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     dispatch_queue_t videoDataOutputQueue;
 
     BOOL isUsingFrontFacingCamera;
+    BOOL isFlashOn;
     
     NSMutableDictionary *recognisedFaces;
     NSMutableDictionary *processing;
@@ -81,6 +83,10 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 @property (nonatomic, retain) MBSwitch *cameraSwitch;
 @property (weak, nonatomic) IBOutlet UIButton *snapButton;
 @property (weak, nonatomic) IBOutlet UIScrollView *faceListScrollView;
+@property (weak, nonatomic) IBOutlet UIImageView *shutterImage;
+@property (weak, nonatomic) IBOutlet UIImageView *cameraImage;
+@property (weak, nonatomic) IBOutlet UIImageView *videoImage;
+@property (weak, nonatomic) IBOutlet UIButton *GalleryButton;
 
 - (IBAction)toggleFlash:(id)sender;
 - (IBAction)switchCameras:(id)sender;
@@ -96,6 +102,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
     
     instructPoint = @[NSStringFromCGPoint(CGPointMake(0, 0)),  ];
 
@@ -137,9 +144,16 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
         self.cameraSwitch = [[MBSwitch alloc] initWithFrame:CGRectMake(248, 41, 61.0, 18.0)]; //12
         [self.CameraBottomView addSubview:_cameraSwitch];
         [_cameraSwitch addTarget:self action:@selector(switchCameraVideo:) forControlEvents:UIControlEventValueChanged];
+        
+#warning 이번 버전(최초)에서는 카메라/비디오 스위치와 비디오 모드 빼고 가기로 함.
+        _cameraSwitch.hidden = YES;
+        _cameraImage.hidden = YES;
+        _videoImage.hidden = YES;
     }
 
     [_closeButton bootstrapStyle];
+    
+    
     
 }
 
@@ -155,6 +169,10 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     //[self.navigationController.navigationBar setBackgroundColor:[UIColor redColor]];
     self.navigationController.navigationBarHidden = YES;
     
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(OrientationEventHandler:)
+												 name:MotionOrientationChangedNotification object:nil];
+
+    
 	[self setupAVCapture];
 }
 
@@ -168,9 +186,9 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 
 - (void)viewWillDisappear:(BOOL)animated
 {
-	[self teardownAVCapture];
-    
 	[super viewWillDisappear:animated];
+    [self teardownAVCapture];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:MotionOrientationChangedNotification object:nil];
 }
 
 
@@ -178,6 +196,35 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+
+- (void)OrientationEventHandler:(NSNotification *)notification
+{
+    double degree = [[MotionOrientation sharedInstance] degreeOrientation];
+    NSLog(@"Orientation = %f", degree);
+    dispatch_async(dispatch_get_main_queue(), ^(void) {
+        [UIView animateWithDuration:0.2 animations:^{
+            _shutterImage.transform = CGAffineTransformMakeRotation(degree * (M_PI/180.0)) ;
+            _cameraImage.transform = CGAffineTransformMakeRotation(degree * (M_PI/180.0)) ;
+            _videoImage.transform = CGAffineTransformMakeRotation(degree * (M_PI/180.0)) ;
+            _GalleryButton.transform = CGAffineTransformMakeRotation(degree * (M_PI/180.0)) ;
+            
+            _flashButton.transform  = CGAffineTransformMakeRotation(degree * (M_PI/180.0)) ;
+            _switchButton.imageView.transform  = CGAffineTransformMakeRotation(degree * (M_PI/180.0)) ;
+            
+            // Face Icon rotate
+            for(UIView *view in _faceListScrollView.subviews){
+                if([view isKindOfClass:[UIButton class]]){
+                    view.transform  = CGAffineTransformMakeRotation(degree * (M_PI/180.0)) ;
+                }
+            }
+
+            
+        }];
+
+    });
+
 }
 
 
@@ -234,7 +281,42 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 }
 
 - (IBAction)toggleFlash:(id)sender {
+//    [self setFlashMode:AVCaptureFlashModeAuto forDevice:[[self videoDeviceInput] device]];
+
+    if(isFlashOn)
+        [self setFlashMode:AVCaptureFlashModeOff];
+    else
+        [self setFlashMode:AVCaptureFlashModeOn];
+    
+    isFlashOn = !isFlashOn;
+        
 }
+
+- (void)setFlashMode:(AVCaptureFlashMode)flashMode
+{
+    if (isUsingFrontFacingCamera) return;
+    
+    for (AVCaptureDevice *device in [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo]) {
+        if ([device hasFlash] && [device isFlashModeSupported:flashMode])
+        {
+            NSError *error = nil;
+            if ([device lockForConfiguration:&error])
+            {
+                [device setFlashMode:flashMode];
+                [device unlockForConfiguration];
+                if(flashMode == AVCaptureFlashModeOff)
+                    [_flashButton setImage:[UIImage imageNamed:@"flash_camera_selcet.png"] forState:UIControlStateNormal];
+                else if(flashMode == AVCaptureFlashModeOn)
+                    [_flashButton setImage:[UIImage imageNamed:@"flash_camera.png"] forState:UIControlStateNormal];
+            }
+            else
+            {
+                NSLog(@"%@", error);
+            }
+        }
+	}
+}
+
 
 - (IBAction)switchCameras:(id)sender {
     AVCaptureDevicePosition desiredPosition;
@@ -252,10 +334,13 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 			}
 			[[previewLayer session] addInput:input];
 			[[previewLayer session] commitConfiguration];
+            
 			break;
 		}
 	}
 	isUsingFrontFacingCamera = !isUsingFrontFacingCamera;
+    if(isUsingFrontFacingCamera)  _flashButton.enabled = NO;
+    else _flashButton.enabled = YES;
 }
 
 - (IBAction)closeCamera:(id)sender
@@ -498,7 +583,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 		}
 	}
     
-	AVCaptureDeviceInput *deviceInput = [AVCaptureDeviceInput deviceInputWithDevice:device error:&error];
+	deviceInput = [AVCaptureDeviceInput deviceInputWithDevice:device error:&error];
 	require( error == nil, bail );
 	{
         isUsingFrontFacingCamera = YES;
@@ -559,6 +644,9 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
         [session startRunning];
         
         _frameNum = 0;
+        
+        isFlashOn = NO;
+        [self setFlashMode:AVCaptureFlashModeOff];
     }
 bail:
     {
