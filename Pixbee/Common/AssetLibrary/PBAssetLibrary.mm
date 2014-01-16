@@ -371,16 +371,17 @@
                 
                 if(self.faceProcessStop) break ;
                 
-                NSDate *date = [NSDate date];
+                //NSDate *date = [NSDate date];
                 
                 ALAsset *photoAsset = [_totalAssets[i] objectForKey:@"Asset"];
                 
                 CGImageRef cgImage = [photoAsset aspectRatioThumbnail];
                 CIImage *ciImage = [CIImage imageWithCGImage:cgImage];
                 
-                NSArray *fs = [FaceLib detectFace:ciImage options:@{CIDetectorSmile: @(YES),
-                                                                    CIDetectorEyeBlink: @(YES),
-                                                                    }];
+//                NSArray *fs = [FaceLib detectFace:ciImage options:@{CIDetectorSmile: @(YES),
+//                                                                    CIDetectorEyeBlink: @(YES),
+//                                                                    }];
+                NSArray *fs = [FaceLib detectFace:ciImage options:nil];
                 int counter = (int)[fs count];
                 
                 //                NSString *AssetURL = [photoAsset valueForProperty:ALAssetPropertyAssetURL];
@@ -424,12 +425,13 @@
                     }
                 }
                 
-                double workTime = 0 - [date timeIntervalSinceNow];
+                //double workTime = 0 - [date timeIntervalSinceNow];
                 _currentProcess++;
                 
                 //if (faceImage) {
-                NSDictionary *processInfo = @{ @"Total" : @(_totalProcess), @"Current":@(_currentProcess), @"Match":@(_matchCount),
-                                               @"Asset" : photoAsset, @"Face" : faceImage};
+                NSDictionary *processInfo = @{ @"Total" : @(_totalProcess), @"Current":@(_currentProcess),
+                                               @"Match":@(_matchCount), @"Asset" : photoAsset};//
+                                               //@"Face" : faceImage};//, @"CIImage" : ciImage};
                 
                 enumerationBlock(processInfo);
                 //}

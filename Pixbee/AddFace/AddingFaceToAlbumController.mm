@@ -111,15 +111,26 @@
           dispatch_async(dispatch_get_main_queue(), ^{
               NSLog(@"Processing : %@", processInfo);
               
-              [self.assets addObject:[processInfo objectForKey:@"Asset"]];
+//              [self.assets addObject:[processInfo objectForKey:@"Asset"]];
+//              CGImageRef iref = [[self.assets lastObject] aspectRatioThumbnail];
               
-              CGImageRef iref = [[self.assets lastObject] aspectRatioThumbnail];
+              ALAsset *asset = [processInfo objectForKey:@"Asset"];
+              CGImageRef iref = [asset aspectRatioThumbnail];
               if (iref) {
                   UIImage *thumbnail = [UIImage imageWithCGImage:iref];
                   if (thumbnail) {
                       [self.photoView swapImage:thumbnail];
                   }
               };
+              
+              
+//              CIImage *ciImage = processInfo[@"CIImage"];
+//              if(ciImage){
+//                  UIImage *thumbnail = [UIImage imageWithCIImage:ciImage];
+//                  if (thumbnail) {
+//                      [self.photoView swapImage:thumbnail];
+//                  }
+//              }
               
               int totalV = [[processInfo objectForKey:@"Total"] intValue];
               int currentV = [[processInfo objectForKey:@"Current"] intValue];
@@ -129,13 +140,29 @@
               [self.progressView setProgress:((float)currentV/(float)totalV) animated:YES];
               [self.ProgressGauge setText:[NSString stringWithFormat:@"%d", matchV]];
               
-              _faceImageView.image = [processInfo objectForKey:@"Face"];
+              //_faceImageView.image = [processInfo objectForKey:@"Face"];
           });
       }
                  completion:^(BOOL finished){
                      dispatch_async(dispatch_get_main_queue(), ^{
                          
                          self.assets = AssetLib.faceAssets;
+                         
+                         ALAsset *photoAsset = [self.assets lastObject];
+                         NSArray *faces = [AssetLib getFaceData:photoAsset];
+                         if(faces.count == 1 && !IsEmpty(faces)){
+                             NSDictionary *face = faces[0];
+                             UIImage *faceImage = face[@"faceImage"];
+                             if(faceImage != nil)
+                                 [SQLManager setUserProfileImage:faceImage UserID:self.UserID];
+                         }
+                         else {
+                             CGImageRef cgImage = [photoAsset aspectRatioThumbnail];
+                             UIImage *faceImage = [UIImage imageWithCGImage:cgImage];
+                             if(faceImage != nil)
+                                 [SQLManager setUserProfileImage:faceImage UserID:self.UserID];
+                         }
+                         
                          
                          [self.flowView reloadData];
                          // Wait one second and then fade in the view
