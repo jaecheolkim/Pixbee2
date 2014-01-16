@@ -124,7 +124,7 @@
 {
     
     self.usersPhotos = [[SQLManager getAllUserPhotos] mutableCopy];
-    NSLog(@"usersPhotos: %@",_usersPhotos);
+    //NSLog(@"usersPhotos: %@",_usersPhotos);
     [self calAllPhotos];
     
     [self.tableView reloadData];
@@ -345,6 +345,8 @@
 }
 
 - (void)doneUserCell:(UserCell *)cell {
+    NSIndexPath *indexPath = editIndexPath;
+    
     NSString *inputUserName = cell.inputName.text;
     NSString *cellUserName = [cell.user objectForKey:@"UserName"];
     int cellUserID = [[cell.user objectForKey:@"UserID"] intValue];
@@ -352,13 +354,22 @@
     if(![cellUserName isEqualToString:inputUserName] && !IsEmpty(inputUserName)){
         //Update DB
         NSArray *result = [SQLManager updateUser:@{ @"UserID" : @(cellUserID), @"UserName" :inputUserName}];
-        if(!IsEmpty(result))
+        if(!IsEmpty(result)){
             cell.userName.text = inputUserName;
+            
+            NSDictionary *users = [self.usersPhotos objectAtIndex:indexPath.row];
+            NSArray *photos = users[@"photos"];
+            NSDictionary *user =result[0];
+            [self.usersPhotos replaceObjectAtIndex:indexPath.row withObject:@{@"user":user,@"photos":photos}];
+
+        }
     }
     NSLog(@"Input text : %@", cell.inputName.text);
     [self.tableView setEditing:NO];
     [self.tableView setScrollEnabled:YES];
     self.editCell = nil;
+    
+    
 }
 
 - (void)deleteUserCell:(UserCell *)cell {

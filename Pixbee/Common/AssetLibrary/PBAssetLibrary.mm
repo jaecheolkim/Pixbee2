@@ -330,6 +330,21 @@
      }];
 }
 
+- (NSArray*)getFaceData:(ALAsset*)photoAsset
+{
+    CGImageRef cgImage = [photoAsset aspectRatioThumbnail];
+    CIImage *ciImage = [CIImage imageWithCGImage:cgImage];
+    
+    NSArray *fs = [FaceLib detectFace:ciImage options:nil];
+
+    NSMutableArray *result = [NSMutableArray array];
+    for(CIFaceFeature *face in fs){
+        NSDictionary *faceDic = [FaceLib getFaceData:ciImage bound:face.bounds];
+        [result addObject:faceDic];
+    }
+
+    return result;
+}
 
 
 - (void)checkFacesFor:(int)UserID usingEnumerationBlock:(void (^)(NSDictionary *processInfo))enumerationBlock completion:(void (^)(BOOL finished))completion {

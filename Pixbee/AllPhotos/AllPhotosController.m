@@ -293,13 +293,34 @@
             NSDictionary *user = [result objectAtIndex:0];
             //NSString *UserName = [user objectForKey:@"UserName"];
             int UserID = [[user objectForKey:@"UserID"] intValue];
+            int photoCount = 0;
             
-            for(NSIndexPath *indexPath in selectedPhotos){
+            for(NSIndexPath *indexPath in selectedPhotos)
+            {
+                photoCount++;
                 NSDictionary *photo = [self.photos objectAtIndex:indexPath.row];
+                ALAsset *asset = photo[@"Asset"];
                 NSLog(@"photo data = %@", photo);
-                [SQLManager saveNewUserPhotoToDB:photo[@"Asset"] users:@[@(UserID)]];
-                //[photoDatas addObject:photo];
+                
+                NSArray *faces = [AssetLib getFaceData:asset];
+                if(faces.count == 1 && !IsEmpty(faces)){
+                    NSDictionary *face = faces[0];
+                    NSData *faceData = face[@"image"];
+                    UIImage *faceImage = face[@"faceImage"];
+                    if(faceImage != nil)
+                        [SQLManager setUserProfileImage:faceImage UserID:UserID];
+                    
+                    [SQLManager setTrainModelForUserID:UserID withFaceData:faceData];
+                }
+                else {
+                    CGImageRef cgImage = [asset aspectRatioThumbnail];
+                    UIImage *faceImage = [UIImage imageWithCGImage:cgImage];
+                    if(faceImage != nil)
+                        [SQLManager setUserProfileImage:faceImage UserID:UserID];
+                }
 
+                
+                [SQLManager saveNewUserPhotoToDB:asset users:@[@(UserID)]];
             }
             
             [self.navigationController popViewControllerAnimated:YES];

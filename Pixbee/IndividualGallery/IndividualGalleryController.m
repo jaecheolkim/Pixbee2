@@ -550,7 +550,7 @@ UserCellDelegate>
 - (void)newFaceTab {
     if(selectedPhotos.count < 5){
         [UIAlertView showWithTitle:@""
-                           message:@"5장 이상 등록!! & 추후 구현"
+                           message:@"5장 이상 등록!!"
                  cancelButtonTitle:@"OK"
                  otherButtonTitles:nil
                           tapBlock:^(UIAlertView *alertView, NSInteger buttonIndex) {
@@ -564,24 +564,45 @@ UserCellDelegate>
         NSDictionary *user = [result objectAtIndex:0];
         //NSString *UserName = [user objectForKey:@"UserName"];
         __block int UserID = [[user objectForKey:@"UserID"] intValue];
-
+        __block int photoCount = 0;
+        
         for(NSIndexPath *indexPath in selectedPhotos){
+            
             NSDictionary *photo = [self.photos objectAtIndex:indexPath.row];
             NSLog(@"photo data = %@", photo);
 
             [AssetLib.assetsLibrary assetForURL:[NSURL URLWithString:photo[@"AssetURL"]]
-            resultBlock:^(ALAsset *asset) {
+            resultBlock:^(ALAsset *asset)
+            {
+                
+                photoCount++;
+                NSArray *faces = [AssetLib getFaceData:asset];
+                if(faces.count == 1 && !IsEmpty(faces)){
+                    NSDictionary *face = faces[0];
+                    NSData *faceData = face[@"image"];
+                    UIImage *faceImage = face[@"faceImage"];
+                    if(faceImage != nil)
+                        [SQLManager setUserProfileImage:faceImage UserID:UserID];
+
+                    [SQLManager setTrainModelForUserID:UserID withFaceData:faceData];
+                }
+                else {
+                    CGImageRef cgImage = [asset aspectRatioThumbnail];
+                    UIImage *faceImage = [UIImage imageWithCGImage:cgImage];
+                    if(faceImage != nil)
+                        [SQLManager setUserProfileImage:faceImage UserID:UserID];
+                }
+                
                 [SQLManager saveNewUserPhotoToDB:asset users:@[@(UserID)]];
+                
             }
             failureBlock:^(NSError *error) {
                 NSLog(@"Unresolved error: %@, %@", error, [error localizedDescription]);
             }];
-            
-            
-            //[photoDatas addObject:photo];
-            
         }
         
+#warning 얼굴인식 TrainModel 업데이트 필요. (추가된 얼굴들에 대하여..)
+
         [self.navigationController popViewControllerAnimated:YES];
         //[self performSegueWithIdentifier:SEGUE_4_1_TO_3_2 sender:self];
     }

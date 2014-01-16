@@ -539,13 +539,32 @@
     return UserID;
 }
 
+- (void)setUserProfileImage:(UIImage*)profileImage UserID:(int)UserID
+{
+    NSString *imagePath = [NSString stringWithFormat:@"profileImage_%d.png",UserID];
+
+    [[SDImageCache sharedImageCache] removeImageForKey:imagePath];
+    [[SDImageCache sharedImageCache] storeImage:profileImage forKey:imagePath toDisk:YES];
+    
+    NSArray *result = [SQLManager updateUser:@{ @"UserID" : @(UserID), @"UserProfile" :imagePath}];
+    if(!IsEmpty(result)){
+        NSLog(@"User Profile result = %@", result);
+    }
+
+}
+
 // 해당 User의 Profile 이미지 가져오기
 - (UIImage *)getUserProfileImage:(int)UserID
 {
 #warning 프로필 이미지 가져오기 추가 필요
-    
-    NSString *imagePath = [NSString stringWithFormat:@"profileImage%d",UserID];
-    UIImage *profileImage = [[SDImageCache sharedImageCache] imageFromMemoryCacheForKey:imagePath];
+//    NSArray *userInfo = [SQLManager getUserInfo:UserID];
+//    if(!IsEmpty(userInfo)){
+//        NSString *UserProfile = userInfo[0][@"UserProfile"];
+//    } else {
+//        
+//    }
+    NSString *imagePath = [NSString stringWithFormat:@"profileImage_%d.png",UserID];
+    UIImage *profileImage = [[SDImageCache sharedImageCache] imageFromDiskCacheForKey:imagePath];
     if(IsEmpty(profileImage)) {
         UIImage *image = [UIImage imageNamed:@"noname@2x.png"];
         profileImage = [UIImage maskImage:image withMask:[UIImage imageNamed:@"photo_profile_hive@2x.png"]];

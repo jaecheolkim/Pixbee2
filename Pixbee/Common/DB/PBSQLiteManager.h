@@ -53,6 +53,8 @@ enum errorCodes {
 // 해당 UserID의 UserPhotos 데이터 모두 삭제.
 - (BOOL)deleteUser:(int)UserID;
 
+// 해당 User의 profile 이미지 저장하기
+- (void)setUserProfileImage:(UIImage*)profileImage UserID:(int)UserID;
 // 해당 User의 Profile 이미지 가져오기
 - (UIImage *)getUserProfileImage:(int)UserID;
 

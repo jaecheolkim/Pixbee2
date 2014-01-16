@@ -222,7 +222,8 @@ using namespace cv;
 - (NSArray*)detectFace:(CIImage*)ciImage options:(NSDictionary *)options
 {
     NSArray *features = nil;
-    if(_faceDetector && ciImage && options)
+    if(!_faceDetector) [FaceLib initDetector:CIDetectorAccuracyLow Tacking:NO];
+    if(_faceDetector && ciImage)
         features = [_faceDetector featuresInImage:ciImage options:options];
     return features;
 }
@@ -527,8 +528,9 @@ using namespace cv;
     NSData *serialized = [self serializeCvMat:faceData];
     
     NSString *PhotoBound = NSStringFromCGRect(ciImage.extent);
+    NSString *faceBound = NSStringFromCGRect(faceRect);
     
-    NSDictionary *result = @{@"PhotoBound": PhotoBound, @"image": serialized, @"faceImage":faceImage };
+    NSDictionary *result = @{@"PhotoBound": PhotoBound, @"faceBound":faceBound, @"image": serialized, @"faceImage":faceImage };
     
     return result;
 }
