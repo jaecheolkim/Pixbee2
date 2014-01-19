@@ -10,8 +10,9 @@
 #import "UIImage+Addon.h"
 #import <Accounts/Accounts.h>
 #import <Twitter/Twitter.h>
+#import <MessageUI/MessageUI.h>
 
-@interface TagNShareViewController () <UIScrollViewDelegate, UITextViewDelegate, UIDocumentInteractionControllerDelegate>
+@interface TagNShareViewController () <UIScrollViewDelegate, UITextViewDelegate, UIDocumentInteractionControllerDelegate, MFMailComposeViewControllerDelegate>
 {
 
     UIView *selectedView;   // 필터 스크롤뷰안에서 이동하는 선택되어진 뷰.
@@ -285,7 +286,7 @@
         
     }
     else if (self.mailButton.selected) {
-        
+        [self createEmail];
     }
     else if (self.messageButton.selected) {
         
@@ -372,6 +373,50 @@
     [accountStore requestAccessToAccountsWithType:twitterType
                                           options:NULL
                                        completion:accountStoreHandler];
+}
+
+- (void)createEmail {
+    //Create a string with HTML formatting for the email body
+    NSMutableString *emailBody = [[NSMutableString alloc] initWithString:@"<html><body>"];
+    //Add some text to it however you want
+    
+    NSString *bodymessage = [NSString stringWithFormat:@"<p>%@</p>", self.textView.text];
+    
+    [emailBody appendString:bodymessage];
+    //Pick an image to insert
+    //This example would come from the main bundle, but your source can be elsewhere
+    
+    for (int i=0; i<[self.images count]; i++) {
+        //Convert the image into data
+        NSData *imageData = [NSData dataWithData:UIImagePNGRepresentation([self.images objectAtIndex:i])];
+        //Create a base64 string representation of the data using NSData+Base64
+        NSString *base64String = [imageData base64Encoding];
+        //Add the encoded string to the emailBody string
+        //Don't forget the "<b>" tags are required, the "<p>" tags are optional
+        [emailBody appendString:[NSString stringWithFormat:@"<p><b><img src='data:image/png;base64,%@'></b></p>",base64String]];
+        //You could repeat here with more text or images, otherwise
+    }
+
+    //close the HTML formatting
+    [emailBody appendString:@"</body></html>"];
+//    NSLog(@"%@",emailBody);
+    
+    //Create the mail composer window
+    MFMailComposeViewController *emailDialog = [[MFMailComposeViewController alloc] init];
+    emailDialog.mailComposeDelegate = self;
+    [emailDialog setSubject:@"Title 적으면 됨."];
+    [emailDialog setMessageBody:emailBody isHTML:YES];
+    
+    [self presentViewController:emailDialog animated:YES completion:^(void){
+        
+    }];
+}
+
+
+- (void)mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0) {
+    [self dismissViewControllerAnimated:YES completion:^(void){
+        
+    }];
 }
 
 

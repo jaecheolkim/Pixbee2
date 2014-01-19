@@ -706,13 +706,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7805A5E5186589B300B234C1 /* MessageUI.framework in Frameworks */,
 				69766D87188BDF42003B6F8F /* Twitter.framework in Frameworks */,
 				69766D85188BDF33003B6F8F /* Accounts.framework in Frameworks */,
 				80D5B62D18759293000CD8D7 /* FacebookSDK.framework in Frameworks */,
 				80D5B62E18759293000CD8D7 /* opencv2.framework in Frameworks */,
 				80D5B62F18759293000CD8D7 /* SDWebImage.framework in Frameworks */,
 				7805A5E7186589BE00B234C1 /* MobileCoreServices.framework in Frameworks */,
-				7805A5E5186589B300B234C1 /* MessageUI.framework in Frameworks */,
 				7805A5E3186589A200B234C1 /* libz.1.2.5.dylib in Frameworks */,
 				7805A5E11865899100B234C1 /* ImageIO.framework in Frameworks */,
 				7805A5DF1865897D00B234C1 /* Security.framework in Frameworks */,
