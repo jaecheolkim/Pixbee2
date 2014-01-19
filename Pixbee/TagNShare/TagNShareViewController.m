@@ -11,7 +11,7 @@
 #import <Accounts/Accounts.h>
 #import <Twitter/Twitter.h>
 
-@interface TagNShareViewController () <UIScrollViewDelegate, UITextViewDelegate>
+@interface TagNShareViewController () <UIScrollViewDelegate, UITextViewDelegate, UIDocumentInteractionControllerDelegate>
 {
 
     UIView *selectedView;   // 필터 스크롤뷰안에서 이동하는 선택되어진 뷰.
@@ -21,6 +21,7 @@
     int currentPage; // UIPageControl의 현재 페이지
 }
 
+@property (nonatomic, strong)     UIDocumentInteractionController* docController;
 @property (weak, nonatomic) IBOutlet UIScrollView *imageScrollView; // 이미지 스크롤뷰
 @property (weak, nonatomic) IBOutlet UIPageControl *imagePageControl; // 이미지 페이지 컨트롤
 
@@ -199,11 +200,25 @@
 }
 
 - (IBAction)instagramClickHandler:(id)sender {
-    [self.facebookButton setSelected:NO];
-    [self.twitterButton setSelected:NO];
-    [self.instagramButton setSelected:YES];
-    [self.mailButton setSelected:NO];
-    [self.messageButton setSelected:NO];
+    
+    NSURL *instagramURL = [NSURL URLWithString:@"instagram://location?id=1"];
+    if ([[UIApplication sharedApplication] canOpenURL:instagramURL]) {
+        
+        if ([self.images count] == 1) {
+            [self.facebookButton setSelected:NO];
+            [self.twitterButton setSelected:NO];
+            [self.instagramButton setSelected:YES];
+            [self.mailButton setSelected:NO];
+            [self.messageButton setSelected:NO];
+        }
+        else {
+            
+        }
+        
+    }
+    else {
+        
+    }
 }
 
 - (IBAction)mailClickHandler:(id)sender {
@@ -257,6 +272,16 @@
         }
     }
     else if (self.instagramButton.selected) {
+        
+        UIImage* instaImage = [self.images objectAtIndex:0];
+        NSString* imagePath = [NSString stringWithFormat:@"%@/image.igo", [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject]];
+        [[NSFileManager defaultManager] removeItemAtPath:imagePath error:nil];
+        [UIImagePNGRepresentation(instaImage) writeToFile:imagePath atomically:YES];
+        NSLog(@"image size: %@", NSStringFromCGSize(instaImage.size));
+        _docController = [UIDocumentInteractionController interactionControllerWithURL:[NSURL fileURLWithPath:imagePath]];
+        _docController.delegate=self;
+        _docController.UTI = @"com.instagram.exclusivegram";
+        [_docController presentOpenInMenuFromRect:self.view.frame inView:self.view animated:YES];
         
     }
     else if (self.mailButton.selected) {
