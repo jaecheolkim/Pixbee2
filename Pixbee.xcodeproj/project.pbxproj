@@ -13,6 +13,8 @@
 		6968D9A2186EEE0000831442 /* NewAlbumActivity.m in Sources */ = {isa = PBXBuildFile; fileRef = 6968D9A0186EEE0000831442 /* NewAlbumActivity.m */; };
 		6968D9A6186EF7DB00831442 /* AlbumSelectionController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6968D9A5186EF7DB00831442 /* AlbumSelectionController.m */; };
 		696ECBDB1850551F00F54DB6 /* AllPhotosController.m in Sources */ = {isa = PBXBuildFile; fileRef = 696ECBDA1850551F00F54DB6 /* AllPhotosController.m */; };
+		69766D85188BDF33003B6F8F /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 69766D84188BDF33003B6F8F /* Accounts.framework */; };
+		69766D87188BDF42003B6F8F /* Twitter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 69766D86188BDF42003B6F8F /* Twitter.framework */; };
 		697C83DE186DF2FA00823990 /* MBSwitch.m in Sources */ = {isa = PBXBuildFile; fileRef = 697C83DD186DF2FA00823990 /* MBSwitch.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		698B1EA81881197D00BBBBA7 /* DeleteActivity.m in Sources */ = {isa = PBXBuildFile; fileRef = 698B1EA71881197D00BBBBA7 /* DeleteActivity.m */; };
 		69A6C9531880F2C200CAABA1 /* TotalGalleryViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 69A6C9521880F2C200CAABA1 /* TotalGalleryViewCell.m */; };
@@ -298,6 +300,8 @@
 		6968D9A5186EF7DB00831442 /* AlbumSelectionController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AlbumSelectionController.m; sourceTree = "<group>"; };
 		696ECBD91850551F00F54DB6 /* AllPhotosController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AllPhotosController.h; sourceTree = "<group>"; };
 		696ECBDA1850551F00F54DB6 /* AllPhotosController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AllPhotosController.m; sourceTree = "<group>"; };
+		69766D84188BDF33003B6F8F /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
+		69766D86188BDF42003B6F8F /* Twitter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Twitter.framework; path = System/Library/Frameworks/Twitter.framework; sourceTree = SDKROOT; };
 		697C83A8186DC57A00823990 /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FacebookSDK.framework; path = ../FacebookSDK.framework; sourceTree = "<group>"; };
 		697C83A9186DC57A00823990 /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = opencv2.framework; path = ../opencv2.framework; sourceTree = "<group>"; };
 		697C83AA186DC57A00823990 /* SDWebImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDWebImage.framework; path = ../SDWebImage.framework; sourceTree = "<group>"; };
@@ -702,6 +706,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				69766D87188BDF42003B6F8F /* Twitter.framework in Frameworks */,
+				69766D85188BDF33003B6F8F /* Accounts.framework in Frameworks */,
 				80D5B62D18759293000CD8D7 /* FacebookSDK.framework in Frameworks */,
 				80D5B62E18759293000CD8D7 /* opencv2.framework in Frameworks */,
 				80D5B62F18759293000CD8D7 /* SDWebImage.framework in Frameworks */,
@@ -901,6 +907,8 @@
 		69ED32DB18484EBB00127196 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				69766D86188BDF42003B6F8F /* Twitter.framework */,
+				69766D84188BDF33003B6F8F /* Accounts.framework */,
 				80D5B62A18759293000CD8D7 /* FacebookSDK.framework */,
 				80D5B62B18759293000CD8D7 /* opencv2.framework */,
 				80D5B62C18759293000CD8D7 /* SDWebImage.framework */,

@@ -8,6 +8,8 @@
 
 #import "TagNShareViewController.h"
 #import "UIImage+Addon.h"
+#import <Accounts/Accounts.h>
+#import <Twitter/Twitter.h>
 
 @interface TagNShareViewController () <UIScrollViewDelegate, UITextViewDelegate>
 {
@@ -160,11 +162,40 @@
 }
 
 - (IBAction)twitterClickHandler:(id)sender {
-    [self.facebookButton setSelected:NO];
-    [self.twitterButton setSelected:YES];
-    [self.instagramButton setSelected:NO];
-    [self.mailButton setSelected:NO];
-    [self.messageButton setSelected:NO];
+    
+    ACAccountStore *accountStore = [[ACAccountStore alloc] init];
+
+    ACAccountType *twitterType = [accountStore accountTypeWithAccountTypeIdentifier:ACAccountTypeIdentifierTwitter];
+   
+    ACAccountStoreRequestAccessCompletionHandler accountStoreHandler = ^(BOOL granted, NSError *error) {
+        if (granted) {
+            NSArray *accounts = [accountStore accountsWithAccountType:twitterType];
+            //Lets access the first Twitter Account, but in real time you have to provide a list for the User to select
+            if ([accounts count] > 0) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self.facebookButton setSelected:NO];
+                    [self.twitterButton setSelected:YES];
+                    [self.instagramButton setSelected:NO];
+                    [self.mailButton setSelected:NO];
+                    [self.messageButton setSelected:NO];
+                });
+            }
+            else {
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Twitter Account" message:@"There are no Twitter Accounts present on the device" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles: nil];
+                [alert show];
+            }
+        }
+        else {
+            NSLog(@"[ERROR] An error occurred while asking for user authorization: %@",
+                  [error localizedDescription]);
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Twitter Account" message:@"There are no Twitter Accounts present on the device" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles: nil];
+            [alert show];
+        }
+    };
+    
+    [accountStore requestAccessToAccountsWithType:twitterType
+                                          options:NULL
+                                       completion:accountStoreHandler];
 }
 
 - (IBAction)instagramClickHandler:(id)sender {
@@ -221,7 +252,9 @@
 
     }
     else if (self.twitterButton.selected) {
-        
+        for (int i=0; i<[self.images count]; i++) {
+            [self postImage:[self.images objectAtIndex:i] withStatus:self.textView.text];
+        }
     }
     else if (self.instagramButton.selected) {
         
@@ -239,7 +272,7 @@
     for (int i=0; i<[self.images count]; i++) {
         // Put together the dialog parameters
         NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-                                       UIImageJPEGRepresentation([self.images objectAtIndex:i], 0.7), @"source",
+                                       UIImagePNGRepresentation([self.images objectAtIndex:i]), @"source",
                                        self.textView.text, @"message",
                                        //                                   @"Allow your users to share stories on Facebook from your app using the iOS SDK.", @"description",
                                        //                                   @"https://developers.facebook.com/docs/ios/share/", @"link",
@@ -261,6 +294,59 @@
                                   }
                               }];
     }
+}
+
+- (void)postImage:(UIImage *)image withStatus:(NSString *)status
+{
+    ACAccountStore *accountStore = [[ACAccountStore alloc] init];
+    
+    ACAccountType *twitterType = [accountStore accountTypeWithAccountTypeIdentifier:ACAccountTypeIdentifierTwitter];
+    
+    SLRequestHandler requestHandler = ^(NSData *responseData, NSHTTPURLResponse *urlResponse, NSError *error) {
+        if (responseData) {
+            NSInteger statusCode = urlResponse.statusCode;
+            if (statusCode >= 200 && statusCode < 300) {
+                NSDictionary *postResponseData = [NSJSONSerialization JSONObjectWithData:responseData
+                                                                                 options:NSJSONReadingMutableContainers
+                                                                                   error:NULL];
+                NSLog(@"[SUCCESS!] Created Tweet with ID: %@", postResponseData[@"id_str"]);
+            }
+            else {
+                NSLog(@"[ERROR] Server responded: status code %d %@", statusCode, [NSHTTPURLResponse localizedStringForStatusCode:statusCode]);
+            }
+        }
+        else {
+            NSLog(@"[ERROR] An error occurred while posting: %@", [error localizedDescription]);
+        }
+    };
+    
+    ACAccountStoreRequestAccessCompletionHandler accountStoreHandler = ^(BOOL granted, NSError *error) {
+        if (granted) {
+            NSArray *accounts = [accountStore accountsWithAccountType:twitterType];
+            NSURL *url = [NSURL URLWithString:@"https://api.twitter.com"
+                          @"/1.1/statuses/update_with_media.json"];
+            NSDictionary *params = @{@"status" : status};
+            SLRequest *request = [SLRequest requestForServiceType:SLServiceTypeTwitter
+                                                    requestMethod:SLRequestMethodPOST
+                                                              URL:url
+                                                       parameters:params];
+            NSData *imageData = UIImageJPEGRepresentation(image, 1.f);
+            [request addMultipartData:imageData
+                             withName:@"media[]"
+                                 type:@"image/jpeg"
+                             filename:@"image.jpg"];
+            [request setAccount:[accounts lastObject]];
+            [request performRequestWithHandler:requestHandler];
+        }
+        else {
+            NSLog(@"[ERROR] An error occurred while asking for user authorization: %@",
+                  [error localizedDescription]);
+        }
+    };
+    
+    [accountStore requestAccessToAccountsWithType:twitterType
+                                          options:NULL
+                                       completion:accountStoreHandler];
 }
 
 
