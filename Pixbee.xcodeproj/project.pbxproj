@@ -2103,6 +2103,7 @@
 					/Users/Hoseok,
 					/Users/jaecheolkim,
 					/Users/skplanet,
+					/Users/leehoseok,
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Pixbee/Pixbee-Prefix.pch";
@@ -2134,6 +2135,7 @@
 					/Users/Hoseok,
 					/Users/jaecheolkim,
 					/Users/skplanet,
+					/Users/leehoseok,
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Pixbee/Pixbee-Prefix.pch";

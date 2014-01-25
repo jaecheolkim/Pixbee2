@@ -139,7 +139,16 @@
 
 
 - (void) calAllPhotos {
-    int allphotocount = (int)[[PBAssetsLibrary sharedInstance].totalAssets count];
+    
+    NSArray *total = [PBAssetsLibrary sharedInstance].totalAssets;
+    int allphotocount = 0;
+    if (total) {
+        for (NSArray *location in total) {
+            allphotocount += [location count];
+        }
+    }
+    
+//    int allphotocount = (int)[[PBAssetsLibrary sharedInstance].totalAssets count];
     self.allPhotosView.countLabel.text = [NSString stringWithFormat:@"%d", allphotocount];
 }
 

@@ -98,13 +98,12 @@
 
 - (void) reloadDB {
     self.photos = [PBAssetsLibrary sharedInstance].totalAssets;
-    int allphotocount = (int)[self.photos count];
-//    if (self.photos) {
-//        for (NSDictionary *user in self.photos) {
-//            NSArray *photos = [user objectForKey:@"photos"];
-//            allphotocount += [photos count];
-//        }
-//    }
+    int allphotocount = 0;
+    if (self.photos) {
+        for (NSArray *location in self.photos) {
+            allphotocount += [location count];
+        }
+    }
     
     self.allPhotosView.countLabel.text = [NSString stringWithFormat:@"%d", allphotocount];
     self.collectionView.allowsMultipleSelection = YES;
@@ -148,10 +147,149 @@
     
     if (kind == UICollectionElementKindSectionHeader) {
         GalleryHeaderView *headerView = [collectionView dequeueReusableSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:@"GalleryHeaderView" forIndexPath:indexPath];
-        NSString *title = [[NSString alloc]initWithFormat:@"Photos Group #%i", indexPath.section + 1];
-        headerView.leftLabel.text = title;
-        UIImage *headerImage = [UIImage imageNamed:@"header_banner.png"];
-        headerView.backgroundImage.image = headerImage;
+        
+        CLGeocoder *geocoder = [[CLGeocoder alloc] init];
+        CLLocation *location = [[PBAssetsLibrary sharedInstance].locationArray objectAtIndex:indexPath.section];
+        
+        [geocoder reverseGeocodeLocation:location completionHandler:^(NSArray *placemarks, NSError *error) {
+            if (! error) {
+                NSLog(@"Places: %@", placemarks);
+                for (CLPlacemark *placemark in placemarks) {
+                    NSLog(@"country: %@", [placemark country]);
+                    NSLog(@"administrativeArea: %@", [placemark administrativeArea]);
+                    NSLog(@"subAdministrativeArea: %@", [placemark subAdministrativeArea]);
+                    NSLog(@"region: %@", [placemark region]);
+                    NSLog(@"Locality: %@", [placemark locality]);
+                    NSLog(@"subLocality: %@", [placemark subLocality]);
+                    NSLog(@"Thoroughfare: %@", [placemark thoroughfare]);
+                    NSLog(@"subThoroughfare: %@", [placemark subThoroughfare]);
+                    NSLog(@"Name: %@", [placemark name]);
+                    NSLog(@"Desc: %@", placemark);
+                    NSLog(@"addressDictionary: %@", [placemark addressDictionary]);
+                    NSArray *areasOfInterest = [placemark areasOfInterest];
+                    for (id area in areasOfInterest) {
+                        NSLog(@"Class: %@", [area class]);
+                        NSLog(@"AREA: %@", area);
+                    }
+                    NSString *divider = @"";
+                    NSString *descriptiveString = @"";
+                    
+                    if ([[placemark ISOcountryCode] isEqualToString:@"KR"]) {
+                        
+                        if (! IsEmpty([placemark administrativeArea])) {
+                            descriptiveString = [descriptiveString stringByAppendingFormat:@"%@%@", divider, [placemark administrativeArea]];
+                            divider = @", ";
+                        }
+                        
+                        if (! IsEmpty([placemark locality]) && (IsEmpty([placemark subLocality]) || ! [[placemark subLocality] isEqualToString:[placemark locality]])) {
+                            descriptiveString = [descriptiveString stringByAppendingFormat:@"%@%@", divider, [placemark locality]];
+                            divider = @", ";
+                        }
+                        
+                        if (! IsEmpty([placemark subLocality])) {
+                            descriptiveString = [descriptiveString stringByAppendingFormat:@"%@%@", divider, [placemark subLocality]];
+                            divider = @", ";
+                        }
+                        
+                        if (! IsEmpty([placemark thoroughfare])) {
+                            if (! IsEmpty(descriptiveString))
+                                divider = @" ";
+                            descriptiveString = [descriptiveString stringByAppendingFormat:@"%@%@", divider, [placemark thoroughfare]];
+                            divider = @", ";
+                        }
+                        
+                        if (! IsEmpty([placemark subThoroughfare])) {
+                            if (! IsEmpty(descriptiveString))
+                                divider = @" ";
+                            
+                            descriptiveString = [descriptiveString stringByAppendingFormat:@"%@%@", divider, [placemark subThoroughfare]];
+                            divider = @", ";
+                        }
+                    }
+                    else {
+                        if (! IsEmpty([placemark subThoroughfare])) {
+                            descriptiveString = [descriptiveString stringByAppendingFormat:@"%@", [placemark subThoroughfare]];
+                            divider = @", ";
+                        }
+                        if (! IsEmpty([placemark thoroughfare])) {
+                            if (! IsEmpty(descriptiveString))
+                                divider = @" ";
+                            descriptiveString = [descriptiveString stringByAppendingFormat:@"%@%@", divider, [placemark thoroughfare]];
+                            divider = @", ";
+                        }
+                        
+                        if (! IsEmpty([placemark subLocality])) {
+                            descriptiveString = [descriptiveString stringByAppendingFormat:@"%@%@", divider, [placemark subLocality]];
+                            divider = @", ";
+                        }
+                        
+                        if (! IsEmpty([placemark locality]) && (IsEmpty([placemark subLocality]) || ! [[placemark subLocality] isEqualToString:[placemark locality]])) {
+                            descriptiveString = [descriptiveString stringByAppendingFormat:@"%@%@", divider, [placemark locality]];
+                            divider = @", ";
+                        }
+                        
+                        if (! IsEmpty([placemark administrativeArea])) {
+                            descriptiveString = [descriptiveString stringByAppendingFormat:@"%@%@", divider, [placemark administrativeArea]];
+                            divider = @", ";
+                        }
+                    }
+                    
+                    
+//                    if (! IsEmpty([placemark ISOcountryCode])) {
+//                        descriptiveString = [descriptiveString stringByAppendingFormat:@"%@%@", divider, [placemark ISOcountryCode]];
+//                        divider = @", ";
+//                    }
+//
+//                    if (! IsEmpty([placemark name])) {
+//                        descriptiveString = [NSString stringWithString:[placemark name]];
+//                    }
+                    
+                    NSLog(@"Smart place: %@", descriptiveString);
+                    
+                    NSString *title = descriptiveString ;//[[NSString alloc]initWithFormat:@"Photos Group #%i", indexPath.section + 1];
+                    headerView.leftLabel.text = title;
+                    UIImage *headerImage = [UIImage imageNamed:@"header_banner.png"];
+                    headerView.backgroundImage.image = headerImage;
+                    
+                    
+                    
+                    // 날짜
+                    NSArray *distancePhotos = [self.photos objectAtIndex:indexPath.section];
+                    NSDictionary *firstphoto = [distancePhotos firstObject];
+                    ALAsset *firstasset= [firstphoto objectForKey:@"Asset"];
+                    NSDate *firstDate = [firstasset valueForProperty:ALAssetPropertyDate];
+                    NSString *firstdateString = [NSDateFormatter localizedStringFromDate:firstDate
+                                                                          dateStyle:NSDateFormatterLongStyle
+                                                                          timeStyle:NSDateFormatterNoStyle];
+                    
+                    NSDictionary *lasttphoto = [distancePhotos lastObject];
+                    ALAsset *lastasset= [lasttphoto objectForKey:@"Asset"];
+                    NSDate *lastDate = [lastasset valueForProperty:ALAssetPropertyDate];
+                    NSString *lastdateString = [NSDateFormatter localizedStringFromDate:lastDate
+                                                                               dateStyle:NSDateFormatterLongStyle
+                                                                               timeStyle:NSDateFormatterNoStyle];
+                    NSLog(@"%@ ~ %@",firstdateString, lastdateString);
+                    
+                    if ([firstdateString isEqualToString:lastdateString]) {
+                        headerView.rightLabel.text = [NSString stringWithFormat:@"%@", firstdateString];
+                    }
+                    else {
+                        headerView.rightLabel.text = [NSString stringWithFormat:@"%@ ~ %@", firstdateString, lastdateString];
+                    }
+                }
+                /*
+                 Place: (
+                 "301 Geary St, 301 Geary St, San Francisco, CA  94102-1801, United States @ <+37.78711200,-122.40846000> +/- 100.00m"
+                 )
+                 */
+            }
+        }];
+
+        
+//        NSString *title = [[NSString alloc]initWithFormat:@"Photos Group #%i", indexPath.section + 1];
+//        headerView.leftLabel.text = title;
+//        UIImage *headerImage = [UIImage imageNamed:@"header_banner.png"];
+//        headerView.backgroundImage.image = headerImage;
         
         reusableview = headerView;
     }
@@ -171,7 +309,8 @@
     
     TotalGalleryViewCell *cell = (TotalGalleryViewCell *)[collectionView dequeueReusableCellWithReuseIdentifier:identifier forIndexPath:indexPath];
     
-    NSDictionary *photo = [self.photos objectAtIndex:indexPath.row];
+    NSArray *distancePhotos = [self.photos objectAtIndex:indexPath.section];
+    NSDictionary *photo = [distancePhotos objectAtIndex:indexPath.row];
     
     [cell updateCell:photo];
     
@@ -298,7 +437,8 @@
             for(NSIndexPath *indexPath in selectedPhotos)
             {
                 photoCount++;
-                NSDictionary *photo = [self.photos objectAtIndex:indexPath.row];
+                NSArray *distancePhotos = [self.photos objectAtIndex:indexPath.section];
+                NSDictionary *photo = [distancePhotos objectAtIndex:indexPath.row];
                 ALAsset *asset = photo[@"Asset"];
                 NSLog(@"photo data = %@", photo);
                 
@@ -345,7 +485,8 @@
         NSMutableArray *photoDatas = [NSMutableArray array];
         
         for(NSIndexPath *indexPath in selectedPhotos){
-            NSDictionary *photo = [self.photos objectAtIndex:indexPath.row];
+            NSArray *distancePhoto = [self.photos objectAtIndex:indexPath.section];
+            NSDictionary *photo = [distancePhoto objectAtIndex:indexPath.row];
             [photoDatas addObject:photo];
         }
         
