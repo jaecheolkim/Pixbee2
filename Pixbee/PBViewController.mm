@@ -83,7 +83,7 @@
                 NSLog(@" ============== new asset found!");
             }
             NSLog(@"Locations : %@", [AssetLib locationArray]);
-            [AssetLib checkGeocode];
+            //[AssetLib checkGeocode];
             GlobalValue.lastAssetURL = assetURL.absoluteString;
         }
 

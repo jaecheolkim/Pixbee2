@@ -16,6 +16,10 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    // filter test
+    [[NSUserDefaults standardUserDefaults] setObject:@"YEAR" forKey:@"ALLPHOTO_FILTER"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    
     [TestFlight takeOff:@"0d73a652-a45f-4b76-9fec-026bd931c1f7"];
     [SQLManager initDataBase];
 
