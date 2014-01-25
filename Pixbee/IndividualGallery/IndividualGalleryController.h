@@ -11,5 +11,6 @@
 @interface IndividualGalleryController : UIViewController
 
 @property (strong, nonatomic) NSDictionary *usersPhotos;
+@property (nonatomic, assign) int UserID;
 
 @end

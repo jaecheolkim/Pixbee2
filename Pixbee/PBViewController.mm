@@ -36,9 +36,9 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    
-    FBHELPER.delegate = self;
+
     [FBHELPER loadFBLoginView:self.viewFBLoginViewArea];
+    FBHELPER.delegate = self;
     
     [_indicator setHidesWhenStopped:YES];
 }

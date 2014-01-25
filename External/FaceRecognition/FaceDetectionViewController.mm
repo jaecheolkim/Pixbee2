@@ -26,6 +26,11 @@
 
 
 #define CAPTURE_FPS 30
+const int TOTAL_COLLECT = 30;
+const double CHANGE_IN_IMAGE_FOR_COLLECTION = 0.1; //0.3;
+// How much the facial image should change before collecting a new face photo for training.
+const double CHANGE_IN_SECONDS_FOR_COLLECTION = 0.2 ; //1.0 원래는 1초에 하나씩이지만 0.3초마다 수집하게 바꿈.
+// How much time must pass before collecting a new face photo for training.
 
 
 @interface FaceDetectionViewController ()
@@ -36,6 +41,8 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     IBOutlet UIView *previewView;
     IBOutlet UIView *faceView;
     IBOutlet UIImageView *faceImageView;
+    
+    __weak IBOutlet UIImageView *reconstImageView;
     
     AVCaptureDeviceInput *deviceInput;
     AVCaptureVideoPreviewLayer *previewLayer;
@@ -70,6 +77,9 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     CIDetector *faceDetector;
     
     NSMutableArray *selectedUsers;
+    
+    cv::Mat old_prepreprocessedFace;
+    double old_time;
 
 }
 @property (weak, nonatomic) IBOutlet UILabel *instructionsLabel;
@@ -103,6 +113,8 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 {
     [super viewDidLoad];
     
+    old_time = 0;
+    old_prepreprocessedFace = cv::Mat();
     
     instructPoint = @[NSStringFromCGPoint(CGPointMake(0, 0)),  ];
 
@@ -115,7 +127,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     if(self.faceMode == FaceModeRecognize) {
         NSArray *trainModel = [SQLManager getTrainModels];
         if(!IsEmpty(trainModel)){
-            isFaceRecRedy = [FaceLib initRecognizer:LBPHFaceRecognizer models:trainModel];
+            isFaceRecRedy = [FaceLib initRecognizer:EigenFaceRecognizer models:trainModel];
         }
     }
     
@@ -690,20 +702,22 @@ bail:
 }
 
 #pragma mark -
+//- (UIImage *)imageFromSampleBuffer:(CMSampleBufferRef) sampleBuffer
+
 - (void)processImage:(CMSampleBufferRef)sampleBuffer
 {
- 
+    
 	// got an image
 	CVPixelBufferRef pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
 	CFDictionaryRef attachments = CMCopyDictionaryOfAttachments(kCFAllocatorDefault, sampleBuffer, kCMAttachmentMode_ShouldPropagate);
-	__block CIImage *ciImage = [[CIImage alloc] initWithCVPixelBuffer:pixelBuffer options:(__bridge NSDictionary *)attachments];
+	CIImage *ciImage = [[CIImage alloc] initWithCVPixelBuffer:pixelBuffer options:(__bridge NSDictionary *)attachments];
 	if (attachments)
 		CFRelease(attachments);
     
-	NSDictionary *imageOptions = nil;
-	UIDeviceOrientation curDeviceOrientation = [[MotionOrientation sharedInstance] deviceOrientation]; // [[UIDevice currentDevice] orientation];
+	UIDeviceOrientation curDeviceOrientation = [[MotionOrientation sharedInstance] deviceOrientation];
+    // [[UIDevice currentDevice] orientation];
 	int exifOrientation;
-
+    
 	enum {
 		PHOTOS_EXIF_0ROW_TOP_0COL_LEFT			= 1, //   1  =  0th row is at the top, and 0th column is on the left (THE DEFAULT).
 		PHOTOS_EXIF_0ROW_TOP_0COL_RIGHT			= 2, //   2  =  0th row is at the top, and 0th column is on the right.
@@ -737,14 +751,13 @@ bail:
 			break;
 	}
     
-	imageOptions = [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:exifOrientation] forKey:CIDetectorImageOrientation];
+	NSDictionary *imageOptions = [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:exifOrientation] forKey:CIDetectorImageOrientation];
     
-    //NSArray *features = [FaceLib detectFace:ciImage options:imageOptions];
     NSArray *features = [faceDetector featuresInImage:ciImage options:imageOptions];
     
     CMFormatDescriptionRef fdesc = CMSampleBufferGetFormatDescription(sampleBuffer);
     CGRect clap = CMVideoFormatDescriptionGetCleanAperture(fdesc, false /*originIsTopLeft == false*/);
-
+    
     
     if(self.faceMode == FaceModeCollect) { // 얼굴 등록일 경우.
         CIFaceFeature *feature = nil;
@@ -754,8 +767,12 @@ bail:
         }
         
         if (self.frameNum == 15) { //매 0.5초마다 검사.
-            if(ciImage && [features count] == 1)
-                [self collectFace:feature inImage:ciImage ofUserID:_UserID];
+            if(ciImage && [features count] == 1){
+                dispatch_async(dispatch_get_main_queue(), ^(void) {
+                    [self collectFace:feature inImage:ciImage ofUserID:_UserID];
+                });
+                
+            }
             else if(ciImage && [features count] > 1 ) {
 #warning 한명 이상은 얼굴 등록 할 수 없음 메시지 뿌려주기
                 
@@ -777,12 +794,108 @@ bail:
             //NSLog(@"feature tracking id: %d", ((CIFaceFeature *)features[0]).trackingID);
             
             for (CIFaceFeature *feature in features) {
-                if(ciImage) [self identifyFace:feature inImage:ciImage];
+                if(ciImage){
+                    [self identifyFace:feature inImage:ciImage];
+                }
             }
         }
     }
-
+    
 }
+
+
+//- (void)processImage:(CMSampleBufferRef)sampleBuffer
+//{
+// 
+//	// got an image
+//	CVPixelBufferRef pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
+//	CFDictionaryRef attachments = CMCopyDictionaryOfAttachments(kCFAllocatorDefault, sampleBuffer, kCMAttachmentMode_ShouldPropagate);
+//	__block CIImage *ciImage = [[CIImage alloc] initWithCVPixelBuffer:pixelBuffer options:(__bridge NSDictionary *)attachments];
+//	if (attachments)
+//		CFRelease(attachments);
+//
+//	UIDeviceOrientation curDeviceOrientation = [[MotionOrientation sharedInstance] deviceOrientation];
+//    // [[UIDevice currentDevice] orientation];
+//	int exifOrientation;
+//
+//	enum {
+//		PHOTOS_EXIF_0ROW_TOP_0COL_LEFT			= 1, //   1  =  0th row is at the top, and 0th column is on the left (THE DEFAULT).
+//		PHOTOS_EXIF_0ROW_TOP_0COL_RIGHT			= 2, //   2  =  0th row is at the top, and 0th column is on the right.
+//		PHOTOS_EXIF_0ROW_BOTTOM_0COL_RIGHT      = 3, //   3  =  0th row is at the bottom, and 0th column is on the right.
+//		PHOTOS_EXIF_0ROW_BOTTOM_0COL_LEFT       = 4, //   4  =  0th row is at the bottom, and 0th column is on the left.
+//		PHOTOS_EXIF_0ROW_LEFT_0COL_TOP          = 5, //   5  =  0th row is on the left, and 0th column is the top.
+//		PHOTOS_EXIF_0ROW_RIGHT_0COL_TOP         = 6, //   6  =  0th row is on the right, and 0th column is the top.
+//		PHOTOS_EXIF_0ROW_RIGHT_0COL_BOTTOM      = 7, //   7  =  0th row is on the right, and 0th column is the bottom.
+//		PHOTOS_EXIF_0ROW_LEFT_0COL_BOTTOM       = 8  //   8  =  0th row is on the left, and 0th column is the bottom.
+//	};
+//	
+//	switch (curDeviceOrientation) {
+//		case UIDeviceOrientationPortraitUpsideDown:  // Device oriented vertically, home button on the top
+//			exifOrientation = PHOTOS_EXIF_0ROW_LEFT_0COL_BOTTOM;
+//			break;
+//		case UIDeviceOrientationLandscapeLeft:       // Device oriented horizontally, home button on the right
+//			if (isUsingFrontFacingCamera)
+//				exifOrientation = PHOTOS_EXIF_0ROW_BOTTOM_0COL_RIGHT;
+//			else
+//				exifOrientation = PHOTOS_EXIF_0ROW_TOP_0COL_LEFT;
+//			break;
+//		case UIDeviceOrientationLandscapeRight:      // Device oriented horizontally, home button on the left
+//			if (isUsingFrontFacingCamera)
+//				exifOrientation = PHOTOS_EXIF_0ROW_TOP_0COL_LEFT;
+//			else
+//				exifOrientation = PHOTOS_EXIF_0ROW_BOTTOM_0COL_RIGHT;
+//			break;
+//		case UIDeviceOrientationPortrait:            // Device oriented vertically, home button on the bottom
+//		default:
+//			exifOrientation = PHOTOS_EXIF_0ROW_RIGHT_0COL_TOP;
+//			break;
+//	}
+//    
+//	NSDictionary *imageOptions = [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:exifOrientation] forKey:CIDetectorImageOrientation];
+// 
+//    NSArray *features = [faceDetector featuresInImage:ciImage options:imageOptions];
+//    
+//    CMFormatDescriptionRef fdesc = CMSampleBufferGetFormatDescription(sampleBuffer);
+//    CGRect clap = CMVideoFormatDescriptionGetCleanAperture(fdesc, false /*originIsTopLeft == false*/);
+//
+//    
+//    if(self.faceMode == FaceModeCollect) { // 얼굴 등록일 경우.
+//        CIFaceFeature *feature = nil;
+//        
+//        if ([features count]) {
+//            feature = [features objectAtIndex:0];
+//        }
+//        
+//        if (self.frameNum == 15) { //매 0.5초마다 검사.
+//            if(ciImage && [features count] == 1)
+//                [self collectFace:feature inImage:ciImage ofUserID:_UserID];
+//            else if(ciImage && [features count] > 1 ) {
+//#warning 한명 이상은 얼굴 등록 할 수 없음 메시지 뿌려주기
+//                
+//            }
+//            self.frameNum = 1;
+//        }
+//        else {
+//            self.frameNum++;
+//        }
+//        
+//    }
+//    else { // 얼굴 인식일 경우.
+//        
+//        dispatch_async(dispatch_get_main_queue(), ^(void) {
+//            [self drawFaceBoxesForFeatures:features forVideoBox:clap orientation:curDeviceOrientation];
+//        });
+//        
+//        if ([features count]) {
+//            //NSLog(@"feature tracking id: %d", ((CIFaceFeature *)features[0]).trackingID);
+//            
+//            for (CIFaceFeature *feature in features) {
+//                if(ciImage) [self identifyFace:feature inImage:ciImage];
+//            }
+//        }
+//    }
+//
+//}
 
 - (void) captureOutput:(AVCaptureOutput *)captureOutput didOutputMetadataObjects:(NSArray *)faces fromConnection:(AVCaptureConnection *)connection
 {
@@ -1006,44 +1119,98 @@ bail:
 
 
 #pragma mark -
+//- (void)collectFace:(CIFaceFeature *)feature inImage:(CIImage *)ciImage ofUserID:(int)UserID
+//{
+//    if(_numPicsTaken > 10) return;
+// 
+//    if(feature.hasLeftEyePosition && feature.hasRightEyePosition){
+//        UIImageOrientation imageOrient = [[MotionOrientation sharedInstance] currentImageOrientationWithFrontCamera:isUsingFrontFacingCamera MirrorFlip:NO];
+//        BOOL isLandScape = [[MotionOrientation sharedInstance] deviceIsLandscape];
+//        cv::Mat cvImage = [FaceLib getFaceImage:ciImage feature:feature orient:imageOrient landscape:isLandScape];
+//        
+//        if(cvImage.data != NULL){
+//            NSData *serialized = [FaceLib serializeCvMat:cvImage];
+//
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//                
+//                [SQLManager setTrainModelForUserID:UserID withFaceData:serialized];
+//                
+//                UIImage *faceImage = [FaceLib MatToUIImage:cvImage];
+//                if(faceImage) [faceImageView setImage:faceImage];
+//
+//                if(_numPicsTaken%2 == 0){
+//                    NSString *imagePath = [NSString stringWithFormat:@"hive%d.png", (int)_numPicsTaken * 10];
+//                    [_hiveImageView setImage:[UIImage imageNamed:imagePath]];
+//                }
+//
+//                self.instructionsLabel.text = [NSString stringWithFormat:@"Taken %@'s face : %ld of 10", self.UserName, (long)self.numPicsTaken];
+//                
+//                if (self.numPicsTaken == 10) {
+//                    [self performSelector:@selector(goNext) withObject:nil afterDelay:2];
+//                }
+//            });
+//            
+//            self.numPicsTaken++;
+//
+//            
+//        }
+//    }
+//}
+
 - (void)collectFace:(CIFaceFeature *)feature inImage:(CIImage *)ciImage ofUserID:(int)UserID
 {
-    if(_numPicsTaken > 10) return;
- 
+    if(_numPicsTaken > TOTAL_COLLECT) return;
+    
+    double current_time = (double)cv::getTickCount();
+    double timeDiff_seconds = (current_time - old_time)/cv::getTickFrequency();
+
     if(feature.hasLeftEyePosition && feature.hasRightEyePosition){
         UIImageOrientation imageOrient = [[MotionOrientation sharedInstance] currentImageOrientationWithFrontCamera:isUsingFrontFacingCamera MirrorFlip:NO];
         BOOL isLandScape = [[MotionOrientation sharedInstance] deviceIsLandscape];
-        cv::Mat cvImage = [FaceLib getFaceImage:ciImage feature:feature orient:imageOrient landscape:isLandScape];
-        
-        if(cvImage.data != NULL){
-            NSData *serialized = [FaceLib serializeCvMat:cvImage];
+        cv::Mat preprocessedFace = [FaceLib getFaceImage:ciImage feature:feature orient:imageOrient landscape:isLandScape];
 
-            dispatch_async(dispatch_get_main_queue(), ^{
+        if(preprocessedFace.data != NULL){
+            
+            double imageDiff = 10000000000.0;
+            if (old_prepreprocessedFace.data) {
+                imageDiff = [FaceLib getSimilarity:preprocessedFace with:old_prepreprocessedFace];
+            }
+            
+            
+            if ((imageDiff > CHANGE_IN_IMAGE_FOR_COLLECTION) && (timeDiff_seconds > CHANGE_IN_SECONDS_FOR_COLLECTION)) {
+                // Also add the mirror image to the training set, so we have more training data, as well as to deal with faces looking to the left or right.
+                cv::Mat mirroredFace;
+                cv::flip(preprocessedFace, mirroredFace, 1);
                 
+                NSData *serialized = [FaceLib serializeCvMat:preprocessedFace];
                 [SQLManager setTrainModelForUserID:UserID withFaceData:serialized];
                 
-                UIImage *faceImage = [FaceLib MatToUIImage:cvImage];
-                if(faceImage) [faceImageView setImage:faceImage];
+                serialized = [FaceLib serializeCvMat:mirroredFace];
+                [SQLManager setTrainModelForUserID:UserID withFaceData:serialized];
 
+                UIImage *faceImage = [FaceLib MatToUIImage:preprocessedFace];
+                if(faceImage) [faceImageView setImage:faceImage];
+                
                 if(_numPicsTaken%2 == 0){
-                    NSString *imagePath = [NSString stringWithFormat:@"hive%d.png", (int)_numPicsTaken * 10];
+                    NSString *imagePath = [NSString stringWithFormat:@"hive%d.png", ((int)_numPicsTaken / TOTAL_COLLECT)  * TOTAL_COLLECT];
                     [_hiveImageView setImage:[UIImage imageNamed:imagePath]];
                 }
-
-                self.instructionsLabel.text = [NSString stringWithFormat:@"Taken %@'s face : %ld of 10", self.UserName, (long)self.numPicsTaken];
                 
-                if (self.numPicsTaken == 10) {
+                self.instructionsLabel.text = [NSString stringWithFormat:@"Taken %@'s face : %ld of TOTAL_COLLECT", self.UserName, (long)self.numPicsTaken];
+                
+                if (self.numPicsTaken == TOTAL_COLLECT) {
                     [self performSelector:@selector(goNext) withObject:nil afterDelay:2];
                 }
-            });
-            
-            self.numPicsTaken++;
 
-            
+                // Keep a copy of the processed face, to compare on next iteration.
+                old_prepreprocessedFace = preprocessedFace;
+                old_time = current_time;
+                
+                self.numPicsTaken++;
+            }
         }
     }
 }
-
 
 
 
@@ -1064,10 +1231,10 @@ bail:
                     [self parseFace:cvImage
                               forId:feature.trackingID];
                     
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        UIImage *faceImage = [FaceLib MatToUIImage:cvImage];
-                        if(faceImage) [faceImageView setImage:faceImage];
-                    });
+//                    dispatch_async(dispatch_get_main_queue(), ^{
+//                        UIImage *faceImage = [FaceLib MatToUIImage:cvImage];
+//                        if(faceImage) [faceImageView setImage:faceImage];
+//                    });
                 }
 
             }
@@ -1080,29 +1247,42 @@ bail:
 - (void)parseFace:(cv::Mat &)image forId:(int)trackingID
 {
     NSDictionary *match = [FaceLib recognizeFace:image];
-    if(match == nil) return;
+    if(IsEmpty(match)) return;
     
-    int UserID = [[match objectForKey:@"UserID"] intValue];
+    int UserID = [match[@"UserID"] intValue];
     
-
+    UIImage *reconstruct = match[@"reconstruct"];
+    
+    UIImage *faceImage = [FaceLib MatToUIImage:image];
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+  
+        if(faceImage) [faceImageView setImage:faceImage];
+        if(reconstruct) [reconstImageView setImage:reconstruct];
+        
+    });
     
     NSLog(@"trackingID : %d / match: %@", trackingID, match);
     
     // Match found
     if (UserID != -1)
     {
-        double confidence = [[match objectForKey:@"confidence"] doubleValue];
+        double confidence = [match[@"confidence"] doubleValue];
         
-
-        if(confidence < 50.f){
-            recognisedFaces[[NSNumber numberWithInt:trackingID]] = [SQLManager getUserName:UserID];
+        
+        //if(confidence < 50.f){
+        if(confidence >= 0.7f){
+            //recognisedFaces[[NSNumber numberWithInt:trackingID]] = [SQLManager getUserName:UserID];
+            NSString *name = [NSString stringWithFormat:@"%@:%.2f", [SQLManager getUserName:UserID], confidence];
+            recognisedFaces[@(trackingID)] = name;
         }
-        else if(confidence > 50.f && confidence < 60.f){
-            NSString *name = [NSString stringWithFormat:@"? %@", [SQLManager getUserName:UserID]];
-            recognisedFaces[[NSNumber numberWithInt:trackingID]] = name;
+        //else if(confidence > 50.f && confidence < 60.f){
+        else if(confidence > 0.5f && confidence < 0.7f){
+            NSString *name = [NSString stringWithFormat:@"? %@:%.2f", [SQLManager getUserName:UserID], confidence];
+            recognisedFaces[@(trackingID)] = name;
         }
         else {
-           recognisedFaces[[NSNumber numberWithInt:trackingID]] = @"Unknown";
+           recognisedFaces[@(trackingID)] = @"Unknown";
         }
         
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -1114,6 +1294,48 @@ bail:
     }
 
     [processing removeObjectForKey:[NSNumber numberWithInt:trackingID]];
+}
+
+//this comes from http://code.opencv.org/svn/gsoc2012/ios/trunk/HelloWorld_iOS/HelloWorld_iOS/VideoCameraController.m
+- (UIImage *)imageFromSampleBuffer:(CMSampleBufferRef) sampleBuffer
+{
+    // Get a CMSampleBuffer's Core Video image buffer for the media data
+    CVImageBufferRef imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
+    // Lock the base address of the pixel buffer
+    CVPixelBufferLockBaseAddress(imageBuffer, 0);
+	
+    // Get the number of bytes per row for the pixel buffer
+    void *baseAddress = CVPixelBufferGetBaseAddress(imageBuffer);
+	
+    // Get the number of bytes per row for the pixel buffer
+    size_t bytesPerRow = CVPixelBufferGetBytesPerRow(imageBuffer);
+    // Get the pixel buffer width and height
+    size_t width = CVPixelBufferGetWidth(imageBuffer);
+    size_t height = CVPixelBufferGetHeight(imageBuffer);
+	
+    // Create a device-dependent RGB color space
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+	
+    // Create a bitmap graphics context with the sample buffer data
+    CGContextRef context = CGBitmapContextCreate(baseAddress, width, height, 8,
+												 bytesPerRow, colorSpace, kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst);
+	
+    // Create a Quartz image from the pixel data in the bitmap graphics context
+    CGImageRef quartzImage = CGBitmapContextCreateImage(context);
+    // Unlock the pixel buffer
+    CVPixelBufferUnlockBaseAddress(imageBuffer,0);
+	
+    // Free up the context and color space
+    CGContextRelease(context);
+    CGColorSpaceRelease(colorSpace);
+	
+    // Create an image object from the Quartz image
+    UIImage *image = [UIImage imageWithCGImage:quartzImage];
+	
+    // Release the Quartz image
+    CGImageRelease(quartzImage);
+	
+    return (image);
 }
 
 

@@ -43,7 +43,7 @@
     /************************/
 
     
-    self.usersPhotos = [[SQLManager getAllUserPhotos] mutableCopy];
+    self.usersPhotos = [SQLManager getAllUserPhotos];//[[SQLManager getAllUserPhotos] mutableCopy];
     //NSLog(@"usersPhotos: %@",_usersPhotos);
     
 //    NSDictionary *users = [[self.usersPhotos objectAtIndex:0] copy];
@@ -133,11 +133,6 @@
 }
 
 - (IBAction)presentProgrammatically:(UIButton *)sender {
-//    IndividualGalleryController * demoVC = [self.storyboard instantiateViewControllerWithIdentifier:@"IndividualGallery"];
-//    [self presentNatGeoViewController:demoVC completion:^(BOOL finished) {
-//        NSLog(@"Present complete!");
-//    }];
-    
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {

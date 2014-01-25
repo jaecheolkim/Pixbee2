@@ -262,9 +262,10 @@
 		80D5B624186F340D000CD8D7 /* filter4@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 80D5B61E186F340D000CD8D7 /* filter4@2x.png */; };
 		80D5B625186F340D000CD8D7 /* filter5@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 80D5B61F186F340D000CD8D7 /* filter5@2x.png */; };
 		80D5B626186F340D000CD8D7 /* filter6@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 80D5B620186F340D000CD8D7 /* filter6@2x.png */; };
-		80D5B62D18759293000CD8D7 /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 80D5B62A18759293000CD8D7 /* FacebookSDK.framework */; };
 		80D5B62E18759293000CD8D7 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 80D5B62B18759293000CD8D7 /* opencv2.framework */; };
 		80D5B62F18759293000CD8D7 /* SDWebImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 80D5B62C18759293000CD8D7 /* SDWebImage.framework */; };
+		80D6B438188D0056002A156F /* UIImageView+UIImageView_FaceAwareFill.m in Sources */ = {isa = PBXBuildFile; fileRef = 80D6B437188D0056002A156F /* UIImageView+UIImageView_FaceAwareFill.m */; };
+		80D6B43B188FB6B9002A156F /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 80D6B43A188FB6B9002A156F /* FacebookSDK.framework */; };
 		80E36396187E45E000A5DF57 /* profile.png in Resources */ = {isa = PBXBuildFile; fileRef = 80E36395187E45E000A5DF57 /* profile.png */; };
 		80E3639C18805A2B00A5DF57 /* image4@2x.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 80E3639718805A2B00A5DF57 /* image4@2x.jpg */; };
 		80E3639D18805A2B00A5DF57 /* image3@2x.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 80E3639818805A2B00A5DF57 /* image3@2x.jpg */; };
@@ -684,6 +685,9 @@
 		80D5B62A18759293000CD8D7 /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FacebookSDK.framework; path = ../../../FacebookSDK.framework; sourceTree = "<group>"; };
 		80D5B62B18759293000CD8D7 /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = opencv2.framework; path = ../../../opencv2.framework; sourceTree = "<group>"; };
 		80D5B62C18759293000CD8D7 /* SDWebImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDWebImage.framework; path = ../../../SDWebImage.framework; sourceTree = "<group>"; };
+		80D6B436188D0056002A156F /* UIImageView+UIImageView_FaceAwareFill.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImageView+UIImageView_FaceAwareFill.h"; sourceTree = "<group>"; };
+		80D6B437188D0056002A156F /* UIImageView+UIImageView_FaceAwareFill.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImageView+UIImageView_FaceAwareFill.m"; sourceTree = "<group>"; };
+		80D6B43A188FB6B9002A156F /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FacebookSDK.framework; path = ../../../Documents/FacebookSDK/FacebookSDK.framework; sourceTree = "<group>"; };
 		80E36395187E45E000A5DF57 /* profile.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = profile.png; sourceTree = "<group>"; };
 		80E3639718805A2B00A5DF57 /* image4@2x.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "image4@2x.jpg"; sourceTree = "<group>"; };
 		80E3639818805A2B00A5DF57 /* image3@2x.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "image3@2x.jpg"; sourceTree = "<group>"; };
@@ -706,10 +710,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				80D6B43B188FB6B9002A156F /* FacebookSDK.framework in Frameworks */,
 				7805A5E5186589B300B234C1 /* MessageUI.framework in Frameworks */,
 				69766D87188BDF42003B6F8F /* Twitter.framework in Frameworks */,
 				69766D85188BDF33003B6F8F /* Accounts.framework in Frameworks */,
-				80D5B62D18759293000CD8D7 /* FacebookSDK.framework in Frameworks */,
 				80D5B62E18759293000CD8D7 /* opencv2.framework in Frameworks */,
 				80D5B62F18759293000CD8D7 /* SDWebImage.framework in Frameworks */,
 				7805A5E7186589BE00B234C1 /* MobileCoreServices.framework in Frameworks */,
@@ -907,6 +911,7 @@
 		69ED32DB18484EBB00127196 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				80D6B43A188FB6B9002A156F /* FacebookSDK.framework */,
 				69766D86188BDF42003B6F8F /* Twitter.framework */,
 				69766D84188BDF33003B6F8F /* Accounts.framework */,
 				80D5B62A18759293000CD8D7 /* FacebookSDK.framework */,
@@ -1240,6 +1245,7 @@
 		78685D5E18495EB1002D2BAA /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				80D2A15A184A58B4008D29B2 /* FaceRecognition */,
 				8010C1FB187A8A7100EB7FF6 /* PBUtil.h */,
 				8010C1FC187A8A7100EB7FF6 /* PBUtil.m */,
 				8081283A184D25F50000CF3E /* GlobalValues */,
@@ -1435,7 +1441,6 @@
 				69B1B2F618587D9200774382 /* IntroControll */,
 				801B35D518561B9600EEB9F3 /* SMShadowdLayer */,
 				807E75C11851576100B1AD7E /* THObserversAndBinders */,
-				80D2A15A184A58B4008D29B2 /* FaceRecognition */,
 				80D2A13E184A3385008D29B2 /* TestFlightSDK2-3 */,
 				80D2A0C5184A1E57008D29B2 /* ASGallery */,
 				80D2A0E3184A1E58008D29B2 /* DACircularProgress */,
@@ -1523,6 +1528,8 @@
 		80D2A10E184A1E58008D29B2 /* UIExtension */ = {
 			isa = PBXGroup;
 			children = (
+				80D6B436188D0056002A156F /* UIImageView+UIImageView_FaceAwareFill.h */,
+				80D6B437188D0056002A156F /* UIImageView+UIImageView_FaceAwareFill.m */,
 				80E3BE561884346200FF4C3D /* UIAlertView+Blocks.h */,
 				80E3BE571884346200FF4C3D /* UIAlertView+Blocks.m */,
 				80D2A10F184A1E58008D29B2 /* FontAwesome.ttf */,
@@ -1557,12 +1564,13 @@
 		80D2A15A184A58B4008D29B2 /* FaceRecognition */ = {
 			isa = PBXGroup;
 			children = (
+				80D55213186C710000B54974 /* PBFaceLib.h */,
 				695B37FA186DF88800FC7D72 /* PBFaceLib.mm */,
 				80D55210186C710000B54974 /* FaceDetectionViewController.h */,
 				80D55211186C710000B54974 /* FaceDetectionViewController.mm */,
-				80D55213186C710000B54974 /* PBFaceLib.h */,
 			);
-			path = FaceRecognition;
+			name = FaceRecognition;
+			path = ../../External/FaceRecognition;
 			sourceTree = "<group>";
 		};
 		80D2A17E184B7B54008D29B2 /* AssetLibrary */ = {
@@ -1682,6 +1690,9 @@
 				LastUpgradeCheck = 0500;
 				ORGANIZATIONNAME = Pixbee;
 				TargetAttributes = {
+					69ED32D818484EBB00127196 = {
+						DevelopmentTeam = F3J73KR3TT;
+					};
 					69ED32F918484EBB00127196 = {
 						TestTargetID = 69ED32D818484EBB00127196;
 					};
@@ -1858,6 +1869,7 @@
 				69F5A8F9187847A60054A640 /* AccountCell.m in Sources */,
 				78564EDF1869F259000FB03C /* FPPopoverKeyboardResponsiveController.m in Sources */,
 				7805A66D18659ECC00B234C1 /* UIImageView+AFNetworking.m in Sources */,
+				80D6B438188D0056002A156F /* UIImageView+UIImageView_FaceAwareFill.m in Sources */,
 				7805A66A18659ECC00B234C1 /* AFPropertyListRequestOperation.m in Sources */,
 				69ED32ED18484EBB00127196 /* PBAppDelegate.m in Sources */,
 				7805A63F18658BA000B234C1 /* IDMCaptionView.m in Sources */,
@@ -2096,6 +2108,7 @@
 				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2103,6 +2116,7 @@
 					/Users/Hoseok,
 					/Users/jaecheolkim,
 					/Users/skplanet,
+					/Users/jaecheolkim/Documents/FacebookSDK,
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Pixbee/Pixbee-Prefix.pch";
@@ -2116,6 +2130,7 @@
 					/Users/skplanet/Pixbee2/External/FaceRecognition,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				USER_HEADER_SEARCH_PATHS = "";
 				WRAPPER_EXTENSION = app;
 			};
@@ -2127,6 +2142,7 @@
 				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: LEE JUNG OK (F3J73KR3TT)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2134,6 +2150,7 @@
 					/Users/Hoseok,
 					/Users/jaecheolkim,
 					/Users/skplanet,
+					/Users/jaecheolkim/Documents/FacebookSDK,
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Pixbee/Pixbee-Prefix.pch";
@@ -2147,6 +2164,7 @@
 					/Users/skplanet/Pixbee2/External/FaceRecognition,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				USER_HEADER_SEARCH_PATHS = "";
 				WRAPPER_EXTENSION = app;
 			};

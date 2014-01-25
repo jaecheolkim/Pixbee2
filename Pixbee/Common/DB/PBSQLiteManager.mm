@@ -607,7 +607,8 @@
 - (NSArray *)getUserInfo:(int)UserID
 {
     //int UserID = [SQLManager getUserID:GlobalValue.userName];
-    NSString *query = [NSString stringWithFormat:@"SELECT UserID, UserName, GUID, UserNick, UserProfile, fbID, fbName, fbProfile, timestamp FROM Users WHERE UserID = %d;", UserID];
+//    NSString *query = [NSString stringWithFormat:@"SELECT UserID, UserName, GUID, UserNick, UserProfile, fbID, fbName, fbProfile, timestamp FROM Users WHERE UserID = %d;", UserID];
+    NSString *query = [NSString stringWithFormat:@"SELECT * FROM Users WHERE UserID = %d;", UserID];
     NSArray *result = [SQLManager getRowsForQuery:query];
     return result;
 }
@@ -1041,7 +1042,7 @@ static inline NSDate* convertDouble2Date(double date){ return [NSDate dateWithTi
 
 }
 
-- (NSArray*)getAllUserPhotos
+- (NSMutableArray*)getAllUserPhotos
 {
     NSMutableArray *usersPhotos = [NSMutableArray array];
     NSArray *users = [self getAllUsers];
@@ -1055,15 +1056,33 @@ static inline NSDate* convertDouble2Date(double date){ return [NSDate dateWithTi
         [usersPhotos addObject:@{@"user":user,@"photos":result}];
         
     }
-    return (NSArray*)usersPhotos;
+    return usersPhotos;
 }
 
-- (NSArray*)getUserPhotos:(int)UserID
+- (NSDictionary*)getUserPhotos:(int)UserID
 {
-    NSString *query = [NSString stringWithFormat:@"SELECT * FROM UserPhotos WHERE UserID = %d", UserID];
+    NSDictionary *userPhotos = nil;
+    NSArray *users = [self getUserInfo:UserID];
+    if(!IsEmpty(users)){
+        NSDictionary *user= users[0];
+        NSString *query = [NSString stringWithFormat:@"SELECT U.UserID, U.PhotoID, U.FaceNo, P.AssetURL FROM UserPhotos AS U  JOIN Photos As P ON U.PhotoID = P.PhotoID WHERE U.UserID = %d",UserID];
+        
+        NSArray *result = [SQLManager getRowsForQuery:query];
+
+        userPhotos = @{@"user":user,@"photos":result};
+
+    }
+    return userPhotos;
     
-    NSArray *result = [SQLManager getRowsForQuery:query];
-    return result;
+//    NSDictionary *user= users[0];
+//    
+//    //NSString *query = [NSString stringWithFormat:@"SELECT * FROM UserPhotos WHERE UserID = %d", UserID];
+//    
+//    NSString *query = [NSString stringWithFormat:@"SELECT U.UserID, U.PhotoID, U.FaceNo, P.AssetURL FROM UserPhotos AS U  JOIN Photos As P ON U.PhotoID = P.PhotoID WHERE U.UserID = %d",UserID];
+//    
+//    NSArray *result = [SQLManager getRowsForQuery:query];
+//    
+//    return result;
 }
 
 - (BOOL)deleteUserPhoto:(int)UserID withPhoto:(int)PhotoID

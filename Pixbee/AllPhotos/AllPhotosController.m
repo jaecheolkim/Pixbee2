@@ -46,7 +46,9 @@
     self.doneButton.enabled = NO;
     NSLog(@"============================> Operation ID = %@", _operateIdentifier);
     
-    if([_operateIdentifier isEqualToString:@"new facetab"] && !IsEmpty(_operateIdentifier)  ){
+    if(([_operateIdentifier isEqualToString:@"new facetab"] || [_operateIdentifier isEqualToString:@"add Photos"])
+       && !IsEmpty(_operateIdentifier))
+    {
         self.doneButton.title = @"Done";
     } else {
         self.doneButton.title = @"Share";
@@ -97,7 +99,7 @@
 }
 
 - (void) reloadDB {
-    self.photos = [PBAssetsLibrary sharedInstance].totalAssets;
+    self.photos = AssetLib.totalAssets;
     int allphotocount = (int)[self.photos count];
 //    if (self.photos) {
 //        for (NSDictionary *user in self.photos) {
@@ -272,7 +274,8 @@
 
 - (IBAction)DoneClickedHandler:(id)sender {
     // DB작업 후 화면 전환.
-    if([_operateIdentifier isEqualToString:@"new facetab"] && !IsEmpty(_operateIdentifier)  ){
+    if([_operateIdentifier isEqualToString:@"new facetab"] && !IsEmpty(_operateIdentifier)  )
+    {
         // 새로운 Facetab 만들고 Main dashboard로 돌아가기
         
         if(selectedPhotos.count < 5){
@@ -306,6 +309,7 @@
                 if(faces.count == 1 && !IsEmpty(faces)){
                     NSDictionary *face = faces[0];
                     NSData *faceData = face[@"image"];
+                    
                     UIImage *faceImage = face[@"faceImage"];
                     if(faceImage != nil)
                         [SQLManager setUserProfileImage:faceImage UserID:UserID];
@@ -325,12 +329,45 @@
             
             [self.navigationController popViewControllerAnimated:YES];
         }
+    }
+    
+    else if([_operateIdentifier isEqualToString:@"add Photos"] && !IsEmpty(_operateIdentifier)  )
+    {
+#warning 추후에 얼굴 등록하는 프로세스 페이지 추가 필요.
+        int UserID = [_userInfo[@"UserID"] intValue];
         
+        for(NSIndexPath *indexPath in selectedPhotos)
+        {
+            NSDictionary *photo = [self.photos objectAtIndex:indexPath.row];
+            ALAsset *asset = photo[@"Asset"];
+            NSLog(@"photo data = %@", photo);
+            
+            NSArray *faces = [AssetLib getFaceData:asset];
+            if(faces.count == 1 && !IsEmpty(faces)){
+                NSDictionary *face = faces[0];
+                NSData *faceData = face[@"image"];
+                
+                UIImage *faceImage = face[@"faceImage"];
+                if(faceImage != nil)
+                    [SQLManager setUserProfileImage:faceImage UserID:UserID];
+                
+                [SQLManager setTrainModelForUserID:UserID withFaceData:faceData];
+            }
+            else {
+                CGImageRef cgImage = [asset aspectRatioThumbnail];
+                UIImage *faceImage = [UIImage imageWithCGImage:cgImage];
+                if(faceImage != nil)
+                    [SQLManager setUserProfileImage:faceImage UserID:UserID];
+            }
 
+            [SQLManager saveNewUserPhotoToDB:asset users:@[@(UserID)]];
+        }
         
+        [self.navigationController popViewControllerAnimated:YES];
         
-        
-    } else {
+    }
+    
+    else {
         // 필터 화면으로 이동
         [self performSegueWithIdentifier:SEGUE_GO_FILTER sender:self];
     }

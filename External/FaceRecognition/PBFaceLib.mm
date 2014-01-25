@@ -23,10 +23,8 @@ using namespace cv;
     CGColorSpaceRef colorSpace;
     cv::Ptr<cv::FaceRecognizer> _model;
     PBFaceRecognizer currentRecognizerType;
-    float unknownPersonThreshold;
 }
-@property (nonatomic, strong) CIDetector *faceDetector;
-//@property (nonatomic, strong) CustomFaceRecognizer *faceRecognizer;
+
 @property (nonatomic, strong) CIContext *context;
 
 @end
@@ -38,7 +36,7 @@ using namespace cv;
 // 초기화.
 - (id)init {
 	if ((self = [super init])) {
-        unknownPersonThreshold = 0.0f;
+        _unknownPersonThreshold = 0.0f;
         _context = [CIContext contextWithOptions:nil];
         colorSpace = CGColorSpaceCreateDeviceRGB();
 	}
@@ -58,34 +56,40 @@ using namespace cv;
 
 - (BOOL)initRecognizer:(PBFaceRecognizer)recognizerType models:(NSArray*)models
 {
-    if(_model == nullptr) {
+    if(_model.empty()) {
+    //if(_model == nullptr) {
         switch (recognizerType) {
             case EigenFaceRecognizer:
                 //_faceRecognizer = [[CustomFaceRecognizer alloc] initWithEigenFaceRecognizer];
-                unknownPersonThreshold = 0.5f;
+                _unknownPersonThreshold = 0.5f;
                 _model = cv::createEigenFaceRecognizer();
                 break;
             case FisherFaceRecognizer:
                 //_faceRecognizer = [[CustomFaceRecognizer alloc] initWithFisherFaceRecognizer];
-                unknownPersonThreshold = 0.7f;
+                _unknownPersonThreshold = 0.7f;
                 _model = cv::createFisherFaceRecognizer();
                 break;
             case LBPHFaceRecognizer:
                 //_faceRecognizer = [[CustomFaceRecognizer alloc] initWithLBPHFaceRecognizer];
-                unknownPersonThreshold = 0.6f;
+                _unknownPersonThreshold = 0.6f;
                 _model = cv::createLBPHFaceRecognizer();
                 break;
             default:
                 break;
         }
-        
+        int num_components = 0;// _model->getInt("num_components");
+        double threshold = _model->getDouble("threshold");
+        std::string name = _model->name();
+        _modelName = @(name.c_str());
+        NSLog(@"Active Model = %@ / componets = %d / threshold = %f", _modelName, num_components, threshold);
         currentRecognizerType = recognizerType;
         
         return [self trainModel:models];
         
     } else {
         NSLog(@"already exist model");
-        return [self updateModel:models];
+        //return [self updateModel:models];
+        return [self trainModel:models];
     }
 
     
@@ -97,7 +101,7 @@ using namespace cv;
 
 - (cv::Mat)dataToMat:(NSData *)data width:(NSNumber *)width height:(NSNumber *)height
 {
-    cv::Mat output = cv::Mat([width integerValue], [height integerValue], CV_8UC1);
+    cv::Mat output = cv::Mat([width intValue], [height intValue], CV_8UC1);
     output.data = (unsigned char*)data.bytes;
     
     return output;
@@ -105,17 +109,19 @@ using namespace cv;
 
 - (BOOL)trainModel:(NSArray *)models
 {
+    if(IsEmpty(models)) return NO;
+    
     std::vector<cv::Mat> images;
     std::vector<int> labels;
     
     for(NSDictionary *model in models){
-        int UserID = [[model objectForKey:@"UserID"] intValue];
-        NSData *imageData = [model objectForKey:@"imageData"];
+        int UserID = [model[@"UserID"] intValue];
+        NSData *imageData = model[@"imageData"];
         
         // Then convert NSData to a cv::Mat. Images are standardized into 100x100
         cv::Mat faceData = [self dataToMat:imageData
-                                     width:[NSNumber numberWithInt:100]
-                                    height:[NSNumber numberWithInt:100]];
+                                     width:@100 //[NSNumber numberWithInt:100]
+                                    height:@100]; //[NSNumber numberWithInt:100]];
         // Put this image into the model
         images.push_back(faceData);
         labels.push_back(UserID);
@@ -161,9 +167,13 @@ using namespace cv;
 
 - (void)initDetector:(NSString*)accuracy Tacking:(BOOL)tracking
 {
-    if(_faceDetector) [self setFaceDetector:nil];
-    NSDictionary *detectorOptions = @{ CIDetectorAccuracy : accuracy, CIDetectorTracking : @(tracking) };
-    _faceDetector = [CIDetector detectorOfType:CIDetectorTypeFace context:nil options:detectorOptions];
+    @synchronized(self.faceDetector) {
+        if(self.faceDetector) [self setFaceDetector:nil];
+        NSDictionary *detectorOptions = @{ CIDetectorAccuracy : accuracy, CIDetectorTracking : @(tracking) };
+        CIDetector *detector = [CIDetector detectorOfType:CIDetectorTypeFace context:nil options:detectorOptions];
+        [self setFaceDetector:detector];
+    }
+
 }
 
 #pragma mark Recognize Operations
@@ -175,7 +185,7 @@ using namespace cv;
     int identity = -1;
     //NSString *personName = @"";
     double confidence =0.0, similarity = 0.0;
-    
+    UIImage *reconst;
     // LBP Algorithm
     if(currentRecognizerType == LBPHFaceRecognizer){
         _model->predict(image, identity, confidence);
@@ -187,12 +197,15 @@ using namespace cv;
         
         cv::Mat reconstructedFace = [self reconstructFace:image];
         
-        similarity = getSimilarity(image, reconstructedFace);
+        //similarity = getSimilarity(image, reconstructedFace);
+        similarity = [self getSimilarity:image with:reconstructedFace];
         
+        reconst = [self MatToUIImage:reconstructedFace];
+        reconstructedFace.release();
         // Crop the confidence rating between 0.0 to 1.0, to show in the bar.
         confidence = 1.0 - cv::min(cv::max(similarity, 0.0), 1.0);
         
-        if (similarity < unknownPersonThreshold) {
+        if (similarity < _unknownPersonThreshold) {
             // Identify who the person is in the preprocessed face image.
             identity = _model->predict(image);
         }
@@ -201,19 +214,26 @@ using namespace cv;
             identity = -1;
         }
     }
+    NSDictionary *d = @{
+                             @"similarity" : @(similarity),
+                             @"reconstruct" : reconst,
+                             @"UserID": @(identity), //[NSNumber numberWithInt:identity],
+                             @"confidence": @(confidence) //[NSNumber numberWithDouble:confidence]
+                             };
     
-    return @{
-             @"UserID": [NSNumber numberWithInt:identity],
-             @"confidence": [NSNumber numberWithDouble:confidence]
-             };
+
+    
+    return d;
     
 }
 
 - (NSDictionary *)recognizeFaceFromUIImage:(UIImage*)faceImage
 {
     cv::Mat cvImage = [self UIImageToMat:faceImage];
-    
-    return [self recognizeFace:cvImage];
+    cv::resize(cvImage, cvImage, cv::Size(100, 100), 0, 0);
+    NSDictionary *result = [self recognizeFace:cvImage];
+    cvImage.release();
+    return result;
     //    NSDictionary *match = [_faceRecognizer recognizeFace:cvImage];
     //    return match;
 }
@@ -222,15 +242,397 @@ using namespace cv;
 - (NSArray*)detectFace:(CIImage*)ciImage options:(NSDictionary *)options
 {
     NSArray *features = nil;
-    if(!_faceDetector) [FaceLib initDetector:CIDetectorAccuracyLow Tacking:NO];
-    if(_faceDetector && ciImage)
-        features = [_faceDetector featuresInImage:ciImage options:options];
+    @synchronized(self.faceDetector) {
+        if(!self.faceDetector){
+            [FaceLib initDetector:CIDetectorAccuracyLow Tacking:NO];
+        }
+        if(self.faceDetector && ciImage){
+            features = [self.faceDetector featuresInImage:ciImage options:options];
+        }
+        
+    }
+
     return features;
 }
 
 
 
 #pragma mark Utils
+
+// Histogram Equalize seperately for the left and right sides of the face.
+
+void equalizeLeftAndRightHalves(Mat &faceImg)
+
+{
+    
+    // It is common that there is stronger light from one half of the face than the other. In that case,
+    
+    // if you simply did histogram equalization on the whole face then it would make one half dark and
+    
+    // one half bright. So we will do histogram equalization separately on each face half, so they will
+    
+    // both look similar on average. But this would cause a sharp edge in the middle of the face, because
+    
+    // the left half and right half would be suddenly different. So we also histogram equalize the whole
+    
+    // image, and in the middle part we blend the 3 images together for a smooth brightness transition.
+    
+    
+    
+    int w = faceImg.cols;
+    
+    int h = faceImg.rows;
+    
+    
+    
+    // 1) First, equalize the whole face.
+    
+    Mat wholeFace;
+    
+    equalizeHist(faceImg, wholeFace);
+    
+    
+    
+    // 2) Equalize the left half and the right half of the face separately.
+    
+    int midX = w/2;
+    
+    Mat leftSide = faceImg(cv::Rect(0,0, midX,h));
+    
+    Mat rightSide = faceImg(cv::Rect(midX,0, w-midX,h));
+    
+    equalizeHist(leftSide, leftSide);
+    
+    equalizeHist(rightSide, rightSide);
+    
+    
+    
+    // 3) Combine the left half and right half and whole face together, so that it has a smooth transition.
+    
+    for (int y=0; y<h; y++) {
+        
+        for (int x=0; x<w; x++) {
+            
+            int v;
+            
+            if (x < w/4) {          // Left 25%: just use the left face.
+                
+                v = leftSide.at<uchar>(y,x);
+                
+            }
+            
+            else if (x < w*2/4) {   // Mid-left 25%: blend the left face & whole face.
+                
+                int lv = leftSide.at<uchar>(y,x);
+                
+                int wv = wholeFace.at<uchar>(y,x);
+                
+                // Blend more of the whole face as it moves further right along the face.
+                
+                float f = (x - w*1/4) / (float)(w*0.25f);
+                
+                v = cvRound((1.0f - f) * lv + (f) * wv);
+                
+            }
+            
+            else if (x < w*3/4) {   // Mid-right 25%: blend the right face & whole face.
+                
+                int rv = rightSide.at<uchar>(y,x-midX);
+                
+                int wv = wholeFace.at<uchar>(y,x);
+                
+                // Blend more of the right-side face as it moves further right along the face.
+                
+                float f = (x - w*2/4) / (float)(w*0.25f);
+                
+                v = cvRound((1.0f - f) * wv + (f) * rv);
+                
+            }
+            
+            else {                  // Right 25%: just use the right face.
+                
+                v = rightSide.at<uchar>(y,x-midX);
+                
+            }
+            
+            faceImg.at<uchar>(y,x) = v;
+            
+        }// end x loop
+        
+    }//end y loop
+    
+    leftSide.release();
+    rightSide.release();
+    wholeFace.release();
+}
+
+
+- (cv::Mat)CropNRotate:(cv::Mat &)MyImage LEye:(CvPoint)leftEye REye:(CvPoint)rightEye destSize:(int)desiredFaceWidth
+{
+    if(leftEye.x + rightEye.x > 0){
+        
+        const double DESIRED_LEFT_EYE_X = 0.16;// 0.16;     // Controls how much of the face is visible after preprocessing.
+        const double DESIRED_LEFT_EYE_Y = 0.14; //0.14;
+        const double FACE_ELLIPSE_CY = 0.40;
+        const double FACE_ELLIPSE_W = 0.70; //0.50;         // Should be atleast 0.5
+        const double FACE_ELLIPSE_H = 0.90; //0.80;         // Controls how tall the face mask is.
+        
+        // Use square faces.
+        int desiredFaceHeight = desiredFaceWidth;
+        
+        // Make the face image the same size as the training images.
+        // Since we found both eyes, lets rotate & scale & translate the face so that the 2 eyes
+        // line up perfectly with ideal eye positions. This makes sure that eyes will be horizontal,
+        // and not too far left or right of the face, etc.
+        
+        // Get the center between the 2 eyes.
+        Point2f eyesCenter = Point2f( (leftEye.x + rightEye.x) * 0.5f, (leftEye.y + rightEye.y) * 0.5f );
+        
+        // Get the angle between the 2 eyes.
+        double dy = (rightEye.y - leftEye.y);
+        double dx = (rightEye.x - leftEye.x);
+        double len = sqrt(dx*dx + dy*dy);
+        double angle = atan2(dy, dx) * 180.0/CV_PI; // Convert from radians to degrees.
+        
+        // Hand measurements shown that the left eye center should ideally be at roughly (0.19, 0.14) of a scaled face image.
+        const double DESIRED_RIGHT_EYE_X = (1.0f - DESIRED_LEFT_EYE_X);
+        
+        // Get the amount we need to scale the image to be the desired fixed size we want.
+        double desiredLen = (DESIRED_RIGHT_EYE_X - DESIRED_LEFT_EYE_X) * desiredFaceWidth;
+        
+        double scale = desiredLen / len;
+        
+        // Get the transformation matrix for rotating and scaling the face to the desired angle & size.
+        Mat rot_mat = getRotationMatrix2D(eyesCenter, angle, scale);
+        
+        // Shift the center of the eyes to be the desired center between the eyes.
+        rot_mat.at<double>(0, 2) += desiredFaceWidth * 0.5f - eyesCenter.x;
+        rot_mat.at<double>(1, 2) += desiredFaceHeight * DESIRED_LEFT_EYE_Y - eyesCenter.y;
+        
+        // Rotate and scale and translate the image to the desired angle & size & position!
+        // Note that we use 'w' for the height instead of 'h', because the input face has 1:1 aspect ratio.
+        Mat warped = Mat(desiredFaceHeight, desiredFaceWidth, CV_8U, Scalar(128)); // Clear the output image to a default grey.
+        warpAffine(MyImage, warped, rot_mat, warped.size());
+        
+        
+        
+        // Give the image a standard brightness and contrast, in case it was too dark or had low contrast.
+        // Do it seperately for the left and right sides of the face.
+        //equalizeLeftAndRightHalves(warped);
+        //equalizeHist(warped, warped);
+        //cv::Mat filtered = [self getRetinexImage:warped];
+        warped = [self getRetinexImage:warped];
+        
+        // Use the "Bilateral Filter" to reduce pixel noise by smoothing the image, but keeping the sharp edges in the face.
+        cv::Mat filtered = Mat(warped.size(), CV_8U);
+        cv::bilateralFilter(warped, filtered, 0, 20.0, 2.0);
+        
+        // Filter out the corners of the face, since we mainly just care about the middle parts.
+        // Draw a filled ellipse in the middle of the face-sized image.
+        Mat mask = Mat(warped.size(), CV_8U, Scalar(0)); // Start with an empty mask.
+        cv::Point faceCenter = cv::Point( desiredFaceWidth/2, cvRound(desiredFaceHeight * FACE_ELLIPSE_CY) );
+        cv::Size size = cv::Size( cvRound(desiredFaceWidth * FACE_ELLIPSE_W), cvRound(desiredFaceHeight * FACE_ELLIPSE_H) );
+        ellipse(mask, faceCenter, size, 0, 0, 360, Scalar(255), CV_FILLED);
+        
+        // Use the mask, to remove outside pixels.
+        
+        Mat dstImg = Mat(warped.size(), CV_8U, Scalar(128)); // Clear the output image to a default gray.
+        
+        // Apply the elliptical mask on the face.
+        filtered.copyTo(dstImg, mask);  // Copies non-masked pixels from filtered to dstImg.
+        
+        rot_mat.release();
+        mask.release();
+        warped.release();
+        filtered.release();
+        
+        return dstImg;
+    }
+    return Mat();
+}
+
+- (cv::Mat)CropNRotate:(cv::Mat &)MyImage faceInfo:(CIFaceFeature *)ff destSize:(int)desiredFaceWidth
+
+{
+//    const double DESIRED_LEFT_EYE_X = 0.16;// 0.16;     // Controls how much of the face is visible after preprocessing.
+//    const double DESIRED_LEFT_EYE_Y = 0.14; //0.14;
+//    const double FACE_ELLIPSE_CY = 0.40;
+//    const double FACE_ELLIPSE_W = 0.70; //0.50;         // Should be atleast 0.5
+//    const double FACE_ELLIPSE_H = 0.90; //0.80;         // Controls how tall the face mask is.
+
+//    // Use square faces.
+//    int desiredFaceHeight = desiredFaceWidth;
+
+    CvPoint leftEye;
+    CvPoint rightEye;
+    CvPoint mouth;
+
+    leftEye.x = ff.leftEyePosition.x;
+    leftEye.y = MyImage.rows - ff.leftEyePosition.y;
+
+    rightEye.x = ff.rightEyePosition.x;
+    rightEye.y = MyImage.rows - ff.rightEyePosition.y;
+    
+    mouth.x = ff.mouthPosition.x;
+    mouth.y = MyImage.rows - ff.mouthPosition.y;
+    
+//    // Draw light-blue anti-aliased circles for the 2 eyes.
+//    Scalar eyeColor = CV_RGB(0,255,255);
+//    if (leftEye.x >= 0) {   // Check if the eye was detected
+//        circle(MyImage, leftEye, 6, eyeColor, 1, CV_AA);
+//    }
+//    if (rightEye.x >= 0) {   // Check if the eye was detected
+//        circle(MyImage, rightEye, 6, eyeColor, 1, CV_AA);
+//    }
+//    if(mouth.x >= 0) {
+//        circle(MyImage, mouth, 6, eyeColor, 1, CV_AA);
+//    }
+    
+    //return MyImage;
+    
+    cv::Mat dstImage = [self CropNRotate:MyImage LEye:leftEye REye:rightEye destSize:desiredFaceWidth];
+    
+    return dstImage;
+    
+//    if(leftEye.x + rightEye.x > 0){
+//        
+//        const double DESIRED_LEFT_EYE_X = 0.16;// 0.16;     // Controls how much of the face is visible after preprocessing.
+//        const double DESIRED_LEFT_EYE_Y = 0.14; //0.14;
+//        const double FACE_ELLIPSE_CY = 0.40;
+//        const double FACE_ELLIPSE_W = 0.70; //0.50;         // Should be atleast 0.5
+//        const double FACE_ELLIPSE_H = 0.90; //0.80;         // Controls how tall the face mask is.
+//        
+//        // Use square faces.
+//        int desiredFaceHeight = desiredFaceWidth;
+//
+//        // Make the face image the same size as the training images.
+//        // Since we found both eyes, lets rotate & scale & translate the face so that the 2 eyes
+//        // line up perfectly with ideal eye positions. This makes sure that eyes will be horizontal,
+//        // and not too far left or right of the face, etc.
+//
+//        // Get the center between the 2 eyes.
+//        Point2f eyesCenter = Point2f( (leftEye.x + rightEye.x) * 0.5f, (leftEye.y + rightEye.y) * 0.5f );
+//        
+//        // Get the angle between the 2 eyes.
+//        double dy = (rightEye.y - leftEye.y);
+//        double dx = (rightEye.x - leftEye.x);
+//        double len = sqrt(dx*dx + dy*dy);
+//        double angle = atan2(dy, dx) * 180.0/CV_PI; // Convert from radians to degrees.
+//
+//        // Hand measurements shown that the left eye center should ideally be at roughly (0.19, 0.14) of a scaled face image.
+//        const double DESIRED_RIGHT_EYE_X = (1.0f - DESIRED_LEFT_EYE_X);
+//
+//        // Get the amount we need to scale the image to be the desired fixed size we want.
+//        double desiredLen = (DESIRED_RIGHT_EYE_X - DESIRED_LEFT_EYE_X) * desiredFaceWidth;
+//        
+//        double scale = desiredLen / len;
+//
+//        // Get the transformation matrix for rotating and scaling the face to the desired angle & size.
+//        Mat rot_mat = getRotationMatrix2D(eyesCenter, angle, scale);
+//        
+//        // Shift the center of the eyes to be the desired center between the eyes.
+//        rot_mat.at<double>(0, 2) += desiredFaceWidth * 0.5f - eyesCenter.x;
+//        rot_mat.at<double>(1, 2) += desiredFaceHeight * DESIRED_LEFT_EYE_Y - eyesCenter.y;
+//
+//        // Rotate and scale and translate the image to the desired angle & size & position!
+//        // Note that we use 'w' for the height instead of 'h', because the input face has 1:1 aspect ratio.
+//        Mat warped = Mat(desiredFaceHeight, desiredFaceWidth, CV_8U, Scalar(128)); // Clear the output image to a default grey.
+//        warpAffine(MyImage, warped, rot_mat, warped.size());
+//
+//        
+//        
+//        // Give the image a standard brightness and contrast, in case it was too dark or had low contrast.
+//        // Do it seperately for the left and right sides of the face.
+//        //equalizeLeftAndRightHalves(warped);
+//        //equalizeHist(warped, warped);
+//        cv::Mat filtered = [self getRetinexImage:warped];
+//
+//        // Use the "Bilateral Filter" to reduce pixel noise by smoothing the image, but keeping the sharp edges in the face.
+//        //cv::Mat filtered = Mat(warped.size(), CV_8U);
+//        //cv::bilateralFilter(warped, filtered, 0, 20.0, 2.0);
+// 
+//        // Filter out the corners of the face, since we mainly just care about the middle parts.
+//        // Draw a filled ellipse in the middle of the face-sized image.
+//        Mat mask = Mat(warped.size(), CV_8U, Scalar(0)); // Start with an empty mask.
+//        cv::Point faceCenter = cv::Point( desiredFaceWidth/2, cvRound(desiredFaceHeight * FACE_ELLIPSE_CY) );
+//        cv::Size size = cv::Size( cvRound(desiredFaceWidth * FACE_ELLIPSE_W), cvRound(desiredFaceHeight * FACE_ELLIPSE_H) );
+//        ellipse(mask, faceCenter, size, 0, 0, 360, Scalar(255), CV_FILLED);
+//
+//        // Use the mask, to remove outside pixels.
+//        
+//        Mat dstImg = Mat(warped.size(), CV_8U, Scalar(128)); // Clear the output image to a default gray.
+//
+//        // Apply the elliptical mask on the face.
+//        filtered.copyTo(dstImg, mask);  // Copies non-masked pixels from filtered to dstImg.
+//        
+//        rot_mat.release();
+//        mask.release();
+//        warped.release();
+//        filtered.release();
+//        
+//        return dstImg;
+//    }
+//    return Mat();
+}
+
+//얼굴만 있는 이미지는 눈/코/입을 찾을 수 없어서 얼굴 이외의 빈 영역을 더 만들어 줌.
+- (UIImage *)drawOverlayImage:(UIImage *)img
+{
+    CGFloat _width = 300;
+    CGFloat _height = 300;
+    
+    colorSpace = CGImageGetColorSpace(img.CGImage);
+    CGContextRef ctx = CGBitmapContextCreate (nil, _width, _height, 8, 0, colorSpace, kCGImageAlphaPremultipliedFirst);
+ 
+    CGContextSetRGBFillColor (ctx, 0.7, 0.7, 0.7, 1.0);
+    CGContextFillRect (ctx, CGRectMake (0, 0, 300, 300));
+    
+    CGContextSetAlpha (ctx, 1.0);
+    CGContextSetBlendMode(ctx, kCGBlendModeNormal);
+    CGContextDrawImage(ctx, CGRectMake(50, 50, 200, 200), [img CGImage]);
+    
+	CGImageRef imageRef = CGBitmapContextCreateImage(ctx);
+	CGContextRelease(ctx);
+    
+	UIImage *imageCopied = [UIImage imageWithCGImage:imageRef];
+    
+	CGImageRelease(imageRef);
+    
+	return imageCopied;
+}
+
+// 큰 얼굴이 있는 사진에서는 얼굴인식이 잘 안되므로 얼굴 이외의 영역을 패딩해 준다.
+// 보통 scale 은 1.2로 세팅 해 줄 것임.
+- (UIImage *)scaleImage:(CGImageRef)cgImage scale:(float)scale
+{
+    CGFloat _width = CGImageGetWidth(cgImage);
+    CGFloat _height = CGImageGetHeight(cgImage);
+    CGFloat _scaleWidth = _width * scale;
+    CGFloat _scaleHeight = _height * scale;
+    
+    NSLog(@"Orignal Size = w(%f)/h(%f) || scale Size = w(%f)/h(%f)", _width, _height, _scaleWidth, _scaleHeight);
+    colorSpace = CGImageGetColorSpace(cgImage);
+    
+    CGContextRef ctx = CGBitmapContextCreate (nil, _scaleWidth, _scaleHeight, 8, 0, colorSpace, kCGImageAlphaPremultipliedFirst);
+    
+    CGContextSetRGBFillColor (ctx, 0.7, 0.7, 0.7, 1.0);
+    CGContextFillRect (ctx, CGRectMake (0, 0, _scaleWidth, _scaleHeight));
+    
+    CGContextSetAlpha (ctx, 1.0);
+    CGContextSetBlendMode(ctx, kCGBlendModeNormal);
+    CGContextDrawImage(ctx, CGRectMake((_scaleWidth - _width)/2, (_scaleHeight - _height)/2, _width, _height), cgImage);
+    
+	CGImageRef imageRef = CGBitmapContextCreateImage(ctx);
+	CGContextRelease(ctx);
+    
+	UIImage *imageCopied = [UIImage imageWithCGImage:imageRef];
+    
+	CGImageRelease(imageRef);
+    
+	return imageCopied;
+
+}
+
 
 - (cv::Mat)getFaceImage:(CIImage *)ciImage feature:(CIFaceFeature *)feature orient:(UIImageOrientation)uiImageOrient landscape:(BOOL)isLandScape
 {
@@ -239,63 +641,37 @@ using namespace cv;
     UIImage *tmpImage = [UIImage imageWithCGImage:cgImage scale:1.0 orientation:uiImageOrient];
     CGImageRelease(cgImage);
     
-    UIImage *image = [self scaleAndRotate:tmpImage maxResolution:200 orientation:tmpImage.imageOrientation];
+    //int maxResolution = MAX(feature.bounds.size.width, feature.bounds.size.height);
+    UIImage *baseImage = [self scaleAndRotate:tmpImage maxResolution:200 orientation:tmpImage.imageOrientation];
+
+    UIImage *image = [self drawOverlayImage:baseImage];
+
+    CIImage *faceImage = [CIImage imageWithCGImage:image.CGImage];
     
     cv::Mat cvImage = [FaceLib UIImageToMat:image];
     
+    //return cvImage;
     
-    
-    ///////////////////
-    //    cgImage = [_context createCGImage:ciImage fromRect:ciImage.extent];
-    //    tmpImage = [UIImage imageWithCGImage:cgImage scale:1.0 orientation:uiImageOrient];
-    //    CGImageRelease(cgImage);
-    //    UIImage *frameImage = [self scaleAndRotate:tmpImage maxResolution:1280 orientation:tmpImage.imageOrientation];
-    
-    CGPoint LEyePosition, REyePosition;
-    
-    CIImage *faceImage = [CIImage imageWithCGImage:image.CGImage];
     NSDictionary *detectorOptions = @{ CIDetectorAccuracy : CIDetectorAccuracyLow, CIDetectorTracking : @(NO) };
     CIDetector *cFaceDetector = [CIDetector detectorOfType:CIDetectorTypeFace context:nil options:detectorOptions];
     NSArray *features = [cFaceDetector featuresInImage:faceImage options:nil];
-    if([features count]) {
-        CIFaceFeature *newFeature = [features objectAtIndex:0];
-        NSLog(@"features orig : bound = %@ / Leye = %@ / Reye = %@ ",
-              NSStringFromCGRect(feature.bounds), NSStringFromCGPoint(feature.leftEyePosition),  NSStringFromCGPoint(feature.rightEyePosition));
-        NSLog(@"features new  : bound = %@ / Leye = %@ / Reye = %@ ",
-              NSStringFromCGRect(newFeature.bounds), NSStringFromCGPoint(newFeature.leftEyePosition),  NSStringFromCGPoint(newFeature.rightEyePosition));
-        
-        cgImage = [_context createCGImage:faceImage fromRect:newFeature.bounds];
-        image = [UIImage imageWithCGImage:cgImage scale:1.0 orientation:UIImageOrientationUp];
-        CGImageRelease(cgImage);
-        
-        cvImage = [FaceLib UIImageToMat:image];
-        
-        LEyePosition = newFeature.leftEyePosition;
-        REyePosition = newFeature.rightEyePosition;
-        
-        CvPoint cvLEYE;
-        cvLEYE.x = LEyePosition.x;
-        cvLEYE.y = LEyePosition.y;
-        
-        CvPoint cvREYE;
-        cvREYE.x = REyePosition.x;
-        cvREYE.y = REyePosition.y;
-        
-        CvPoint offset_pct;
-        offset_pct.x = 25;
-        offset_pct.y = 30;
-        
-        CvPoint dest_sz;
-        dest_sz.x = 100;
-        dest_sz.y = 100;
-        
-        [FaceLib CropFace:cvImage eye_left:cvLEYE eye_right:cvREYE offset_pct:offset_pct dest_sz:dest_sz ];
+
+    cv::Mat resultImage = Mat();
+    
+    for(CIFaceFeature *ff in features){
+        //if(CGRectIntersectsRect(ff.bounds,feature.bounds)){
+            NSLog(@"faceImage bound = %@ / feature.bounds = %@ / Feature.leftEyePosition = %@ / Feature.rightEyePosition = %@",
+                  NSStringFromCGRect(faceImage.extent), NSStringFromCGRect(ff.bounds), NSStringFromCGPoint(ff.leftEyePosition), NSStringFromCGPoint(ff.rightEyePosition));
+        resultImage = [self CropNRotate:cvImage faceInfo:ff destSize:100];
+
+        //}
+
     }
-    ///////////////////
     
+    cvImage.release();
     
-    if(cvImage.data == NULL) return Mat();
-    return cvImage;
+    return resultImage;
+
 }
 
 - (NSData *)serializeCvMat:(cv::Mat&)cvMat
@@ -330,184 +706,184 @@ using namespace cv;
     return onlyTheFace;
 }
 
-- (cv::Mat)getFaceImage_old:(CIImage *)ciImage feature:(CIFaceFeature *)feature orient:(UIImageOrientation)uiImageOrient landscape:(BOOL)isLandScape
-{
-    
-    //    //float rotation = atan2((float)(eye_direction.y),(float)(eye_direction.x));
-    float rotation = 0.f;
-    if(feature.leftEyePosition.x != feature.rightEyePosition.x)
-        rotation = atan (feature.leftEyePosition.y - feature.rightEyePosition.y ) / (feature.leftEyePosition.x - feature.rightEyePosition.x);
-    
-    
-    CGRect faceBound = feature.bounds;
-    CGPoint leftEyePosition = feature.leftEyePosition;
-    CGPoint rightEyePosition = feature.rightEyePosition;
-    
-    if(leftEyePosition.x > rightEyePosition.x) {
-        CGPoint eye = leftEyePosition;
-        leftEyePosition = rightEyePosition;
-        rightEyePosition = eye;
-    }
-    
-    CGPoint LEyePosition, REyePosition;
-    if(isLandScape) {
-        LEyePosition = CGPointMake(leftEyePosition.x - faceBound.origin.x, leftEyePosition.y - faceBound.origin.y);
-        REyePosition = CGPointMake(rightEyePosition.x - faceBound.origin.x, rightEyePosition.y - faceBound.origin.y);
-        
-    } else {
-        LEyePosition = CGPointMake(leftEyePosition.y - faceBound.origin.y, leftEyePosition.x - faceBound.origin.x);
-        REyePosition = CGPointMake(rightEyePosition.y - faceBound.origin.y, rightEyePosition.x - faceBound.origin.x);
-    }
-    
-    CvPoint cvLEYE;
-    cvLEYE.x = LEyePosition.x;
-    cvLEYE.y = LEyePosition.y;
-    
-    CvPoint cvREYE;
-    cvREYE.x = REyePosition.x;
-    cvREYE.y = REyePosition.y;
-    
-    CvPoint offset_pct;
-    offset_pct.x = 25;
-    offset_pct.y = 30;
-    
-    CvPoint dest_sz;
-    dest_sz.x = 100;
-    dest_sz.y = 100;
-    
-    
-    
-    NSLog(@"original Size : %@ / face rect : %@ / LE : %@ / RE : %@ / rotation : %f / isLandScape : %d",
-          NSStringFromCGRect(ciImage.extent) , NSStringFromCGRect(feature.bounds),
-          NSStringFromCGPoint(feature.leftEyePosition), NSStringFromCGPoint(feature.rightEyePosition), rotation, (isLandScape)? 1 : 0);
-    
-    
-    //
-    //    CGImageRef cgImage = [_context createCGImage:ciImage fromRect:feature.bounds];
-    //    colorSpace = CGImageGetColorSpace(cgImage);
-    //
-    //    CGFloat cols = CGImageGetWidth(cgImage); //  image.size.width;
-    //    CGFloat rows = CGImageGetHeight(cgImage); //image.size.height;
-    //
-    //    cv::Mat cvMat(rows, cols, CV_8UC4);
-    //
-    //    CGContextRef contextRef = CGBitmapContextCreate(
-    //                                                    cvMat.data,                 // Pointer to  data
-    //                                                    cols,                       // Width of bitmap
-    //                                                    rows,                       // Height of bitmap
-    //                                                    8,                          // Bits per component
-    //                                                    cvMat.step[0],              // Bytes per row
-    //                                                    colorSpace,                 // Colorspace
-    //                                                    kCGImageAlphaNoneSkipLast|kCGBitmapByteOrderDefault // Bitmap info flags
-    //                                                    );
-    //
-    //
-    ////    CGContextRotateCTM (contextRef, -90 * M_PI / 180);
-    ////    CGContextTranslateCTM (contextRef, -cols, 0);
-    //
-    //    CGContextRotateCTM (contextRef, rotation);
-    //
-    //    CGContextDrawImage(contextRef, CGRectMake(0, 0, cols, rows), cgImage);
-    //    CGContextRelease(contextRef);
-    //
-    //    cv::Mat cvImage;
-    //    cvtColor(cvMat, cvImage, CV_RGB2GRAY);
-    ///////////////////////////////////////////////////////
-    
-    //    CGRect faceBound = feature.bounds;
-    //    CGPoint leftEyePosition = feature.leftEyePosition;
-    //    CGPoint rightEyePosition = feature.rightEyePosition;
-    //
-    //    if(leftEyePosition.x > rightEyePosition.x) {
-    //        CGPoint eye = leftEyePosition;
-    //        leftEyePosition = rightEyePosition;
-    //        rightEyePosition = eye;
-    //    }
-    //
-    //    CGPoint LEyePosition = CGPointMake(leftEyePosition.y - faceBound.origin.y, leftEyePosition.x - faceBound.origin.x);
-    //    CGPoint REyePosition = CGPointMake(rightEyePosition.y - faceBound.origin.y, rightEyePosition.x - faceBound.origin.x);
-    //
-    //    CGImageRef cgImage = [_context createCGImage:ciImage fromRect:faceBound];
-    //    //CGImageRef cgImage = [FaceLib getFaceCGImage:ciImage bound:faceBound];
-    //    UIImage *tmpImage = [UIImage imageWithCGImage:cgImage scale:1.0 orientation:uiImageOrient];//(UIImageOrientation)UIImageOrientationLeftMirrored];
-    //    CGImageRelease(cgImage);
-    //
-    //
-    //    UIImage *image = [FaceLib fixrotation:tmpImage];
-    //    cv::Mat cvImage = [FaceLib UIImageToMat:image];
-    //
-    //    CvPoint cvLEYE;
-    //    cvLEYE.x = LEyePosition.x;
-    //    cvLEYE.y = LEyePosition.y;
-    //
-    //    CvPoint cvREYE;
-    //    cvREYE.x = REyePosition.x;
-    //    cvREYE.y = REyePosition.y;
-    //
-    //    CvPoint offset_pct;
-    //    offset_pct.x = 25;
-    //    offset_pct.y = 30;
-    //
-    //    CvPoint dest_sz;
-    //    dest_sz.x = 100;
-    //    dest_sz.y = 100;
-    
-    
-    CGImageRef cgImage = [_context createCGImage:ciImage fromRect:feature.bounds];
-    UIImage *tmpImage = [UIImage imageWithCGImage:cgImage scale:1.0 orientation:uiImageOrient];
-    CGImageRelease(cgImage);
-    
-    UIImage *image = [FaceLib fixrotation:tmpImage];
-    
-    //UIImage *image = [self scaleAndRotate:tmpImage maxResolution:100 orientation:tmpImage.imageOrientation];
-    
-    
-    
-    //    CIImage *cropImage = [CIImage imageWithCGImage:image.CGImage];
-    //
-    //    NSArray *features = [_faceDetector featuresInImage:cropImage options:nil];
-    //    //NSArray *features = [FaceLib detectFace:cropImage options:nil];
-    //    if([features count]){
-    //        CIFaceFeature *faceFeature = [features objectAtIndex:0];
-    //
-    //        float rotation = 0.f;
-    //        if(faceFeature.leftEyePosition.x != faceFeature.rightEyePosition.x)
-    //            rotation = atan (faceFeature.leftEyePosition.y - faceFeature.rightEyePosition.y ) / (faceFeature.leftEyePosition.x - faceFeature.rightEyePosition.x);
-    //
-    //
-    //        NSLog(@"original Size : %@ / face rect : %@ / LE : %@ / RE : %@ / rotation : %f / orient : %d",
-    //              NSStringFromCGRect(cropImage.extent) , NSStringFromCGRect(faceFeature.bounds),
-    //              NSStringFromCGPoint(faceFeature.leftEyePosition), NSStringFromCGPoint(faceFeature.rightEyePosition), rotation, (int)uiImageOrient);
-    //
-    //
-    //    } else {
-    //        return Mat();
-    //    }
-    //
-    //    NSArray* adjustments = [ciImage autoAdjustmentFiltersWithOptions:[NSDictionary dictionaryWithObject:[NSNumber numberWithBool:NO] forKey:kCIImageAutoAdjustRedEye]];
-    //
-    //    for (CIFilter* filter in adjustments)
-    //    {
-    //        [filter setValue:cropImage forKey:kCIInputImageKey];
-    //        cropImage = filter.outputImage;
-    //    }
-    //    cgImage =[_context createCGImage:cropImage fromRect:cropImage.extent];
-    //    image = [UIImage imageWithCGImage:cgImage scale:1.0 orientation:UIImageOrientationUp];
-    //    CGImageRelease(cgImage);
-    //cgImage = CGImageCreateWithImageInRect(<#CGImageRef image#>, <#CGRect rect#>);
-    
-    cv::Mat cvImage = [FaceLib UIImageToMat:image];
-    
-    
-    
-    
-    if(cvImage.data == NULL) return Mat();
-    
-    //[FaceLib CropFace:cvImage eye_left:cvLEYE eye_right:cvREYE offset_pct:offset_pct dest_sz:dest_sz ];
-    
-    //cvImage = [self getRetinexImage:cvImage];
-    return cvImage;
-}
+//- (cv::Mat)getFaceImage_old:(CIImage *)ciImage feature:(CIFaceFeature *)feature orient:(UIImageOrientation)uiImageOrient landscape:(BOOL)isLandScape
+//{
+//    
+//    //    //float rotation = atan2((float)(eye_direction.y),(float)(eye_direction.x));
+//    float rotation = 0.f;
+//    if(feature.leftEyePosition.x != feature.rightEyePosition.x)
+//        rotation = atan (feature.leftEyePosition.y - feature.rightEyePosition.y ) / (feature.leftEyePosition.x - feature.rightEyePosition.x);
+//    
+//    
+//    CGRect faceBound = feature.bounds;
+//    CGPoint leftEyePosition = feature.leftEyePosition;
+//    CGPoint rightEyePosition = feature.rightEyePosition;
+//    
+//    if(leftEyePosition.x > rightEyePosition.x) {
+//        CGPoint eye = leftEyePosition;
+//        leftEyePosition = rightEyePosition;
+//        rightEyePosition = eye;
+//    }
+//    
+//    CGPoint LEyePosition, REyePosition;
+//    if(isLandScape) {
+//        LEyePosition = CGPointMake(leftEyePosition.x - faceBound.origin.x, leftEyePosition.y - faceBound.origin.y);
+//        REyePosition = CGPointMake(rightEyePosition.x - faceBound.origin.x, rightEyePosition.y - faceBound.origin.y);
+//        
+//    } else {
+//        LEyePosition = CGPointMake(leftEyePosition.y - faceBound.origin.y, leftEyePosition.x - faceBound.origin.x);
+//        REyePosition = CGPointMake(rightEyePosition.y - faceBound.origin.y, rightEyePosition.x - faceBound.origin.x);
+//    }
+//    
+//    CvPoint cvLEYE;
+//    cvLEYE.x = LEyePosition.x;
+//    cvLEYE.y = LEyePosition.y;
+//    
+//    CvPoint cvREYE;
+//    cvREYE.x = REyePosition.x;
+//    cvREYE.y = REyePosition.y;
+//    
+//    CvPoint offset_pct;
+//    offset_pct.x = 25;
+//    offset_pct.y = 30;
+//    
+//    CvPoint dest_sz;
+//    dest_sz.x = 100;
+//    dest_sz.y = 100;
+//    
+//    
+//    
+//    NSLog(@"original Size : %@ / face rect : %@ / LE : %@ / RE : %@ / rotation : %f / isLandScape : %d",
+//          NSStringFromCGRect(ciImage.extent) , NSStringFromCGRect(feature.bounds),
+//          NSStringFromCGPoint(feature.leftEyePosition), NSStringFromCGPoint(feature.rightEyePosition), rotation, (isLandScape)? 1 : 0);
+//    
+//    
+//    //
+//    //    CGImageRef cgImage = [_context createCGImage:ciImage fromRect:feature.bounds];
+//    //    colorSpace = CGImageGetColorSpace(cgImage);
+//    //
+//    //    CGFloat cols = CGImageGetWidth(cgImage); //  image.size.width;
+//    //    CGFloat rows = CGImageGetHeight(cgImage); //image.size.height;
+//    //
+//    //    cv::Mat cvMat(rows, cols, CV_8UC4);
+//    //
+//    //    CGContextRef contextRef = CGBitmapContextCreate(
+//    //                                                    cvMat.data,                 // Pointer to  data
+//    //                                                    cols,                       // Width of bitmap
+//    //                                                    rows,                       // Height of bitmap
+//    //                                                    8,                          // Bits per component
+//    //                                                    cvMat.step[0],              // Bytes per row
+//    //                                                    colorSpace,                 // Colorspace
+//    //                                                    kCGImageAlphaNoneSkipLast|kCGBitmapByteOrderDefault // Bitmap info flags
+//    //                                                    );
+//    //
+//    //
+//    ////    CGContextRotateCTM (contextRef, -90 * M_PI / 180);
+//    ////    CGContextTranslateCTM (contextRef, -cols, 0);
+//    //
+//    //    CGContextRotateCTM (contextRef, rotation);
+//    //
+//    //    CGContextDrawImage(contextRef, CGRectMake(0, 0, cols, rows), cgImage);
+//    //    CGContextRelease(contextRef);
+//    //
+//    //    cv::Mat cvImage;
+//    //    cvtColor(cvMat, cvImage, CV_RGB2GRAY);
+//    ///////////////////////////////////////////////////////
+//    
+//    //    CGRect faceBound = feature.bounds;
+//    //    CGPoint leftEyePosition = feature.leftEyePosition;
+//    //    CGPoint rightEyePosition = feature.rightEyePosition;
+//    //
+//    //    if(leftEyePosition.x > rightEyePosition.x) {
+//    //        CGPoint eye = leftEyePosition;
+//    //        leftEyePosition = rightEyePosition;
+//    //        rightEyePosition = eye;
+//    //    }
+//    //
+//    //    CGPoint LEyePosition = CGPointMake(leftEyePosition.y - faceBound.origin.y, leftEyePosition.x - faceBound.origin.x);
+//    //    CGPoint REyePosition = CGPointMake(rightEyePosition.y - faceBound.origin.y, rightEyePosition.x - faceBound.origin.x);
+//    //
+//    //    CGImageRef cgImage = [_context createCGImage:ciImage fromRect:faceBound];
+//    //    //CGImageRef cgImage = [FaceLib getFaceCGImage:ciImage bound:faceBound];
+//    //    UIImage *tmpImage = [UIImage imageWithCGImage:cgImage scale:1.0 orientation:uiImageOrient];//(UIImageOrientation)UIImageOrientationLeftMirrored];
+//    //    CGImageRelease(cgImage);
+//    //
+//    //
+//    //    UIImage *image = [FaceLib fixrotation:tmpImage];
+//    //    cv::Mat cvImage = [FaceLib UIImageToMat:image];
+//    //
+//    //    CvPoint cvLEYE;
+//    //    cvLEYE.x = LEyePosition.x;
+//    //    cvLEYE.y = LEyePosition.y;
+//    //
+//    //    CvPoint cvREYE;
+//    //    cvREYE.x = REyePosition.x;
+//    //    cvREYE.y = REyePosition.y;
+//    //
+//    //    CvPoint offset_pct;
+//    //    offset_pct.x = 25;
+//    //    offset_pct.y = 30;
+//    //
+//    //    CvPoint dest_sz;
+//    //    dest_sz.x = 100;
+//    //    dest_sz.y = 100;
+//    
+//    
+//    CGImageRef cgImage = [_context createCGImage:ciImage fromRect:feature.bounds];
+//    UIImage *tmpImage = [UIImage imageWithCGImage:cgImage scale:1.0 orientation:uiImageOrient];
+//    CGImageRelease(cgImage);
+//    
+//    UIImage *image = [FaceLib fixrotation:tmpImage];
+//    
+//    //UIImage *image = [self scaleAndRotate:tmpImage maxResolution:100 orientation:tmpImage.imageOrientation];
+//    
+//    
+//    
+//    //    CIImage *cropImage = [CIImage imageWithCGImage:image.CGImage];
+//    //
+//    //    NSArray *features = [_faceDetector featuresInImage:cropImage options:nil];
+//    //    //NSArray *features = [FaceLib detectFace:cropImage options:nil];
+//    //    if([features count]){
+//    //        CIFaceFeature *faceFeature = [features objectAtIndex:0];
+//    //
+//    //        float rotation = 0.f;
+//    //        if(faceFeature.leftEyePosition.x != faceFeature.rightEyePosition.x)
+//    //            rotation = atan (faceFeature.leftEyePosition.y - faceFeature.rightEyePosition.y ) / (faceFeature.leftEyePosition.x - faceFeature.rightEyePosition.x);
+//    //
+//    //
+//    //        NSLog(@"original Size : %@ / face rect : %@ / LE : %@ / RE : %@ / rotation : %f / orient : %d",
+//    //              NSStringFromCGRect(cropImage.extent) , NSStringFromCGRect(faceFeature.bounds),
+//    //              NSStringFromCGPoint(faceFeature.leftEyePosition), NSStringFromCGPoint(faceFeature.rightEyePosition), rotation, (int)uiImageOrient);
+//    //
+//    //
+//    //    } else {
+//    //        return Mat();
+//    //    }
+//    //
+//    //    NSArray* adjustments = [ciImage autoAdjustmentFiltersWithOptions:[NSDictionary dictionaryWithObject:[NSNumber numberWithBool:NO] forKey:kCIImageAutoAdjustRedEye]];
+//    //
+//    //    for (CIFilter* filter in adjustments)
+//    //    {
+//    //        [filter setValue:cropImage forKey:kCIInputImageKey];
+//    //        cropImage = filter.outputImage;
+//    //    }
+//    //    cgImage =[_context createCGImage:cropImage fromRect:cropImage.extent];
+//    //    image = [UIImage imageWithCGImage:cgImage scale:1.0 orientation:UIImageOrientationUp];
+//    //    CGImageRelease(cgImage);
+//    //cgImage = CGImageCreateWithImageInRect(<#CGImageRef image#>, <#CGRect rect#>);
+//    
+//    cv::Mat cvImage = [FaceLib UIImageToMat:image];
+//    
+//    
+//    
+//    
+//    if(cvImage.data == NULL) return Mat();
+//    
+//    //[FaceLib CropFace:cvImage eye_left:cvLEYE eye_right:cvREYE offset_pct:offset_pct dest_sz:dest_sz ];
+//    
+//    //cvImage = [self getRetinexImage:cvImage];
+//    return cvImage;
+//}
 
 - (CGImageRef)getFaceCGImage:(CIImage *)ciImage bound:(CGRect)faceRect
 {
@@ -515,25 +891,156 @@ using namespace cv;
     return img;
 }
 
-- (NSDictionary*)getFaceData:(CIImage *)ciImage bound:(CGRect)faceRect
+- (cv::Mat)getFaceCVData:(CIImage *)ciImage feature:(CIFaceFeature *)face
 {
+    CGRect faceRect = face.bounds;
+    
+    
     CGImageRef img = [_context createCGImage:ciImage fromRect:faceRect];
-    UIImage *faceImage = [UIImage imageWithCGImage:img];
+    UIImage *tmpImage = [UIImage imageWithCGImage:img];
     if(img) CGImageRelease(img);
     
-    if(faceImage == nil) return nil;
+    if(tmpImage == nil) {
+        return Mat();
+    }
     
-    cv::Mat cvimage = [self UIImageToMat:faceImage];
-    cv::Mat faceData = [self pullStandardizedFace:cvimage];
-    NSData *serialized = [self serializeCvMat:faceData];
+    NSLog(@"ciImage.bound = %@ / face.bound = %@ / lefteye = %@ / righteye = %@ / mouth = %@",
+          NSStringFromCGRect(ciImage.extent), NSStringFromCGRect(face.bounds),
+          NSStringFromCGPoint(face.leftEyePosition), NSStringFromCGPoint(face.rightEyePosition),
+          NSStringFromCGPoint(face.mouthPosition));
+    
+    
+    cv::Mat cvImage = [FaceLib UIImageToMat:tmpImage];
+    
+    
+    CvPoint leftEye, rightEye, mouth;
+    
+    leftEye.x = face.leftEyePosition.x - faceRect.origin.x;
+    leftEye.y = cvImage.rows - (face.leftEyePosition.y - faceRect.origin.y);
+    
+    rightEye.x = face.rightEyePosition.x - faceRect.origin.x;
+    rightEye.y = cvImage.rows - (face.rightEyePosition.y - faceRect.origin.y);
+    
+    mouth.x = face.mouthPosition.x - faceRect.origin.x;
+    mouth.y = cvImage.rows - (face.mouthPosition.y - faceRect.origin.y);
+    
+    cv::Mat resultImage = [self CropNRotate:cvImage LEye:leftEye REye:rightEye destSize:100];
+    
+    return resultImage;
+}
+
+
+- (NSDictionary*)getFaceData:(CIImage *)ciImage feature:(CIFaceFeature *)face
+{
+    CGRect faceRect = face.bounds;
+    
+    
+    CGImageRef img = [_context createCGImage:ciImage fromRect:faceRect];
+    UIImage *tmpImage = [UIImage imageWithCGImage:img];
+    if(img) CGImageRelease(img);
+    
+    if(tmpImage == nil) {
+        return nil;
+    }
+    
+    NSLog(@"ciImage.bound = %@ / face.bound = %@ / lefteye = %@ / righteye = %@ / mouth = %@",
+          NSStringFromCGRect(ciImage.extent), NSStringFromCGRect(face.bounds),
+          NSStringFromCGPoint(face.leftEyePosition), NSStringFromCGPoint(face.rightEyePosition),
+          NSStringFromCGPoint(face.mouthPosition));
+
+ 
+    cv::Mat cvImage = [FaceLib UIImageToMat:tmpImage];
+    
+    
+    CvPoint leftEye, rightEye, mouth;
+    
+    leftEye.x = face.leftEyePosition.x - faceRect.origin.x;
+    leftEye.y = cvImage.rows - (face.leftEyePosition.y - faceRect.origin.y);
+    
+    rightEye.x = face.rightEyePosition.x - faceRect.origin.x;
+    rightEye.y = cvImage.rows - (face.rightEyePosition.y - faceRect.origin.y);
+    
+    mouth.x = face.mouthPosition.x - faceRect.origin.x;
+    mouth.y = cvImage.rows - (face.mouthPosition.y - faceRect.origin.y);
+
+    cv::Mat resultImage = [self CropNRotate:cvImage LEye:leftEye REye:rightEye destSize:100];
+    
+    
+    //cv::Mat resultImage = [self CropNRotate:cvImage faceInfo:face destSize:100];
+
+    NSData *serialized = [self serializeCvMat:resultImage];
     
     NSString *PhotoBound = NSStringFromCGRect(ciImage.extent);
     NSString *faceBound = NSStringFromCGRect(faceRect);
     
-    NSDictionary *result = @{@"PhotoBound": PhotoBound, @"faceBound":faceBound, @"image": serialized, @"faceImage":faceImage };
+    UIImage *processImage = [self MatToUIImage:resultImage];
+    NSDictionary *result = @{@"PhotoBound": PhotoBound, @"faceBound":faceBound,
+                             @"image": serialized, @"faceImage":tmpImage, @"process":processImage };
+    
+    
+    cvImage.release();
+    resultImage.release();
     
     return result;
 }
+
+//- (NSDictionary*)getFaceData:(CIImage *)ciImage feature:(CIFaceFeature *)face
+////- (NSDictionary*)getFaceData:(CIImage *)ciImage bound:(CGRect)faceRect
+//{
+//    CGRect faceRect = face.bounds;
+//    
+//    CGImageRef img = [_context createCGImage:ciImage fromRect:faceRect];
+//    UIImage *tmpImage = [UIImage imageWithCGImage:img];
+//    if(img) CGImageRelease(img);
+//    
+//    if(tmpImage == nil) return nil;
+//    
+//    UIImage *baseImage = [self scaleAndRotate:tmpImage maxResolution:200 orientation:tmpImage.imageOrientation];
+//    UIImage *image = [self drawOverlayImage:baseImage];
+//    CIImage *faceImage = [CIImage imageWithCGImage:image.CGImage];
+//    
+//    cv::Mat cvImage = [FaceLib UIImageToMat:image];
+//    
+////    NSDictionary *detectorOptions = @{ CIDetectorAccuracy : CIDetectorAccuracyLow, CIDetectorTracking : @(NO) };
+////    CIDetector *cFaceDetector = [CIDetector detectorOfType:CIDetectorTypeFace context:nil options:detectorOptions];
+////    NSArray *features = [cFaceDetector featuresInImage:faceImage options:nil];
+//    
+////    NSArray *features = [FaceLib detectFace:faceImage options:nil];
+//    
+//    NSArray *features = [self.faceDetector featuresInImage:faceImage];
+//    
+//    cv::Mat resultImage = Mat();
+//    
+//    for(CIFaceFeature *ff in features){
+//        //if(CGRectIntersectsRect(ff.bounds,feature.bounds)){
+//        NSLog(@"faceImage bound = %@ / feature.bounds = %@ / Feature.leftEyePosition = %@ / Feature.rightEyePosition = %@",
+//              NSStringFromCGRect(faceImage.extent), NSStringFromCGRect(ff.bounds),
+//              NSStringFromCGPoint(ff.leftEyePosition), NSStringFromCGPoint(ff.rightEyePosition));
+//        resultImage = [self CropNRotate:cvImage faceInfo:ff destSize:100];
+//        
+//        //}
+//        
+//    }
+//    
+//    features = nil;
+//    
+//    
+//    //cv::Mat cvimage = [self UIImageToMat:tmpImage];
+//    //cv::Mat faceData = [self pullStandardizedFace:resultImage];
+//    NSData *serialized = [self serializeCvMat:resultImage];
+//    
+//    NSString *PhotoBound = NSStringFromCGRect(ciImage.extent);
+//    NSString *faceBound = NSStringFromCGRect(faceRect);
+//    
+//    NSDictionary *result = @{@"PhotoBound": PhotoBound, @"faceBound":faceBound,
+//                             @"image": serialized, @"faceImage":tmpImage };
+//    
+//    
+//    cvImage.release();
+//    resultImage.release();
+//    
+//    return result;
+//}
 
 - (cv::Mat)UIImageToMat:(UIImage *)image
 {
@@ -543,6 +1050,15 @@ using namespace cv;
 - (cv::Mat)UIImageToMat:(UIImage *)image usingColorSpace:(int)outputSpace
 {
     colorSpace = CGImageGetColorSpace(image.CGImage);
+    
+    CGBitmapInfo bitmapInfo = kCGImageAlphaNoneSkipLast|kCGBitmapByteOrderDefault;
+    
+    CGColorSpaceModel cspacemodel = CGColorSpaceGetModel(colorSpace);
+    if(cspacemodel == kCGColorSpaceModelMonochrome){
+        bitmapInfo = kCGImageAlphaNone;
+    }
+    
+    
     //colorSpace = CGColorSpaceCreateDeviceRGB();
     
     CGFloat cols = image.size.width;
@@ -557,7 +1073,7 @@ using namespace cv;
                                                     8,                          // Bits per component
                                                     cvMat.step[0],              // Bytes per row
                                                     colorSpace,                 // Colorspace
-                                                    kCGImageAlphaNoneSkipLast|kCGBitmapByteOrderDefault // Bitmap info flags
+                                                    bitmapInfo //kCGImageAlphaNoneSkipLast|kCGBitmapByteOrderDefault // Bitmap info flags
                                                     );
     
     CGContextDrawImage(contextRef, CGRectMake(0, 0, cols, rows), image.CGImage);
@@ -566,7 +1082,7 @@ using namespace cv;
     
     cv::Mat finalOutput;
     cvtColor(cvMat, finalOutput, outputSpace);
-    
+    cvMat.release();
     return finalOutput;
 }
 
@@ -623,6 +1139,8 @@ using namespace cv;
     
     UIImage *resulImg = [self MatToUIImage:preprocessed];
     
+    image.release();
+    preprocessed.release();
     
     //    cv::Mat image;
     //    UIImageToMat(uiImage, image, NO);
@@ -633,7 +1151,10 @@ using namespace cv;
 - (cv::Mat)getRetinexImage:(cv::Mat)image
 {
     cv::Mat preprocessed = tan_triggs_preprocessing(image);
-    return norm_0_255(preprocessed);
+    cv::Mat result = norm_0_255(preprocessed);
+    preprocessed.release();
+    
+    return result;
 }
 
 - (UIImage*)getSkinUIImage:(UIImage*)uiImage
@@ -743,6 +1264,7 @@ cv::Mat tan_triggs_preprocessing(cv::InputArray src,
             cv::Mat tmp;
             cv::pow(abs(I), alpha, tmp);
             meanI = cv::mean(tmp).val[0];
+            tmp.release();
             
         }
         I = I / cv::pow(meanI, 1.0/alpha);
@@ -754,6 +1276,7 @@ cv::Mat tan_triggs_preprocessing(cv::InputArray src,
             cv::Mat tmp;
             cv::pow(cv::min(cv::abs(I), tau), alpha, tmp);
             meanI = cv::mean(tmp).val[0];
+            tmp.release();
         }
         I = I / cv::pow(meanI, 1.0/alpha);
     }
@@ -767,6 +1290,9 @@ cv::Mat tan_triggs_preprocessing(cv::InputArray src,
         }
         I = tau * I;
     }
+    
+    X.release();
+    
     return I;
 }
 
@@ -1057,6 +1583,9 @@ cv::Mat rotate(cv::Mat& image, double angle, CvPoint centre)
     cv::Mat rotated_img(cv::Size(image.size().height, image.size().width), image.type());
     
     warpAffine(image, rotated_img, rot_matrix, image.size());
+    
+    rot_matrix.release();
+    
     return (rotated_img);
 }
 
@@ -1163,6 +1692,12 @@ cv::Mat rotate(cv::Mat& image, double angle, CvPoint centre)
         reconstructionMat.convertTo(reconstructedFace, CV_8U, 1, 0);
         //printMatInfo(reconstructedFace, "reconstructedFace");
         
+        averageFaceRow.release();
+        eigenvectors.release();
+        projection.release();
+        reconstructionRow.release();
+        reconstructionMat.release();
+        
         return reconstructedFace;
         
     } catch (cv::Exception e) {
@@ -1172,7 +1707,7 @@ cv::Mat rotate(cv::Mat& image, double angle, CvPoint centre)
 }
 
 // Compare two images by getting the L2 error (square-root of sum of squared error).
-double getSimilarity(const cv::Mat A, const cv::Mat B)
+- (double)getSimilarity:(const cv::Mat)A with:(const cv::Mat)B
 {
     if (A.rows > 0 && A.rows == B.rows && A.cols > 0 && A.cols == B.cols) {
         // Calculate the L2 relative error between the 2 images.
@@ -1185,7 +1720,23 @@ double getSimilarity(const cv::Mat A, const cv::Mat B)
         //cout << "WARNING: Images have a different size in 'getSimilarity()'." << endl;
         return 100000000.0;  // Return a bad value
     }
+
 }
+
+//double getSimilarity(const cv::Mat A, const cv::Mat B)
+//{
+//    if (A.rows > 0 && A.rows == B.rows && A.cols > 0 && A.cols == B.cols) {
+//        // Calculate the L2 relative error between the 2 images.
+//        double errorL2 = cv::norm(A, B, CV_L2);
+//        // Convert to a reasonable scale, since L2 error is summed across all pixels of the image.
+//        double similarity = errorL2 / (double)(A.rows * A.cols);
+//        return similarity;
+//    }
+//    else {
+//        //cout << "WARNING: Images have a different size in 'getSimilarity()'." << endl;
+//        return 100000000.0;  // Return a bad value
+//    }
+//}
 
 
 @end

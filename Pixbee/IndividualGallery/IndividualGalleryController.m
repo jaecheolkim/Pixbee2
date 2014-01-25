@@ -20,6 +20,8 @@
 #import "NewAlbumActivity.h"
 #import "DeleteActivity.h"
 #import "AlbumSelectionController.h"
+#import "AllPhotosController.h"
+
 @interface IndividualGalleryController ()
 <UICollectionViewDataSource, UICollectionViewDelegate,
 IDMPhotoBrowserDelegate, FBFriendControllerDelegate,
@@ -63,6 +65,13 @@ UserCellDelegate>
     
     _shareButton.enabled = NO;
     
+    
+}
+
+- (void)refreshInfo
+{
+    self.usersPhotos = [SQLManager getUserPhotos:_UserID];
+    
     userInfo = [self.usersPhotos objectForKey:@"user"];
     NSLog(@"userInfo = %@", userInfo);
     
@@ -86,10 +95,18 @@ UserCellDelegate>
     
     self.importView.titleLabel.lineBreakMode = NSLineBreakByWordWrapping;
     self.importView.titleLabel.textAlignment = NSTextAlignmentCenter;
-
+    
     NSString *buttonTitle = [NSString stringWithFormat:@"Message Here\nPlease import\nmore %@'s Photo", [self.user objectForKey:@"UserName"]];
     self.importView.titleLabel.text = buttonTitle;
+ 
 }
+
+-(void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    [self refreshInfo];
+}
+
 
 -(void)viewDidAppear:(BOOL)animated
 {
@@ -111,6 +128,8 @@ UserCellDelegate>
 
 - (void)goBottom
 {
+    if(IsEmpty(self.photos)) return;
+    
     NSInteger section = [self numberOfSectionsInCollectionView:_collectionView] - 1;
     NSInteger item = [self collectionView:_collectionView numberOfItemsInSection:section] - 1;
     NSIndexPath *lastIndexPath = [NSIndexPath indexPathForItem:item inSection:section];
@@ -121,7 +140,8 @@ UserCellDelegate>
 - (void)refreshSelectedPhotCountOnNavTilte
 {
     _shareButton.enabled = NO;
-    int selectcount = (int)[selectedPhotos count];
+    int selectcount = 0;
+    if(!IsEmpty(selectedPhotos)) selectcount = (int)[selectedPhotos count];
     if(selectcount) _shareButton.enabled = YES;
     
     [UIView animateWithDuration:0.3
@@ -524,12 +544,14 @@ UserCellDelegate>
              
           }
          else if ( [act isEqualToString:@"com.pixbee.deleteSharing"] ) {
-             if (self.importView) {
-                 [self performSegueWithIdentifier:SEGUE_4_2_TO_3_2 sender:self];
-             }
-             else {
-                 [self deletePhotos];
-             }
+//             if (self.importView) {
+//                 [self performSegueWithIdentifier:SEGUE_4_2_TO_3_2 sender:self];
+//             }
+//             else {
+//                 [self deletePhotos];
+//             }
+             
+             [self deletePhotos];
          }
         
         self.activityController = nil;
@@ -629,6 +651,7 @@ UserCellDelegate>
         self.activityController = nil;
         NSLog(@"Operation : %@ complete!", currentAction);
         [selectedPhotos removeAllObjects];
+        [self.collectionView reloadData];
         [self refreshSelectedPhotCountOnNavTilte];
     }];
 }
@@ -661,12 +684,14 @@ UserCellDelegate>
         self.activityController = nil;
         NSLog(@"Operation : %@ complete!", currentAction);
         [selectedPhotos removeAllObjects];
+        [self.collectionView reloadData];
         [self refreshSelectedPhotCountOnNavTilte];
     }];
 }
 
 - (void)deletePhotos
 {
+    if(IsEmpty(selectedPhotos)) return;
     
     [self.activityController dismissViewControllerAnimated:YES completion:nil];
     
@@ -675,14 +700,17 @@ UserCellDelegate>
             // UI
             GalleryViewCell *cell = (GalleryViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
             [cell showSelectIcon:NO];
-            
-            NSDictionary *photo = [self.photos objectAtIndex:indexPath.row];
-            int userID = [[photo objectForKey:@"UserID"] intValue];
-            int photoID = [[photo objectForKey:@"PhotoID"] intValue];
-            NSLog(@"photo = %@", photo);
-            [SQLManager deleteUserPhoto:userID  withPhoto:photoID];
-            
-            [self.photos removeObjectAtIndex:indexPath.row];
+            if( indexPath.row != [self.photos count]){
+                NSLog(@"selected:%d / photos count:%d", indexPath.row, [self.photos count]);
+                NSDictionary *photo = [self.photos objectAtIndex:indexPath.row];
+                int userID = [[photo objectForKey:@"UserID"] intValue];
+                int photoID = [[photo objectForKey:@"PhotoID"] intValue];
+                NSLog(@"photo = %@", photo);
+                [SQLManager deleteUserPhoto:userID  withPhoto:photoID];
+                
+                [self.photos removeObjectAtIndex:indexPath.row];
+            }
+
         }
         
         [self.collectionView deleteItemsAtIndexPaths:selectedPhotos];
@@ -693,7 +721,10 @@ UserCellDelegate>
         self.activityController = nil;
         NSLog(@"deletePhotos complete!");
         [selectedPhotos removeAllObjects];
+        [self editButtonClickHandler:nil];
+        [self.collectionView reloadData];
         [self refreshSelectedPhotCountOnNavTilte];
+        
     }];
 }
 
@@ -707,6 +738,8 @@ UserCellDelegate>
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    NSLog(@"segue.identifier = %@", segue.identifier);
+    
     if([segue isKindOfClass:[OpenPhotoSegue class]]) {
         // Set the start point for the animation to center of the button for the animation
         CGPoint point2 = [self.view convertPoint:self.selectedCell.center fromView:self.collectionView];
@@ -726,6 +759,13 @@ UserCellDelegate>
         destination.photos = photoDatas;
         destination.operateIdentifier = currentAction;
         
+    }
+    else if([segue.identifier isEqualToString:@"Segue4_2to6_1"]) // 사진을 직접 개인 앨범에 추가하기 위해 All Photos 로 이동.
+    {
+        AllPhotosController *destViewController = segue.destinationViewController;
+        destViewController.segueIdentifier = segue.identifier;
+        destViewController.operateIdentifier = @"add Photos";
+        destViewController.userInfo = userInfo;
     }
 }
 
@@ -756,6 +796,10 @@ UserCellDelegate>
         else if ([destOperation isEqualToString:@"com.pixbee.copySharing"]) {
             [self copyPhotos:destUserID];
         }
+        
+    }
+    else if([sourceViewController isKindOfClass:[AllPhotosController class]]) {
+        //AlbumSelectionController *controller = (AlbumSelectionController *)unwindSegue.sourceViewController;
         
     }
 

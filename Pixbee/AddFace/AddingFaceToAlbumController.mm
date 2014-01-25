@@ -31,9 +31,12 @@
 @property (strong, nonatomic) FBFriendController *friendPopup;
 @property (strong, nonatomic) IBOutlet UIButton *rightButton;
 
+@property (weak, nonatomic) IBOutlet UIButton *skipButton;
 @property (weak, nonatomic) IBOutlet UIImageView *faceImageView;
+@property (weak, nonatomic) IBOutlet UIImageView *processImageView;
 
 @property (strong, nonatomic) NSMutableArray *assets;
+@property (weak, nonatomic) IBOutlet UILabel *matchLabel;
 
 - (IBAction)skipButtonClickHandler:(id)sender;
 - (IBAction)addButtonClickHandler:(id)sender;
@@ -80,6 +83,8 @@
     
     self.assets = [NSMutableArray array];
     
+    self.skipButton.enabled = NO;
+    
     self.progressView.roundedCorners = NO;
     self.progressView.progressTintColor = UIColorFromRGB(0xffcf0e);
     self.progressView.thicknessRatio = 1.0f;
@@ -110,73 +115,79 @@
       usingEnumerationBlock:^(NSDictionary *processInfo) {
           dispatch_async(dispatch_get_main_queue(), ^{
               NSLog(@"Processing : %@", processInfo);
+ 
+              int totalV = [[processInfo objectForKey:@"totalV"] intValue];
+              int currentV = [[processInfo objectForKey:@"currentV"] intValue];
+              int matchV = [[processInfo objectForKey:@"matchV"] intValue];
+              id scaledImage = [processInfo objectForKey:@"scaledImage"];
+              id faceImage = processInfo[@"faceImage"];
+              id match = [processInfo objectForKey:@"match"];
               
-//              [self.assets addObject:[processInfo objectForKey:@"Asset"]];
-//              CGImageRef iref = [[self.assets lastObject] aspectRatioThumbnail];
-              
-              ALAsset *asset = [processInfo objectForKey:@"Asset"];
-              CGImageRef iref = [asset aspectRatioThumbnail];
-              if (iref) {
-                  UIImage *thumbnail = [UIImage imageWithCGImage:iref];
-                  if (thumbnail) {
-                      [self.photoView swapImage:thumbnail];
-                  }
-              };
-              
-              
-//              CIImage *ciImage = processInfo[@"CIImage"];
-//              if(ciImage){
-//                  UIImage *thumbnail = [UIImage imageWithCIImage:ciImage];
-//                  if (thumbnail) {
-//                      [self.photoView swapImage:thumbnail];
-//                  }
-//              }
-              
-              int totalV = [[processInfo objectForKey:@"Total"] intValue];
-              int currentV = [[processInfo objectForKey:@"Current"] intValue];
-              int matchV = [[processInfo objectForKey:@"Match"] intValue];
               NSLog(@"currentV = %d / totalV = %d / matchV = %d", currentV, totalV, matchV);
               
               [self.progressView setProgress:((float)currentV/(float)totalV) animated:YES];
               [self.ProgressGauge setText:[NSString stringWithFormat:@"%d", matchV]];
               
-              //_faceImageView.image = [processInfo objectForKey:@"Face"];
-          });
+              if([scaledImage isKindOfClass:[UIImage class]])
+              {
+                [self.photoView swapImage:scaledImage];
+              }
+              
+              if([faceImage isKindOfClass:[UIImage class]]){
+                  _faceImageView.image = faceImage;
+              }
+              
+              if([match isKindOfClass:[NSDictionary class]] && !IsEmpty(match))
+              {
+                  double confidence = [match[@"confidence"] doubleValue];
+                  int userID = [match[@"UserID"] intValue];
+                  
+                  id processImage = match[@"reconstruct"];
+                  if([processImage isKindOfClass:[UIImage class]]){
+                      _processImageView.image = processImage;
+                  }
+                  
+                  _matchLabel.text = [NSString stringWithFormat:@"%d : %.2f", userID, confidence];
+                  
+              }
+           });
       }
-                 completion:^(BOOL finished){
-                     dispatch_async(dispatch_get_main_queue(), ^{
+      completion:^(BOOL finished){
+          dispatch_async(dispatch_get_main_queue(), ^{
                          
-                         self.assets = AssetLib.faceAssets;
-                         
-                         ALAsset *photoAsset = [self.assets lastObject];
-                         NSArray *faces = [AssetLib getFaceData:photoAsset];
-                         if(faces.count == 1 && !IsEmpty(faces)){
-                             NSDictionary *face = faces[0];
-                             UIImage *faceImage = face[@"faceImage"];
-                             if(faceImage != nil)
-                                 [SQLManager setUserProfileImage:faceImage UserID:self.UserID];
-                         }
-                         else {
-                             CGImageRef cgImage = [photoAsset aspectRatioThumbnail];
-                             UIImage *faceImage = [UIImage imageWithCGImage:cgImage];
-                             if(faceImage != nil)
-                                 [SQLManager setUserProfileImage:faceImage UserID:self.UserID];
-                         }
-                         
-                         
-                         [self.flowView reloadData];
-                         // Wait one second and then fade in the view
-                         [UIView animateWithDuration:0.3
-                                          animations:^{
-                                              self.photoView.alpha = 0.0;
-                                              self.flowView.alpha = 1.0;
-                                              self.leftButton.alpha = 1.0;
-                                              self.rightButton.alpha = 1.0;
-                                          }
-                                          completion:nil];
+              self.assets = AssetLib.faceAssets;
+              
+//              ALAsset *photoAsset = [self.assets lastObject];
+//              NSArray *faces = [AssetLib getFaceData:photoAsset];
+//              if(faces.count == 1 && !IsEmpty(faces)){
+//                  NSDictionary *face = faces[0];
+//                  UIImage *faceImage = face[@"faceImage"];
+//                  if(faceImage != nil)
+//                      [SQLManager setUserProfileImage:faceImage UserID:self.UserID];
+//              }
+//              else {
+//                  CGImageRef cgImage = [photoAsset aspectRatioThumbnail];
+//                  UIImage *faceImage = [UIImage imageWithCGImage:cgImage];
+//                  if(faceImage != nil)
+//                      [SQLManager setUserProfileImage:faceImage UserID:self.UserID];
+//              }
+              
+              
+              
+              [self.flowView reloadData];
+              // Wait one second and then fade in the view
+              [UIView animateWithDuration:0.3
+                               animations:^{
+                                   self.photoView.alpha = 0.0;
+                                   self.flowView.alpha = 1.0;
+                                   self.leftButton.alpha = 1.0;
+                                   self.rightButton.alpha = 1.0;
+                                   
+                                   self.skipButton.enabled = YES;
+                               }
+                               completion:nil];
                      });
-                 }
-     
+      }
      ];
 
 }
@@ -199,6 +210,20 @@
 
 - (IBAction)skipButtonClickHandler:(id)sender {
     AssetLib.faceProcessStop = YES;
+    
+    if(!IsEmpty(self.assets)){
+        NSDictionary *PhotoInfo = [self.assets objectAtIndex:_currentPage];
+        
+        //ALAsset *photoAsset = PhotoInfo[@"Asset"];
+        int userID = [PhotoInfo[@"UserID"] intValue];
+        int photoID = [PhotoInfo[@"PhotoID"] intValue];
+        
+        [SQLManager deleteUserPhoto:userID  withPhoto:photoID];
+        
+        [self.assets removeObjectAtIndex:_currentPage];
+        
+        [self.flowView reloadData];
+    }
 }
 
 - (IBAction)addButtonClickHandler:(id)sender {
@@ -221,25 +246,12 @@
 }
 
 - (void)updateProgressUI:(NSNumber *)total currentProcess:(NSNumber *)currentprocess {
-    int totalV = [total intValue];
-    int currentV = [currentprocess intValue];
-    
-    //    [self performSelectorOnMainThread:@selector(progressUpdate:) withObject:[NSNumber numberWithFloat:] waitUntilDone:NO];
-    [self.progressView setProgress:((float)currentV/(float)totalV) animated:YES];
-    [self.ProgressGauge setText:[NSString stringWithFormat:@"%d", currentV]];
 }
 
 - (void)updatePhotoGallery:(ALAsset *)asset {
-    [self.assets addObject:asset];
-    CGImageRef iref = [[self.assets lastObject] aspectRatioThumbnail];
-    if (iref) {
-        UIImage *thumbnail = [UIImage imageWithCGImage:iref];
-        if (thumbnail) {
-            [self.photoView swapImage:thumbnail];
-        }
-    };
 }
 
+//[_faceAssets addObject:@{@"Asset": photoAsset, @"UserID" : @(UserID), @"PhotoID" : @(PhotoID)}];
 #pragma mark - PagedFlowView Datasource
 //返回显示View的个数
 - (NSInteger)numberOfPagesInFlowView:(SBPageFlowView *)flowView{
@@ -263,7 +275,9 @@
         imageView.layer.masksToBounds = YES;
     }
     
-    CGImageRef iref = [[self.assets objectAtIndex:index] aspectRatioThumbnail];
+    ALAsset *photoAsset = [self.assets objectAtIndex:index][@"Asset"];
+    CGImageRef iref = [photoAsset aspectRatioThumbnail];
+    //CGImageRef iref = [[self.assets objectAtIndex:index] aspectRatioThumbnail];
     if (iref) {
         UIImage *thumbnail = [UIImage imageWithCGImage:iref];
         if (thumbnail) {
@@ -291,8 +305,9 @@
     if (index < 0 || index >= [self.assets count]) {
         return;
     }
-    
-    CGImageRef iref = [[self.assets objectAtIndex:index] aspectRatioThumbnail];
+    ALAsset *photoAsset = [self.assets objectAtIndex:index][@"Asset"];
+    CGImageRef iref = [photoAsset aspectRatioThumbnail];
+    //CGImageRef iref = [[self.assets objectAtIndex:index] aspectRatioThumbnail];
     if (iref) {
         UIImage *thumbnail = [UIImage imageWithCGImage:iref];
         if (thumbnail) {
@@ -308,21 +323,16 @@
     };
 }
 
-- (void)didScrollToPage:(NSInteger)pageNumber inFlowView:(SBPageFlowView *)flowView {
-//    NSLog(@"Scrolled to page # %d", pageNumber);
+- (void)didScrollToPage:(NSInteger)pageNumber inFlowView:(SBPageFlowView *)flowView
+{
+    NSLog(@"Scrolled to page # %d", pageNumber);
     _currentPage = pageNumber;
 }
 
 - (void)didSelectItemAtIndex:(NSInteger)index inFlowView:(SBPageFlowView *)flowView
 {
-//    NSLog(@"didSelectItemAtIndex: %d", index);
+    NSLog(@"didSelectItemAtIndex: %d", index);
     
-    UIAlertView  *alert = [[UIAlertView alloc] initWithTitle:@""
-                                                     message:[NSString stringWithFormat:@"您当前选择的是第 %d 个图片",index]
-                                                    delegate:self
-                                           cancelButtonTitle:@"确定"
-                                           otherButtonTitles: nil];
-    [alert show];
     
 }
 

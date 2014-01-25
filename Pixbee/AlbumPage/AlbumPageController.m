@@ -52,16 +52,9 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
-    // Uncomment to display a logo as the navigation bar title
     self.navigationItem.titleView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"pixbee.png"]];
-    
 
     [self initialNotification];
-    
-//    self.usersPhotos = [[SQLManager getAllUserPhotos] mutableCopy];
-//    NSLog(@"usersPhotos: %@",_usersPhotos);
-//    [self calAllPhotos];
     
     [self reloadDB];
     
@@ -123,7 +116,7 @@
 - (void)reloadDB
 {
     
-    self.usersPhotos = [[SQLManager getAllUserPhotos] mutableCopy];
+    self.usersPhotos = [SQLManager getAllUserPhotos];//[[SQLManager getAllUserPhotos] mutableCopy];
     //NSLog(@"usersPhotos: %@",_usersPhotos);
     [self calAllPhotos];
     
@@ -139,7 +132,7 @@
 
 
 - (void) calAllPhotos {
-    int allphotocount = (int)[[PBAssetsLibrary sharedInstance].totalAssets count];
+    int allphotocount = (int)[AssetLib.totalAssets count];
     self.allPhotosView.countLabel.text = [NSString stringWithFormat:@"%d", allphotocount];
 }
 
@@ -218,11 +211,6 @@
     NSArray *photos = [users objectForKey:@"photos"];
 
     if ([photos count] > 5) {
-//        IndividualGalleryController *destViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"IndividualGallery"];
-//        NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
-//        destViewController.usersPhotos = [self.usersPhotos objectAtIndex:indexPath.row];
-//        [self.navigationController pushViewController:destViewController animated:YES];
-        
         [self performSegueWithIdentifier:SEGUE_3_1_TO_4_1 sender:self];
     }
     else {
@@ -253,22 +241,26 @@
 }
 
 - (IBAction)presentProgrammatically:(UIButton *)sender {
-//    IndividualGalleryController * demoVC = [self.storyboard instantiateViewControllerWithIdentifier:@"IndividualGallery"];
-//    [self presentNatGeoViewController:demoVC completion:^(BOOL finished) {
-//        NSLog(@"Present complete!");
-//    }];
-    
 }
 
 //SEGUE_3_1_TO_6_1 // add new face tab from camera
 //SEGUE_3_1_TO_4_3 // add new face tab from album
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    if ([segue.identifier isEqualToString:SEGUE_3_1_TO_4_1] || [segue.identifier isEqualToString:SEGUE_3_1_TO_4_2]) {
+    if ([segue.identifier isEqualToString:SEGUE_3_1_TO_4_1] || [segue.identifier isEqualToString:SEGUE_3_1_TO_4_2])
+    {
         NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
         IndividualGalleryController *destViewController = segue.destinationViewController;
-        destViewController.usersPhotos = [self.usersPhotos objectAtIndex:indexPath.row];
+
+        NSDictionary *users = [self.usersPhotos objectAtIndex:indexPath.row];
+        NSDictionary *user = [users objectForKey:@"user"];
+        int UserID = [[user objectForKey:@"UserID"] intValue];
+        
+        //destViewController.usersPhotos = [self.usersPhotos objectAtIndex:indexPath.row];
+        destViewController.UserID = UserID;
+        
     }
-    else if([segue.identifier isEqualToString:SEGUE_3_1_TO_4_3]){ // add new face tab from Album
+    else if([segue.identifier isEqualToString:SEGUE_3_1_TO_4_3])
+    { // add new face tab from Album
         AllPhotosController *destViewController = segue.destinationViewController;
         destViewController.photos = self.usersPhotos;
         destViewController.segueIdentifier = segue.identifier;
@@ -276,7 +268,8 @@
 
     }
     
-    else if ([segue.identifier isEqualToString:SEGUE_3_1_TO_6_1]) { // add new face tab from camera
+    else if ([segue.identifier isEqualToString:SEGUE_3_1_TO_6_1])
+    { // add new face tab from camera
         NSArray *result = [SQLManager newUser];
         NSDictionary *user = [result objectAtIndex:0];
         NSString *UserName = [user objectForKey:@"UserName"];

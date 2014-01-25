@@ -18,6 +18,11 @@ static inline BOOL IsEmpty(id thing) {
         && [(NSArray *)thing count] == 0);
 }
 
+static inline id ObjectOrNull(id object)
+{
+    return object ?: [NSNull null];
+}
+
 
 @interface GlobalValues : NSObject
 @property (nonatomic, strong) NSString* userName;
