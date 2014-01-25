@@ -46,9 +46,7 @@
     self.doneButton.enabled = NO;
     NSLog(@"============================> Operation ID = %@", _operateIdentifier);
     
-    if(([_operateIdentifier isEqualToString:@"new facetab"] || [_operateIdentifier isEqualToString:@"add Photos"])
-       && !IsEmpty(_operateIdentifier))
-    {
+    if([_operateIdentifier isEqualToString:@"new facetab"] && !IsEmpty(_operateIdentifier)  ){
         self.doneButton.title = @"Done";
     } else {
         self.doneButton.title = @"Share";
@@ -99,14 +97,13 @@
 }
 
 - (void) reloadDB {
-    self.photos = AssetLib.totalAssets;
-    int allphotocount = (int)[self.photos count];
-//    if (self.photos) {
-//        for (NSDictionary *user in self.photos) {
-//            NSArray *photos = [user objectForKey:@"photos"];
-//            allphotocount += [photos count];
-//        }
-//    }
+    self.photos = [PBAssetsLibrary sharedInstance].totalAssets;
+    int allphotocount = 0;
+    if (self.photos) {
+        for (NSArray *location in self.photos) {
+            allphotocount += [location count];
+        }
+    }
     
     self.allPhotosView.countLabel.text = [NSString stringWithFormat:@"%d", allphotocount];
     self.collectionView.allowsMultipleSelection = YES;
@@ -150,10 +147,149 @@
     
     if (kind == UICollectionElementKindSectionHeader) {
         GalleryHeaderView *headerView = [collectionView dequeueReusableSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:@"GalleryHeaderView" forIndexPath:indexPath];
-        NSString *title = [[NSString alloc]initWithFormat:@"Photos Group #%i", indexPath.section + 1];
-        headerView.leftLabel.text = title;
-        UIImage *headerImage = [UIImage imageNamed:@"header_banner.png"];
-        headerView.backgroundImage.image = headerImage;
+        
+        CLGeocoder *geocoder = [[CLGeocoder alloc] init];
+        CLLocation *location = [[PBAssetsLibrary sharedInstance].locationArray objectAtIndex:indexPath.section];
+        
+        [geocoder reverseGeocodeLocation:location completionHandler:^(NSArray *placemarks, NSError *error) {
+            if (! error) {
+                NSLog(@"Places: %@", placemarks);
+                for (CLPlacemark *placemark in placemarks) {
+                    NSLog(@"country: %@", [placemark country]);
+                    NSLog(@"administrativeArea: %@", [placemark administrativeArea]);
+                    NSLog(@"subAdministrativeArea: %@", [placemark subAdministrativeArea]);
+                    NSLog(@"region: %@", [placemark region]);
+                    NSLog(@"Locality: %@", [placemark locality]);
+                    NSLog(@"subLocality: %@", [placemark subLocality]);
+                    NSLog(@"Thoroughfare: %@", [placemark thoroughfare]);
+                    NSLog(@"subThoroughfare: %@", [placemark subThoroughfare]);
+                    NSLog(@"Name: %@", [placemark name]);
+                    NSLog(@"Desc: %@", placemark);
+                    NSLog(@"addressDictionary: %@", [placemark addressDictionary]);
+                    NSArray *areasOfInterest = [placemark areasOfInterest];
+                    for (id area in areasOfInterest) {
+                        NSLog(@"Class: %@", [area class]);
+                        NSLog(@"AREA: %@", area);
+                    }
+                    NSString *divider = @"";
+                    NSString *descriptiveString = @"";
+                    
+                    if ([[placemark ISOcountryCode] isEqualToString:@"KR"]) {
+                        
+                        if (! IsEmpty([placemark administrativeArea])) {
+                            descriptiveString = [descriptiveString stringByAppendingFormat:@"%@%@", divider, [placemark administrativeArea]];
+                            divider = @", ";
+                        }
+                        
+                        if (! IsEmpty([placemark locality]) && (IsEmpty([placemark subLocality]) || ! [[placemark subLocality] isEqualToString:[placemark locality]])) {
+                            descriptiveString = [descriptiveString stringByAppendingFormat:@"%@%@", divider, [placemark locality]];
+                            divider = @", ";
+                        }
+                        
+                        if (! IsEmpty([placemark subLocality])) {
+                            descriptiveString = [descriptiveString stringByAppendingFormat:@"%@%@", divider, [placemark subLocality]];
+                            divider = @", ";
+                        }
+                        
+                        if (! IsEmpty([placemark thoroughfare])) {
+                            if (! IsEmpty(descriptiveString))
+                                divider = @" ";
+                            descriptiveString = [descriptiveString stringByAppendingFormat:@"%@%@", divider, [placemark thoroughfare]];
+                            divider = @", ";
+                        }
+                        
+                        if (! IsEmpty([placemark subThoroughfare])) {
+                            if (! IsEmpty(descriptiveString))
+                                divider = @" ";
+                            
+                            descriptiveString = [descriptiveString stringByAppendingFormat:@"%@%@", divider, [placemark subThoroughfare]];
+                            divider = @", ";
+                        }
+                    }
+                    else {
+                        if (! IsEmpty([placemark subThoroughfare])) {
+                            descriptiveString = [descriptiveString stringByAppendingFormat:@"%@", [placemark subThoroughfare]];
+                            divider = @", ";
+                        }
+                        if (! IsEmpty([placemark thoroughfare])) {
+                            if (! IsEmpty(descriptiveString))
+                                divider = @" ";
+                            descriptiveString = [descriptiveString stringByAppendingFormat:@"%@%@", divider, [placemark thoroughfare]];
+                            divider = @", ";
+                        }
+                        
+                        if (! IsEmpty([placemark subLocality])) {
+                            descriptiveString = [descriptiveString stringByAppendingFormat:@"%@%@", divider, [placemark subLocality]];
+                            divider = @", ";
+                        }
+                        
+                        if (! IsEmpty([placemark locality]) && (IsEmpty([placemark subLocality]) || ! [[placemark subLocality] isEqualToString:[placemark locality]])) {
+                            descriptiveString = [descriptiveString stringByAppendingFormat:@"%@%@", divider, [placemark locality]];
+                            divider = @", ";
+                        }
+                        
+                        if (! IsEmpty([placemark administrativeArea])) {
+                            descriptiveString = [descriptiveString stringByAppendingFormat:@"%@%@", divider, [placemark administrativeArea]];
+                            divider = @", ";
+                        }
+                    }
+                    
+                    
+//                    if (! IsEmpty([placemark ISOcountryCode])) {
+//                        descriptiveString = [descriptiveString stringByAppendingFormat:@"%@%@", divider, [placemark ISOcountryCode]];
+//                        divider = @", ";
+//                    }
+//
+//                    if (! IsEmpty([placemark name])) {
+//                        descriptiveString = [NSString stringWithString:[placemark name]];
+//                    }
+                    
+                    NSLog(@"Smart place: %@", descriptiveString);
+                    
+                    NSString *title = descriptiveString ;//[[NSString alloc]initWithFormat:@"Photos Group #%i", indexPath.section + 1];
+                    headerView.leftLabel.text = title;
+                    UIImage *headerImage = [UIImage imageNamed:@"header_banner.png"];
+                    headerView.backgroundImage.image = headerImage;
+                    
+                    
+                    
+                    // 날짜
+                    NSArray *distancePhotos = [self.photos objectAtIndex:indexPath.section];
+                    NSDictionary *firstphoto = [distancePhotos firstObject];
+                    ALAsset *firstasset= [firstphoto objectForKey:@"Asset"];
+                    NSDate *firstDate = [firstasset valueForProperty:ALAssetPropertyDate];
+                    NSString *firstdateString = [NSDateFormatter localizedStringFromDate:firstDate
+                                                                          dateStyle:NSDateFormatterLongStyle
+                                                                          timeStyle:NSDateFormatterNoStyle];
+                    
+                    NSDictionary *lasttphoto = [distancePhotos lastObject];
+                    ALAsset *lastasset= [lasttphoto objectForKey:@"Asset"];
+                    NSDate *lastDate = [lastasset valueForProperty:ALAssetPropertyDate];
+                    NSString *lastdateString = [NSDateFormatter localizedStringFromDate:lastDate
+                                                                               dateStyle:NSDateFormatterLongStyle
+                                                                               timeStyle:NSDateFormatterNoStyle];
+                    NSLog(@"%@ ~ %@",firstdateString, lastdateString);
+                    
+                    if ([firstdateString isEqualToString:lastdateString]) {
+                        headerView.rightLabel.text = [NSString stringWithFormat:@"%@", firstdateString];
+                    }
+                    else {
+                        headerView.rightLabel.text = [NSString stringWithFormat:@"%@ ~ %@", firstdateString, lastdateString];
+                    }
+                }
+                /*
+                 Place: (
+                 "301 Geary St, 301 Geary St, San Francisco, CA  94102-1801, United States @ <+37.78711200,-122.40846000> +/- 100.00m"
+                 )
+                 */
+            }
+        }];
+
+        
+//        NSString *title = [[NSString alloc]initWithFormat:@"Photos Group #%i", indexPath.section + 1];
+//        headerView.leftLabel.text = title;
+//        UIImage *headerImage = [UIImage imageNamed:@"header_banner.png"];
+//        headerView.backgroundImage.image = headerImage;
         
         reusableview = headerView;
     }
@@ -173,7 +309,8 @@
     
     TotalGalleryViewCell *cell = (TotalGalleryViewCell *)[collectionView dequeueReusableCellWithReuseIdentifier:identifier forIndexPath:indexPath];
     
-    NSDictionary *photo = [self.photos objectAtIndex:indexPath.row];
+    NSArray *distancePhotos = [self.photos objectAtIndex:indexPath.section];
+    NSDictionary *photo = [distancePhotos objectAtIndex:indexPath.row];
     
     [cell updateCell:photo];
     
@@ -274,8 +411,7 @@
 
 - (IBAction)DoneClickedHandler:(id)sender {
     // DB작업 후 화면 전환.
-    if([_operateIdentifier isEqualToString:@"new facetab"] && !IsEmpty(_operateIdentifier)  )
-    {
+    if([_operateIdentifier isEqualToString:@"new facetab"] && !IsEmpty(_operateIdentifier)  ){
         // 새로운 Facetab 만들고 Main dashboard로 돌아가기
         
         if(selectedPhotos.count < 5){
@@ -301,7 +437,8 @@
             for(NSIndexPath *indexPath in selectedPhotos)
             {
                 photoCount++;
-                NSDictionary *photo = [self.photos objectAtIndex:indexPath.row];
+                NSArray *distancePhotos = [self.photos objectAtIndex:indexPath.section];
+                NSDictionary *photo = [distancePhotos objectAtIndex:indexPath.row];
                 ALAsset *asset = photo[@"Asset"];
                 NSLog(@"photo data = %@", photo);
                 
@@ -309,7 +446,6 @@
                 if(faces.count == 1 && !IsEmpty(faces)){
                     NSDictionary *face = faces[0];
                     NSData *faceData = face[@"image"];
-                    
                     UIImage *faceImage = face[@"faceImage"];
                     if(faceImage != nil)
                         [SQLManager setUserProfileImage:faceImage UserID:UserID];
@@ -329,45 +465,12 @@
             
             [self.navigationController popViewControllerAnimated:YES];
         }
-    }
-    
-    else if([_operateIdentifier isEqualToString:@"add Photos"] && !IsEmpty(_operateIdentifier)  )
-    {
-#warning 추후에 얼굴 등록하는 프로세스 페이지 추가 필요.
-        int UserID = [_userInfo[@"UserID"] intValue];
         
-        for(NSIndexPath *indexPath in selectedPhotos)
-        {
-            NSDictionary *photo = [self.photos objectAtIndex:indexPath.row];
-            ALAsset *asset = photo[@"Asset"];
-            NSLog(@"photo data = %@", photo);
-            
-            NSArray *faces = [AssetLib getFaceData:asset];
-            if(faces.count == 1 && !IsEmpty(faces)){
-                NSDictionary *face = faces[0];
-                NSData *faceData = face[@"image"];
-                
-                UIImage *faceImage = face[@"faceImage"];
-                if(faceImage != nil)
-                    [SQLManager setUserProfileImage:faceImage UserID:UserID];
-                
-                [SQLManager setTrainModelForUserID:UserID withFaceData:faceData];
-            }
-            else {
-                CGImageRef cgImage = [asset aspectRatioThumbnail];
-                UIImage *faceImage = [UIImage imageWithCGImage:cgImage];
-                if(faceImage != nil)
-                    [SQLManager setUserProfileImage:faceImage UserID:UserID];
-            }
 
-            [SQLManager saveNewUserPhotoToDB:asset users:@[@(UserID)]];
-        }
         
-        [self.navigationController popViewControllerAnimated:YES];
         
-    }
-    
-    else {
+        
+    } else {
         // 필터 화면으로 이동
         [self performSegueWithIdentifier:SEGUE_GO_FILTER sender:self];
     }
@@ -382,7 +485,8 @@
         NSMutableArray *photoDatas = [NSMutableArray array];
         
         for(NSIndexPath *indexPath in selectedPhotos){
-            NSDictionary *photo = [self.photos objectAtIndex:indexPath.row];
+            NSArray *distancePhoto = [self.photos objectAtIndex:indexPath.section];
+            NSDictionary *photo = [distancePhoto objectAtIndex:indexPath.row];
             [photoDatas addObject:photo];
         }
         

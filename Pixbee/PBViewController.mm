@@ -71,7 +71,8 @@
     [AssetLib syncAlbumToDB:^(NSArray *result) {
         //NSLog(@"Result = %@", result);
         if(result.count > 0  && result != nil){
-            ALAsset *lastAsset = [[result objectAtIndex:result.count-1] objectForKey:@"Asset"];
+            NSArray *lastDistance = [result objectAtIndex:result.count-1];
+            ALAsset *lastAsset = [[lastDistance objectAtIndex:lastDistance.count-1] objectForKey:@"Asset"];
             NSURL *assetURL = [lastAsset valueForProperty:ALAssetPropertyAssetURL];
             
             NSLog(@"Last Asset URL = %@", assetURL.absoluteString);

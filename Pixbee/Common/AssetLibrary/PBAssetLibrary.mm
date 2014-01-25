@@ -242,6 +242,7 @@
 {
     
     NSMutableArray *assets = [[NSMutableArray alloc] init];
+    __block NSMutableArray *distanceAssets = nil;
     
     __block int locationGroup = 0;
     __block CLLocation *oldLocation = [[CLLocation alloc] initWithLatitude:0 longitude:0];
@@ -258,11 +259,20 @@
                 CLLocationDistance distance = [newLocation distanceFromLocation:oldLocation];
 
                 if(distance > 1000){ //1km 반경이 넘으면 주소 refresh
-                    oldLocation = newLocation;
-                    [_locationArray addObject:newLocation];
                     
+                    if (distanceAssets != nil) {
+                        [assets addObject:distanceAssets];
+                    }
+                    
+                    oldLocation = newLocation;
+                    distanceAssets = [[NSMutableArray alloc] init];
+                    [_locationArray addObject:newLocation];
                     locationGroup++;
+                    
                     //[self reverseGeocode:newLocation group:locationGroup];
+                }
+                else {
+                    
                 }
                 
                 NSLog(@"LocationGroup : %d || Distance : %f || NEW Longitude = %f / Latitude = %f || OLD Longitude = %f / Latitude = %f ",
@@ -274,9 +284,13 @@
 
 
             
-            [assets addObject:@{@"Asset":result, @"GroupURL":[assetsGroup valueForProperty:ALAssetsGroupPropertyURL]} ];
+            [distanceAssets addObject:@{@"Asset":result, @"GroupURL":[assetsGroup valueForProperty:ALAssetsGroupPropertyURL]} ];
+            
             
         } else {
+            if (![assets containsObject:distanceAssets]) {
+                [assets addObject:distanceAssets];
+            }
             success(assets);
         }
     };
@@ -317,6 +331,11 @@
          [[PBAssetsLibrary sharedInstance] loadAssets3:resultGropus success:^(NSArray *resultAssets) { //각 그룹별 Assets  뽑아냄.
  
              [_totalAssets addObjectsFromArray:resultAssets];
+             
+             int count = 0;
+             for (NSArray *array in _totalAssets) {
+                 count = count + [array count];
+             }
              
              result(resultAssets);
              //NSLog(@"Total Assets = %d / %@", (int)[_totalAssets count], _totalAssets);
@@ -592,6 +611,24 @@
 
 }
 
+//- (void)reverseGeocode:(CLLocation *)location {
+//    
+//    CLGeocoder *geocoder = [[CLGeocoder alloc] init];
+//    [geocoder reverseGeocodeLocation:location completionHandler:^(NSArray *placemarks, NSError *error) {
+//        if (error){
+//            NSLog(@"Geocode failed with error: %@", error);
+//            self.labelDesc.text = @"서버에서 주소를 가져오는데 실패했습니다";
+//            status = ADDRESS_RETRY;
+//            return;
+//        }
+//        CLPlacemark *placemark = [placemarks objectAtIndex:0];
+//        NSString *fullAddress = nil;
+//        fullAddress = [[[NSString alloc] initWithFormat:@"%@ %@ %@ %@ %@ %@", placemark.administrativeArea, placemark.subAdministrativeArea ?placemark.subAdministrativeArea:@"", placemark.locality?placemark.locality:@"", placemark.subLocality?placemark.subLocality:@"", placemark.thoroughfare?placemark.thoroughfare:@"", placemark.subThoroughfare?placemark.subThoroughfare:@""] autorelease];
+//        NSString *replacementStr = [fullAddress stringByReplacingOccurrencesOfString:@"  " withString:@" "];
+//    }];
+//}
+//}
+
 - (void)reverseGeocode:(CLLocation *)location group:(int)locationGroup {
 //    if ([_geocoder isGeocoding])
 //        return;
@@ -665,6 +702,8 @@
     }];
     
 }
+
+
 
 - (NSString *)getAddressFrom:(CLPlacemark*)place
 {
