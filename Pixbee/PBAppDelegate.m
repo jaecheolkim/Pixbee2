@@ -17,7 +17,8 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     // filter test
-    [[NSUserDefaults standardUserDefaults] setObject:@"YEAR" forKey:@"ALLPHOTO_FILTER"];
+    [[NSUserDefaults standardUserDefaults] setObject:@"DISTANCE" forKey:@"ALLPHOTO_FILTER"];
+    [[NSUserDefaults standardUserDefaults] setInteger:10000 forKey:@"DISTANCE"];
     [[NSUserDefaults standardUserDefaults] synchronize];
     
     [TestFlight takeOff:@"0d73a652-a45f-4b76-9fec-026bd931c1f7"];

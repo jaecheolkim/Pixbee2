@@ -259,7 +259,15 @@
                 if(newLocation != nil){
                     CLLocationDistance distance = [newLocation distanceFromLocation:oldLocation];
                     
-                    if(distance > 1000){ //1km 반경이 넘으면 주소 refresh
+                    NSNumber *distanceN = [[NSUserDefaults standardUserDefaults] objectForKey:@"DISTANCE"];
+                    int dis = 1000;
+                    if (distanceN) {
+                        if ([distanceN intValue] > 0){
+                            dis = [distanceN intValue];
+                        }
+                    }
+                    
+                    if(distance > dis){ //1km 반경이 넘으면 주소 refresh
                         
                         if (subAssets != nil) {
                             [assets addObject:subAssets];
