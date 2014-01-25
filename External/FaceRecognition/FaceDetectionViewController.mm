@@ -26,7 +26,7 @@
 
 
 #define CAPTURE_FPS 30
-const int TOTAL_COLLECT = 30;
+const int TOTAL_COLLECT = 20;
 const double CHANGE_IN_IMAGE_FOR_COLLECTION = 0.1; //0.3;
 // How much the facial image should change before collecting a new face photo for training.
 const double CHANGE_IN_SECONDS_FOR_COLLECTION = 0.2 ; //1.0 원래는 1초에 하나씩이지만 0.3초마다 수집하게 바꿈.
@@ -1192,7 +1192,7 @@ bail:
                 if(faceImage) [faceImageView setImage:faceImage];
                 
                 if(_numPicsTaken%2 == 0){
-                    NSString *imagePath = [NSString stringWithFormat:@"hive%d.png", ((int)_numPicsTaken / TOTAL_COLLECT)  * TOTAL_COLLECT];
+                    NSString *imagePath = [NSString stringWithFormat:@"hive%d.png", (int)_numPicsTaken / TOTAL_COLLECT];
                     [_hiveImageView setImage:[UIImage imageNamed:imagePath]];
                 }
                 

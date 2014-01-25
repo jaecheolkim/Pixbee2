@@ -697,10 +697,10 @@ UserCellDelegate>
     
     [self.collectionView performBatchUpdates:^{
         for (NSIndexPath *indexPath in selectedPhotos) {
-            // UI
-            GalleryViewCell *cell = (GalleryViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
-            [cell showSelectIcon:NO];
+
             if( indexPath.row != [self.photos count]){
+                GalleryViewCell *cell = (GalleryViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
+                [cell showSelectIcon:NO];
                 NSLog(@"selected:%d / photos count:%d", indexPath.row, [self.photos count]);
                 NSDictionary *photo = [self.photos objectAtIndex:indexPath.row];
                 int userID = [[photo objectForKey:@"UserID"] intValue];
@@ -721,7 +721,7 @@ UserCellDelegate>
         self.activityController = nil;
         NSLog(@"deletePhotos complete!");
         [selectedPhotos removeAllObjects];
-        [self editButtonClickHandler:nil];
+        //[self editButtonClickHandler:nil];
         [self.collectionView reloadData];
         [self refreshSelectedPhotCountOnNavTilte];
         

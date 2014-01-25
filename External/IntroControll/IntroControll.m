@@ -43,7 +43,7 @@
         [pageControl sizeToFit];
         [pageControl setCenter:CGPointMake(frame.size.width/2.0, frame.size.height-50)];
         [self addSubview:pageControl];
-        
+        pageControl.hidden = YES;
         //Create pages
         pages = pagesArray;
         
