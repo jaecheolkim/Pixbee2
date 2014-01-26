@@ -242,11 +242,12 @@
 {
     
     NSMutableArray *assets = [[NSMutableArray alloc] init];
-    __block NSMutableArray *distanceAssets = nil;
+    __block NSMutableArray *subAssets = nil;
     
     __block int locationGroup = 0;
     __block CLLocation *oldLocation = [[CLLocation alloc] initWithLatitude:0 longitude:0];
-    //__block NSDate *oldDate;
+    __block NSDate *oldDate;
+    __block BOOL addLocation = NO;
     
     ALAssetsGroupEnumerationResultsBlock assetsEnumerationBlock = ^(ALAsset *result, NSUInteger index, BOOL *stop) {
         
@@ -254,42 +255,156 @@
             //ALAssetPropertyLocation : CLLocation
             //ALAssetPropertyDate : NSDate
             
-            CLLocation *newLocation = [result valueForProperty:ALAssetPropertyLocation];
-            if(newLocation != nil){
-                CLLocationDistance distance = [newLocation distanceFromLocation:oldLocation];
-
-                if(distance > 1000){ //1km 반경이 넘으면 주소 refresh
+            NSString *filter = [[NSUserDefaults standardUserDefaults] objectForKey:@"ALLPHOTO_FILTER"];
+            if (filter == nil || [filter isEqualToString:@""] || [filter isEqualToString:@"DISTANCE"]) {
+                CLLocation *newLocation = [result valueForProperty:ALAssetPropertyLocation];
+                if(newLocation != nil){
+                    CLLocationDistance distance = [newLocation distanceFromLocation:oldLocation];
                     
-                    if (distanceAssets != nil) {
-                        [assets addObject:distanceAssets];
+                    NSNumber *distanceN = [[NSUserDefaults standardUserDefaults] objectForKey:@"DISTANCE"];
+                    int dis = 1000;
+                    if (distanceN) {
+                        if ([distanceN intValue] > 0){
+                            dis = [distanceN intValue];
+                        }
                     }
                     
-                    oldLocation = newLocation;
-                    distanceAssets = [[NSMutableArray alloc] init];
-                    [_locationArray addObject:newLocation];
-                    locationGroup++;
+                    if(distance > dis){ //1km 반경이 넘으면 주소 refresh
+                        
+                        if (subAssets != nil) {
+                            [assets addObject:subAssets];
+                        }
+                        
+                        oldLocation = newLocation;
+                        subAssets = [[NSMutableArray alloc] init];
+                        [_locationArray addObject:newLocation];
+                        locationGroup++;
+                        
+                        //[self reverseGeocode:newLocation group:locationGroup];
+                    }
+                    else {
+                        
+                    }
                     
-                    //[self reverseGeocode:newLocation group:locationGroup];
+                    NSLog(@"LocationGroup : %d || Distance : %f || NEW Longitude = %f / Latitude = %f || OLD Longitude = %f / Latitude = %f ",
+                          locationGroup, distance, newLocation.coordinate.longitude, newLocation.coordinate.latitude, oldLocation.coordinate.longitude, oldLocation.coordinate.latitude );
                 }
-                else {
-                    
-                }
+                [subAssets addObject:@{@"Asset":result, @"GroupURL":[assetsGroup valueForProperty:ALAssetsGroupPropertyURL]} ];
+            }
+            else {
+                NSDate *date = [result valueForProperty:ALAssetPropertyDate];
+                CLLocation *newLocation = [result valueForProperty:ALAssetPropertyLocation];
                 
-                NSLog(@"LocationGroup : %d || Distance : %f || NEW Longitude = %f / Latitude = %f || OLD Longitude = %f / Latitude = %f ",
-                      locationGroup, distance, newLocation.coordinate.longitude, newLocation.coordinate.latitude, oldLocation.coordinate.longitude, oldLocation.coordinate.latitude );
-            
+                NSCalendar *calendar = [NSCalendar currentCalendar];
+                NSDateComponents *weekdayComponent = [calendar components:(NSDayCalendarUnit | NSCalendarUnitWeekOfYear | NSCalendarUnitMonth | NSCalendarUnitYear) fromDate:date];
+                
+                NSInteger year = [weekdayComponent year];
+                NSInteger month = [weekdayComponent month];
+                NSInteger weekOfYear = [weekdayComponent weekOfYear];
+                NSInteger day = [weekdayComponent day];
+                
+                if(date != nil){
+                    
+                    NSInteger oday = -1;
+                    NSInteger oweekOfYear = -1;
+                    NSInteger omonth = -1;
+                    NSInteger oyear = -1;
 
+
+                    if (oldDate) {
+                        NSDateComponents *weekdayComponent1 = [calendar components:(NSDayCalendarUnit | NSCalendarUnitWeekOfYear | NSCalendarUnitMonth | NSCalendarUnitYear) fromDate:oldDate];
+                        
+                        oyear = [weekdayComponent1 year];
+                        omonth = [weekdayComponent1 month];
+                        oweekOfYear = [weekdayComponent1 weekOfYear];
+                        oday = [weekdayComponent1 day];
+                    }
+                    
+                    if ([filter isEqualToString:@"DAY"]) {
+                        if(day != oday || month != omonth || year != oyear){
+                            
+                            if (subAssets != nil) {
+                                [assets addObject:subAssets];
+                            }
+                            
+                            oldDate = date;
+                            subAssets = [[NSMutableArray alloc] init];
+                            if (addLocation) {
+                                [_locationArray addObject:@""];
+                            }
+                            addLocation = YES;
+                            locationGroup++;
+                        }
+                    }
+                    else if ([filter isEqualToString:@"WEEK"]) {
+                        if(weekOfYear != oweekOfYear){
+                            
+                            if (subAssets != nil) {
+                                [assets addObject:subAssets];
+                            }
+                            
+                            oldDate = date;
+                            subAssets = [[NSMutableArray alloc] init];
+                            if (addLocation) {
+                                [_locationArray addObject:@""];
+                            }
+                            addLocation = YES;
+                            locationGroup++;
+                        }
+                    }
+                    else if ([filter isEqualToString:@"MONTH"]) {
+                        if(month != omonth || year != oyear){
+                            
+                            if (subAssets != nil) {
+                                [assets addObject:subAssets];
+                            }
+                            
+                            oldDate = date;
+                            subAssets = [[NSMutableArray alloc] init];
+                            if (addLocation) {
+                                [_locationArray addObject:@""];
+                            }
+                            addLocation = YES;
+                            locationGroup++;
+                        }
+                    }
+                    else if ([filter isEqualToString:@"YEAR"]) {
+                        if(year != oyear){
+                            
+                            if (subAssets != nil) {
+                                [assets addObject:subAssets];
+                            }
+                            
+                            oldDate = date;
+                            subAssets = [[NSMutableArray alloc] init];
+                            if (addLocation) {
+                                [_locationArray addObject:@""];
+                            }
+                            addLocation = YES;
+                            locationGroup++;
+                        }
+                    }
+
+                                        
+                    if (addLocation) {
+                        if (newLocation != nil) {
+                            [_locationArray addObject:newLocation];
+                            addLocation = NO;
+                        }
+                    }
+                }
+                [subAssets addObject:@{@"Asset":result, @"GroupURL":[assetsGroup valueForProperty:ALAssetsGroupPropertyURL]} ];
 
             }
-
-
-            
-            [distanceAssets addObject:@{@"Asset":result, @"GroupURL":[assetsGroup valueForProperty:ALAssetsGroupPropertyURL]} ];
-            
             
         } else {
-            if (![assets containsObject:distanceAssets]) {
-                [assets addObject:distanceAssets];
+            if (![assets containsObject:subAssets]) {
+                [assets addObject:subAssets];
+                
+                if (addLocation) {
+                    [_locationArray addObject:@""];
+                }
+
             }
             success(assets);
         }
@@ -533,101 +648,86 @@
 
 - (void)checkGeocode
 {
-    if(!IsEmpty(_locationArray)){
-        for(int i = 0; i < _locationArray.count; i++)
-        {
-            int locationGroup = i;
-            CLLocation *location = [_locationArray objectAtIndex:i];
-            [_geocoder reverseGeocodeLocation:location completionHandler:^(NSArray *placemarks, NSError *error) {
-                if (! error) {
-                    NSLog(@"Places: %@", placemarks);
-                    for (CLPlacemark *placemark in placemarks) {
-                        NSLog(@"country: %@", [placemark country]);
-                        NSLog(@"administrativeArea: %@", [placemark administrativeArea]);
-                        NSLog(@"subAdministrativeArea: %@", [placemark subAdministrativeArea]);
-                        NSLog(@"region: %@", [placemark region]);
-                        NSLog(@"Locality: %@", [placemark locality]);
-                        NSLog(@"subLocality: %@", [placemark subLocality]);
-                        NSLog(@"Thoroughfare: %@", [placemark thoroughfare]);
-                        NSLog(@"subThoroughfare: %@", [placemark subThoroughfare]);
-                        NSLog(@"Name: %@", [placemark name]);
-                        NSLog(@"Desc: %@", placemark);
-                        NSLog(@"addressDictionary: %@", [placemark addressDictionary]);
-                        NSArray *areasOfInterest = [placemark areasOfInterest];
-                        for (id area in areasOfInterest) {
-                            NSLog(@"Class: %@", [area class]);
-                            NSLog(@"AREA: %@", area);
+    NSString *filter = [[NSUserDefaults standardUserDefaults] objectForKey:@"ALLPHOTO_FILTER"];
+    if (filter == nil || [filter isEqualToString:@""] || [filter isEqualToString:@"DISTANCE"]) {
+        if(!IsEmpty(_locationArray)){
+            for(int i = 0; i < _locationArray.count; i++)
+            {
+                int locationGroup = i;
+                CLLocation *location = [_locationArray objectAtIndex:i];
+                [_geocoder reverseGeocodeLocation:location completionHandler:^(NSArray *placemarks, NSError *error) {
+                    if (! error) {
+                        NSLog(@"Places: %@", placemarks);
+                        for (CLPlacemark *placemark in placemarks) {
+                            NSLog(@"country: %@", [placemark country]);
+                            NSLog(@"administrativeArea: %@", [placemark administrativeArea]);
+                            NSLog(@"subAdministrativeArea: %@", [placemark subAdministrativeArea]);
+                            NSLog(@"region: %@", [placemark region]);
+                            NSLog(@"Locality: %@", [placemark locality]);
+                            NSLog(@"subLocality: %@", [placemark subLocality]);
+                            NSLog(@"Thoroughfare: %@", [placemark thoroughfare]);
+                            NSLog(@"subThoroughfare: %@", [placemark subThoroughfare]);
+                            NSLog(@"Name: %@", [placemark name]);
+                            NSLog(@"Desc: %@", placemark);
+                            NSLog(@"addressDictionary: %@", [placemark addressDictionary]);
+                            NSArray *areasOfInterest = [placemark areasOfInterest];
+                            for (id area in areasOfInterest) {
+                                NSLog(@"Class: %@", [area class]);
+                                NSLog(@"AREA: %@", area);
+                            }
+                            NSString *divider = @"";
+                            NSString *descriptiveString = @"";
+                            if (! IsEmpty([placemark subThoroughfare])) {
+                                descriptiveString = [descriptiveString stringByAppendingFormat:@"%@", [placemark subThoroughfare]];
+                                divider = @", ";
+                            }
+                            if (! IsEmpty([placemark thoroughfare])) {
+                                if (! IsEmpty(descriptiveString))
+                                    divider = @" ";
+                                descriptiveString = [descriptiveString stringByAppendingFormat:@"%@%@", divider, [placemark thoroughfare]];
+                                divider = @", ";
+                            }
+                            
+                            if (! IsEmpty([placemark subLocality])) {
+                                descriptiveString = [descriptiveString stringByAppendingFormat:@"%@%@", divider, [placemark subLocality]];
+                                divider = @", ";
+                            }
+                            
+                            if (! IsEmpty([placemark locality]) && (IsEmpty([placemark subLocality]) || ! [[placemark subLocality] isEqualToString:[placemark locality]])) {
+                                descriptiveString = [descriptiveString stringByAppendingFormat:@"%@%@", divider, [placemark locality]];
+                                divider = @", ";
+                            }
+                            
+                            if (! IsEmpty([placemark administrativeArea])) {
+                                descriptiveString = [descriptiveString stringByAppendingFormat:@"%@%@", divider, [placemark administrativeArea]];
+                                divider = @", ";
+                            }
+                            
+                            if (! IsEmpty([placemark ISOcountryCode])) {
+                                descriptiveString = [descriptiveString stringByAppendingFormat:@"%@%@", divider, [placemark ISOcountryCode]];
+                                divider = @", ";
+                            }
+                            
+                            if (! IsEmpty([placemark name])) {
+                                descriptiveString = [NSString stringWithString:[placemark name]];
+                            }
+                            
+                            NSLog(@"Location Group : %d || Smart place: %@",locationGroup, descriptiveString);
+                            
                         }
-                        NSString *divider = @"";
-                        NSString *descriptiveString = @"";
-                        if (! IsEmpty([placemark subThoroughfare])) {
-                            descriptiveString = [descriptiveString stringByAppendingFormat:@"%@", [placemark subThoroughfare]];
-                            divider = @", ";
-                        }
-                        if (! IsEmpty([placemark thoroughfare])) {
-                            if (! IsEmpty(descriptiveString))
-                                divider = @" ";
-                            descriptiveString = [descriptiveString stringByAppendingFormat:@"%@%@", divider, [placemark thoroughfare]];
-                            divider = @", ";
-                        }
-                        
-                        if (! IsEmpty([placemark subLocality])) {
-                            descriptiveString = [descriptiveString stringByAppendingFormat:@"%@%@", divider, [placemark subLocality]];
-                            divider = @", ";
-                        }
-                        
-                        if (! IsEmpty([placemark locality]) && (IsEmpty([placemark subLocality]) || ! [[placemark subLocality] isEqualToString:[placemark locality]])) {
-                            descriptiveString = [descriptiveString stringByAppendingFormat:@"%@%@", divider, [placemark locality]];
-                            divider = @", ";
-                        }
-                        
-                        if (! IsEmpty([placemark administrativeArea])) {
-                            descriptiveString = [descriptiveString stringByAppendingFormat:@"%@%@", divider, [placemark administrativeArea]];
-                            divider = @", ";
-                        }
-                        
-                        if (! IsEmpty([placemark ISOcountryCode])) {
-                            descriptiveString = [descriptiveString stringByAppendingFormat:@"%@%@", divider, [placemark ISOcountryCode]];
-                            divider = @", ";
-                        }
-                        
-                        if (! IsEmpty([placemark name])) {
-                            descriptiveString = [NSString stringWithString:[placemark name]];
-                        }
-                        
-                        NSLog(@"Location Group : %d || Smart place: %@",locationGroup, descriptiveString);
-                        
+                        /*
+                         Place: (
+                         "301 Geary St, 301 Geary St, San Francisco, CA  94102-1801, United States @ <+37.78711200,-122.40846000> +/- 100.00m"
+                         )
+                         */
                     }
-                    /*
-                     Place: (
-                     "301 Geary St, 301 Geary St, San Francisco, CA  94102-1801, United States @ <+37.78711200,-122.40846000> +/- 100.00m"
-                     )
-                     */
-                }
-            }];
-
-        }
+                }];
+                
+            }
+        }        
     }
 
 }
-
-//- (void)reverseGeocode:(CLLocation *)location {
-//    
-//    CLGeocoder *geocoder = [[CLGeocoder alloc] init];
-//    [geocoder reverseGeocodeLocation:location completionHandler:^(NSArray *placemarks, NSError *error) {
-//        if (error){
-//            NSLog(@"Geocode failed with error: %@", error);
-//            self.labelDesc.text = @"서버에서 주소를 가져오는데 실패했습니다";
-//            status = ADDRESS_RETRY;
-//            return;
-//        }
-//        CLPlacemark *placemark = [placemarks objectAtIndex:0];
-//        NSString *fullAddress = nil;
-//        fullAddress = [[[NSString alloc] initWithFormat:@"%@ %@ %@ %@ %@ %@", placemark.administrativeArea, placemark.subAdministrativeArea ?placemark.subAdministrativeArea:@"", placemark.locality?placemark.locality:@"", placemark.subLocality?placemark.subLocality:@"", placemark.thoroughfare?placemark.thoroughfare:@"", placemark.subThoroughfare?placemark.subThoroughfare:@""] autorelease];
-//        NSString *replacementStr = [fullAddress stringByReplacingOccurrencesOfString:@"  " withString:@" "];
-//    }];
-//}
-//}
 
 - (void)reverseGeocode:(CLLocation *)location group:(int)locationGroup {
 //    if ([_geocoder isGeocoding])
