@@ -123,7 +123,7 @@
 - (void)reloadDB
 {
     
-    self.usersPhotos = [[SQLManager getAllUserPhotos] mutableCopy];
+    self.usersPhotos = [SQLManager getAllUserPhotos];// mutableCopy];
     //NSLog(@"usersPhotos: %@",_usersPhotos);
     [self calAllPhotos];
     
@@ -275,7 +275,14 @@
     if ([segue.identifier isEqualToString:SEGUE_3_1_TO_4_1] || [segue.identifier isEqualToString:SEGUE_3_1_TO_4_2]) {
         NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
         IndividualGalleryController *destViewController = segue.destinationViewController;
-        destViewController.usersPhotos = [self.usersPhotos objectAtIndex:indexPath.row];
+        
+        NSDictionary *users = [self.usersPhotos objectAtIndex:indexPath.row];
+        NSDictionary *user = [users objectForKey:@"user"];
+        int UserID = [[user objectForKey:@"UserID"] intValue];
+        
+        //destViewController.usersPhotos = [self.usersPhotos objectAtIndex:indexPath.row];
+        destViewController.UserID = UserID;
+        
     }
     else if([segue.identifier isEqualToString:SEGUE_3_1_TO_4_3]){ // add new face tab from Album
         AllPhotosController *destViewController = segue.destinationViewController;

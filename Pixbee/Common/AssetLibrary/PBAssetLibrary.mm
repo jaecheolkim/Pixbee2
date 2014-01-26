@@ -238,7 +238,7 @@
 	}
 }
 
-- (void)loadAssets2:(ALAssetsGroup *)assetsGroup success:(void (^)(NSArray *result))success
+- (void)loadAssets2:(ALAssetsGroup *)assetsGroup success:(void (^)(NSMutableArray *result))success
 {
     
     NSMutableArray *assets = [[NSMutableArray alloc] init];
@@ -417,14 +417,14 @@
 }
 
 
-- (void)loadAssets3:(NSArray*)assetsGroups success:(void (^)(NSArray *result))success
+- (void)loadAssets3:(NSArray*)assetsGroups success:(void (^)(NSMutableArray *result))success
 {
     __block int count = 0;
     __block int groupCont = (int)[assetsGroups count];
     __block NSMutableArray *_tmpAssets = [NSMutableArray array];
     
     for(ALAssetsGroup *assetGroup in assetsGroups){
-        [[PBAssetsLibrary sharedInstance] loadAssets2:assetGroup success:^(NSArray *resultAssets) { //각 그룹별 Assets  뽑아냄.
+        [[PBAssetsLibrary sharedInstance] loadAssets2:assetGroup success:^(NSMutableArray *resultAssets) { //각 그룹별 Assets  뽑아냄.
             [_tmpAssets addObjectsFromArray:resultAssets];
             count++;
             if(count == groupCont){
@@ -443,7 +443,7 @@
          NSLog(@"=== Result Groups : %@", resultGropus);
          [[PBAssetsLibrary sharedInstance] assetGroupsToDB:resultGropus]; //그룹 리스트 DB로 저장/
 
-         [[PBAssetsLibrary sharedInstance] loadAssets3:resultGropus success:^(NSArray *resultAssets) { //각 그룹별 Assets  뽑아냄.
+         [[PBAssetsLibrary sharedInstance] loadAssets3:resultGropus success:^(NSMutableArray *resultAssets) { //각 그룹별 Assets  뽑아냄.
  
              [_totalAssets addObjectsFromArray:resultAssets];
              
@@ -453,10 +453,7 @@
              }
              
              result(resultAssets);
-             //NSLog(@"Total Assets = %d / %@", (int)[_totalAssets count], _totalAssets);
 
-
-             
          }];
 
      }
@@ -485,7 +482,17 @@
 - (void)checkFacesFor:(int)UserID usingEnumerationBlock:(void (^)(NSDictionary *processInfo))enumerationBlock completion:(void (^)(BOOL finished))completion {
     NSLog(@"Start...");
     
-    _totalProcess = (int)[_totalAssets count];
+    if(IsEmpty(_totalAssets)) return;
+    
+    //_totalProcess = (int)[_totalAssets count];
+    
+    int count = 0;
+    for (NSArray *array in _totalAssets) {
+        count = count + (int)[array count];
+    }
+    _totalProcess = count;
+    
+    
     _currentProcess = 0;
     _matchCount = 0;
     
@@ -507,111 +514,227 @@
         @autoreleasepool {
             double max_confidence = -1.0;
             
-            NSString *GroupURL = [_totalAssets[0] objectForKey:@"GroupURL"];
+            NSString *GroupURL = _totalAssets[0][0][@"GroupURL"];
             NSDictionary *match = nil;
-            for(int i = 0; i < (int)[_totalAssets count]; i++){
             
-                if(self.faceProcessStop) break ;
-                
-                ALAsset *photoAsset = [_totalAssets[i] objectForKey:@"Asset"];
-                
-//                CGImageRef cgImage = [photoAsset aspectRatioThumbnail];
-//                UIImage *scaledImage = [FaceLib scaleImage:cgImage scale:1.2f];
-//                CIImage *ciImage = [CIImage imageWithCGImage:scaledImage.CGImage];
-                
-                CGImageRef cgImage = [photoAsset aspectRatioThumbnail];
-                UIImage *scaledImage = nil;
-                CIImage *ciImage = [CIImage imageWithCGImage:cgImage];
-                
-                
-                NSArray *fs = [cFaceDetector featuresInImage:ciImage];
-
-                UIImage *faceImage = nil;
-                UIImage *profileImage = nil;
-                
-                if(!IsEmpty(fs)) {
-                    // 신규 포토 저장.
-                    // Save DB. [Photos] 얼굴이 검출된 사진만 Photos Table에 저장.
-                    int PhotoID = [SQLManager newPhotoWith:photoAsset withGroupAssetURL:GroupURL];
+            int i = 0;
+            for (NSArray *array in _totalAssets) {
+                for(NSDictionary *AssetInfo in array){
                     
-                    for(CIFaceFeature *face in fs)
-                    {
-                        if(PhotoID >= 0)
+                    if(self.faceProcessStop) break ;
+                    
+                    ALAsset *photoAsset = AssetInfo[@"Asset"];
+
+                    //if(self.faceProcessStop) break ;
+                    
+                    //ALAsset *photoAsset = [_totalAssets[i] objectForKey:@"Asset"];
+                    
+                    //                CGImageRef cgImage = [photoAsset aspectRatioThumbnail];
+                    //                UIImage *scaledImage = [FaceLib scaleImage:cgImage scale:1.2f];
+                    //                CIImage *ciImage = [CIImage imageWithCGImage:scaledImage.CGImage];
+                    
+                    CGImageRef cgImage = [photoAsset aspectRatioThumbnail];
+                    UIImage *scaledImage = nil;
+                    CIImage *ciImage = [CIImage imageWithCGImage:cgImage];
+                    
+                    
+                    NSArray *fs = [cFaceDetector featuresInImage:ciImage];
+                    
+                    UIImage *faceImage = nil;
+                    UIImage *profileImage = nil;
+                    
+                    if(!IsEmpty(fs)) {
+                        // 신규 포토 저장.
+                        // Save DB. [Photos] 얼굴이 검출된 사진만 Photos Table에 저장.
+                        int PhotoID = [SQLManager newPhotoWith:photoAsset withGroupAssetURL:GroupURL];
+                        
+                        for(CIFaceFeature *face in fs)
                         {
-                            if(face.bounds.size.width < 50.f) { // 얼굴이 작은 이미지는 스킵하자...
-                                continue;
-                            }
-                            // Save DB. [Faces]
-                            cv::Mat cvImage =  [FaceLib getFaceCVData:ciImage feature:face];
-                            
-                            NSData *serialized = [FaceLib serializeCvMat:cvImage];
-                            NSString *PhotoBound = NSStringFromCGRect(ciImage.extent);
-                            NSString *faceBound = NSStringFromCGRect(face.bounds);
-                            NSDictionary *faceDic = @{@"PhotoBound": PhotoBound, @"faceBound":faceBound,
-                                                     @"image": serialized};
- 
-                            faceImage = [FaceLib MatToUIImage:cvImage];
-
-                            if(faceDic)
+                            if(PhotoID >= 0)
                             {
-                                int FaceNo = [SQLManager newFaceWith:PhotoID withFeature:face withInfo:faceDic];
-
-                                if(isFaceRecRedy)
+                                if(face.bounds.size.width < 50.f) { // 얼굴이 작은 이미지는 스킵하자...
+                                    continue;
+                                }
+                                // Save DB. [Faces]
+                                cv::Mat cvImage =  [FaceLib getFaceCVData:ciImage feature:face];
+                                
+                                NSData *serialized = [FaceLib serializeCvMat:cvImage];
+                                NSString *PhotoBound = NSStringFromCGRect(ciImage.extent);
+                                NSString *faceBound = NSStringFromCGRect(face.bounds);
+                                NSDictionary *faceDic = @{@"PhotoBound": PhotoBound, @"faceBound":faceBound,
+                                                          @"image": serialized};
+                                
+                                faceImage = [FaceLib MatToUIImage:cvImage];
+                                
+                                if(faceDic)
                                 {
-                                    match = [FaceLib recognizeFace:cvImage];
-
-                                    if(match != nil){
-                                        NSLog(@"Match : %@", match);
-
-                                        double currentConfidence = [match[@"confidence"] doubleValue];
+                                    int FaceNo = [SQLManager newFaceWith:PhotoID withFeature:face withInfo:faceDic];
+                                    
+                                    if(isFaceRecRedy)
+                                    {
+                                        match = [FaceLib recognizeFace:cvImage];
                                         
-                                        if([match[@"UserID"] intValue] == UserID && currentConfidence >= 0.78f)
-                                        //if(([match[@"UserID"] intValue] == UserID && currentConfidence >= 0.78f)  || currentConfidence >= 0.9f)
-                                        { //< 60.f){
-                                            int PhotoNo = [SQLManager newUserPhotosWith:[match[@"UserID"] intValue]
-                                                                              withPhoto:PhotoID
-                                                                               withFace:FaceNo];
-                                            if(PhotoNo) {
-                                                if(currentConfidence > max_confidence){
-                                                    max_confidence = currentConfidence;
+                                        if(match != nil){
+                                            NSLog(@"Match : %@", match);
+                                            
+                                            double currentConfidence = [match[@"confidence"] doubleValue];
+                                            
+                                            if([match[@"UserID"] intValue] == UserID && currentConfidence >= 0.78f)
+                                                //if(([match[@"UserID"] intValue] == UserID && currentConfidence >= 0.78f)  || currentConfidence >= 0.9f)
+                                            { //< 60.f){
+                                                int PhotoNo = [SQLManager newUserPhotosWith:[match[@"UserID"] intValue]
+                                                                                  withPhoto:PhotoID
+                                                                                   withFace:FaceNo];
+                                                if(PhotoNo) {
+                                                    if(currentConfidence > max_confidence){
+                                                        max_confidence = currentConfidence;
+                                                        
+                                                        CGImageRef tmpImage = [FaceLib getFaceCGImage:ciImage bound:face.bounds];
+                                                        profileImage = [UIImage imageWithCGImage:tmpImage];
+                                                        
+                                                        [SQLManager setUserProfileImage:profileImage UserID:UserID];
+                                                    }
+                                                    NSLog(@"UserID => %d Added confidence = %f",[match[@"UserID"] intValue], [match[@"confidence"] doubleValue]);
                                                     
-                                                    CGImageRef tmpImage = [FaceLib getFaceCGImage:ciImage bound:face.bounds];
-                                                    profileImage = [UIImage imageWithCGImage:tmpImage];
+                                                    scaledImage = [UIImage imageWithCGImage:cgImage];
+                                                    [_faceAssets addObject:@{@"Asset": photoAsset, @"UserID" : @(UserID), @"PhotoID" : @(PhotoID)}];
                                                     
-                                                    [SQLManager setUserProfileImage:profileImage UserID:UserID];
+                                                    _matchCount++;
                                                 }
-                                                NSLog(@"UserID => %d Added confidence = %f",[match[@"UserID"] intValue], [match[@"confidence"] doubleValue]);
-                                                
-                                                scaledImage = [UIImage imageWithCGImage:cgImage];
-                                                [_faceAssets addObject:@{@"Asset": photoAsset, @"UserID" : @(UserID), @"PhotoID" : @(PhotoID)}];
-                                                
-                                                _matchCount++;
                                             }
                                         }
+                                        
                                     }
-                                    
                                 }
+                                
                             }
                             
                         }
-                        
                     }
+                    
+                    //if(cgImage) CGImageRelease(cgImage);
+                    
+                    
+                    _currentProcess++;
+                    
+                    NSDictionary *processInfo = @{ @"totalV" : @(_totalProcess), @"currentV": @(_currentProcess),
+                                                   @"matchV": @(_matchCount), @"scaledImage" : ObjectOrNull(scaledImage),
+                                                   @"faceImage" : ObjectOrNull(faceImage),  @"match" : ObjectOrNull(match)};
+                    
+                    enumerationBlock(processInfo);
+                    
+                    
+                    
+                    
+                    i++;
                 }
-                
-                //if(cgImage) CGImageRelease(cgImage);
-                
-
-                _currentProcess++;
-
-                NSDictionary *processInfo = @{ @"totalV" : @(_totalProcess), @"currentV": @(_currentProcess),
-                                               @"matchV": @(_matchCount), @"scaledImage" : ObjectOrNull(scaledImage),
-                                               @"faceImage" : ObjectOrNull(faceImage),  @"match" : ObjectOrNull(match)};
-
-                enumerationBlock(processInfo);
-
             }
             
             completion(YES);
+            
+//            for(int i = 0; i < (int)[_totalAssets count]; i++){
+//            
+//                if(self.faceProcessStop) break ;
+//                
+//                ALAsset *photoAsset = [_totalAssets[i] objectForKey:@"Asset"];
+//                
+////                CGImageRef cgImage = [photoAsset aspectRatioThumbnail];
+////                UIImage *scaledImage = [FaceLib scaleImage:cgImage scale:1.2f];
+////                CIImage *ciImage = [CIImage imageWithCGImage:scaledImage.CGImage];
+//                
+//                CGImageRef cgImage = [photoAsset aspectRatioThumbnail];
+//                UIImage *scaledImage = nil;
+//                CIImage *ciImage = [CIImage imageWithCGImage:cgImage];
+//                
+//                
+//                NSArray *fs = [cFaceDetector featuresInImage:ciImage];
+//
+//                UIImage *faceImage = nil;
+//                UIImage *profileImage = nil;
+//                
+//                if(!IsEmpty(fs)) {
+//                    // 신규 포토 저장.
+//                    // Save DB. [Photos] 얼굴이 검출된 사진만 Photos Table에 저장.
+//                    int PhotoID = [SQLManager newPhotoWith:photoAsset withGroupAssetURL:GroupURL];
+//                    
+//                    for(CIFaceFeature *face in fs)
+//                    {
+//                        if(PhotoID >= 0)
+//                        {
+//                            if(face.bounds.size.width < 50.f) { // 얼굴이 작은 이미지는 스킵하자...
+//                                continue;
+//                            }
+//                            // Save DB. [Faces]
+//                            cv::Mat cvImage =  [FaceLib getFaceCVData:ciImage feature:face];
+//                            
+//                            NSData *serialized = [FaceLib serializeCvMat:cvImage];
+//                            NSString *PhotoBound = NSStringFromCGRect(ciImage.extent);
+//                            NSString *faceBound = NSStringFromCGRect(face.bounds);
+//                            NSDictionary *faceDic = @{@"PhotoBound": PhotoBound, @"faceBound":faceBound,
+//                                                     @"image": serialized};
+// 
+//                            faceImage = [FaceLib MatToUIImage:cvImage];
+//
+//                            if(faceDic)
+//                            {
+//                                int FaceNo = [SQLManager newFaceWith:PhotoID withFeature:face withInfo:faceDic];
+//
+//                                if(isFaceRecRedy)
+//                                {
+//                                    match = [FaceLib recognizeFace:cvImage];
+//
+//                                    if(match != nil){
+//                                        NSLog(@"Match : %@", match);
+//
+//                                        double currentConfidence = [match[@"confidence"] doubleValue];
+//                                        
+//                                        if([match[@"UserID"] intValue] == UserID && currentConfidence >= 0.78f)
+//                                        //if(([match[@"UserID"] intValue] == UserID && currentConfidence >= 0.78f)  || currentConfidence >= 0.9f)
+//                                        { //< 60.f){
+//                                            int PhotoNo = [SQLManager newUserPhotosWith:[match[@"UserID"] intValue]
+//                                                                              withPhoto:PhotoID
+//                                                                               withFace:FaceNo];
+//                                            if(PhotoNo) {
+//                                                if(currentConfidence > max_confidence){
+//                                                    max_confidence = currentConfidence;
+//                                                    
+//                                                    CGImageRef tmpImage = [FaceLib getFaceCGImage:ciImage bound:face.bounds];
+//                                                    profileImage = [UIImage imageWithCGImage:tmpImage];
+//                                                    
+//                                                    [SQLManager setUserProfileImage:profileImage UserID:UserID];
+//                                                }
+//                                                NSLog(@"UserID => %d Added confidence = %f",[match[@"UserID"] intValue], [match[@"confidence"] doubleValue]);
+//                                                
+//                                                scaledImage = [UIImage imageWithCGImage:cgImage];
+//                                                [_faceAssets addObject:@{@"Asset": photoAsset, @"UserID" : @(UserID), @"PhotoID" : @(PhotoID)}];
+//                                                
+//                                                _matchCount++;
+//                                            }
+//                                        }
+//                                    }
+//                                    
+//                                }
+//                            }
+//                            
+//                        }
+//                        
+//                    }
+//                }
+//                
+//                //if(cgImage) CGImageRelease(cgImage);
+//                
+//
+//                _currentProcess++;
+//
+//                NSDictionary *processInfo = @{ @"totalV" : @(_totalProcess), @"currentV": @(_currentProcess),
+//                                               @"matchV": @(_matchCount), @"scaledImage" : ObjectOrNull(scaledImage),
+//                                               @"faceImage" : ObjectOrNull(faceImage),  @"match" : ObjectOrNull(match)};
+//
+//                enumerationBlock(processInfo);
+//
+//            }
+//            
+//            completion(YES);
         }
     });
 
