@@ -200,19 +200,19 @@
                                 divider = @", ";
                             }
                             
-                            if (! IsEmpty([placemark subThoroughfare])) {
-                                if (! IsEmpty(descriptiveString))
-                                    divider = @" ";
-                                
-                                descriptiveString = [descriptiveString stringByAppendingFormat:@"%@%@", divider, [placemark subThoroughfare]];
-                                divider = @", ";
-                            }
+//                            if (! IsEmpty([placemark subThoroughfare])) {
+//                                if (! IsEmpty(descriptiveString))
+//                                    divider = @" ";
+//                                
+//                                descriptiveString = [descriptiveString stringByAppendingFormat:@"%@%@", divider, [placemark subThoroughfare]];
+//                                divider = @", ";
+//                            }
                         }
                         else {
-                            if (! IsEmpty([placemark subThoroughfare])) {
-                                descriptiveString = [descriptiveString stringByAppendingFormat:@"%@", [placemark subThoroughfare]];
-                                divider = @", ";
-                            }
+//                            if (! IsEmpty([placemark subThoroughfare])) {
+//                                descriptiveString = [descriptiveString stringByAppendingFormat:@"%@", [placemark subThoroughfare]];
+//                                divider = @", ";
+//                            }
                             if (! IsEmpty([placemark thoroughfare])) {
                                 if (! IsEmpty(descriptiveString))
                                     divider = @" ";
@@ -360,19 +360,19 @@
                                     divider = @", ";
                                 }
                                 
-                                if (! IsEmpty([placemark subThoroughfare])) {
-                                    if (! IsEmpty(descriptiveString))
-                                        divider = @" ";
-                                    
-                                    descriptiveString = [descriptiveString stringByAppendingFormat:@"%@%@", divider, [placemark subThoroughfare]];
-                                    divider = @", ";
-                                }
+//                                if (! IsEmpty([placemark subThoroughfare])) {
+//                                    if (! IsEmpty(descriptiveString))
+//                                        divider = @" ";
+//                                    
+//                                    descriptiveString = [descriptiveString stringByAppendingFormat:@"%@%@", divider, [placemark subThoroughfare]];
+//                                    divider = @", ";
+//                                }
                             }
                             else {
-                                if (! IsEmpty([placemark subThoroughfare])) {
-                                    descriptiveString = [descriptiveString stringByAppendingFormat:@"%@", [placemark subThoroughfare]];
-                                    divider = @", ";
-                                }
+//                                if (! IsEmpty([placemark subThoroughfare])) {
+//                                    descriptiveString = [descriptiveString stringByAppendingFormat:@"%@", [placemark subThoroughfare]];
+//                                    divider = @", ";
+//                                }
                                 if (! IsEmpty([placemark thoroughfare])) {
                                     if (! IsEmpty(descriptiveString))
                                         divider = @" ";

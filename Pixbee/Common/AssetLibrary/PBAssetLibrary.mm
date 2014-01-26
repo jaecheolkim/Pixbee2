@@ -246,6 +246,7 @@
     __block int locationGroup = 0;
     __block CLLocation *oldLocation = [[CLLocation alloc] initWithLatitude:0 longitude:0];
     __block NSDate *oldDate;
+    __block BOOL addLocation = NO;
     
     ALAssetsGroupEnumerationResultsBlock assetsEnumerationBlock = ^(ALAsset *result, NSUInteger index, BOOL *stop) {
         
@@ -327,12 +328,10 @@
                             
                             oldDate = date;
                             subAssets = [[NSMutableArray alloc] init];
-                            if (newLocation != nil) {
-                                [_locationArray addObject:newLocation];
-                            }
-                            else {
+                            if (addLocation) {
                                 [_locationArray addObject:@""];
                             }
+                            addLocation = YES;
                             locationGroup++;
                         }
                     }
@@ -345,12 +344,10 @@
                             
                             oldDate = date;
                             subAssets = [[NSMutableArray alloc] init];
-                            if (newLocation != nil) {
-                                [_locationArray addObject:newLocation];
-                            }
-                            else {
+                            if (addLocation) {
                                 [_locationArray addObject:@""];
                             }
+                            addLocation = YES;
                             locationGroup++;
                         }
                     }
@@ -363,12 +360,10 @@
                             
                             oldDate = date;
                             subAssets = [[NSMutableArray alloc] init];
-                            if (newLocation != nil) {
-                                [_locationArray addObject:newLocation];
-                            }
-                            else {
+                            if (addLocation) {
                                 [_locationArray addObject:@""];
                             }
+                            addLocation = YES;
                             locationGroup++;
                         }
                     }
@@ -381,18 +376,21 @@
                             
                             oldDate = date;
                             subAssets = [[NSMutableArray alloc] init];
-                            if (newLocation != nil) {
-                                [_locationArray addObject:newLocation];
-                            }
-                            else {
+                            if (addLocation) {
                                 [_locationArray addObject:@""];
                             }
+                            addLocation = YES;
                             locationGroup++;
                         }
                     }
 
                                         
-                
+                    if (addLocation) {
+                        if (newLocation != nil) {
+                            [_locationArray addObject:newLocation];
+                            addLocation = NO;
+                        }
+                    }
                 }
                 [subAssets addObject:@{@"Asset":result, @"GroupURL":[assetsGroup valueForProperty:ALAssetsGroupPropertyURL]} ];
 
@@ -401,6 +399,11 @@
         } else {
             if (![assets containsObject:subAssets]) {
                 [assets addObject:subAssets];
+                
+                if (addLocation) {
+                    [_locationArray addObject:@""];
+                }
+
             }
             success(assets);
         }
