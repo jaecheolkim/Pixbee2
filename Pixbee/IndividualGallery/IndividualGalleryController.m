@@ -25,7 +25,7 @@
 @interface IndividualGalleryController ()
 <UICollectionViewDataSource, UICollectionViewDelegate,
 IDMPhotoBrowserDelegate, FBFriendControllerDelegate,
-UserCellDelegate>
+UserCellDelegate, GalleryViewCellDelegate>
 {
     NSMutableArray *selectedPhotos;
     NSDictionary *userInfo;
@@ -64,8 +64,6 @@ UserCellDelegate>
     [super viewDidLoad];
     
     _shareButton.enabled = NO;
-    
-    
 }
 
 - (void)refreshInfo
@@ -141,8 +139,12 @@ UserCellDelegate>
 {
     _shareButton.enabled = NO;
     int selectcount = 0;
-    if(!IsEmpty(selectedPhotos)) selectcount = (int)[selectedPhotos count];
-    if(selectcount) _shareButton.enabled = YES;
+    if(!IsEmpty(selectedPhotos)) {
+        selectcount = (int)[selectedPhotos count];
+    }
+    if(selectcount) {
+        _shareButton.enabled = YES;
+    }
     
     [UIView animateWithDuration:0.3
                      animations:^{
@@ -210,9 +212,9 @@ UserCellDelegate>
     static NSString *identifier = @"GalleryViewCell";
     
     GalleryViewCell *cell = (GalleryViewCell *)[collectionView dequeueReusableCellWithReuseIdentifier:identifier forIndexPath:indexPath];
-    
+    cell.delegate = self;
     NSDictionary *photo = [self.photos objectAtIndex:indexPath.row];
-    
+    //[cell setIndexPath:indexPath];
     [cell updateCell:photo];
     
     if ([selectedPhotos containsObject:indexPath]) {
@@ -341,6 +343,67 @@ UserCellDelegate>
 //    return YES;
 //}
 
+#pragma mark GalleryViewCellDelegate
+
+- (void)cellTap:(GalleryViewCell *)cell
+{
+    NSIndexPath *indexPath = [self.collectionView indexPathForCell:cell];
+    NSLog(@"tapItem: %d %@", (int)indexPath.row, cell.selected?@"YES":@"NO");
+ 
+    if (self.collectionView.allowsMultipleSelection) {
+        if(!cell.selected){
+            [selectedPhotos addObject:indexPath];
+            [cell showSelectIcon:YES];
+        }
+        else {
+            [selectedPhotos removeObject:indexPath];
+            [cell showSelectIcon:NO];
+        }
+
+        [cell setNeedsDisplay];
+        [self refreshSelectedPhotCountOnNavTilte];
+        cell.selected = !cell.selected;
+    }
+    else {
+        self.selectedCell = (GalleryViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
+ 
+        NSMutableArray *idmPhotos = [NSMutableArray arrayWithCapacity:1];
+        NSDictionary *photoinfo = [self.photos objectAtIndex:indexPath.row];
+        NSString *photo = [photoinfo objectForKey:@"AssetURL"];
+        [idmPhotos addObject:photo];
+        
+        // Create and setup browser
+        IDMPhotoBrowser *browser = [[IDMPhotoBrowser alloc] initWithPhotoURLs:idmPhotos animatedFromView:self.selectedCell]; // using initWithPhotos:animatedFromView: method to use the zoom-in animation
+        browser.delegate = self;
+        [browser setInitialPageIndex:indexPath.row];
+        browser.displayActionButton = NO;
+        browser.displayArrowButton = NO;
+        //        browser.displayArrowButton = YES;
+        browser.displayCounterLabel = YES;
+        browser.scaleImage = self.selectedCell.photoImageView.image;
+        
+        //        [self.navigationController p presentedViewController:browser];
+        
+        // Show
+        [self presentViewController:browser animated:YES completion:nil];
+        [self collectionView:self.collectionView didDeselectItemAtIndexPath:indexPath];
+    }
+
+
+}
+
+- (void)cellPressed:(GalleryViewCell *)cell
+{
+    if(self.activityController) return;
+    
+    NSIndexPath *indexPath = [self.collectionView indexPathForCell:cell];
+    
+    NSLog(@"longPressItem: %d", (int)indexPath.row);
+    [selectedPhotos addObject:indexPath];
+    [self shareButtonClickHandler:nil];
+}
+
+
 #pragma mark UserCellDelegate
 
 - (void)editUserCell:(UserCell *)cell {
@@ -430,16 +493,7 @@ UserCellDelegate>
         
         [selectedPhotos removeAllObjects];
         [self refreshSelectedPhotCountOnNavTilte];
-        
-//        [UIView animateWithDuration:0.3
-//                         animations:^{
-//                             self.shareButton.alpha = 0.0;
-//                             self.navigationItem.title = @"Album";
-//                         }
-//                         completion:^(BOOL finished){
-//                             
-//                         }];
-    }
+     }
 }
 
 - (IBAction)albumButtonClickHandler:(id)sender {
@@ -698,7 +752,7 @@ UserCellDelegate>
     [self.collectionView performBatchUpdates:^{
         for (NSIndexPath *indexPath in selectedPhotos) {
 
-            if( indexPath.row != [self.photos count]){
+            if( indexPath.row < [self.photos count]){
                 GalleryViewCell *cell = (GalleryViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
                 [cell showSelectIcon:NO];
                 NSLog(@"selected:%d / photos count:%d", indexPath.row, [self.photos count]);

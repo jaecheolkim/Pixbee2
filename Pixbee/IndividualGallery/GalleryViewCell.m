@@ -10,13 +10,54 @@
 #import "SDImageCache.h"
 
 @implementation GalleryViewCell
+@synthesize delegate;
+//- (id)initWithFrame:(CGRect)frame {
+//	self = [super initWithFrame:frame];
+//	if (self) {
+//	}
+//	return self;
+//}
 
-- (id)initWithFrame:(CGRect)frame {
-	self = [super initWithFrame:frame];
-	if (self) {
-	}
-	return self;
+-(id)initWithCoder:(NSCoder *)aDecoder {
+    self = [super initWithCoder:aDecoder];
+    if (self) {
+        UIView *bgView = [[UIView alloc] initWithFrame:self.backgroundView.frame];
+        bgView.backgroundColor = [UIColor blueColor];
+        bgView.layer.borderColor = [[UIColor whiteColor] CGColor];
+        bgView.layer.borderWidth = 4;
+        self.selectedBackgroundView = bgView;
+        
+        
+        UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapItem:)];
+        [self addGestureRecognizer:tapGestureRecognizer];
+        
+        
+        UILongPressGestureRecognizer *longPressPressGestureRecognizer
+        = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPressItem:)];
+        [self addGestureRecognizer:longPressPressGestureRecognizer];
+
+
+    }
+    return self;
 }
+
+- (void)tapItem:(id)sender
+{
+    
+    if ([self.delegate respondsToSelector:@selector(cellTap:)]){
+        [self.delegate cellTap:self];
+    }
+}
+
+- (void)longPressItem:(id)sender
+{
+    
+    if ([self.delegate respondsToSelector:@selector(cellPressed:)]){
+        [self.delegate cellPressed:self];
+    }
+}
+
+
 
 - (void)setSelected:(BOOL)selected {
     [super setSelected:selected];
