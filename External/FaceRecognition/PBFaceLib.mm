@@ -216,7 +216,7 @@ using namespace cv;
     }
     NSDictionary *d = @{
                              @"similarity" : @(similarity),
-                             @"reconstruct" : reconst,
+                             @"reconstruct" : ObjectOrNull(reconst),
                              @"UserID": @(identity), //[NSNumber numberWithInt:identity],
                              @"confidence": @(confidence) //[NSNumber numberWithDouble:confidence]
                              };
@@ -366,6 +366,13 @@ void equalizeLeftAndRightHalves(Mat &faceImg)
     wholeFace.release();
 }
 
+- (void)unsharpMask:(cv::Mat&)im
+{
+    cv::Mat tmp;
+    cv::GaussianBlur(im, tmp, cv::Size(5,5), 5);
+    cv::addWeighted(im, 1.5, tmp, -0.5, 0, im);
+}
+
 
 - (cv::Mat)CropNRotate:(cv::Mat &)MyImage LEye:(CvPoint)leftEye REye:(CvPoint)rightEye destSize:(int)desiredFaceWidth
 {
@@ -421,11 +428,13 @@ void equalizeLeftAndRightHalves(Mat &faceImg)
         //equalizeLeftAndRightHalves(warped);
         //equalizeHist(warped, warped);
         //cv::Mat filtered = [self getRetinexImage:warped];
-        warped = [self getRetinexImage:warped];
+        //warped = [self getRetinexImage:warped];
         
         // Use the "Bilateral Filter" to reduce pixel noise by smoothing the image, but keeping the sharp edges in the face.
         cv::Mat filtered = Mat(warped.size(), CV_8U);
         cv::bilateralFilter(warped, filtered, 0, 20.0, 2.0);
+        
+        //[self unsharpMask:filtered];
         
         // Filter out the corners of the face, since we mainly just care about the middle parts.
         // Draw a filled ellipse in the middle of the face-sized image.

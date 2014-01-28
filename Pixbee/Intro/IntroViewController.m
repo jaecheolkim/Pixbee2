@@ -3,6 +3,7 @@
 #import "PBAppDelegate.h"
 
 @implementation IntroViewController
+@synthesize callerID;
 
 - (id)init
 {
@@ -50,8 +51,13 @@
 }
 
 - (void)action:(id)sender {
-    PBAppDelegate *appdelegate = (PBAppDelegate*)[[UIApplication sharedApplication] delegate];
-    [appdelegate goMainView];
+    if(!IsEmpty(callerID)){
+        [self.navigationController popViewControllerAnimated:YES];
+    } else {
+        PBAppDelegate *appdelegate = (PBAppDelegate*)[[UIApplication sharedApplication] delegate];
+        [appdelegate goMainView];
+    }
+
 }
 
 @end

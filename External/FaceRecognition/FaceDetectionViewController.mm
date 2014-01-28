@@ -23,14 +23,39 @@
 #import "AddingFaceToAlbumController.h"
 #import "AllPhotosController.h"
 #import "UIButton+FaceIcon.h"
-
+#import "NSTimer+Pause.h"
 
 #define CAPTURE_FPS 30
-const int TOTAL_COLLECT = 20;
+const int TOTAL_COLLECT = 10;
 const double CHANGE_IN_IMAGE_FOR_COLLECTION = 0.1; //0.3;
 // How much the facial image should change before collecting a new face photo for training.
 const double CHANGE_IN_SECONDS_FOR_COLLECTION = 0.2 ; //1.0 원래는 1초에 하나씩이지만 0.3초마다 수집하게 바꿈.
 // How much time must pass before collecting a new face photo for training.
+
+CGPoint AnglePoint[10] = {
+    CGPointMake(160, 284),
+    CGPointMake(219.5, 275.5),
+    CGPointMake(52, 285.5),
+    CGPointMake(155, 163),
+    CGPointMake(154, 413),
+    CGPointMake(32, 185.5),
+    CGPointMake(86, 194.5),
+    CGPointMake(232.5, 384),
+    CGPointMake(91, 387),
+    CGPointMake(160, 284)};
+
+NSString *AngleDesc[10] = {
+    @"중앙을 바라보세요.",
+    @"왼쪽으로 고개를 돌리세요.",
+    @"오른쪽으로 고개를 돌리세요.",
+    @"위를 바라 보세요.",
+    @"아래를 바라 보세요.",
+    @"위 오른쪽을 바라 보세요.",
+    @"위 왼쪽을 바라 보세요.",
+    @"아래 오른쪽을 바라 보세요.",
+    @"아래 왼쪽을 바라 보세요.",
+    @"중앙을 보시고 웃으세요."
+};
 
 
 @interface FaceDetectionViewController ()
@@ -80,6 +105,10 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     
     cv::Mat old_prepreprocessedFace;
     double old_time;
+    
+    int ani_step;
+    
+    NSTimer *aniTimer;
 
 }
 @property (weak, nonatomic) IBOutlet UILabel *instructionsLabel;
@@ -165,6 +194,8 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 
     [_closeButton bootstrapStyle];
     
+    ani_step = 0;
+    [self startTimer];
     
     
 }
@@ -259,7 +290,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     
     CGSize viewSize = faceView.bounds.size;
 	layer.frame = CGRectMake((viewSize.width - 232)/2, (viewSize.height - 279)/2, 232, 279);
-    
+    //layer.frame = CGRectMake(viewSize.width/2 - 150, viewSize.height/2 - 150, 300, 300);
 	transformLayer.frame =  faceView.bounds;
 
     showGuide = YES;
@@ -274,12 +305,8 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 	CGSize viewSize = self.view.bounds.size;
 	aniLoc = CGPointMake((location.x - viewSize.width / 2) / viewSize.width,
                          (location.y - viewSize.height / 2) / viewSize.height);
-    
-//    [CATransaction begin];
-//	[CATransaction setAnimationDuration:1.f];
-//	transformLayer.transform = CATransform3DRotate(CATransform3DMakeRotation(M_PI * aniLoc.x, 0, 1, 0), -M_PI * aniLoc.y, 1, 0, 0);
-//	[CATransaction commit];
-    
+ 
+    NSLog(@"GuidePoint = %@ in View(%@)", NSStringFromCGPoint(location), NSStringFromCGRect(self.view.bounds));
     [self guideAnimation:aniLoc];
 }
 
@@ -289,10 +316,71 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 	[CATransaction setAnimationDuration:1.f];
 	transformLayer.transform = CATransform3DRotate(CATransform3DMakeRotation(M_PI * point.x, 0, 1, 0), -M_PI * point.y, 1, 0, 0);
 	[CATransaction commit];
-
+    
 }
 
-- (IBAction)toggleFlash:(id)sender {
+- (void)startTimer
+{
+    if(ani_step < 9)
+        aniTimer = [NSTimer scheduledTimerWithTimeInterval:1.5 target:self selector:@selector(spinit:) userInfo:nil repeats:YES];
+        //[self performSelector:@selector(spinit:) withObject:nil afterDelay:3];
+}
+
+- (void)spinit:(NSTimer *)timer
+{
+     dispatch_async(dispatch_get_main_queue(), ^{
+
+         if(ani_step > 9) {
+             [aniTimer invalidate];
+             aniTimer = nil;
+             _instructionsLabel.text = @"수고하셨습니다";
+             return;
+         }
+         
+         // AnglePoint[10] AngleDesc[10]
+         
+         CGPoint location = AnglePoint[ani_step];
+         CGSize viewSize = self.view.bounds.size;
+         aniLoc = CGPointMake((location.x - viewSize.width / 2) / viewSize.width,
+                              (location.y - viewSize.height / 2) / viewSize.height);
+         
+         NSLog(@"GuidePoint = %@ in View(%@)", NSStringFromCGPoint(location), NSStringFromCGRect(self.view.bounds));
+         
+         _instructionsLabel.text = AngleDesc[ani_step];
+         
+         [self guideAnimation:aniLoc];
+         
+         ani_step++;
+         
+         [aniTimer pause];
+     });
+    
+
+    
+    
+    //[aniTimer pause];
+    
+}
+
+//center = 160,284
+//{320, 568}
+//
+//중앙        CGPointMake(160, 284)
+//왼쪽        CGPointMake(219.5, 275.5)
+//오른족       CGPointMake(52, 285.5)
+//위          CGPointMake(155, 163)
+//아래        CGPointMake(154, 413)
+//위 오른쪽     CGPointMake(32, 185.5)
+//위 왼쪽      CGPointMake(86, 194.5)
+//아래 오른족    CGPointMake(232.5, 384)
+//아래 왼쪽     CGPointMake(91, 387)
+//중앙        CGPointMake(160, 284)
+//웃어라
+//찡그려라
+
+
+- (IBAction)toggleFlash:(id)sender
+{
 //    [self setFlashMode:AVCaptureFlashModeAuto forDevice:[[self videoDeviceInput] device]];
 
     if(isFlashOn)
@@ -417,6 +505,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
         
         
         NSLog(@"success load ALAsset.... ");
+        NSLog(@"SAVE || selectedUsers = %@", users);
         [SQLManager saveNewUserPhotoToDB:asset users:users];
         
 //        int count = 0;
@@ -452,6 +541,12 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     [self performSegueWithIdentifier:SEGUE_6_1_TO_2_2 sender:self];
 }
 
+- (void)goAlbum
+{
+    self.navigationController.navigationBarHidden = NO;
+    [self performSegueWithIdentifier:@"Segue6_1to3_1" sender:self];
+}
+
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
 //    if ([segue.identifier isEqualToString:SEGUE_GO_FILTER]){
@@ -480,20 +575,22 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     
     int faceCount = (int)_faceListScrollView.subviews.count;
     
-//    // 동일 사용자 중복
-//    for(UIView *view in _faceListScrollView.subviews){
-//        if([view isKindOfClass:[UIButton class]]){
-//            UIButton_FaceIcon *button = (UIButton_FaceIcon*)view;
-//            if(button.UserID == UserID) return;
-//        }
-//    }
+    // 동일 사용자 중복
+    for(UIView *view in _faceListScrollView.subviews){
+        if([view isKindOfClass:[UIButton class]]){
+            UIButton_FaceIcon *button = (UIButton_FaceIcon*)view;
+            if(button.UserID == UserID) return;
+        }
+    }
+    
+    UIImage *profileImage = [SQLManager getUserProfileImage:UserID];
 
     UIButton_FaceIcon* button = [UIButton_FaceIcon buttonWithType:UIButtonTypeCustom];
     [button addTarget:self action:@selector(imageTouch:withEvent:) forControlEvents:UIControlEventTouchDown];
     [button addTarget:self action:@selector(imageMoved:withEvent:) forControlEvents:UIControlEventTouchDragInside];
     [button addTarget:self action:@selector(imageEnd:withEvent:) forControlEvents:UIControlEventTouchUpInside];
     
-    [button setProfileImage:faceImageView.image];
+    [button setProfileImage:profileImage];
     button.frame = CGRectMake(10+faceCount*60, 9.0f, 50.0f, 50.0f);
     button.UserID = UserID;
     button.index = faceCount;
@@ -503,6 +600,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 
     [selectedUsers addObject:@(UserID)];
     
+    NSLog(@"ADD || selectedUsers = %@", selectedUsers);
     NSLog(@"facecount = %d / frame = %@",faceCount, NSStringFromCGRect(button.frame));
     
     [_faceListScrollView setContentSize:CGSizeMake(10 + faceCount*60 + 50, 67.0)];
@@ -565,7 +663,15 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 
     if(!CGRectContainsPoint (_faceListScrollView.frame, point)){
         NSLog(@"---------------Drag End Outside");
-        [sender removeFromSuperview];
+        
+        [button0 removeFromSuperview];
+        
+        int userid = button0.UserID;
+        [selectedUsers removeObject:@(userid)];
+        
+        NSLog(@"REMOVE || selectedUsers = %@", selectedUsers);
+        
+    
     } else {
         NSLog(@"---------------Drag End Inside");
         
@@ -675,6 +781,11 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
         
         isFlashOn = NO;
         [self setFlashMode:AVCaptureFlashModeOff];
+        
+        
+        [[deviceInput device] addObserver:self forKeyPath:@"adjustingFocus" options:NSKeyValueObservingOptionNew context:NULL];
+        
+
     }
 bail:
     {
@@ -697,6 +808,7 @@ bail:
 {
 	//[stillImageOutput removeObserver:self forKeyPath:@"isCapturingStillImage"];
     
+    [[deviceInput device] removeObserver:self forKeyPath:@"adjustingFocus"];
 	[previewLayer removeFromSuperlayer];
 }
 
@@ -715,6 +827,21 @@ bail:
             [processing removeAllObjects];
         }
     });
+}
+
+// 포커스가 변경되면 호출되는 부분...
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
+  
+    if ([keyPath isEqual:@"adjustingFocus"]) {
+        
+        NSLog(@"adjustingFocus change = %@", change);
+        
+        for (NSString* val in [change allKeys]) {
+            if ([val isEqualToString:@"new"] && [[change objectForKey:val] intValue] == 1) {
+                NSLog(@"Camera Focus is safe..");
+            }
+        }
+    }
 }
 
 #pragma mark -
@@ -1175,57 +1302,76 @@ bail:
 
 - (void)collectFace:(CIFaceFeature *)feature inImage:(CIImage *)ciImage ofUserID:(int)UserID
 {
-    if(_numPicsTaken > TOTAL_COLLECT) return;
-    
-    double current_time = (double)cv::getTickCount();
-    double timeDiff_seconds = (current_time - old_time)/cv::getTickFrequency();
-
-    if(feature.hasLeftEyePosition && feature.hasRightEyePosition){
-        UIImageOrientation imageOrient = [[MotionOrientation sharedInstance] currentImageOrientationWithFrontCamera:isUsingFrontFacingCamera MirrorFlip:NO];
-        BOOL isLandScape = [[MotionOrientation sharedInstance] deviceIsLandscape];
-        cv::Mat preprocessedFace = [FaceLib getFaceImage:ciImage feature:feature orient:imageOrient landscape:isLandScape];
-
-        if(preprocessedFace.data != NULL){
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if(_numPicsTaken > TOTAL_COLLECT) return;
+        
+        double current_time = (double)cv::getTickCount();
+        double timeDiff_seconds = (current_time - old_time)/cv::getTickFrequency();
+        
+        if(feature.hasLeftEyePosition && feature.hasRightEyePosition){
+            UIImageOrientation imageOrient = [[MotionOrientation sharedInstance] currentImageOrientationWithFrontCamera:isUsingFrontFacingCamera MirrorFlip:NO];
+            BOOL isLandScape = [[MotionOrientation sharedInstance] deviceIsLandscape];
+            cv::Mat preprocessedFace = [FaceLib getFaceImage:ciImage feature:feature orient:imageOrient landscape:isLandScape];
             
-            double imageDiff = 10000000000.0;
-            if (old_prepreprocessedFace.data) {
-                imageDiff = [FaceLib getSimilarity:preprocessedFace with:old_prepreprocessedFace];
-            }
-            
-            
-            if ((imageDiff > CHANGE_IN_IMAGE_FOR_COLLECTION) && (timeDiff_seconds > CHANGE_IN_SECONDS_FOR_COLLECTION)) {
-                // Also add the mirror image to the training set, so we have more training data, as well as to deal with faces looking to the left or right.
-                cv::Mat mirroredFace;
-                cv::flip(preprocessedFace, mirroredFace, 1);
+            if(preprocessedFace.data != NULL){
                 
-                NSData *serialized = [FaceLib serializeCvMat:preprocessedFace];
-                [SQLManager setTrainModelForUserID:UserID withFaceData:serialized];
-                
-                serialized = [FaceLib serializeCvMat:mirroredFace];
-                [SQLManager setTrainModelForUserID:UserID withFaceData:serialized];
-
-                UIImage *faceImage = [FaceLib MatToUIImage:preprocessedFace];
-                if(faceImage) [faceImageView setImage:faceImage];
-                
-                if(_numPicsTaken%2 == 0){
-                    NSString *imagePath = [NSString stringWithFormat:@"hive%d.png", (int)_numPicsTaken / TOTAL_COLLECT];
-                    [_hiveImageView setImage:[UIImage imageNamed:imagePath]];
+                double imageDiff = 10000000000.0;
+                if (old_prepreprocessedFace.data) {
+                    imageDiff = [FaceLib getSimilarity:preprocessedFace with:old_prepreprocessedFace];
                 }
                 
-                self.instructionsLabel.text = [NSString stringWithFormat:@"Taken %@'s face : %ld of TOTAL_COLLECT", self.UserName, (long)self.numPicsTaken];
                 
-                if (self.numPicsTaken == TOTAL_COLLECT) {
-                    [self performSelector:@selector(goNext) withObject:nil afterDelay:2];
+                if ((imageDiff > CHANGE_IN_IMAGE_FOR_COLLECTION) && (timeDiff_seconds > CHANGE_IN_SECONDS_FOR_COLLECTION)) {
+                    // Also add the mirror image to the training set, so we have more training data, as well as to deal with faces looking to the left or right.
+                    cv::Mat mirroredFace;
+                    cv::flip(preprocessedFace, mirroredFace, 1);
+                    
+                    NSData *serialized = [FaceLib serializeCvMat:preprocessedFace];
+                    [SQLManager setTrainModelForUserID:UserID withFaceData:serialized];
+                    
+                    serialized = [FaceLib serializeCvMat:mirroredFace];
+                    [SQLManager setTrainModelForUserID:UserID withFaceData:serialized];
+                    
+                    UIImage *faceImage = [FaceLib MatToUIImage:preprocessedFace];
+                    if(faceImage) [faceImageView setImage:faceImage];
+                    
+                    if(_numPicsTaken%2 == 0){
+                        NSString *imagePath = [NSString stringWithFormat:@"hive%d.png", (int)_numPicsTaken * TOTAL_COLLECT];
+                        [_hiveImageView setImage:[UIImage imageNamed:imagePath]];
+                    }
+                    
+                    self.instructionsLabel.text = [NSString stringWithFormat:@"Taken %d / 10", (int)self.numPicsTaken];
+                    
+                    //if(ani_step > 9){
+                    if (self.numPicsTaken == TOTAL_COLLECT) {
+                        
+                        CGImageRef cgimage = [FaceLib getFaceCGImage:ciImage bound:feature.bounds];
+                        UIImage *profileImage = [UIImage imageWithCGImage:cgimage scale:1.0 orientation:imageOrient];
+                        CGImageRelease(cgimage);
+                        profileImage = [profileImage fixRotation];
+                        
+                        //UIImage *profileImage = [UIImage imageWithCIImage:ciImage];
+                        [SQLManager setUserProfileImage:profileImage UserID:UserID];
+                        
+                        if(UserID > 1) // 처음 사용자 아니면
+                            [self performSelector:@selector(goAlbum) withObject:nil afterDelay:2];
+                        else
+                            [self performSelector:@selector(goNext) withObject:nil afterDelay:2];
+                    }
+                    
+                    // Keep a copy of the processed face, to compare on next iteration.
+                    old_prepreprocessedFace = preprocessedFace;
+                    old_time = current_time;
+                    
+                    self.numPicsTaken++;
+                    
+                    if(!aniTimer.isValid)[aniTimer resume];
                 }
-
-                // Keep a copy of the processed face, to compare on next iteration.
-                old_prepreprocessedFace = preprocessedFace;
-                old_time = current_time;
-                
-                self.numPicsTaken++;
             }
         }
-    }
+    });
+    
+
 }
 
 
@@ -1273,8 +1419,8 @@ bail:
     
     dispatch_async(dispatch_get_main_queue(), ^{
   
-        if(faceImage) [faceImageView setImage:faceImage];
-        if(reconstruct) [reconstImageView setImage:reconstruct];
+        if(!IsEmpty(faceImage)) [faceImageView setImage:faceImage];
+        if(!IsEmpty(reconstruct)) [reconstImageView setImage:reconstruct];
         
     });
     
@@ -1287,13 +1433,13 @@ bail:
         
         
         //if(confidence < 50.f){
-        if(confidence >= 0.7f){
+        if(confidence >= 0.8f){
             //recognisedFaces[[NSNumber numberWithInt:trackingID]] = [SQLManager getUserName:UserID];
             NSString *name = [NSString stringWithFormat:@"%@:%.2f", [SQLManager getUserName:UserID], confidence];
             recognisedFaces[@(trackingID)] = name;
         }
         //else if(confidence > 50.f && confidence < 60.f){
-        else if(confidence > 0.5f && confidence < 0.7f){
+        else if(confidence > 0.7f && confidence < 0.8f){
             NSString *name = [NSString stringWithFormat:@"? %@:%.2f", [SQLManager getUserName:UserID], confidence];
             recognisedFaces[@(trackingID)] = name;
         }
@@ -1354,31 +1500,68 @@ bail:
     return (image);
 }
 
+- (UIButton *)tagButtonWithTag:(NSString *)tag point:(CGPoint)position
+{
+    UIFont *_font = [UIFont systemFontOfSize:14.0f];
+    UIColor *_tagBackgroundColor = [UIColor greenColor];
+    UIColor *_tagForegroundColor = [UIColor whiteColor];
+
+    NSString *searchChar = @"?";
+    NSRange rang =[tag rangeOfString:searchChar options:NSCaseInsensitiveSearch];
+
+    if (rang.length == [searchChar length] || [tag isEqualToString:@"Unknown"]){
+        _tagBackgroundColor = [UIColor darkGrayColor];
+    }
+
+    
+    UIButton *tagBtn = [[UIButton alloc] init];
+    [tagBtn.titleLabel setFont:_font];
+    [tagBtn setBackgroundColor:_tagBackgroundColor];
+    [tagBtn setTitleColor:_tagForegroundColor forState:UIControlStateNormal];
+//    [tagBtn addTarget:self action:@selector(tagButtonDidPushed:) forControlEvents:UIControlEventTouchUpInside];
+    [tagBtn setTitle:tag forState:UIControlStateNormal];
+    
+    CGRect btnFrame = tagBtn.frame;
+    btnFrame.origin.x = position.x;
+    btnFrame.origin.y = position.y;
+    btnFrame.size.width = [tagBtn.titleLabel.text sizeWithAttributes:@{NSFontAttributeName:_font}].width + (tagBtn.layer.cornerRadius * 2.0f) + 20.0f;
+    btnFrame.size.height = 20;
+    tagBtn.layer.cornerRadius = btnFrame.size.height * 0.5f;
+    tagBtn.frame = CGRectIntegral(btnFrame);
+    
+    //NSLog(@"btn frame [%@] = %@", tag, NSStringFromCGRect(tagBtn.frame));
+    
+    return tagBtn;
+}
+
+
 
 - (void)showFaceRect:(CGRect)rect withName:(NSString *)name
 {
-    NSString *searchChar = @"?";
-    NSRange rang =[name rangeOfString:searchChar options:NSCaseInsensitiveSearch];
-    BOOL mayBe = FALSE;
-    if (rang.length == [searchChar length] || [name isEqualToString:@"Unknown"]) mayBe = TRUE;
+//    NSString *searchChar = @"?";
+//    NSRange rang =[name rangeOfString:searchChar options:NSCaseInsensitiveSearch];
+//    BOOL mayBe = FALSE;
+//    if (rang.length == [searchChar length] || [name isEqualToString:@"Unknown"]) mayBe = TRUE;
     
-    UIView *view = [[UIView alloc] initWithFrame:rect];
-    view.layer.contents = (id)guideImage.CGImage;
-    view.layer.borderWidth = 1.0f;
-    view.layer.borderColor = (name && !mayBe) ? [UIColor greenColor].CGColor : [UIColor redColor].CGColor;
-
-    if (name) {
-        UILabel *nameLabel = [UILabel new];
-        nameLabel.text = name;
-        [nameLabel sizeToFit];
-        nameLabel.textColor = (name && !mayBe) ? [UIColor greenColor] : [UIColor redColor];
-        nameLabel.backgroundColor = [UIColor clearColor];
-        nameLabel.center = CGPointMake(view.frame.size.width / 2, view.frame.size.height / 2);
-        
-        [view addSubview:nameLabel];
-    }
+//    UIView *view = [[UIView alloc] initWithFrame:rect];
+//    view.layer.contents = (id)guideImage.CGImage;
+//    view.layer.borderWidth = 1.0f;
+//    view.layer.borderColor = (name && !mayBe) ? [UIColor greenColor].CGColor : [UIColor redColor].CGColor;
+//
+//    if (name) {
+//        UILabel *nameLabel = [UILabel new];
+//        nameLabel.text = name;
+//        [nameLabel sizeToFit];
+//        nameLabel.textColor = (name && !mayBe) ? [UIColor greenColor] : [UIColor redColor];
+//        nameLabel.backgroundColor = [UIColor clearColor];
+//        nameLabel.center = CGPointMake(view.frame.size.width / 2, view.frame.size.height / 2);
+//        
+//        [view addSubview:nameLabel];
+//    }
+//    [faceView addSubview:view];
     
-    [faceView addSubview:view];
+    UIButton *nameButton = [self tagButtonWithTag:name point:rect.origin];
+    [faceView addSubview:nameButton];
 }
 
 @end

@@ -108,6 +108,8 @@
         [self performSegueWithIdentifier:SEGUE_FACEANALYZE sender:self];
 }
 
+
+
 #pragma mark FBHelperDelegate
 
 //맨 마지막에 호출 됨.

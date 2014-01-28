@@ -365,7 +365,7 @@ UserCellDelegate, GalleryViewCellDelegate>
         cell.selected = !cell.selected;
     }
     else {
-        self.selectedCell = (GalleryViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
+        self.selectedCell = cell;//(GalleryViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
  
         NSMutableArray *idmPhotos = [NSMutableArray arrayWithCapacity:1];
         NSDictionary *photoinfo = [self.photos objectAtIndex:indexPath.row];

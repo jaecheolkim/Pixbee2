@@ -568,7 +568,7 @@
     if(IsEmpty(profileImage)) {
         UIImage *image = [UIImage imageNamed:@"noname@2x.png"];
         profileImage = [UIImage maskImage:image withMask:[UIImage imageNamed:@"photo_profile_hive@2x.png"]];
-        [[SDImageCache sharedImageCache] storeImage:profileImage forKey:imagePath toDisk:YES];
+        //[[SDImageCache sharedImageCache] storeImage:profileImage forKey:imagePath toDisk:YES];
     }
     return profileImage;
 }

@@ -579,7 +579,7 @@
                                             
                                             double currentConfidence = [match[@"confidence"] doubleValue];
                                             
-                                            if([match[@"UserID"] intValue] == UserID && currentConfidence >= 0.78f)
+                                            if([match[@"UserID"] intValue] == UserID && currentConfidence >= 0.7f)
                                                 //if(([match[@"UserID"] intValue] == UserID && currentConfidence >= 0.78f)  || currentConfidence >= 0.9f)
                                             { //< 60.f){
                                                 int PhotoNo = [SQLManager newUserPhotosWith:[match[@"UserID"] intValue]
@@ -589,10 +589,10 @@
                                                     if(currentConfidence > max_confidence){
                                                         max_confidence = currentConfidence;
                                                         
-                                                        CGImageRef tmpImage = [FaceLib getFaceCGImage:ciImage bound:face.bounds];
-                                                        profileImage = [UIImage imageWithCGImage:tmpImage];
-                                                        
-                                                        [SQLManager setUserProfileImage:profileImage UserID:UserID];
+//                                                        CGImageRef tmpImage = [FaceLib getFaceCGImage:ciImage bound:face.bounds];
+//                                                        profileImage = [UIImage imageWithCGImage:tmpImage];
+//                                                        
+//                                                        [SQLManager setUserProfileImage:profileImage UserID:UserID];
                                                     }
                                                     NSLog(@"UserID => %d Added confidence = %f",[match[@"UserID"] intValue], [match[@"confidence"] doubleValue]);
                                                     

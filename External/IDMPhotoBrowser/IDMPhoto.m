@@ -188,13 +188,30 @@ caption = _caption;
 {
     ALAssetsLibraryAssetForURLResultBlock resultblock = ^(ALAsset *myasset)
     {
-        ALAssetRepresentation *rep = [myasset defaultRepresentation];
-        CGImageRef iref = [rep fullResolutionImage];
-        if (iref) {
-            UIImage *largeimage = [UIImage imageWithCGImage:iref scale:1.0 orientation:0];
+        if(myasset){
+            ALAssetRepresentation* representation = [myasset defaultRepresentation];
+            
+            // Retrieve the image orientation from the ALAsset
+            UIImageOrientation orientation = UIImageOrientationUp;
+            NSNumber* orientationValue = [myasset valueForProperty:@"ALAssetPropertyOrientation"];
+            if (orientationValue != nil) {
+                orientation = [orientationValue intValue];
+            }
+            
+            CGFloat scale  = 1;
+            UIImage* largeimage = [UIImage imageWithCGImage:[representation fullResolutionImage]
+                                                 scale:scale orientation:orientation];
+            
             self.underlyingImage = largeimage;
             [self performSelectorOnMainThread:@selector(imageLoadingComplete) withObject:nil waitUntilDone:NO];
         }
+//        ALAssetRepresentation *rep = [myasset defaultRepresentation];
+//        CGImageRef iref = [rep fullResolutionImage];
+//        if (iref) {
+//            UIImage *largeimage = [UIImage imageWithCGImage:iref scale:1.0 orientation:0];
+//            self.underlyingImage = largeimage;
+//            [self performSelectorOnMainThread:@selector(imageLoadingComplete) withObject:nil waitUntilDone:NO];
+//        }
     };
     
     //

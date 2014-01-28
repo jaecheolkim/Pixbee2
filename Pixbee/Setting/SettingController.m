@@ -10,10 +10,13 @@
 #import "SegmentCell.h"
 #import "AccountCell.h"
 #import <FacebookSDK/FacebookSDK.h>
+#import "IntroViewController.h"
 
 @interface SettingController ()
 @property (strong, nonatomic) SegmentCell *segmentCell;
 @property (strong, nonatomic) AccountCell *accountCell;
+
+
 //@property (strong, nonatomic) IBOutlet UILabel *photoCountLabel;
 //@property (strong, nonatomic) IBOutlet UISwitch *autoAnalyzeSwitch;
 //@property (strong, nonatomic) IBOutlet UISwitch *optionSwitch;
@@ -23,6 +26,8 @@
 - (IBAction)settingOptionChange:(id)sender;
 - (IBAction)photoCountChange:(id)sender;
 - (IBAction)closeClickHandler:(id)sender;
+- (IBAction)goIntroView:(id)sender;
+
 
 @end
 
@@ -32,6 +37,7 @@ static NSString *AccountCellIdentifier = @"AccountCell";
 static NSString *AutoAnalyzeCellIdentifier = @"AutoAnalyzeCell";
 static NSString *OptionCellIdentifier = @"OptionCell";
 static NSString *SegmentCellIdentifier = @"SegmentCell";
+static NSString *AboutCellIdentifier = @"AboutCell";
 
 - (id)initWithStyle:(UITableViewStyle)style
 {
@@ -106,7 +112,7 @@ static NSString *SegmentCellIdentifier = @"SegmentCell";
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     // Return the number of rows in the section.
-    return 4;
+    return 5;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -121,6 +127,9 @@ static NSString *SegmentCellIdentifier = @"SegmentCell";
     }
     else if (indexPath.row == 3) {
         return 80;
+    }
+    else if (indexPath.row == 4) {
+        return 91;
     }
     
     return 0;
@@ -170,6 +179,10 @@ static NSString *SegmentCellIdentifier = @"SegmentCell";
         [self.segmentCell.segmentControl setSelectedSegmentIndex:segmentselect];
         self.segmentCell.segmentLabel.text = [self.segmentCell.segmentControl titleForSegmentAtIndex:[self.segmentCell.segmentControl selectedSegmentIndex]];
     }
+    else if (indexPath.row == 4) {
+        cell = [tableView dequeueReusableCellWithIdentifier:AboutCellIdentifier forIndexPath:indexPath];
+    }
+
 
     return cell;
 }
@@ -302,5 +315,15 @@ static NSString *SegmentCellIdentifier = @"SegmentCell";
 
 - (IBAction)closeClickHandler:(id)sender {
     [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+- (IBAction)goIntroView:(id)sender {
+    NSLog(@"Go IntroView");
+
+    IntroViewController *controller = [[IntroViewController alloc] init];
+    controller.callerID = @"SettingViewController";
+    
+    [self.navigationController pushViewController:controller animated:YES];
+    
 }
 @end
