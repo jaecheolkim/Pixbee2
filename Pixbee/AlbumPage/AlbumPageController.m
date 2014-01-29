@@ -57,6 +57,8 @@
     self.navigationItem.titleView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"pixbee.png"]];
     
 
+    _tableView.backgroundColor = [UIColor clearColor];
+    
     [self initialNotification];
     
 //    self.usersPhotos = [[SQLManager getAllUserPhotos] mutableCopy];

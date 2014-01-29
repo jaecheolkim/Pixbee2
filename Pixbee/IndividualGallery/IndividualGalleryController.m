@@ -62,7 +62,7 @@ UserCellDelegate, GalleryViewCellDelegate>
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
+    _collectionView.backgroundColor = [UIColor clearColor];
     _shareButton.enabled = NO;
 }
 
@@ -533,41 +533,12 @@ UserCellDelegate, GalleryViewCellDelegate>
                                                    UIActivityTypePostToTencentWeibo,
                                                    UIActivityTypeAirDrop]];
     
-//    UIView *tabView = [[UIView alloc] initWithFrame:CGRectMake(0, 150, 320, 20)];
-//    tabView.backgroundColor = [UIColor redColor];
-//    
-//    UIButton *shareButton = [[UIButton alloc] initWithFrame:CGRectMake(10, 0, 20, 20)];
-//    UIButton *deleteButton = [[UIButton alloc] initWithFrame:CGRectMake(290, -10, 32, 40)];
-//    [deleteButton setImage:[UIImage imageNamed:@"trash.png"] forState:UIControlStateNormal];
-//    
-//    shareButton.backgroundColor = [UIColor blueColor];
-//    deleteButton.backgroundColor = [UIColor blueColor];
-//    [tabView addSubview:shareButton];
-//    [tabView addSubview:deleteButton];
-//    
-//    [activityController.view addSubview:tabView];
-    
+
     [self presentViewController:self.activityController
                        animated:YES
                      completion:^
                     {
-//                        NSLog(@"%@", self.activityController);
-//                        
-//                        UIView *tabView = [[UIView alloc] initWithFrame:CGRectMake(0, 250, 320, 30)];
-//                        tabView.backgroundColor = [UIColor whiteColor];
-//                        tabView.alpha = 0.9;
-//
-//                        UIButton *shareButton = [[UIButton alloc] initWithFrame:CGRectMake(10, 5, 20, 20)];
-//                        UIButton *deleteButton = [[UIButton alloc] initWithFrame:CGRectMake(280, -5, 32, 40)];
-//                        [deleteButton setImage:[UIImage imageNamed:@"trash.png"] forState:UIControlStateNormal];
-//
-//                        shareButton.backgroundColor = [UIColor blueColor];
-//                        [tabView addSubview:shareButton];
-//                        [tabView addSubview:deleteButton];
-//                        [deleteButton addTarget:self action:@selector(deletePhotos:) forControlEvents:UIControlEventTouchUpInside];
-//                        
-//                        [self.activityController.view addSubview:tabView];
-                        
+
                     }];
     
     [self.activityController setCompletionHandler:^(NSString *act, BOOL done) {

@@ -37,6 +37,7 @@
 
 - (void)awakeFromNib {
     NSLog(@"style");
+    self.backgroundColor = [UIColor clearColor];
     UIImageView *border = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"individualbar.png"]];
     border.frame = CGRectMake(3, 3, 314, 76);
     self.borderView = border;

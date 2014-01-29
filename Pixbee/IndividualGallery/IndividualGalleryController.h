@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface IndividualGalleryController : UIViewController
+@interface IndividualGalleryController : PBCommonViewController
 
 @property (strong, nonatomic) NSDictionary *usersPhotos;
 @property (nonatomic, assign) int UserID;

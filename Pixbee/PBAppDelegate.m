@@ -23,6 +23,9 @@
     
     [TestFlight takeOff:@"0d73a652-a45f-4b76-9fec-026bd931c1f7"];
     [SQLManager initDataBase];
+    
+    [[UINavigationBar appearance] setBarTintColor:[UIColor colorWithRed:246.0f/255.0f green:223.0f/255.0f blue:55.0f/255.0f alpha:1.0f]];
+
 
 //    // Uncomment to change the background color of navigation bar
 //    [[UINavigationBar appearance] setBarTintColor:UIColorFromRGB(0xffcf0e)];
@@ -31,7 +34,7 @@
 ////    [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
 ////    
 ////    // Uncomment to assign a custom backgroung image
-    [[UINavigationBar appearance] setBackgroundImage:[UIImage imageNamed:@"topbar.png"] forBarMetrics:UIBarMetricsDefault];
+    //[[UINavigationBar appearance] setBackgroundImage:[UIImage imageNamed:@"topbar.png"] forBarMetrics:UIBarMetricsDefault];
 //
 //    // Uncomment to change the back indicator image
 //    

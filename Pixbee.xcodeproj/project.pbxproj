@@ -276,6 +276,10 @@
 		80E363A51880D60100A5DF57 /* stop_video@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 80E363A31880D60100A5DF57 /* stop_video@2x.png */; };
 		80E363A61880D60100A5DF57 /* video@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 80E363A41880D60100A5DF57 /* video@2x.png */; };
 		80E3BE581884346200FF4C3D /* UIAlertView+Blocks.m in Sources */ = {isa = PBXBuildFile; fileRef = 80E3BE571884346200FF4C3D /* UIAlertView+Blocks.m */; };
+		80F17AE41898D09000EBD0C8 /* Default_main.png in Resources */ = {isa = PBXBuildFile; fileRef = 80F17AE31898D09000EBD0C8 /* Default_main.png */; };
+		80F17AE61898DCE500EBD0C8 /* Intro_start_bg.png in Resources */ = {isa = PBXBuildFile; fileRef = 80F17AE51898DCE500EBD0C8 /* Intro_start_bg.png */; };
+		80F17AE91898E0E100EBD0C8 /* PBCommonViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 80F17AE81898E0E100EBD0C8 /* PBCommonViewController.m */; };
+		80F17AEC1898E3EA00EBD0C8 /* background@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 80F17AEB1898E3EA00EBD0C8 /* background@2x.png */; };
 		80F9DD8E187B299800A1BF21 /* UIImage+Addon.m in Sources */ = {isa = PBXBuildFile; fileRef = 80F9DD8D187B299800A1BF21 /* UIImage+Addon.m */; };
 		80F9DD91187B9BA300A1BF21 /* UIButton+FaceIcon.m in Sources */ = {isa = PBXBuildFile; fileRef = 80F9DD90187B9BA300A1BF21 /* UIButton+FaceIcon.m */; };
 /* End PBXBuildFile section */
@@ -703,6 +707,11 @@
 		80E3BE561884346200FF4C3D /* UIAlertView+Blocks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIAlertView+Blocks.h"; sourceTree = "<group>"; };
 		80E3BE571884346200FF4C3D /* UIAlertView+Blocks.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIAlertView+Blocks.m"; sourceTree = "<group>"; };
 		80E3BE591884347F00FF4C3D /* UIExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIExtensions.h; sourceTree = "<group>"; };
+		80F17AE31898D09000EBD0C8 /* Default_main.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default_main.png; sourceTree = "<group>"; };
+		80F17AE51898DCE500EBD0C8 /* Intro_start_bg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Intro_start_bg.png; sourceTree = "<group>"; };
+		80F17AE71898E0E100EBD0C8 /* PBCommonViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBCommonViewController.h; sourceTree = "<group>"; };
+		80F17AE81898E0E100EBD0C8 /* PBCommonViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBCommonViewController.m; sourceTree = "<group>"; };
+		80F17AEB1898E3EA00EBD0C8 /* background@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "background@2x.png"; sourceTree = "<group>"; };
 		80F9DD8C187B299800A1BF21 /* UIImage+Addon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Addon.h"; sourceTree = "<group>"; };
 		80F9DD8D187B299800A1BF21 /* UIImage+Addon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Addon.m"; sourceTree = "<group>"; };
 		80F9DD8F187B9BA300A1BF21 /* UIButton+FaceIcon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIButton+FaceIcon.h"; sourceTree = "<group>"; };
@@ -970,6 +979,8 @@
 				69ED32EE18484EBB00127196 /* Main.storyboard */,
 				69ED32F118484EBB00127196 /* PBViewController.h */,
 				69ED32F218484EBB00127196 /* PBViewController.mm */,
+				80F17AE71898E0E100EBD0C8 /* PBCommonViewController.h */,
+				80F17AE81898E0E100EBD0C8 /* PBCommonViewController.m */,
 				69ED32F418484EBB00127196 /* Images.xcassets */,
 				69ED32E318484EBB00127196 /* Supporting Files */,
 				78685D591848F617002D2BAA /* PBDefine.h */,
@@ -1113,6 +1124,7 @@
 		7856F6F11849D1B700A17349 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				80F17AEB1898E3EA00EBD0C8 /* background@2x.png */,
 				8013EAAA1882D608007075E7 /* noname@2x.png */,
 				80E363A31880D60100A5DF57 /* stop_video@2x.png */,
 				80E363A41880D60100A5DF57 /* video@2x.png */,
@@ -1378,6 +1390,8 @@
 		78C1EB11186B0A780072E7DB /* intro */ = {
 			isa = PBXGroup;
 			children = (
+				80F17AE51898DCE500EBD0C8 /* Intro_start_bg.png */,
+				80F17AE31898D09000EBD0C8 /* Default_main.png */,
 				80E3639718805A2B00A5DF57 /* image4@2x.jpg */,
 				80E3639818805A2B00A5DF57 /* image3@2x.jpg */,
 				80E3639918805A2B00A5DF57 /* image1@2x.jpg */,
@@ -1766,6 +1780,8 @@
 				7805A6DA1866E7B800B234C1 /* copy@2x.png in Resources */,
 				80D2A147184A3385008D29B2 /* release_notes.md in Resources */,
 				80D5B624186F340D000CD8D7 /* filter4@2x.png in Resources */,
+				80F17AEC1898E3EA00EBD0C8 /* background@2x.png in Resources */,
+				80F17AE41898D09000EBD0C8 /* Default_main.png in Resources */,
 				78C1EB76186B0A790072E7DB /* xicon_select@2x.png in Resources */,
 				7805A6E11866E7B800B234C1 /* mainbar@2x.png in Resources */,
 				7805A64618658BA000B234C1 /* SVProgressHUD.bundle in Resources */,
@@ -1788,6 +1804,7 @@
 				78C1EB40186B0A790072E7DB /* comment@2x.png in Resources */,
 				78C1EB6C186B0A790072E7DB /* social_mail@2x.png in Resources */,
 				78C1EB5D186B0A790072E7DB /* message_icon@2x.png in Resources */,
+				80F17AE61898DCE500EBD0C8 /* Intro_start_bg.png in Resources */,
 				78C1EB38186B0A790072E7DB /* blue_button_select@2x.png in Resources */,
 				78C1EB6A186B0A790072E7DB /* social_instagram@2x.png in Resources */,
 				7805A64118658BA000B234C1 /* IDMPhotoBrowser.bundle in Resources */,
@@ -1911,6 +1928,7 @@
 				78C156DB186491A5007BA1DF /* FPPopoverController.m in Sources */,
 				7805A66718659ECC00B234C1 /* AFImageRequestOperation.m in Sources */,
 				78A8053F184F80E5008E81B3 /* SCTPushLeft.m in Sources */,
+				80F17AE91898E0E100EBD0C8 /* PBCommonViewController.m in Sources */,
 				69B1B2FD18587D9200774382 /* IntroControll.m in Sources */,
 				69C39FE718606CBD001EDDFA /* UIImage+MultiFormat.m in Sources */,
 				78C156DC186491A5007BA1DF /* FPPopoverView.m in Sources */,

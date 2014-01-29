@@ -421,15 +421,15 @@ void equalizeLeftAndRightHalves(Mat &faceImg)
         Mat warped = Mat(desiredFaceHeight, desiredFaceWidth, CV_8U, Scalar(128)); // Clear the output image to a default grey.
         warpAffine(MyImage, warped, rot_mat, warped.size());
         
-        
+        //cv::Mat filtered = warped;
         
         // Give the image a standard brightness and contrast, in case it was too dark or had low contrast.
         // Do it seperately for the left and right sides of the face.
         //equalizeLeftAndRightHalves(warped);
         //equalizeHist(warped, warped);
         //cv::Mat filtered = [self getRetinexImage:warped];
-        //warped = [self getRetinexImage:warped];
-        
+        warped = [self getRetinexImage:warped];
+
         // Use the "Bilateral Filter" to reduce pixel noise by smoothing the image, but keeping the sharp edges in the face.
         cv::Mat filtered = Mat(warped.size(), CV_8U);
         cv::bilateralFilter(warped, filtered, 0, 20.0, 2.0);

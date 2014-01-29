@@ -27,6 +27,7 @@
     #import "GlobalValues.h"
 
     #import "UIExtensions.h"
+    #import "PBCommonViewController.h"
 #endif
 
 #ifdef DEBUG

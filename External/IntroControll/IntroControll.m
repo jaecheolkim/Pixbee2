@@ -40,10 +40,14 @@
         //Initial PageView
         pageControl = [[UIPageControl alloc] init];
         pageControl.numberOfPages = pagesArray.count;
+                
+        pageControl.pageIndicatorTintColor = [UIColor darkGrayColor];
+        pageControl.currentPageIndicatorTintColor = [UIColor yellowColor];
+        
         [pageControl sizeToFit];
-        [pageControl setCenter:CGPointMake(frame.size.width/2.0, frame.size.height-50)];
+        [pageControl setCenter:CGPointMake(frame.size.width/2.0, 550)];//frame.size.height-50)];
         [self addSubview:pageControl];
-        pageControl.hidden = YES;
+        pageControl.hidden = NO;
         //Create pages
         pages = pagesArray;
         

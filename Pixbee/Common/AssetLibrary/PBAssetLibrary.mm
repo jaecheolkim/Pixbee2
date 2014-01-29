@@ -502,7 +502,7 @@
         NSArray *trainModel = [SQLManager getTrainModels];
         
         if(!IsEmpty(trainModel)){
-            isFaceRecRedy = [FaceLib initRecognizer:EigenFaceRecognizer models:trainModel];
+            isFaceRecRedy = [FaceLib initRecognizer:LBPHFaceRecognizer models:trainModel];
         }
         
         NSDictionary *detectorOptions = @{ CIDetectorAccuracy : CIDetectorAccuracyLow, CIDetectorTracking : @(NO) };
@@ -579,7 +579,8 @@
                                             
                                             double currentConfidence = [match[@"confidence"] doubleValue];
                                             
-                                            if([match[@"UserID"] intValue] == UserID && currentConfidence >= 0.7f)
+                                            if([match[@"UserID"] intValue] == UserID && currentConfidence < 60.f) //for LBPH
+                                            //if([match[@"UserID"] intValue] == UserID && currentConfidence >= 0.7f) //for EigenFace
                                                 //if(([match[@"UserID"] intValue] == UserID && currentConfidence >= 0.78f)  || currentConfidence >= 0.9f)
                                             { //< 60.f){
                                                 int PhotoNo = [SQLManager newUserPhotosWith:[match[@"UserID"] intValue]

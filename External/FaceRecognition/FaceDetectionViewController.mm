@@ -25,6 +25,8 @@
 #import "UIButton+FaceIcon.h"
 #import "NSTimer+Pause.h"
 
+static void *IsAdjustingFocusingContext = &IsAdjustingFocusingContext;
+
 #define CAPTURE_FPS 30
 const int TOTAL_COLLECT = 10;
 const double CHANGE_IN_IMAGE_FOR_COLLECTION = 0.1; //0.3;
@@ -126,6 +128,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 @property (weak, nonatomic) IBOutlet UIImageView *cameraImage;
 @property (weak, nonatomic) IBOutlet UIImageView *videoImage;
 @property (weak, nonatomic) IBOutlet UIButton *GalleryButton;
+@property (nonatomic, retain) CALayer *adjustingFocusLayer;
 
 - (IBAction)toggleFlash:(id)sender;
 - (IBAction)switchCameras:(id)sender;
@@ -156,7 +159,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     if(self.faceMode == FaceModeRecognize) {
         NSArray *trainModel = [SQLManager getTrainModels];
         if(!IsEmpty(trainModel)){
-            isFaceRecRedy = [FaceLib initRecognizer:EigenFaceRecognizer models:trainModel];
+            isFaceRecRedy = [FaceLib initRecognizer:LBPHFaceRecognizer models:trainModel];
         }
     }
     
@@ -230,6 +233,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 - (void)viewWillDisappear:(BOOL)animated
 {
 	[super viewWillDisappear:animated];
+    isReadyToScanFace = NO;
     [self teardownAVCapture];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:MotionOrientationChangedNotification object:nil];
 }
@@ -445,7 +449,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 
 - (IBAction)closeCamera:(id)sender
 {
-    [self teardownAVCapture];
+    //[self teardownAVCapture];
     
     if(self.faceMode == FaceModeCollect && [_segueid isEqualToString:SEGUE_FACEANALYZE])
     {
@@ -783,8 +787,21 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
         [self setFlashMode:AVCaptureFlashModeOff];
         
         
-        [[deviceInput device] addObserver:self forKeyPath:@"adjustingFocus" options:NSKeyValueObservingOptionNew context:NULL];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(cameraWantsRefocus:)
+                                                     name:AVCaptureDeviceSubjectAreaDidChangeNotification
+                                                   object:[AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo]];
         
+        AVCaptureDevice *device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
+        [device addObserver:self forKeyPath:@"adjustingFocus" options:NSKeyValueObservingOptionNew context:IsAdjustingFocusingContext];
+        
+        
+        if ( !self.adjustingFocusLayer) {
+            CALayer *adjustingFocusBox = [self createLayerBoxWithColor:[UIColor colorWithRed:0.f green:0.f blue:1.f alpha:.8f]];
+            [self.view.layer addSublayer:adjustingFocusBox];
+            self.adjustingFocusLayer = adjustingFocusBox;
+        }
+
 
     }
 bail:
@@ -808,9 +825,34 @@ bail:
 {
 	//[stillImageOutput removeObserver:self forKeyPath:@"isCapturingStillImage"];
     
-    [[deviceInput device] removeObserver:self forKeyPath:@"adjustingFocus"];
+    AVCaptureDevice *device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
+    [device removeObserver:self forKeyPath:@"adjustingFocus"];
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:AVCaptureDeviceSubjectAreaDidChangeNotification object:[AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo]];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    
 	[previewLayer removeFromSuperlayer];
+    self.adjustingFocusLayer = nil;
 }
+
+- (void)cameraWantsRefocus:(NSNotification *)n
+{
+	AVCaptureDevice *device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
+	if ( YES == [device lockForConfiguration:NULL] ) {
+		if ( [device isFocusPointOfInterestSupported] ) {
+			[device setFocusPointOfInterest:CGPointMake(.5, .5)];
+			[device setFocusMode:AVCaptureFocusModeContinuousAutoFocus];
+		}
+		if ( [device isExposurePointOfInterestSupported] ) {
+			[device setExposurePointOfInterest:CGPointMake(.5, .5)];
+			[device setExposureMode:AVCaptureExposureModeContinuousAutoExposure];
+		}
+		[device setSubjectAreaChangeMonitoringEnabled:NO];
+		[device unlockForConfiguration];
+	}
+    
+}
+
 
 - (void)clearGuide
 {
@@ -829,26 +871,124 @@ bail:
     });
 }
 
-// 포커스가 변경되면 호출되는 부분...
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
-  
-    if ([keyPath isEqual:@"adjustingFocus"]) {
-        
-        NSLog(@"adjustingFocus change = %@", change);
-        
-        for (NSString* val in [change allKeys]) {
-            if ([val isEqualToString:@"new"] && [[change objectForKey:val] intValue] == 1) {
-                NSLog(@"Camera Focus is safe..");
-            }
-        }
+- (CALayer *)createLayerBoxWithColor:(UIColor *)color
+{
+    NSDictionary *unanimatedActions = [[NSDictionary alloc] initWithObjectsAndKeys:[NSNull null], @"bounds",[NSNull null], @"frame",[NSNull null], @"position", nil];
+    CALayer *box = [[CALayer alloc] init];
+    [box setActions:unanimatedActions];
+    [box setBorderWidth:1.f];
+    [box setBorderColor:[color CGColor]];
+    [box setOpacity:0.f];
+    [unanimatedActions release];
+    
+    return [box autorelease];
+}
+
+- (void)addAdjustingAnimationToLayer:(CALayer *)focusLayer removeAnimation:(BOOL)remove
+{
+    if (remove) {
+        [focusLayer removeAnimationForKey:@"animateOpacity"];
+    }
+    if ([focusLayer animationForKey:@"animateOpacity"] == nil) {
+        [focusLayer setHidden:NO];
+        CABasicAnimation *opacityAnimation = [CABasicAnimation animationWithKeyPath:@"opacity"];
+        [opacityAnimation setDuration:.3f];
+        [opacityAnimation setRepeatCount:1.f];
+        [opacityAnimation setAutoreverses:YES];
+        [opacityAnimation setFromValue:@1.f];
+        [opacityAnimation setToValue:@.0f];
+        [focusLayer addAnimation:opacityAnimation forKey:@"animateOpacity"];
     }
 }
+
+// 포커스가 변경되면 호출되는 부분...
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+	if ( context == IsAdjustingFocusingContext ) {
+		BOOL isAdjusting = [change[NSKeyValueChangeNewKey] boolValue];
+		CALayer *focusLayer = self.adjustingFocusLayer;
+		[focusLayer setBorderWidth:2.f];
+		[focusLayer setBorderColor:[[UIColor colorWithRed:0.f green:0.f blue:1.f alpha:.7f] CGColor]];
+		[focusLayer setCornerRadius:8.f];
+		[self addAdjustingAnimationToLayer:layer removeAnimation:YES];
+		
+		if (isAdjusting == YES) {
+			// Size the layer
+			CGPoint poi = [(AVCaptureDevice *)object focusPointOfInterest];
+			CGSize layerSize;
+			if ( CGPointEqualToPoint(poi, CGPointMake(.5, .5)) )
+                //				layerSize = CGSizeMake(self.previewView.bounds.size.width * .8, self.previewView.bounds.size.height * .8);
+                layerSize = CGSizeMake(self.view.bounds.size.width * .6, self.view.bounds.size.height * .6);
+			else {
+                //				CGFloat points = MIN(self.previewView.bounds.size.width * .25, self.previewView.bounds.size.height * .25);
+                CGFloat points = MIN(self.view.bounds.size.width * .2, self.view.bounds.size.height * .2);
+				layerSize = CGSizeMake(points, points);
+			}
+            //			poi = [(AVCaptureVideoPreviewLayer *)self.previewView.layer pointForCaptureDevicePointOfInterest:poi];
+            poi = [self pointForCaptureDevicePointOfInterest:poi];
+			[focusLayer setFrame:CGRectMake(0., 0., layerSize.width, layerSize.height)];
+			[focusLayer setPosition:poi];
+            
+            NSLog(@"==============================> LayerSize c_x : %f / c_y : %f / width : %f / height : %f", poi.x, poi.y, layerSize.width, layerSize.height);
+            NSLog(@"==============================> ViewSize width : %f / height : %f", self.view.bounds.size.width, self.view.bounds.size.height);
+		}
+	}
+}
+
+// 스크린 화면을 위한 POI (화면사이즈)
+- (CGPoint)pointForCaptureDevicePointOfInterest:(CGPoint)pointOfInterest
+{
+    CGPoint point;
+    // Otherwise manually convert the point from point-of-interest coordinates
+    // to preview layer coordinates. Notice we set the content gravity of the
+    // preview layer to AVLayerVideoGravityResizeAspectFill.
+    CGRect bounds = [self.view bounds];
+    CGFloat width = CGRectGetWidth(bounds); //CGRectGetHeight(bounds);
+    CGFloat height = CGRectGetHeight(bounds); //CGRectGetWidth(bounds);
+    //    CGFloat aspectRatio = self.view.frame.size.height / self.view.frame.size.width;
+    //    if (width / height > aspectRatio) {
+    //        point.x = (pointOfInterest.y - 0.5) * width * aspectRatio - height / 2.0;
+    //        point.y = pointOfInterest.x * width;
+    //    } else {
+    point.x = pointOfInterest.x * width; //(1.0 - pointOfInterest.x) * width;
+    point.y = pointOfInterest.y * height; //(1.0 - pointOfInterest.y) * height; //(0.5 - pointOfInterest.x) * height / aspectRatio - width / 2.0;
+    //    }
+    
+    //    point = self.view.center;
+    return point;
+}
+
+// 카메라 디바이스를 위한 POI (0 ~ 1)
+- (CGPoint)captureDevicePointOfInterestForPoint:(CGPoint)point
+{
+    // Same discussion above.
+    CGPoint pointOfInterest;
+    
+    
+    CGRect bounds = [self.view bounds];
+    CGFloat width = CGRectGetWidth(bounds); //bounds.size.width; // CGRectGetHeight(bounds);
+    CGFloat height = CGRectGetHeight(bounds); //bounds.size.height; // CGRectGetWidth(bounds);
+    //    CGFloat aspectRatio = self.view.frame.size.height / self.view.frame.size.width;
+    //    if (width / height > aspectRatio) {
+    pointOfInterest.x = point.x / width;
+    pointOfInterest.y = point.y / height; //0.5 + (height / 2.0 + point.y) / width / aspectRatio;
+    //    } else {
+    //        pointOfInterest.x = 0.5 - (width / 2.0 + point.y) / height * aspectRatio;
+    //        pointOfInterest.y = 1.0 - point.x / height;
+    //    }
+    
+    //pointOfInterest = CGPointMake(0.5, 0.5);
+    
+    return pointOfInterest;
+}
+
 
 #pragma mark -
 //- (UIImage *)imageFromSampleBuffer:(CMSampleBufferRef) sampleBuffer
 
 - (void)processImage:(CMSampleBufferRef)sampleBuffer
 {
+    if(!isReadyToScanFace) return;
     
 	// got an image
 	CVPixelBufferRef pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
@@ -929,6 +1069,11 @@ bail:
     }
     else { // 얼굴 인식일 경우.
         
+        if(IsEmpty(features)){
+            [recognisedFaces removeAllObjects];
+            [processing removeAllObjects];
+        }
+        
         dispatch_async(dispatch_get_main_queue(), ^(void) {
             [self drawFaceBoxesForFeatures:features forVideoBox:clap orientation:curDeviceOrientation];
         });
@@ -942,6 +1087,8 @@ bail:
                 }
             }
         }
+
+        
     }
     
 }
@@ -1064,8 +1211,7 @@ bail:
 
 - (void)captureOutput:(AVCaptureOutput *)captureOutput didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnection *)connection
 {
-    if(isReadyToScanFace)
-        [self processImage:sampleBuffer];
+    [self processImage:sampleBuffer];
 }
 
 // called asynchronously as the capture output is capturing sample buffers, this method asks the face detector (if on)
@@ -1130,7 +1276,9 @@ bail:
             else
                 faceRect = CGRectOffset(faceRect, previewBox.origin.x, previewBox.origin.y);
             
-            NSString *name = recognisedFaces[[NSNumber numberWithInt:ff.trackingID]];
+            NSString *name = nil;
+            if(!IsEmpty(recognisedFaces))
+                name = recognisedFaces[@(ff.trackingID)];
             
             if (([features count] > 1) && (ff.trackingID == 0)) {
                 name = nil;
@@ -1205,7 +1353,7 @@ bail:
     else
         faceRect = CGRectOffset(faceRect, previewBox.origin.x, previewBox.origin.y);
     
-    NSString *name = recognisedFaces[[NSNumber numberWithInt:ff.trackingID]];
+    NSString *name = recognisedFaces[@(ff.trackingID)];
     
     //if (([features count] > 1) && (ff.trackingID == 0)) {
     if ((ff.trackingID == 0)) {
@@ -1379,9 +1527,9 @@ bail:
 
 - (void)identifyFace:(CIFaceFeature *)feature inImage:(CIImage *)ciImage
 {
-    if (!recognisedFaces[[NSNumber numberWithInt:feature.trackingID]]) {
-        if (!processing[[NSNumber numberWithInt:feature.trackingID]]) {
-            processing[[NSNumber numberWithInt:feature.trackingID]] = @"1";
+    if (!recognisedFaces[@(feature.trackingID)]) {
+        if (!processing[@(feature.trackingID)]) {
+            processing[@(feature.trackingID)] = @"1";
             
             if(feature.hasLeftEyePosition && feature.hasRightEyePosition){
                 
@@ -1393,17 +1541,32 @@ bail:
                     [self parseFace:cvImage
                               forId:feature.trackingID];
                     
-//                    dispatch_async(dispatch_get_main_queue(), ^{
-//                        UIImage *faceImage = [FaceLib MatToUIImage:cvImage];
-//                        if(faceImage) [faceImageView setImage:faceImage];
-//                    });
                 }
 
             }
         }
-    } else {
-        //NSLog(@"%d is %@", feature.trackingID, recognisedFaces[[NSNumber numberWithInt:feature.trackingID]]);
     }
+    
+//    int trackingID = feature.trackingID;
+//    int count = [processing[@(trackingID)] intValue];
+//    if(count < 3){
+//        processing[@(trackingID)] = [NSString stringWithFormat:@"%d", count + 1];
+//        
+//        if(feature.hasLeftEyePosition && feature.hasRightEyePosition){
+//            
+//            UIImageOrientation imageOrient = [[MotionOrientation sharedInstance] currentImageOrientationWithFrontCamera:isUsingFrontFacingCamera MirrorFlip:NO];
+//            BOOL isLandScape = [[MotionOrientation sharedInstance] deviceIsLandscape];
+//            cv::Mat cvImage = [FaceLib getFaceImage:ciImage feature:feature orient:imageOrient landscape:isLandScape];
+//            
+//            if(cvImage.data != NULL){
+//                [self parseFace:cvImage
+//                          forId:trackingID];
+//                
+//            }
+//            
+//        }
+//    }
+
 }
 
 - (void)parseFace:(cv::Mat &)image forId:(int)trackingID
@@ -1411,6 +1574,7 @@ bail:
     NSDictionary *match = [FaceLib recognizeFace:image];
     if(IsEmpty(match)) return;
     
+    BOOL isFindFace = NO;
     int UserID = [match[@"UserID"] intValue];
     
     UIImage *reconstruct = match[@"reconstruct"];
@@ -1432,30 +1596,32 @@ bail:
         double confidence = [match[@"confidence"] doubleValue];
         
         
-        //if(confidence < 50.f){
-        if(confidence >= 0.8f){
+        if(confidence < 50.f){ // For LBPH
+        //if(confidence >= 0.8f){ // For EigenFace
             //recognisedFaces[[NSNumber numberWithInt:trackingID]] = [SQLManager getUserName:UserID];
             NSString *name = [NSString stringWithFormat:@"%@:%.2f", [SQLManager getUserName:UserID], confidence];
             recognisedFaces[@(trackingID)] = name;
+            isFindFace = YES;
         }
-        //else if(confidence > 50.f && confidence < 60.f){
-        else if(confidence > 0.7f && confidence < 0.8f){
+        else if(confidence > 50.f && confidence < 60.f){ // For LBPH
+        //else if(confidence > 0.7f && confidence < 0.8f){ // For EigenFace
             NSString *name = [NSString stringWithFormat:@"? %@:%.2f", [SQLManager getUserName:UserID], confidence];
             recognisedFaces[@(trackingID)] = name;
+            isFindFace = YES;
         }
         else {
            recognisedFaces[@(trackingID)] = @"Unknown";
         }
         
         dispatch_async(dispatch_get_main_queue(), ^{
-            
-            [self addNewFaceIcon:UserID];
+            if(isFindFace)
+                [self addNewFaceIcon:UserID];
             
         });
-
     }
 
-    [processing removeObjectForKey:[NSNumber numberWithInt:trackingID]];
+    //if([processing[@(trackingID)] intValue] > 2);
+        [processing removeObjectForKey:[NSNumber numberWithInt:trackingID]];
 }
 
 //this comes from http://code.opencv.org/svn/gsoc2012/ios/trunk/HelloWorld_iOS/HelloWorld_iOS/VideoCameraController.m

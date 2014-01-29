@@ -8,21 +8,21 @@
     if (self) {
         UILabel *titleLabel = [[UILabel alloc] init];
         [titleLabel setText:model.titleText];
-        [titleLabel setTextColor:[UIColor whiteColor]];
-        [titleLabel setFont:[UIFont boldSystemFontOfSize:18]];
-        [titleLabel setShadowColor:[UIColor blackColor]];
-        [titleLabel setShadowOffset:CGSizeMake(1, 1)];
+        [titleLabel setTextColor:[UIColor blackColor]];
+        [titleLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Bold" size:25]];//[UIFont boldSystemFontOfSize:25]];
+//        [titleLabel setShadowColor:[UIColor blackColor]];
+//        [titleLabel setShadowOffset:CGSizeMake(1, 1)];
         [titleLabel setBackgroundColor:[UIColor clearColor]];
         [titleLabel sizeToFit];
-        [titleLabel setCenter:CGPointMake(frame.size.width/2, frame.size.height-145)];
+        [titleLabel setCenter:CGPointMake(frame.size.width/2, 66)]; // frame.size.height - 145
         [self addSubview:titleLabel];
         
         UILabel *descriptionLabel = [[UILabel alloc] init];
         [descriptionLabel setText:model.descriptionText];
-        [descriptionLabel setFont:[UIFont systemFontOfSize:16]];
-        [descriptionLabel setTextColor:[UIColor whiteColor]];
-        [descriptionLabel setShadowColor:[UIColor blackColor]];
-        [descriptionLabel setShadowOffset:CGSizeMake(1, 1)];
+        [descriptionLabel setFont:[UIFont fontWithName:@"HelveticaNeue-light" size:16]];//[UIFont systemFontOfSize:16]];
+        [descriptionLabel setTextColor:[UIColor blackColor]];
+//        [descriptionLabel setShadowColor:[UIColor blackColor]];
+//        [descriptionLabel setShadowOffset:CGSizeMake(1, 1)];
         [descriptionLabel setNumberOfLines:3];
         [descriptionLabel setBackgroundColor:[UIColor clearColor]];
         [descriptionLabel setTextAlignment:NSTextAlignmentCenter];
