@@ -94,7 +94,8 @@ UserCellDelegate, GalleryViewCellDelegate>
     self.importView.titleLabel.lineBreakMode = NSLineBreakByWordWrapping;
     self.importView.titleLabel.textAlignment = NSTextAlignmentCenter;
     
-    NSString *buttonTitle = [NSString stringWithFormat:@"Message Here\nPlease import\nmore %@'s Photo", [self.user objectForKey:@"UserName"]];
+    NSLog(@"title - %@", self.importView.titleLabel.text);
+    NSString *buttonTitle = [NSString stringWithFormat:@"Please import\nmore %@'s Photo", [self.user objectForKey:@"UserName"]];
     self.importView.titleLabel.text = buttonTitle;
  
 }

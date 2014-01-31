@@ -113,7 +113,7 @@
     [self setUser:user];
     
     int UserID = [[user objectForKey:@"UserID"] intValue];
-    
+
     // 사용자 이미지
     if(IsEmpty([user objectForKey:@"UserProfile"])) {
         [self.userImage setImage:[SQLManager getUserProfileImage:UserID]];
@@ -189,6 +189,28 @@
         [self.delegate searchFriend:self name:self.inputName.text];
     }
 }
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+    if (textField == self.inputName) {
+        
+//        NSString *UserName = textField.text;
+//        int userID = [[self.user objectForKey:@"UserID"] intValue];
+//        
+//        if(!IsEmpty(UserName)){
+//            [self.userName setText:UserName];
+//            NSArray *result = [SQLManager updateUser:@{ @"UserID" : @(userID), @"UserName" :UserName}];
+//            NSLog(@"result = %@", result);
+//        }
+//        
+//        
+//        [textField resignFirstResponder];
+        
+        [self doneButtonClickHandler:nil];
+        return NO;
+    }
+    return YES;
+}
+
 
 - (void)layoutSubviews
 {

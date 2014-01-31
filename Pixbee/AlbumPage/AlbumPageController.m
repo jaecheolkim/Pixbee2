@@ -60,11 +60,7 @@
     _tableView.backgroundColor = [UIColor clearColor];
     
     [self initialNotification];
-    
-//    self.usersPhotos = [[SQLManager getAllUserPhotos] mutableCopy];
-//    NSLog(@"usersPhotos: %@",_usersPhotos);
-//    [self calAllPhotos];
-    
+
     [self reloadDB];
     
     // 이전 버튼 제거
@@ -149,8 +145,7 @@
             allphotocount += [location count];
         }
     }
-    
-//    int allphotocount = (int)[[PBAssetsLibrary sharedInstance].totalAssets count];
+
     self.allPhotosView.countLabel.text = [NSString stringWithFormat:@"%d", allphotocount];
 }
 
@@ -229,11 +224,6 @@
     NSArray *photos = [users objectForKey:@"photos"];
 
     if ([photos count] > 5) {
-//        IndividualGalleryController *destViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"IndividualGallery"];
-//        NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
-//        destViewController.usersPhotos = [self.usersPhotos objectAtIndex:indexPath.row];
-//        [self.navigationController pushViewController:destViewController animated:YES];
-        
         [self performSegueWithIdentifier:SEGUE_3_1_TO_4_1 sender:self];
     }
     else {
@@ -366,10 +356,10 @@
     NSIndexPath *indexPath = editIndexPath;
     
     NSString *inputUserName = cell.inputName.text;
-    NSString *cellUserName = [cell.user objectForKey:@"UserName"];
+    //NSString *cellUserName = [cell.user objectForKey:@"UserName"];
     int cellUserID = [[cell.user objectForKey:@"UserID"] intValue];
     
-    if(![cellUserName isEqualToString:inputUserName] && !IsEmpty(inputUserName)){
+    if(!IsEmpty(inputUserName)){
         //Update DB
         NSArray *result = [SQLManager updateUser:@{ @"UserID" : @(cellUserID), @"UserName" :inputUserName}];
         if(!IsEmpty(result)){

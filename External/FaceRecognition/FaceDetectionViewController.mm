@@ -198,7 +198,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     [_closeButton bootstrapStyle];
     
     ani_step = 0;
-    [self startTimer];
+    //[self startTimer];
     
     
 }
@@ -1501,9 +1501,9 @@ bail:
                         //UIImage *profileImage = [UIImage imageWithCIImage:ciImage];
                         [SQLManager setUserProfileImage:profileImage UserID:UserID];
                         
-                        if(UserID > 1) // 처음 사용자 아니면
-                            [self performSelector:@selector(goAlbum) withObject:nil afterDelay:2];
-                        else
+                        //if(UserID > 1) // 처음 사용자 아니면
+                        //    [self performSelector:@selector(goAlbum) withObject:nil afterDelay:2];
+                        //else
                             [self performSelector:@selector(goNext) withObject:nil afterDelay:2];
                     }
                     
@@ -1593,26 +1593,43 @@ bail:
     // Match found
     if (UserID != -1)
     {
+        PBFaceRecognizer currentRecognizerType = (PBFaceRecognizer)[match[@"currentRecognizerType"] intValue];
         double confidence = [match[@"confidence"] doubleValue];
-        
-        
-        if(confidence < 50.f){ // For LBPH
-        //if(confidence >= 0.8f){ // For EigenFace
-            //recognisedFaces[[NSNumber numberWithInt:trackingID]] = [SQLManager getUserName:UserID];
-            NSString *name = [NSString stringWithFormat:@"%@:%.2f", [SQLManager getUserName:UserID], confidence];
-            recognisedFaces[@(trackingID)] = name;
-            isFindFace = YES;
+    
+        if(currentRecognizerType == LBPHFaceRecognizer)
+        {
+            if(confidence < 50.f){ // For LBPH
+                NSString *name = [NSString stringWithFormat:@"%@:%.2f", [SQLManager getUserName:UserID], confidence];
+                recognisedFaces[@(trackingID)] = name;
+                isFindFace = YES;
+            }
+            //else if(confidence > 50.f && confidence < 60.f){ // For LBPH
+            else if(confidence > 50.f && confidence < 80.f){ // For LBPH
+                NSString *name = [NSString stringWithFormat:@"? %@:%.2f", [SQLManager getUserName:UserID], confidence];
+                recognisedFaces[@(trackingID)] = name;
+                isFindFace = YES;
+            }
+            else {
+                recognisedFaces[@(trackingID)] = @"Unknown";
+            }
         }
-        else if(confidence > 50.f && confidence < 60.f){ // For LBPH
-        //else if(confidence > 0.7f && confidence < 0.8f){ // For EigenFace
-            NSString *name = [NSString stringWithFormat:@"? %@:%.2f", [SQLManager getUserName:UserID], confidence];
-            recognisedFaces[@(trackingID)] = name;
-            isFindFace = YES;
+        else if(currentRecognizerType == EigenFaceRecognizer || currentRecognizerType == FisherFaceRecognizer)
+        {
+            if(confidence >= 0.8f){ // For EigenFace
+                NSString *name = [NSString stringWithFormat:@"%@:%.2f", [SQLManager getUserName:UserID], confidence];
+                recognisedFaces[@(trackingID)] = name;
+                isFindFace = YES;
+            }
+            else if(confidence > 0.7f && confidence < 0.8f){ // For EigenFace
+                NSString *name = [NSString stringWithFormat:@"? %@:%.2f", [SQLManager getUserName:UserID], confidence];
+                recognisedFaces[@(trackingID)] = name;
+                isFindFace = YES;
+            }
+            else {
+                recognisedFaces[@(trackingID)] = @"Unknown";
+            }
         }
-        else {
-           recognisedFaces[@(trackingID)] = @"Unknown";
-        }
-        
+
         dispatch_async(dispatch_get_main_queue(), ^{
             if(isFindFace)
                 [self addNewFaceIcon:UserID];

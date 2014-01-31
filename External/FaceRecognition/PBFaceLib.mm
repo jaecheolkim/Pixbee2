@@ -179,14 +179,12 @@ using namespace cv;
 #pragma mark Recognize Operations
 - (NSDictionary *)recognizeFace:(cv::Mat&)image
 {
-    //    NSDictionary *match = [_faceRecognizer recognizeFace:image];
-    //    return match;
-    
+
     int identity = -1;
-    //NSString *personName = @"";
     double confidence =0.0, similarity = 0.0;
-    UIImage *reconst;
-    // LBP Algorithm
+    UIImage *reconst = nil;
+    
+    // LBP Algorithm modelName
     if(currentRecognizerType == LBPHFaceRecognizer){
         _model->predict(image, identity, confidence);
         
@@ -214,7 +212,8 @@ using namespace cv;
             identity = -1;
         }
     }
-    NSDictionary *d = @{
+    
+    NSDictionary *d = @{     @"currentRecognizerType" : @(currentRecognizerType),
                              @"similarity" : @(similarity),
                              @"reconstruct" : ObjectOrNull(reconst),
                              @"UserID": @(identity), //[NSNumber numberWithInt:identity],
@@ -421,18 +420,18 @@ void equalizeLeftAndRightHalves(Mat &faceImg)
         Mat warped = Mat(desiredFaceHeight, desiredFaceWidth, CV_8U, Scalar(128)); // Clear the output image to a default grey.
         warpAffine(MyImage, warped, rot_mat, warped.size());
         
-        //cv::Mat filtered = warped;
+        cv::Mat filtered = warped;
         
         // Give the image a standard brightness and contrast, in case it was too dark or had low contrast.
         // Do it seperately for the left and right sides of the face.
         //equalizeLeftAndRightHalves(warped);
         //equalizeHist(warped, warped);
         //cv::Mat filtered = [self getRetinexImage:warped];
-        warped = [self getRetinexImage:warped];
+        //warped = [self getRetinexImage:warped];
 
         // Use the "Bilateral Filter" to reduce pixel noise by smoothing the image, but keeping the sharp edges in the face.
-        cv::Mat filtered = Mat(warped.size(), CV_8U);
-        cv::bilateralFilter(warped, filtered, 0, 20.0, 2.0);
+        //cv::Mat filtered = Mat(warped.size(), CV_8U);
+        //cv::bilateralFilter(warped, filtered, 0, 20.0, 2.0);
         
         //[self unsharpMask:filtered];
         

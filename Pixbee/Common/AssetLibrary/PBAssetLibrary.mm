@@ -576,33 +576,54 @@
                                         
                                         if(match != nil){
                                             NSLog(@"Match : %@", match);
-                                            
+                                            PBFaceRecognizer currentRecognizerType = (PBFaceRecognizer)[match[@"currentRecognizerType"] intValue];
                                             double currentConfidence = [match[@"confidence"] doubleValue];
                                             
-                                            if([match[@"UserID"] intValue] == UserID && currentConfidence < 60.f) //for LBPH
-                                            //if([match[@"UserID"] intValue] == UserID && currentConfidence >= 0.7f) //for EigenFace
-                                                //if(([match[@"UserID"] intValue] == UserID && currentConfidence >= 0.78f)  || currentConfidence >= 0.9f)
-                                            { //< 60.f){
-                                                int PhotoNo = [SQLManager newUserPhotosWith:[match[@"UserID"] intValue]
-                                                                                  withPhoto:PhotoID
-                                                                                   withFace:FaceNo];
-                                                if(PhotoNo) {
-                                                    if(currentConfidence > max_confidence){
-                                                        max_confidence = currentConfidence;
+                                            
+                                            if(currentRecognizerType == LBPHFaceRecognizer)
+                                            {
+                                                if([match[@"UserID"] intValue] == UserID && currentConfidence < 150.f) //for LBPH
+                                                //if([match[@"UserID"] intValue] == UserID && currentConfidence < 60.f) //for LBPH
+                                                {
+                                                    int PhotoNo = [SQLManager newUserPhotosWith:[match[@"UserID"] intValue]
+                                                                                      withPhoto:PhotoID
+                                                                                       withFace:FaceNo];
+                                                    if(PhotoNo) {
+                                                        if(currentConfidence > max_confidence){
+                                                            max_confidence = currentConfidence;
+                                                        }
+                                                        NSLog(@"UserID => %d Added confidence = %f",[match[@"UserID"] intValue], [match[@"confidence"] doubleValue]);
                                                         
-//                                                        CGImageRef tmpImage = [FaceLib getFaceCGImage:ciImage bound:face.bounds];
-//                                                        profileImage = [UIImage imageWithCGImage:tmpImage];
-//                                                        
-//                                                        [SQLManager setUserProfileImage:profileImage UserID:UserID];
+                                                        scaledImage = [UIImage imageWithCGImage:cgImage];
+                                                        [_faceAssets addObject:@{@"Asset": photoAsset, @"UserID" : @(UserID), @"PhotoID" : @(PhotoID)}];
+                                                        
+                                                        _matchCount++;
                                                     }
-                                                    NSLog(@"UserID => %d Added confidence = %f",[match[@"UserID"] intValue], [match[@"confidence"] doubleValue]);
-                                                    
-                                                    scaledImage = [UIImage imageWithCGImage:cgImage];
-                                                    [_faceAssets addObject:@{@"Asset": photoAsset, @"UserID" : @(UserID), @"PhotoID" : @(PhotoID)}];
-                                                    
-                                                    _matchCount++;
                                                 }
+                                                
                                             }
+                                            else if(currentRecognizerType == EigenFaceRecognizer || currentRecognizerType == FisherFaceRecognizer)
+                                            {
+                                                if([match[@"UserID"] intValue] == UserID && currentConfidence >= 0.7f) //for EigenFace
+                                                {
+                                                    int PhotoNo = [SQLManager newUserPhotosWith:[match[@"UserID"] intValue]
+                                                                                      withPhoto:PhotoID
+                                                                                       withFace:FaceNo];
+                                                    if(PhotoNo) {
+                                                        if(currentConfidence > max_confidence){
+                                                            max_confidence = currentConfidence;
+                                                         }
+                                                        NSLog(@"UserID => %d Added confidence = %f",[match[@"UserID"] intValue], [match[@"confidence"] doubleValue]);
+                                                        
+                                                        scaledImage = [UIImage imageWithCGImage:cgImage];
+                                                        [_faceAssets addObject:@{@"Asset": photoAsset, @"UserID" : @(UserID), @"PhotoID" : @(PhotoID)}];
+                                                        
+                                                        _matchCount++;
+                                                    }
+                                                }
+                                                
+                                            }
+                                            
                                         }
                                         
                                     }

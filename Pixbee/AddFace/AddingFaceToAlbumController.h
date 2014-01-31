@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface AddingFaceToAlbumController : UIViewController
+@interface AddingFaceToAlbumController : PBCommonViewController
 @property (nonatomic, strong) NSString *UserName;
 @property (nonatomic) int UserID;
 @end

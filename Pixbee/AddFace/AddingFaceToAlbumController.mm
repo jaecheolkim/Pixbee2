@@ -99,8 +99,10 @@
     self.flowView.minimumPageAlpha = 0.5;
     self.flowView.minimumPageScale = 0.5;
 
+    self.nameField.delegate = self;
     self.nameField.text = self.UserName;
     [self.nameField addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
+    
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -227,7 +229,7 @@
 }
 
 - (IBAction)addButtonClickHandler:(id)sender {
-    [self performSegueWithIdentifier:SEGUE_2_2_TO_1_4 sender:self];
+    [self performSegueWithIdentifier:@"Segue2_2to3_1" sender:self];
 }
 
 - (IBAction)rightButtonClickHandler:(id)sender {
@@ -431,6 +433,24 @@
     [controller appearPopup:convertedPoint reverse:NO];
     
     self.friendPopup = controller;
+}
+
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+    if (textField == self.nameField) {
+        
+        NSString *UserName = textField.text;
+        
+        if(!IsEmpty(UserName)){
+            NSArray *result = [SQLManager updateUser:@{ @"UserID" : @(self.UserID), @"UserName" :UserName}];
+            NSLog(@"result = %@", result);
+        }
+        
+        
+        [textField resignFirstResponder];
+        return NO;
+    }
+    return YES;
 }
 
 @end

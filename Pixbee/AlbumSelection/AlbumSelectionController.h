@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface AlbumSelectionController : UIViewController
+@interface AlbumSelectionController : PBCommonViewController
 @property (strong, nonatomic) NSArray *photos;
 @property (strong, nonatomic) NSString *segueIdentifier;
 @property (strong, nonatomic) NSString *operateIdentifier;
