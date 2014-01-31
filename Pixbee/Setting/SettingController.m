@@ -13,6 +13,8 @@
 #import "IntroViewController.h"
 
 @interface SettingController ()
+@property (nonatomic) NSArray *timeZoneNames;
+
 @property (strong, nonatomic) SegmentCell *segmentCell;
 @property (strong, nonatomic) AccountCell *accountCell;
 
@@ -39,18 +41,25 @@ static NSString *OptionCellIdentifier = @"OptionCell";
 static NSString *SegmentCellIdentifier = @"SegmentCell";
 static NSString *AboutCellIdentifier = @"AboutCell";
 
-- (id)initWithStyle:(UITableViewStyle)style
-{
-    self = [super initWithStyle:style];
-    if (self) {
-        // Custom initialization
-    }
-    return self;
-}
+//- (id)initWithStyle:(UITableViewStyle)style
+//{
+//    self = [super initWithStyle:style];
+//    if (self) {
+//        // Custom initialization
+//    }
+//    return self;
+//}
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    
+//    [self.tableView setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"background"]]];
+    
+    NSArray *timeZones = [NSTimeZone knownTimeZoneNames];
+	self.timeZoneNames = [timeZones sortedArrayUsingSelector:@selector(localizedStandardCompare:)];
+
 
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
@@ -65,127 +74,175 @@ static NSString *AboutCellIdentifier = @"AboutCell";
     // Dispose of any resources that can be recreated.
 }
 
-//- (void)awakeFromNib {
-//    
-////    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
-////    UITableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:AccountCellIdentifier forIndexPath:indexPath];
-////    UILabel *accountLabel = (UILabel *)[cell.contentView viewWithTag:10];
-////    accountLabel.text = GlobalValue.userName;
-////    UIButton *logoutButton = (UIButton *)[cell.contentView viewWithTag:20];
-////    if ([FBSession activeSession].isOpen) {
-////        [logoutButton setTitle:@"Log-out" forState:UIControlStateNormal];
-////    }
-////    else {
-////        [logoutButton setTitle:@"Sign-in" forState:UIControlStateNormal];
-////    }
-////    
-////    BOOL autoanalyze = [[NSUserDefaults standardUserDefaults] boolForKey:@"AUTOANALYZE_VALUE"];
-////    indexPath = [NSIndexPath indexPathForRow:1 inSection:0];
-////    cell = [self.tableView dequeueReusableCellWithIdentifier:AutoAnalyzeCellIdentifier forIndexPath:indexPath];
-////    UISwitch *autoAnalyzeSwitch = (UISwitch *)[cell.contentView viewWithTag:10];
-////    autoAnalyzeSwitch.on = !autoanalyze;
-////    
-////    BOOL option = [[NSUserDefaults standardUserDefaults] boolForKey:@"OPTION_VALUE"];
-////    indexPath = [NSIndexPath indexPathForRow:2 inSection:0];
-////    cell = [self.tableView dequeueReusableCellWithIdentifier:OptionCellIdentifier forIndexPath:indexPath];
-////    UISwitch *optionSwitch = (UISwitch *)[cell.contentView viewWithTag:10];
-////    optionSwitch.on = !option;
-//    
-//    long segmentselect = [[NSUserDefaults standardUserDefaults] integerForKey:@"SEGMEMT_VALUE"];
-//    indexPath = [NSIndexPath indexPathForRow:3 inSection:0];
-//    cell = [self.tableView dequeueReusableCellWithIdentifier:SegmentCellIdentifier forIndexPath:indexPath];
-//    UILabel *photoCountLabel = (UILabel *)[cell.contentView viewWithTag:10];
-//    UISegmentedControl *segmentcontrol = (UISegmentedControl *)[cell.contentView viewWithTag:20];
-//    [segmentcontrol setSelectedSegmentIndex:segmentselect];
-//    photoCountLabel.text = [segmentcontrol titleForSegmentAtIndex:[segmentcontrol selectedSegmentIndex]];
-//    [photoCountLabel setNeedsLayout];
-//}
+
 
 #pragma mark - Table view data source
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
-{
-    // Return the number of sections.
-    return 1;
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+	// Return the number of time zone names.
+	return [self.timeZoneNames count];
 }
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
-    // Return the number of rows in the section.
-    return 5;
-}
 
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.row == 0) {
-        return 91;
-    }
-    else if (indexPath.row == 1) {
-        return 50;
-    }
-    else if (indexPath.row == 2) {
-        return 50;
-    }
-    else if (indexPath.row == 3) {
-        return 80;
-    }
-    else if (indexPath.row == 4) {
-        return 91;
-    }
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    return 0;
+	static NSString *MyIdentifier = @"MyIdentifier";
+    
+	/*
+     Retrieve a cell with the given identifier from the table view.
+     The cell is defined in the main storyboard: its identifier is MyIdentifier, and  its selection style is set to None.
+     */
+	UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:MyIdentifier];
+    
+	// Set up the cell.
+	NSString *timeZoneName = [self.timeZoneNames objectAtIndex:indexPath.row];
+	cell.textLabel.text = timeZoneName;
+    
+	return cell;
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+
+- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
-
-    UITableViewCell *cell;
-    if (indexPath.row == 0) {
-        if (self.accountCell == nil) {
-            cell = [tableView dequeueReusableCellWithIdentifier:AccountCellIdentifier forIndexPath:indexPath];
+    if ([cell respondsToSelector:@selector(tintColor)]) {
+        if (tableView == self.tableView) {
+            CGFloat cornerRadius = 5.f;
+            cell.backgroundColor = UIColor.clearColor;
+            CAShapeLayer *layer = [[CAShapeLayer alloc] init];
+            CGMutablePathRef pathRef = CGPathCreateMutable();
+            CGRect bounds = CGRectInset(cell.bounds, 10, 0);
+            BOOL addLine = NO;
+            if (indexPath.row == 0 && indexPath.row == [tableView numberOfRowsInSection:indexPath.section]-1) {
+                CGPathAddRoundedRect(pathRef, nil, bounds, cornerRadius, cornerRadius);
+            } else if (indexPath.row == 0) {
+                CGPathMoveToPoint(pathRef, nil, CGRectGetMinX(bounds), CGRectGetMaxY(bounds));
+                CGPathAddArcToPoint(pathRef, nil, CGRectGetMinX(bounds), CGRectGetMinY(bounds), CGRectGetMidX(bounds), CGRectGetMinY(bounds), cornerRadius);
+                CGPathAddArcToPoint(pathRef, nil, CGRectGetMaxX(bounds), CGRectGetMinY(bounds), CGRectGetMaxX(bounds), CGRectGetMidY(bounds), cornerRadius);
+                CGPathAddLineToPoint(pathRef, nil, CGRectGetMaxX(bounds), CGRectGetMaxY(bounds));
+                addLine = YES;
+            } else if (indexPath.row == [tableView numberOfRowsInSection:indexPath.section]-1) {
+                CGPathMoveToPoint(pathRef, nil, CGRectGetMinX(bounds), CGRectGetMinY(bounds));
+                CGPathAddArcToPoint(pathRef, nil, CGRectGetMinX(bounds), CGRectGetMaxY(bounds), CGRectGetMidX(bounds), CGRectGetMaxY(bounds), cornerRadius);
+                CGPathAddArcToPoint(pathRef, nil, CGRectGetMaxX(bounds), CGRectGetMaxY(bounds), CGRectGetMaxX(bounds), CGRectGetMidY(bounds), cornerRadius);
+                CGPathAddLineToPoint(pathRef, nil, CGRectGetMaxX(bounds), CGRectGetMinY(bounds));
+            } else {
+                CGPathAddRect(pathRef, nil, bounds);
+                addLine = YES;
+            }
+            layer.path = pathRef;
+            CFRelease(pathRef);
+            layer.fillColor = [UIColor colorWithWhite:1.f alpha:0.8f].CGColor;
             
-            self.accountCell = (AccountCell *)cell;
+            if (addLine == YES) {
+                CALayer *lineLayer = [[CALayer alloc] init];
+                CGFloat lineHeight = (1.f / [UIScreen mainScreen].scale);
+                lineLayer.frame = CGRectMake(CGRectGetMinX(bounds)+10, bounds.size.height-lineHeight, bounds.size.width-10, lineHeight);
+                lineLayer.backgroundColor = tableView.separatorColor.CGColor;
+                [layer addSublayer:lineLayer];
+            }
+            UIView *testView = [[UIView alloc] initWithFrame:bounds];
+            [testView.layer insertSublayer:layer atIndex:0];
+            testView.backgroundColor = UIColor.clearColor;
+            cell.backgroundView = testView;
         }
-        
-        self.accountCell.accountLabel.text = GlobalValue.userName;
-        if ([FBSession activeSession].isOpen) {
-            [self.accountCell.logoutButton setTitle:@"Log-out" forState:UIControlStateNormal];
-        }
-        else {
-            [self.accountCell.logoutButton setTitle:@"Sign-in" forState:UIControlStateNormal];
-        }
     }
-    else if (indexPath.row == 1) {
-        cell = [tableView dequeueReusableCellWithIdentifier:AutoAnalyzeCellIdentifier forIndexPath:indexPath];
-        
-        BOOL autoanalyze = [[NSUserDefaults standardUserDefaults] boolForKey:@"AUTOANALYZE_VALUE"];
-        UISwitch *autoAnalyzeSwitch = (UISwitch *)[cell.contentView viewWithTag:10];
-        autoAnalyzeSwitch.on = !autoanalyze;
-    }
-    else if (indexPath.row == 2) {
-        cell = [tableView dequeueReusableCellWithIdentifier:OptionCellIdentifier forIndexPath:indexPath];
-        
-        BOOL option = [[NSUserDefaults standardUserDefaults] boolForKey:@"OPTION_VALUE"];
-        UISwitch *optionSwitch = (UISwitch *)[cell.contentView viewWithTag:10];
-        optionSwitch.on = !option;
-    }
-    else if (indexPath.row == 3) {
-        if (self.segmentCell == nil) {
-            cell = (SegmentCell*)[tableView dequeueReusableCellWithIdentifier:SegmentCellIdentifier forIndexPath:indexPath];
-            
-            self.segmentCell = (SegmentCell *)cell;
-        }
-        long segmentselect = [[NSUserDefaults standardUserDefaults] integerForKey:@"SEGMEMT_VALUE"];
-        
-        [self.segmentCell.segmentControl setSelectedSegmentIndex:segmentselect];
-        self.segmentCell.segmentLabel.text = [self.segmentCell.segmentControl titleForSegmentAtIndex:[self.segmentCell.segmentControl selectedSegmentIndex]];
-    }
-    else if (indexPath.row == 4) {
-        cell = [tableView dequeueReusableCellWithIdentifier:AboutCellIdentifier forIndexPath:indexPath];
-    }
-
-
-    return cell;
 }
+
+
+//- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+//{
+//    // Return the number of sections.
+//    return 1;
+//}
+//
+//- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+//{
+//    // Return the number of rows in the section.
+//    return 1;
+//}
+//
+//- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+////    if (indexPath.row == 0) {
+////        return 91;
+////    }
+////    else if (indexPath.row == 1) {
+////        return 50;
+////    }
+////    else if (indexPath.row == 2) {
+////        return 50;
+////    }
+////    else if (indexPath.row == 3) {
+////        return 80;
+////    }
+////    else if (indexPath.row == 4) {
+////        return 91;
+////    }
+//    
+//    return 50;
+//}
+
+//- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+//{
+//
+////    UITableViewCell *cell;
+////    if (indexPath.row == 0) {
+////        if (self.accountCell == nil) {
+////            cell = [tableView dequeueReusableCellWithIdentifier:AccountCellIdentifier forIndexPath:indexPath];
+////            
+////            self.accountCell = (AccountCell *)cell;
+////        }
+////        
+////        self.accountCell.accountLabel.text = GlobalValue.userName;
+//        if ([FBSession activeSession].isOpen) {
+//            [self.accountCell.logoutButton setTitle:@"Log-out" forState:UIControlStateNormal];
+//        }
+//        else {
+//            [self.accountCell.logoutButton setTitle:@"Sign-in" forState:UIControlStateNormal];
+//        }
+////    }
+////    else if (indexPath.row == 1) {
+////        cell = [tableView dequeueReusableCellWithIdentifier:AutoAnalyzeCellIdentifier forIndexPath:indexPath];
+////        
+////        BOOL autoanalyze = [[NSUserDefaults standardUserDefaults] boolForKey:@"AUTOANALYZE_VALUE"];
+////        UISwitch *autoAnalyzeSwitch = (UISwitch *)[cell.contentView viewWithTag:10];
+////        autoAnalyzeSwitch.on = !autoanalyze;
+////    }
+////    else if (indexPath.row == 2) {
+////        cell = [tableView dequeueReusableCellWithIdentifier:OptionCellIdentifier forIndexPath:indexPath];
+////        
+////        BOOL option = [[NSUserDefaults standardUserDefaults] boolForKey:@"OPTION_VALUE"];
+////        UISwitch *optionSwitch = (UISwitch *)[cell.contentView viewWithTag:10];
+////        optionSwitch.on = !option;
+////    }
+////    else if (indexPath.row == 3) {
+////        if (self.segmentCell == nil) {
+////            cell = (SegmentCell*)[tableView dequeueReusableCellWithIdentifier:SegmentCellIdentifier forIndexPath:indexPath];
+////            
+////            self.segmentCell = (SegmentCell *)cell;
+////        }
+////        long segmentselect = [[NSUserDefaults standardUserDefaults] integerForKey:@"SEGMEMT_VALUE"];
+////        
+////        [self.segmentCell.segmentControl setSelectedSegmentIndex:segmentselect];
+////        self.segmentCell.segmentLabel.text = [self.segmentCell.segmentControl titleForSegmentAtIndex:[self.segmentCell.segmentControl selectedSegmentIndex]];
+////    }
+////    else if (indexPath.row == 4) {
+////        cell = [tableView dequeueReusableCellWithIdentifier:AboutCellIdentifier forIndexPath:indexPath];
+////    }
+////
+////
+////    return cell;
+//    
+//    static NSString *MyIdentifier = @"MyIdentifier";
+//    
+//	/*
+//     Retrieve a cell with the given identifier from the table view.
+//     The cell is defined in the main storyboard: its identifier is MyIdentifier, and  its selection style is set to None.
+//     */
+//	UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:MyIdentifier];
+//    
+//    
+//	return cell;
+//}
 
 /*
 // Override to support conditional editing of the table view.

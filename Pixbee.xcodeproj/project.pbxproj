@@ -209,6 +209,9 @@
 		801B35DB18561B9600EEB9F3 /* SMTransformLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 801B35D918561B9600EEB9F3 /* SMTransformLayer.m */; };
 		801B35DF18561BC400EEB9F3 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 801B35DE18561BC400EEB9F3 /* ViewController.m */; };
 		8065CCB5189A7D0700E37716 /* setting_logo@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8065CCB4189A7D0700E37716 /* setting_logo@2x.png */; };
+		8065CCB8189BC9BB00E37716 /* PBSettingTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8065CCB7189BC9BB00E37716 /* PBSettingTableViewController.m */; };
+		8065CCC3189C00E500E37716 /* RFRateMe.m in Sources */ = {isa = PBXBuildFile; fileRef = 8065CCC0189C00E500E37716 /* RFRateMe.m */; };
+		8065CCC4189C00E500E37716 /* UIAlertView+NSCookbook.m in Sources */ = {isa = PBXBuildFile; fileRef = 8065CCC2189C00E500E37716 /* UIAlertView+NSCookbook.m */; };
 		807E75C81851576100B1AD7E /* THBinder.m in Sources */ = {isa = PBXBuildFile; fileRef = 807E75C31851576100B1AD7E /* THBinder.m */; };
 		807E75C91851576100B1AD7E /* THObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = 807E75C51851576100B1AD7E /* THObserver.m */; };
 		80812839184D22960000CF3E /* DB_text.txt in Resources */ = {isa = PBXBuildFile; fileRef = 80812838184D22960000CF3E /* DB_text.txt */; };
@@ -604,6 +607,12 @@
 		801B35DD18561BC400EEB9F3 /* ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		801B35DE18561BC400EEB9F3 /* ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		8065CCB4189A7D0700E37716 /* setting_logo@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "setting_logo@2x.png"; sourceTree = "<group>"; };
+		8065CCB6189BC9BB00E37716 /* PBSettingTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PBSettingTableViewController.h; path = Setting/PBSettingTableViewController.h; sourceTree = "<group>"; };
+		8065CCB7189BC9BB00E37716 /* PBSettingTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PBSettingTableViewController.m; path = Setting/PBSettingTableViewController.m; sourceTree = "<group>"; };
+		8065CCBF189C00E500E37716 /* RFRateMe.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RFRateMe.h; sourceTree = "<group>"; };
+		8065CCC0189C00E500E37716 /* RFRateMe.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RFRateMe.m; sourceTree = "<group>"; };
+		8065CCC1189C00E500E37716 /* UIAlertView+NSCookbook.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIAlertView+NSCookbook.h"; sourceTree = "<group>"; };
+		8065CCC2189C00E500E37716 /* UIAlertView+NSCookbook.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIAlertView+NSCookbook.m"; sourceTree = "<group>"; };
 		807E75C21851576100B1AD7E /* THBinder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = THBinder.h; sourceTree = "<group>"; };
 		807E75C31851576100B1AD7E /* THBinder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = THBinder.m; sourceTree = "<group>"; };
 		807E75C41851576100B1AD7E /* THObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = THObserver.h; sourceTree = "<group>"; };
@@ -1019,6 +1028,8 @@
 			children = (
 				69F5A8F11877DC780054A640 /* SettingController.h */,
 				69F5A8F21877DC780054A640 /* SettingController.m */,
+				8065CCB6189BC9BB00E37716 /* PBSettingTableViewController.h */,
+				8065CCB7189BC9BB00E37716 /* PBSettingTableViewController.m */,
 			);
 			path = Setting;
 			sourceTree = "<group>";
@@ -1417,6 +1428,17 @@
 			path = SMShadowdLayer;
 			sourceTree = "<group>";
 		};
+		8065CCBE189C00E500E37716 /* RFRateMe */ = {
+			isa = PBXGroup;
+			children = (
+				8065CCBF189C00E500E37716 /* RFRateMe.h */,
+				8065CCC0189C00E500E37716 /* RFRateMe.m */,
+				8065CCC1189C00E500E37716 /* UIAlertView+NSCookbook.h */,
+				8065CCC2189C00E500E37716 /* UIAlertView+NSCookbook.m */,
+			);
+			path = RFRateMe;
+			sourceTree = "<group>";
+		};
 		807E75C11851576100B1AD7E /* THObserversAndBinders */ = {
 			isa = PBXGroup;
 			children = (
@@ -1441,6 +1463,7 @@
 		80D2A0C4184A1E57008D29B2 /* External */ = {
 			isa = PBXGroup;
 			children = (
+				8065CCBE189C00E500E37716 /* RFRateMe */,
 				697C83DB186DF2FA00823990 /* MBSwitch */,
 				80D55216186C713400B54974 /* MotionOrientation */,
 				7805A65118659ECC00B234C1 /* AFNetworking */,
@@ -1893,6 +1916,7 @@
 				69C39FE318606CBD001EDDFA /* NSData+GIF.m in Sources */,
 				800FBAF0189688910041017C /* NSTimer+Pause.m in Sources */,
 				80D5B5D2186F0541000CD8D7 /* PBFilterViewController.m in Sources */,
+				8065CCC3189C00E500E37716 /* RFRateMe.m in Sources */,
 				69C39FD118606B39001EDDFA /* UIButton+WebCache.m in Sources */,
 				695B37FB186DF88800FC7D72 /* PBFaceLib.mm in Sources */,
 				8081283D184D25F50000CF3E /* GlobalValues.m in Sources */,
@@ -1904,6 +1928,7 @@
 				80D2A133184A1E58008D29B2 /* SWTableViewCell.m in Sources */,
 				78685D6A184979A6002D2BAA /* InvitationController.m in Sources */,
 				807E75C91851576100B1AD7E /* THObserver.m in Sources */,
+				8065CCC4189C00E500E37716 /* UIAlertView+NSCookbook.m in Sources */,
 				78C950AA185D5FA60041E8DD /* SBPageFlowView.m in Sources */,
 				78A80541184F80E5008E81B3 /* UIStoryboardSegue+CustomTransitions.m in Sources */,
 				69C39FCD18606B39001EDDFA /* SDWebImageDecoder.m in Sources */,
@@ -1952,6 +1977,7 @@
 				69F5A8F31877DC780054A640 /* SettingController.m in Sources */,
 				78C1EAEF186AD68E0072E7DB /* UIView+SubviewHunting.m in Sources */,
 				7805A6F01866F41300B234C1 /* BasicBottomView.m in Sources */,
+				8065CCB8189BC9BB00E37716 /* PBSettingTableViewController.m in Sources */,
 				80D2A11B184A1E58008D29B2 /* ASGalleryPage.m in Sources */,
 				696ECBDB1850551F00F54DB6 /* AllPhotosController.m in Sources */,
 				7805A64718658BA000B234C1 /* SVProgressHUD.m in Sources */,

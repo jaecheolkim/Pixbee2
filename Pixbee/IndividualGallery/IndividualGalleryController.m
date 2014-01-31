@@ -64,6 +64,8 @@ UserCellDelegate, GalleryViewCellDelegate>
     [super viewDidLoad];
     _collectionView.backgroundColor = [UIColor clearColor];
     _shareButton.enabled = NO;
+    
+    self.userProfileView.delegate = self;
 }
 
 - (void)refreshInfo
@@ -79,17 +81,17 @@ UserCellDelegate, GalleryViewCellDelegate>
     self.photos = [self.usersPhotos objectForKey:@"photos"];
     self.user = [self.usersPhotos objectForKey:@"user"];
     
-    [self.userProfileView.borderView removeFromSuperview];
-    self.userProfileView.borderView = nil;
+//    [self.userProfileView.borderView removeFromSuperview];
+//    self.userProfileView.borderView = nil;
     [self.userProfileView updateCell:self.user count:[self.photos count]];
-    self.userProfileView.delegate = self;
+    
     
     UICollectionViewFlowLayout *collectionViewLayout = (UICollectionViewFlowLayout*)self.collectionView.collectionViewLayout;
     collectionViewLayout.sectionInset = UIEdgeInsetsMake(0, 0, 3, 0);
     
     [self.collectionView reloadData];
-    [self.userProfileView.borderView removeFromSuperview];
-    self.userProfileView.borderView = nil;
+//    [self.userProfileView.borderView removeFromSuperview];
+//    self.userProfileView.borderView = nil;
     
     self.importView.titleLabel.lineBreakMode = NSLineBreakByWordWrapping;
     self.importView.titleLabel.textAlignment = NSTextAlignmentCenter;
@@ -412,17 +414,64 @@ UserCellDelegate, GalleryViewCellDelegate>
 }
 
 - (void)doneUserCell:(UserCell *)cell {
+    
+    NSString *inputUserName = cell.inputName.text;
+    int cellUserID = [[cell.user objectForKey:@"UserID"] intValue];
+    
+    if(!IsEmpty(inputUserName)){
+        //Update DB
+        NSArray *result = [SQLManager updateUser:@{ @"UserID" : @(cellUserID), @"UserName" :inputUserName}];
+        if(!IsEmpty(result)){
+            cell.userName.text = inputUserName;
+            
+//            NSDictionary *users = [self.usersPhotos objectAtIndex:indexPath.row];
+//            NSArray *photos = users[@"photos"];
+//            NSDictionary *user =result[0];
+//            [self.usersPhotos replaceObjectAtIndex:indexPath.row withObject:@{@"user":user,@"photos":photos}];
+            
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"AlbumContentsViewEventHandler"
+                                                                object:self
+                                                              userInfo:@{@"Msg":@"changedGalleryDB"}];
+            
+        }
+    }
+
+    
     [self frientList:cell appear:NO];
     [self.userProfileView setEditing:NO animated:NO];
 }
 
 - (void)deleteUserCell:(UserCell *)cell {
-    [self doneUserCell:cell];
+    [self.userProfileView setEditing:NO animated:NO];
     
-    // 여기서 삭제시 어떻게 처리하는지 구현
-    
-    // 여기도 DB 업데이트
+    UIActionSheet *deleteMenu = [[UIActionSheet alloc] initWithTitle:nil
+                                                            delegate:self
+                                                   cancelButtonTitle:NSLocalizedString(@"Cancel", @"")
+                                              destructiveButtonTitle:NSLocalizedString(@"Delete selected FaceTag", @"")
+                                                   otherButtonTitles:nil];
+	[deleteMenu showInView:self.view];
 }
+
+- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
+    NSLog(@"Button index = %d", (int)buttonIndex);
+    if(buttonIndex == 0) {
+         int UserID = [[self.userProfileView.user objectForKey:@"UserID"] intValue];
+        if([SQLManager deleteUser:UserID]){
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"AlbumContentsViewEventHandler"
+                                                                object:self
+                                                              userInfo:@{@"Msg":@"changedGalleryDB"}];
+            
+            [self.navigationController popViewControllerAnimated:YES];
+ 
+        } else {
+            NSLog(@"Can't delete Users db row..");
+#warning Error message 뿌려주기
+        }
+
+    }
+    
+}
+
 
 - (void)frientList:(UserCell *)cell appear:(BOOL)show {
     if (show) {

@@ -9,9 +9,11 @@
 #import <objc/runtime.h>
 #import "GlobalValues.h"
 
-#define  KEY_USERID             @"userID"
-#define  KEY_USERNAME           @"userName"
-#define  KEY_LASTASSETURL       @"lastAssetURL"
+#define  KEY_USERID                     @"userID"
+#define  KEY_USERNAME                   @"userName"
+#define  KEY_LASTASSETURL               @"lastAssetURL"
+#define  KEY_AUTOALBUMSCANSETTING       @"autoAlbumScanSetting"
+#define  KEY_PUSHNOTIFICATIONSETTING    @"pushNotificationSetting"
 
 @interface GlobalValues ()
 @end
@@ -88,8 +90,25 @@
 	return [[NSUserDefaults standardUserDefaults] objectForKey:strKey];
 }
 
+- (void)setAutoAlbumScanSetting:(int)autoAlbumScanSetting
+{
+    [self writeObjectToDefault:[NSString stringWithFormat:@"%d",autoAlbumScanSetting] withKey:KEY_AUTOALBUMSCANSETTING];
+}
 
+- (int)autoAlbumScanSetting
+{
+    return [[self readObjectFromDefault:KEY_AUTOALBUMSCANSETTING] intValue];
+}
 
+- (void)setPushNotificationSetting:(int)pushNotificationSetting
+{
+    [self writeObjectToDefault:[NSString stringWithFormat:@"%d",pushNotificationSetting] withKey:KEY_PUSHNOTIFICATIONSETTING];
+}
+
+- (int)pushNotificationSetting
+{
+    return [[self readObjectFromDefault:KEY_PUSHNOTIFICATIONSETTING] intValue];
+}
 
 
 
