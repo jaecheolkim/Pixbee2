@@ -111,6 +111,8 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     int ani_step;
     
     NSTimer *aniTimer;
+    
+    double currentAngle;
 
 }
 @property (weak, nonatomic) IBOutlet UILabel *instructionsLabel;
@@ -198,10 +200,15 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     [_closeButton bootstrapStyle];
     
     ani_step = 0;
+    currentAngle = 0.0;
     //[self startTimer];
     
-    
+    UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapScreen:)];
+    [self.view addGestureRecognizer:tapGestureRecognizer];
 }
+
+
+
 
 
 - (BOOL)prefersStatusBarHidden {
@@ -250,24 +257,24 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 {
     double degree = [[MotionOrientation sharedInstance] degreeOrientation];
     NSLog(@"Orientation = %f", degree);
+    currentAngle = degree * (M_PI/180.0);
+    
     dispatch_async(dispatch_get_main_queue(), ^(void) {
         [UIView animateWithDuration:0.2 animations:^{
-            _shutterImage.transform = CGAffineTransformMakeRotation(degree * (M_PI/180.0)) ;
-            _cameraImage.transform = CGAffineTransformMakeRotation(degree * (M_PI/180.0)) ;
-            _videoImage.transform = CGAffineTransformMakeRotation(degree * (M_PI/180.0)) ;
-            _GalleryButton.transform = CGAffineTransformMakeRotation(degree * (M_PI/180.0)) ;
+            _shutterImage.transform = CGAffineTransformMakeRotation(currentAngle) ;
+            _cameraImage.transform = CGAffineTransformMakeRotation(currentAngle) ;
+            _videoImage.transform = CGAffineTransformMakeRotation(currentAngle) ;
+            _GalleryButton.transform = CGAffineTransformMakeRotation(currentAngle) ;
             
-            _flashButton.transform  = CGAffineTransformMakeRotation(degree * (M_PI/180.0)) ;
-            _switchButton.imageView.transform  = CGAffineTransformMakeRotation(degree * (M_PI/180.0)) ;
+            _flashButton.transform  = CGAffineTransformMakeRotation(currentAngle) ;
+            _switchButton.imageView.transform  = CGAffineTransformMakeRotation(currentAngle) ;
             
             // Face Icon rotate
             for(UIView *view in _faceListScrollView.subviews){
                 if([view isKindOfClass:[UIButton class]]){
-                    view.transform  = CGAffineTransformMakeRotation(degree * (M_PI/180.0)) ;
+                    view.transform  = CGAffineTransformMakeRotation(currentAngle) ;
                 }
             }
-
-            
         }];
 
     });
@@ -1093,6 +1100,12 @@ bail:
     
 }
 
+// 화면 터치하면 얼굴인식 다시 되게..
+- (void)tapScreen:(id)sender
+{
+    [self clearGuide];
+}
+
 
 //- (void)processImage:(CMSampleBufferRef)sampleBuffer
 //{
@@ -1247,7 +1260,8 @@ bail:
         CGRect previewBox = [self videoPreviewBoxForGravity:gravity
                                                   frameSize:parentFrameSize
                                                apertureSize:clap.size];
-        
+    
+    
         for ( CIFaceFeature *ff in features ) {
             
             // find the correct position for the square layer within the previewLayer
@@ -1280,14 +1294,15 @@ bail:
             if(!IsEmpty(recognisedFaces))
                 name = recognisedFaces[@(ff.trackingID)];
             
-            if (([features count] > 1) && (ff.trackingID == 0)) {
-                name = nil;
-            }
+//            if (([features count] > 1) && (ff.trackingID == 0)) {
+//                name = nil;
+//            }
             
             [self showFaceRect:faceRect withName:name];
             
             currentFeature++;
         }
+    
         
         [CATransaction commit];
    // }
@@ -1598,36 +1613,39 @@ bail:
     
         if(currentRecognizerType == LBPHFaceRecognizer)
         {
+            NSString *name;
             if(confidence < 50.f){ // For LBPH
-                NSString *name = [NSString stringWithFormat:@"%@:%.2f", [SQLManager getUserName:UserID], confidence];
-                recognisedFaces[@(trackingID)] = name;
+                name = [NSString stringWithFormat:@"%@:%.2f", [SQLManager getUserName:UserID], confidence];
                 isFindFace = YES;
             }
             //else if(confidence > 50.f && confidence < 60.f){ // For LBPH
             else if(confidence > 50.f && confidence < 80.f){ // For LBPH
-                NSString *name = [NSString stringWithFormat:@"? %@:%.2f", [SQLManager getUserName:UserID], confidence];
-                recognisedFaces[@(trackingID)] = name;
+                name = [NSString stringWithFormat:@"? %@:%.2f", [SQLManager getUserName:UserID], confidence];
                 isFindFace = YES;
             }
             else {
-                recognisedFaces[@(trackingID)] = @"Unknown";
+                name = [NSString stringWithFormat:@"Unknown[%d:%.2f]", UserID, confidence];
+                isFindFace = NO;
             }
+            
+            recognisedFaces[@(trackingID)] = name;
         }
         else if(currentRecognizerType == EigenFaceRecognizer || currentRecognizerType == FisherFaceRecognizer)
         {
+            NSString *name;
             if(confidence >= 0.8f){ // For EigenFace
-                NSString *name = [NSString stringWithFormat:@"%@:%.2f", [SQLManager getUserName:UserID], confidence];
-                recognisedFaces[@(trackingID)] = name;
+                name = [NSString stringWithFormat:@"%@:%.2f", [SQLManager getUserName:UserID], confidence];
                 isFindFace = YES;
             }
             else if(confidence > 0.7f && confidence < 0.8f){ // For EigenFace
-                NSString *name = [NSString stringWithFormat:@"? %@:%.2f", [SQLManager getUserName:UserID], confidence];
-                recognisedFaces[@(trackingID)] = name;
+                name = [NSString stringWithFormat:@"? %@:%.2f", [SQLManager getUserName:UserID], confidence];
                 isFindFace = YES;
             }
             else {
-                recognisedFaces[@(trackingID)] = @"Unknown";
+                name = [NSString stringWithFormat:@"Unknown[%d:%.2f]", UserID, confidence];
+                isFindFace = NO;
             }
+            recognisedFaces[@(trackingID)] = name;
         }
 
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -1638,7 +1656,7 @@ bail:
     }
 
     //if([processing[@(trackingID)] intValue] > 2);
-        [processing removeObjectForKey:[NSNumber numberWithInt:trackingID]];
+    [processing removeObjectForKey:[NSNumber numberWithInt:trackingID]];
 }
 
 //this comes from http://code.opencv.org/svn/gsoc2012/ios/trunk/HelloWorld_iOS/HelloWorld_iOS/VideoCameraController.m
@@ -1692,7 +1710,7 @@ bail:
     NSString *searchChar = @"?";
     NSRange rang =[tag rangeOfString:searchChar options:NSCaseInsensitiveSearch];
 
-    if (rang.length == [searchChar length] || [tag isEqualToString:@"Unknown"]){
+    if (rang.length == [searchChar length] || [tag isEqualToString:@"Unknown"] || [tag hasPrefix:@"Unknown"]){
         _tagBackgroundColor = [UIColor darkGrayColor];
     }
 
@@ -1721,30 +1739,9 @@ bail:
 
 - (void)showFaceRect:(CGRect)rect withName:(NSString *)name
 {
-//    NSString *searchChar = @"?";
-//    NSRange rang =[name rangeOfString:searchChar options:NSCaseInsensitiveSearch];
-//    BOOL mayBe = FALSE;
-//    if (rang.length == [searchChar length] || [name isEqualToString:@"Unknown"]) mayBe = TRUE;
-    
-//    UIView *view = [[UIView alloc] initWithFrame:rect];
-//    view.layer.contents = (id)guideImage.CGImage;
-//    view.layer.borderWidth = 1.0f;
-//    view.layer.borderColor = (name && !mayBe) ? [UIColor greenColor].CGColor : [UIColor redColor].CGColor;
-//
-//    if (name) {
-//        UILabel *nameLabel = [UILabel new];
-//        nameLabel.text = name;
-//        [nameLabel sizeToFit];
-//        nameLabel.textColor = (name && !mayBe) ? [UIColor greenColor] : [UIColor redColor];
-//        nameLabel.backgroundColor = [UIColor clearColor];
-//        nameLabel.center = CGPointMake(view.frame.size.width / 2, view.frame.size.height / 2);
-//        
-//        [view addSubview:nameLabel];
-//    }
-//    [faceView addSubview:view];
-    
     UIButton *nameButton = [self tagButtonWithTag:name point:rect.origin];
     [faceView addSubview:nameButton];
+    nameButton.transform  = CGAffineTransformMakeRotation(currentAngle);
 }
 
 @end

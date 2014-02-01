@@ -419,21 +419,31 @@ void equalizeLeftAndRightHalves(Mat &faceImg)
         // Note that we use 'w' for the height instead of 'h', because the input face has 1:1 aspect ratio.
         Mat warped = Mat(desiredFaceHeight, desiredFaceWidth, CV_8U, Scalar(128)); // Clear the output image to a default grey.
         warpAffine(MyImage, warped, rot_mat, warped.size());
+        cv::Mat filtered;
         
-        cv::Mat filtered = warped;
+//        {
+//            equalizeLeftAndRightHalves(warped);
+//            //equalizeHist(warped, warped);
+//            filtered = Mat(warped.size(), CV_8U);
+//            cv::bilateralFilter(warped, filtered, 0, 20.0, 2.0);
+//        }
         
-        // Give the image a standard brightness and contrast, in case it was too dark or had low contrast.
-        // Do it seperately for the left and right sides of the face.
-        //equalizeLeftAndRightHalves(warped);
-        //equalizeHist(warped, warped);
-        //cv::Mat filtered = [self getRetinexImage:warped];
-        //warped = [self getRetinexImage:warped];
+//        {
+//            filtered = [self getRetinexImage:warped];
+//        }
+        
+//        {
+//            warped = [self getRetinexImage:warped];
+//            filtered = Mat(warped.size(), CV_8U);
+//            cv::bilateralFilter(warped, filtered, 0, 20.0, 2.0);
+//        }
+        
 
-        // Use the "Bilateral Filter" to reduce pixel noise by smoothing the image, but keeping the sharp edges in the face.
-        //cv::Mat filtered = Mat(warped.size(), CV_8U);
-        //cv::bilateralFilter(warped, filtered, 0, 20.0, 2.0);
+        {   //맨 마지막 버전 (1/31)
+            filtered = warped;
+        }
         
-        //[self unsharpMask:filtered];
+        
         
         // Filter out the corners of the face, since we mainly just care about the middle parts.
         // Draw a filled ellipse in the middle of the face-sized image.
