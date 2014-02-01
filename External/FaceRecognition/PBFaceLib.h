@@ -54,6 +54,8 @@ typedef enum{
 // 보통 scale 은 1.2로 세팅 해 줄 것임.
 - (UIImage *)scaleImage:(CGImageRef)cgImage scale:(float)scale;
 
+- (cv::Mat)dataToMat:(NSData *)data width:(NSNumber *)width height:(NSNumber *)height;
+
 - (cv::Mat)UIImageToMat:(UIImage *)image;
 - (UIImage*)MatToUIImage:(const cv::Mat&)image;
 - (double)getSimilarity:(const cv::Mat)A with:(const cv::Mat)B;

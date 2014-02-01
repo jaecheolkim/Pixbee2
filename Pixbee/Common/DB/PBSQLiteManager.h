@@ -75,6 +75,8 @@ enum errorCodes {
 - (NSInteger)numberOfFacesForUserID:(int)UserID;
 - (NSArray*)getTrainModels;
 - (void)setTrainModelForUserID:(int)UserID withFaceData:(NSData*)FaceData;
+//테스트용 사용자별 얼굴 리스트
+- (NSArray*)getUsersFaces;
 
 #pragma mark Photos Table
 - (int)newPhotoWith:(ALAsset *)asset withGroupAssetURL:(NSString*)groupAssetURL;

@@ -54,7 +54,6 @@
         self.doneButton.title = @"Share";
     }
 
-    
     selectedPhotos = [NSMutableArray array];
     [self reloadDB];
 }

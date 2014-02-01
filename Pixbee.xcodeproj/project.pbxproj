@@ -216,6 +216,11 @@
 		807E75C91851576100B1AD7E /* THObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = 807E75C51851576100B1AD7E /* THObserver.m */; };
 		80812839184D22960000CF3E /* DB_text.txt in Resources */ = {isa = PBXBuildFile; fileRef = 80812838184D22960000CF3E /* DB_text.txt */; };
 		8081283D184D25F50000CF3E /* GlobalValues.m in Sources */ = {isa = PBXBuildFile; fileRef = 8081283C184D25F50000CF3E /* GlobalValues.m */; };
+		80AA4189189D0F4E00B7CF56 /* SFAlbumView.m in Sources */ = {isa = PBXBuildFile; fileRef = 80AA4180189D0F4E00B7CF56 /* SFAlbumView.m */; };
+		80AA418A189D0F4E00B7CF56 /* SFStackLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 80AA4182189D0F4E00B7CF56 /* SFStackLayout.m */; };
+		80AA418B189D0F4E00B7CF56 /* SFCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 80AA4184189D0F4E00B7CF56 /* SFCollectionViewCell.m */; };
+		80AA418C189D0F4E00B7CF56 /* SFCollectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 80AA4186189D0F4E00B7CF56 /* SFCollectionViewController.m */; };
+		80AA418D189D0F4E00B7CF56 /* SFAlbumViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 80AA4188189D0F4E00B7CF56 /* SFAlbumViewController.m */; };
 		80D2A0C0184A1C1C008D29B2 /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 78685D551848EBAC002D2BAA /* Social.framework */; };
 		80D2A0C1184A1C29008D29B2 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 69ED32DE18484EBB00127196 /* CoreGraphics.framework */; };
 		80D2A116184A1E58008D29B2 /* AlbumListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 80D2A0C7184A1E57008D29B2 /* AlbumListViewController.m */; };
@@ -622,6 +627,16 @@
 		80812838184D22960000CF3E /* DB_text.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = DB_text.txt; path = Pixbee/Common/DB/DB_text.txt; sourceTree = SOURCE_ROOT; };
 		8081283B184D25F50000CF3E /* GlobalValues.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GlobalValues.h; sourceTree = "<group>"; };
 		8081283C184D25F50000CF3E /* GlobalValues.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GlobalValues.m; sourceTree = "<group>"; };
+		80AA417F189D0F4E00B7CF56 /* SFAlbumView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SFAlbumView.h; sourceTree = "<group>"; };
+		80AA4180189D0F4E00B7CF56 /* SFAlbumView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SFAlbumView.m; sourceTree = "<group>"; };
+		80AA4181189D0F4E00B7CF56 /* SFStackLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SFStackLayout.h; sourceTree = "<group>"; };
+		80AA4182189D0F4E00B7CF56 /* SFStackLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SFStackLayout.m; sourceTree = "<group>"; };
+		80AA4183189D0F4E00B7CF56 /* SFCollectionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SFCollectionViewCell.h; sourceTree = "<group>"; };
+		80AA4184189D0F4E00B7CF56 /* SFCollectionViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SFCollectionViewCell.m; sourceTree = "<group>"; };
+		80AA4185189D0F4E00B7CF56 /* SFCollectionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SFCollectionViewController.h; sourceTree = "<group>"; };
+		80AA4186189D0F4E00B7CF56 /* SFCollectionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SFCollectionViewController.m; sourceTree = "<group>"; };
+		80AA4187189D0F4E00B7CF56 /* SFAlbumViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SFAlbumViewController.h; sourceTree = "<group>"; };
+		80AA4188189D0F4E00B7CF56 /* SFAlbumViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SFAlbumViewController.m; sourceTree = "<group>"; };
 		80D2A0C6184A1E57008D29B2 /* AlbumListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlbumListViewController.h; sourceTree = "<group>"; };
 		80D2A0C7184A1E57008D29B2 /* AlbumListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AlbumListViewController.m; sourceTree = "<group>"; };
 		80D2A0C8184A1E57008D29B2 /* ASAssetsLibrary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASAssetsLibrary.h; sourceTree = "<group>"; };
@@ -1463,9 +1478,27 @@
 			path = GlobalValues;
 			sourceTree = "<group>";
 		};
+		80AA417E189D0F4100B7CF56 /* SFAlbum */ = {
+			isa = PBXGroup;
+			children = (
+				80AA417F189D0F4E00B7CF56 /* SFAlbumView.h */,
+				80AA4180189D0F4E00B7CF56 /* SFAlbumView.m */,
+				80AA4181189D0F4E00B7CF56 /* SFStackLayout.h */,
+				80AA4182189D0F4E00B7CF56 /* SFStackLayout.m */,
+				80AA4183189D0F4E00B7CF56 /* SFCollectionViewCell.h */,
+				80AA4184189D0F4E00B7CF56 /* SFCollectionViewCell.m */,
+				80AA4185189D0F4E00B7CF56 /* SFCollectionViewController.h */,
+				80AA4186189D0F4E00B7CF56 /* SFCollectionViewController.m */,
+				80AA4187189D0F4E00B7CF56 /* SFAlbumViewController.h */,
+				80AA4188189D0F4E00B7CF56 /* SFAlbumViewController.m */,
+			);
+			path = SFAlbum;
+			sourceTree = "<group>";
+		};
 		80D2A0C4184A1E57008D29B2 /* External */ = {
 			isa = PBXGroup;
 			children = (
+				80AA417E189D0F4100B7CF56 /* SFAlbum */,
 				8065CCBE189C00E500E37716 /* RFRateMe */,
 				697C83DB186DF2FA00823990 /* MBSwitch */,
 				80D55216186C713400B54974 /* MotionOrientation */,
@@ -1914,6 +1947,7 @@
 				7805A66D18659ECC00B234C1 /* UIImageView+AFNetworking.m in Sources */,
 				80D6B438188D0056002A156F /* UIImageView+UIImageView_FaceAwareFill.m in Sources */,
 				7805A66A18659ECC00B234C1 /* AFPropertyListRequestOperation.m in Sources */,
+				80AA418C189D0F4E00B7CF56 /* SFCollectionViewController.m in Sources */,
 				69ED32ED18484EBB00127196 /* PBAppDelegate.m in Sources */,
 				7805A63F18658BA000B234C1 /* IDMCaptionView.m in Sources */,
 				80D2A119184A1E58008D29B2 /* ALAssetAdapter.m in Sources */,
@@ -1928,6 +1962,8 @@
 				80D2A13A184A1E58008D29B2 /* UIImageView+RoundMask.m in Sources */,
 				69C39FD418606B39001EDDFA /* UIImage+Resize.m in Sources */,
 				7856F72E1849FA1100A17349 /* GalleryHeaderView.m in Sources */,
+				80AA4189189D0F4E00B7CF56 /* SFAlbumView.m in Sources */,
+				80AA418D189D0F4E00B7CF56 /* SFAlbumViewController.m in Sources */,
 				7805A64318658BA000B234C1 /* IDMTapDetectingImageView.m in Sources */,
 				80D2A133184A1E58008D29B2 /* SWTableViewCell.m in Sources */,
 				78685D6A184979A6002D2BAA /* InvitationController.m in Sources */,
@@ -1957,6 +1993,7 @@
 				69C39FD218606B39001EDDFA /* UIImageView+WebCache.m in Sources */,
 				69C39FE418606CBD001EDDFA /* SDWebImageCompat.m in Sources */,
 				80D2A118184A1E58008D29B2 /* GalleryViewController.m in Sources */,
+				80AA418A189D0F4E00B7CF56 /* SFStackLayout.m in Sources */,
 				80D2A139184A1E58008D29B2 /* UIButton+Bootstrap.m in Sources */,
 				80D2A138184A1E58008D29B2 /* NSString+FontAwesome.m in Sources */,
 				80D2A187184B7B54008D29B2 /* PBAssetLibrary.mm in Sources */,
@@ -2021,6 +2058,7 @@
 				7856F6ED1849CD9B00A17349 /* OpenPhotoUnwindSegue.m in Sources */,
 				69C39FE618606CBD001EDDFA /* UIImage+GIF.m in Sources */,
 				69C39FD618606B39001EDDFA /* UIImage+Scaling.m in Sources */,
+				80AA418B189D0F4E00B7CF56 /* SFCollectionViewCell.m in Sources */,
 				6968D9A2186EEE0000831442 /* NewAlbumActivity.m in Sources */,
 				69CCA956185AD758002567CF /* SwapImageView.m in Sources */,
 				7805A64218658BA000B234C1 /* IDMPhotoBrowser.m in Sources */,

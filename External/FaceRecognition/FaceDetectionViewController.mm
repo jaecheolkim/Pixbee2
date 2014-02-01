@@ -160,6 +160,8 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 
     if(self.faceMode == FaceModeRecognize) {
         NSArray *trainModel = [SQLManager getTrainModels];
+        NSLog(@"trainModel = %@", trainModel);
+        
         if(!IsEmpty(trainModel)){
             isFaceRecRedy = [FaceLib initRecognizer:LBPHFaceRecognizer models:trainModel];
         }
@@ -1294,9 +1296,9 @@ bail:
             if(!IsEmpty(recognisedFaces))
                 name = recognisedFaces[@(ff.trackingID)];
             
-//            if (([features count] > 1) && (ff.trackingID == 0)) {
-//                name = nil;
-//            }
+            if (([features count] > 1) && (ff.trackingID == 0)) {
+                name = nil;
+            }
             
             [self showFaceRect:faceRect withName:name];
             

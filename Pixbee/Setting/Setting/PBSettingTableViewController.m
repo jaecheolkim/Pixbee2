@@ -397,7 +397,8 @@
         }
         else if (indexPath.row == 2) // Term Of Use
         {
-            NSLog(@"Term Of Use");
+            NSLog(@"Term Of Use"); //@"SettingToFaceList"
+            [self performSegueWithIdentifier:@"SettingToFaceList" sender:self];
         }
     }
 }
