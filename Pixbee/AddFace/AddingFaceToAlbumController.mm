@@ -121,8 +121,6 @@
               int totalV = [[processInfo objectForKey:@"totalV"] intValue];
               int currentV = [[processInfo objectForKey:@"currentV"] intValue];
               int matchV = [[processInfo objectForKey:@"matchV"] intValue];
-              id scaledImage = [processInfo objectForKey:@"scaledImage"];
-              id faceImage = processInfo[@"faceImage"];
               id match = [processInfo objectForKey:@"match"];
               
               NSLog(@"currentV = %d / totalV = %d / matchV = %d", currentV, totalV, matchV);
@@ -130,29 +128,32 @@
               [self.progressView setProgress:((float)currentV/(float)totalV) animated:YES];
               [self.ProgressGauge setText:[NSString stringWithFormat:@"%d", matchV]];
               
-              if([scaledImage isKindOfClass:[UIImage class]])
+              id scaledImage = [processInfo objectForKey:@"scaledImage"];
+              if(!IsEmpty(scaledImage) && [scaledImage isKindOfClass:[UIImage class]])
               {
                 [self.photoView swapImage:scaledImage];
               }
               
-              if([faceImage isKindOfClass:[UIImage class]]){
-                  _faceImageView.image = faceImage;
-              }
-              
-              if([match isKindOfClass:[NSDictionary class]] && !IsEmpty(match))
-              {
-                  double confidence = [match[@"confidence"] doubleValue];
-                  int userID = [match[@"UserID"] intValue];
-                  
-                  id processImage = match[@"reconstruct"];
-                  if([processImage isKindOfClass:[UIImage class]]){
-                      _processImageView.image = processImage;
+              if(GlobalValue.testMode){
+                  id faceImage = processInfo[@"faceImage"];
+                  if(!IsEmpty(faceImage) && [faceImage isKindOfClass:[UIImage class]]){
+                      _faceImageView.image = faceImage;
                   }
                   
-                  _matchLabel.text = [NSString stringWithFormat:@"%d : %.2f", userID, confidence];
-                  
+                  if([match isKindOfClass:[NSDictionary class]] && !IsEmpty(match))
+                  {
+                      double confidence = [match[@"confidence"] doubleValue];
+                      int userID = [match[@"UserID"] intValue];
+                      
+                      id processImage = match[@"reconstruct"];
+                      if(!IsEmpty(processImage) && [processImage isKindOfClass:[UIImage class]]){
+                          _processImageView.image = processImage;
+                      }
+                      _matchLabel.text = [NSString stringWithFormat:@"%d : %.2f", userID, confidence];
+                  }
               }
-           });
+
+          });
       }
       completion:^(BOOL finished){
           dispatch_async(dispatch_get_main_queue(), ^{

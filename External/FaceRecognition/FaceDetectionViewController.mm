@@ -113,6 +113,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     NSTimer *aniTimer;
     
     double currentAngle;
+    BOOL isFeedingSafe;
 
 }
 @property (weak, nonatomic) IBOutlet UILabel *instructionsLabel;
@@ -227,8 +228,8 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(OrientationEventHandler:)
 												 name:MotionOrientationChangedNotification object:nil];
 
-    
 	[self setupAVCapture];
+    
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -432,6 +433,10 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 
 
 - (IBAction)switchCameras:(id)sender {
+    [self clearGuide];
+    
+    isFeedingSafe = NO;
+    
     AVCaptureDevicePosition desiredPosition;
 	if (isUsingFrontFacingCamera)
 		desiredPosition = AVCaptureDevicePositionBack;
@@ -451,9 +456,12 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 			break;
 		}
 	}
+    
 	isUsingFrontFacingCamera = !isUsingFrontFacingCamera;
     if(isUsingFrontFacingCamera)  _flashButton.enabled = NO;
     else _flashButton.enabled = YES;
+    
+    isFeedingSafe = YES;
 }
 
 - (IBAction)closeCamera:(id)sender
@@ -810,7 +818,8 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
             [self.view.layer addSublayer:adjustingFocusBox];
             self.adjustingFocusLayer = adjustingFocusBox;
         }
-
+        
+        isFeedingSafe = YES;
 
     }
 bail:
@@ -823,7 +832,11 @@ bail:
                               otherButtonTitles:nil] show];
             
             [self teardownAVCapture];
+            
+            isFeedingSafe = NO;
         }
+        
+       
     }
     
     
@@ -1226,7 +1239,9 @@ bail:
 
 - (void)captureOutput:(AVCaptureOutput *)captureOutput didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnection *)connection
 {
-    [self processImage:sampleBuffer];
+    if(isFeedingSafe){
+        [self processImage:sampleBuffer];
+    }
 }
 
 // called asynchronously as the capture output is capturing sample buffers, this method asks the face detector (if on)
@@ -1497,8 +1512,10 @@ bail:
                     serialized = [FaceLib serializeCvMat:mirroredFace];
                     [SQLManager setTrainModelForUserID:UserID withFaceData:serialized];
                     
-                    UIImage *faceImage = [FaceLib MatToUIImage:preprocessedFace];
-                    if(faceImage) [faceImageView setImage:faceImage];
+                    if(GlobalValue.testMode){
+                        UIImage *faceImage = [FaceLib MatToUIImage:preprocessedFace];
+                        if(faceImage) [faceImageView setImage:faceImage];
+                    }
                     
                     if(_numPicsTaken%2 == 0){
                         NSString *imagePath = [NSString stringWithFormat:@"hive%d.png", (int)_numPicsTaken * TOTAL_COLLECT];
@@ -1594,18 +1611,21 @@ bail:
     BOOL isFindFace = NO;
     int UserID = [match[@"UserID"] intValue];
     
-    UIImage *reconstruct = match[@"reconstruct"];
-    
-    UIImage *faceImage = [FaceLib MatToUIImage:image];
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-  
-        if(!IsEmpty(faceImage)) [faceImageView setImage:faceImage];
-        if(!IsEmpty(reconstruct)) [reconstImageView setImage:reconstruct];
+    if(GlobalValue.testMode){
+        UIImage *reconstruct = match[@"reconstruct"];
         
-    });
-    
-    NSLog(@"trackingID : %d / match: %@", trackingID, match);
+        UIImage *faceImage = [FaceLib MatToUIImage:image];
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            
+            if(!IsEmpty(faceImage)) [faceImageView setImage:faceImage];
+            if(!IsEmpty(reconstruct)) [reconstImageView setImage:reconstruct];
+            
+        });
+        
+        NSLog(@"trackingID : %d / match: %@", trackingID, match);
+
+    }
     
     // Match found
     if (UserID != -1)
@@ -1617,16 +1637,25 @@ bail:
         {
             NSString *name;
             if(confidence < 50.f){ // For LBPH
-                name = [NSString stringWithFormat:@"%@:%.2f", [SQLManager getUserName:UserID], confidence];
+                if(GlobalValue.testMode)
+                    name = [NSString stringWithFormat:@"%@:%.2f", [SQLManager getUserName:UserID], confidence];
+                else
+                    name = [NSString stringWithFormat:@"%@ ", [SQLManager getUserName:UserID]];
                 isFindFace = YES;
             }
             //else if(confidence > 50.f && confidence < 60.f){ // For LBPH
             else if(confidence > 50.f && confidence < 80.f){ // For LBPH
-                name = [NSString stringWithFormat:@"? %@:%.2f", [SQLManager getUserName:UserID], confidence];
+                if(GlobalValue.testMode)
+                    name = [NSString stringWithFormat:@"? %@:%.2f", [SQLManager getUserName:UserID], confidence];
+                else
+                    name = [NSString stringWithFormat:@"? %@ ", [SQLManager getUserName:UserID]];
                 isFindFace = YES;
             }
             else {
-                name = [NSString stringWithFormat:@"Unknown[%d:%.2f]", UserID, confidence];
+                if(GlobalValue.testMode)
+                    name = [NSString stringWithFormat:@"Unknown[%d:%.2f]", UserID, confidence];
+                else
+                    name = [NSString stringWithFormat:@"Unknown"];
                 isFindFace = NO;
             }
             
@@ -1636,15 +1665,26 @@ bail:
         {
             NSString *name;
             if(confidence >= 0.8f){ // For EigenFace
-                name = [NSString stringWithFormat:@"%@:%.2f", [SQLManager getUserName:UserID], confidence];
+                if(GlobalValue.testMode)
+                    name = [NSString stringWithFormat:@"%@:%.2f", [SQLManager getUserName:UserID], confidence];
+                else
+                    name = [NSString stringWithFormat:@"%@ ", [SQLManager getUserName:UserID]];
+                    
                 isFindFace = YES;
             }
             else if(confidence > 0.7f && confidence < 0.8f){ // For EigenFace
-                name = [NSString stringWithFormat:@"? %@:%.2f", [SQLManager getUserName:UserID], confidence];
+                if(GlobalValue.testMode)
+                    name = [NSString stringWithFormat:@"? %@:%.2f", [SQLManager getUserName:UserID], confidence];
+                else
+                    name = [NSString stringWithFormat:@"? %@ ", [SQLManager getUserName:UserID]];
+                
                 isFindFace = YES;
             }
             else {
-                name = [NSString stringWithFormat:@"Unknown[%d:%.2f]", UserID, confidence];
+                if(GlobalValue.testMode)
+                    name = [NSString stringWithFormat:@"Unknown[%d:%.2f]", UserID, confidence];
+                else
+                    name = [NSString stringWithFormat:@"Unknown"];
                 isFindFace = NO;
             }
             recognisedFaces[@(trackingID)] = name;
@@ -1658,7 +1698,7 @@ bail:
     }
 
     //if([processing[@(trackingID)] intValue] > 2);
-    [processing removeObjectForKey:[NSNumber numberWithInt:trackingID]];
+    //[processing removeObjectForKey:[NSNumber numberWithInt:trackingID]];
 }
 
 //this comes from http://code.opencv.org/svn/gsoc2012/ios/trunk/HelloWorld_iOS/HelloWorld_iOS/VideoCameraController.m
@@ -1707,15 +1747,33 @@ bail:
 {
     UIFont *_font = [UIFont systemFontOfSize:14.0f];
     UIColor *_tagBackgroundColor = [UIColor greenColor];
-    UIColor *_tagForegroundColor = [UIColor whiteColor];
+    UIColor *_tagForegroundColor = [UIColor purpleColor];
+    float backgroundAlpha = 1.0f;
 
-    NSString *searchChar = @"?";
-    NSRange rang =[tag rangeOfString:searchChar options:NSCaseInsensitiveSearch];
-
-    if (rang.length == [searchChar length] || [tag isEqualToString:@"Unknown"] || [tag hasPrefix:@"Unknown"]){
+//    NSString *searchChar = @"?";
+//    NSRange rang =[tag rangeOfString:searchChar options:NSCaseInsensitiveSearch];
+//
+//    if (rang.length == [searchChar length]) {
+//        _tagBackgroundColor = [UIColor darkGrayColor];
+//        _tagForegroundColor = [UIColor whiteColor];
+//        backgroundAlpha = 0.5f;
+//    }
+    
+    if ([tag hasPrefix:@"?"] && [tag length] > 1) {
+        tag = [tag substringFromIndex:1];
+        
         _tagBackgroundColor = [UIColor darkGrayColor];
+        _tagForegroundColor = [UIColor whiteColor];
+        backgroundAlpha = 0.7f;
+
     }
 
+    else if([tag isEqualToString:@"Unknown"] || [tag hasPrefix:@"Unknown"]) {
+        _tagBackgroundColor = [UIColor darkGrayColor];
+        _tagForegroundColor = [UIColor whiteColor];
+        backgroundAlpha = 0.5f;
+
+    }
     
     UIButton *tagBtn = [[UIButton alloc] init];
     [tagBtn.titleLabel setFont:_font];
@@ -1732,6 +1790,7 @@ bail:
     tagBtn.layer.cornerRadius = btnFrame.size.height * 0.5f;
     tagBtn.frame = CGRectIntegral(btnFrame);
     
+    tagBtn.alpha = backgroundAlpha;
     //NSLog(@"btn frame [%@] = %@", tag, NSStringFromCGRect(tagBtn.frame));
     
     return tagBtn;

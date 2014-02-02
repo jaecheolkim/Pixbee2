@@ -30,6 +30,7 @@ static inline id ObjectOrNull(id object)
 @property (nonatomic, strong) NSString* lastAssetURL;
 @property (nonatomic) int autoAlbumScanSetting;
 @property (nonatomic) int pushNotificationSetting;
+@property (nonatomic) int testMode;
 
 + (GlobalValues*) sharedInstance;
 

@@ -279,7 +279,7 @@
                 cell.selectionStyle = UITableViewCellSelectionStyleNone;
             }
 
-            NSString *title = @"Push Notification";
+            NSString *title = @"Push Notification(test)";
             if((UILabel *)[cell.contentView viewWithTag:PUSHNOTI_TAG]) {
                 [(UILabel *)[cell.contentView viewWithTag:PUSHNOTI_TAG] setText:title];
             } else {
@@ -407,20 +407,22 @@
 - (void)AlbumScanSwitchValueChanged : (id)sender
 {
     if([(UISwitch *)sender isOn]) {
-        GlobalValue.AutoAlbumScanSetting = 1;
+        GlobalValue.autoAlbumScanSetting = 1;
     }
     else {
-        GlobalValue.AutoAlbumScanSetting = 0;
+        GlobalValue.autoAlbumScanSetting = 0;
     }
 }
 
 - (void)PushNotiSwitchValueChanged : (id)sender
 {
     if([(UISwitch *)sender isOn]) {
-        GlobalValue.PushNotificationSetting = 1;
+        GlobalValue.pushNotificationSetting = 1;
+        GlobalValue.testMode = 1;
     }
     else {
-        GlobalValue.PushNotificationSetting = 0;
+        GlobalValue.pushNotificationSetting = 0;
+        GlobalValue.testMode = 0;
     }
 }
 

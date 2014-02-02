@@ -14,7 +14,7 @@
 #define  KEY_LASTASSETURL               @"lastAssetURL"
 #define  KEY_AUTOALBUMSCANSETTING       @"autoAlbumScanSetting"
 #define  KEY_PUSHNOTIFICATIONSETTING    @"pushNotificationSetting"
-
+#define  KEY_TESTMODESETTING            @"testModeSetting"
 @interface GlobalValues ()
 @end
 
@@ -110,6 +110,16 @@
     return [[self readObjectFromDefault:KEY_PUSHNOTIFICATIONSETTING] intValue];
 }
 
+
+- (void)setTestMode:(int)testMode
+{
+    [self writeObjectToDefault:[NSString stringWithFormat:@"%d",testMode] withKey:KEY_TESTMODESETTING];
+}
+
+- (int)testMode
+{
+    return [[self readObjectFromDefault:KEY_TESTMODESETTING] intValue];
+}
 
 
 @end

@@ -17,8 +17,13 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     // filter test
-    [[NSUserDefaults standardUserDefaults] setObject:@"DISTANCE" forKey:@"ALLPHOTO_FILTER"];
-    [[NSUserDefaults standardUserDefaults] setInteger:1000 forKey:@"DISTANCE"];
+    //DISTANCE, DAY, WEEK, MONTH, YEAR 에 따라서 필터되게 했구요..
+    //DISTANCE일 경우는 [[NSUserDefaults standardUserDefaults] objectForKey:@"DISTANCE”]으로 반경 가져와서 처리하게 했습니다.
+//    [[NSUserDefaults standardUserDefaults] setObject:@"DISTANCE" forKey:@"ALLPHOTO_FILTER"];
+//    [[NSUserDefaults standardUserDefaults] setInteger:1000 forKey:@"DISTANCE"];
+//    [[NSUserDefaults standardUserDefaults] synchronize];
+    [[NSUserDefaults standardUserDefaults] setObject:@"DAY" forKey:@"ALLPHOTO_FILTER"];
+    [[NSUserDefaults standardUserDefaults] setInteger:500 forKey:@"DISTANCE"];
     [[NSUserDefaults standardUserDefaults] synchronize];
     
     [TestFlight takeOff:@"0d73a652-a45f-4b76-9fec-026bd931c1f7"];
