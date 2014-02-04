@@ -28,7 +28,6 @@ IDMPhotoBrowserDelegate, FBFriendControllerDelegate,
 UserCellDelegate, GalleryViewCellDelegate>
 {
     NSMutableArray *selectedPhotos;
-    NSDictionary *userInfo;
     NSString *currentAction;
 }
 
@@ -66,14 +65,15 @@ UserCellDelegate, GalleryViewCellDelegate>
     _shareButton.enabled = NO;
     
     self.userProfileView.delegate = self;
+    self.title = @"ALBUM";
 }
 
 - (void)refreshInfo
 {
     self.usersPhotos = [SQLManager getUserPhotos:_UserID];
     
-    userInfo = [self.usersPhotos objectForKey:@"user"];
-    NSLog(@"userInfo = %@", userInfo);
+//    self.user = [self.usersPhotos objectForKey:@"user"];
+//    NSLog(@"userInfo = %@", self.user);
     
 	// Do any additional setup after loading the view.
     selectedPhotos = [NSMutableArray array];
@@ -611,7 +611,7 @@ UserCellDelegate, GalleryViewCellDelegate>
     }
     
     NSLog(@"selectedPhoto = %@", selectedPhotos);
-    NSLog(@"userInfo = %@",userInfo);
+    NSLog(@"userInfo = %@", self.user);
     
     CopyActivity *copyActivity = [[CopyActivity alloc] init];
     MoveActivity *moveActivity = [[MoveActivity alloc] init];
@@ -939,7 +939,7 @@ UserCellDelegate, GalleryViewCellDelegate>
         AllPhotosController *destViewController = segue.destinationViewController;
         destViewController.segueIdentifier = segue.identifier;
         destViewController.operateIdentifier = @"add Photos";
-        destViewController.userInfo = userInfo;
+        destViewController.userInfo = self.user;
     }
 }
 
@@ -959,7 +959,7 @@ UserCellDelegate, GalleryViewCellDelegate>
         
         int destUserID = [destUserInfo[@"UserID"] intValue];
         
-        if(destUserID ==  [userInfo[@"UserID"] intValue]){
+        if(destUserID ==  [self.user[@"UserID"] intValue]){
             NSLog(@"동일 유저에 대한 명령 취소..");
             return;
         }

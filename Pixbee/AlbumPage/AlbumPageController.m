@@ -467,8 +467,8 @@
     //NSString *fbProfile = [[[friend objectForKey:@"picture"] objectForKey:@"data"] objectForKey:@"url"];
 
     
-    if(GlobalValue.UserID != cellUserID && ![fbID isEqualToString:cellfbID])
-    {  // 로그인 한 사용자는 페북 계정을 cell에서 바꿀 수 없음.
+    //if(GlobalValue.UserID != cellUserID && ![fbID isEqualToString:cellfbID])
+    //{  // 로그인 한 사용자는 페북 계정을 cell에서 바꿀 수 없음.
         
         
         NSArray *result = [SQLManager updateUser:@{ @"UserID" : @(cellUserID), @"UserName" : fbUserName,
@@ -487,7 +487,7 @@
         }
 
 
-    }
+    //}
         
     
 

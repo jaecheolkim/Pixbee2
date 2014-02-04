@@ -66,6 +66,16 @@ static NSString *AboutCellIdentifier = @"AboutCell";
  
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+    
+    NSShadow *shadow = [[NSShadow alloc] init];
+    shadow.shadowColor = [UIColor colorWithRed:0.0 green:0.0 blue:0.0 alpha:0.8];
+    shadow.shadowOffset = CGSizeMake(0, 1);
+    [[UINavigationBar appearance] setTitleTextAttributes: [NSDictionary dictionaryWithObjectsAndKeys:
+                                                           [UIColor colorWithRed:32.0/255.0 green:29.0/255.0 blue:7.0/255.0 alpha:1.0], NSForegroundColorAttributeName,
+                                                           //shadow, NSShadowAttributeName,
+                                                           [UIFont fontWithName:@"GillSans-Medium" size:21.0], NSFontAttributeName, nil]];
+
+    self.title = @"SETTING";
 }
 
 - (void)didReceiveMemoryWarning

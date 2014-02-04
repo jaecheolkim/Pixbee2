@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface AllPhotosController : UIViewController
+@interface AllPhotosController : PBCommonViewController
 
 @property (strong, nonatomic) NSArray *photos;
 @property (strong, nonatomic) NSDictionary *userInfo;
