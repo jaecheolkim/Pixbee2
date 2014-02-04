@@ -50,14 +50,14 @@ UserCellDelegate, GalleryViewCellDelegate>
 
 @implementation IndividualGalleryController
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization
-    }
-    return self;
-}
+//- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+//{
+//    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+//    if (self) {
+//        // Custom initialization
+//    }
+//    return self;
+//}
 
 - (void)viewDidLoad
 {
@@ -81,8 +81,8 @@ UserCellDelegate, GalleryViewCellDelegate>
     self.photos = [self.usersPhotos objectForKey:@"photos"];
     self.user = [self.usersPhotos objectForKey:@"user"];
     
-//    [self.userProfileView.borderView removeFromSuperview];
-//    self.userProfileView.borderView = nil;
+    [self.userProfileView.borderView removeFromSuperview];
+    self.userProfileView.borderView = nil;
     [self.userProfileView updateCell:self.user count:[self.photos count]];
     
     
@@ -90,8 +90,8 @@ UserCellDelegate, GalleryViewCellDelegate>
     collectionViewLayout.sectionInset = UIEdgeInsetsMake(0, 0, 3, 0);
     
     [self.collectionView reloadData];
-//    [self.userProfileView.borderView removeFromSuperview];
-//    self.userProfileView.borderView = nil;
+    [self.userProfileView.borderView removeFromSuperview];
+    self.userProfileView.borderView = nil;
     
     self.importView.titleLabel.lineBreakMode = NSLineBreakByWordWrapping;
     self.importView.titleLabel.textAlignment = NSTextAlignmentCenter;
@@ -101,6 +101,23 @@ UserCellDelegate, GalleryViewCellDelegate>
     self.importView.titleLabel.text = buttonTitle;
  
 }
+
+- (void)refresh
+{
+    self.activityController = nil;
+    
+    [selectedPhotos removeAllObjects];
+    [self editButtonClickHandler:nil];
+    [self refreshSelectedPhotCountOnNavTilte];
+    
+    [self refreshInfo];
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"AlbumContentsViewEventHandler"
+                                                        object:self
+                                                      userInfo:@{@"Msg":@"changedGalleryDB"}];
+    
+}
+
 
 -(void)viewWillAppear:(BOOL)animated
 {
@@ -490,14 +507,47 @@ UserCellDelegate, GalleryViewCellDelegate>
 }
 
 - (void)selectedFBFriend:(NSDictionary *)friend {
+    
+    int cellUserID = [[self.user objectForKey:@"UserID"] intValue];
+    NSString *cellUserName = [self.user objectForKey:@"UserName"];
+    NSString *cellfbID = [self.user objectForKey:@"fbID"];
+    
+    NSString *fbUserName = [friend objectForKey:@"name"];
+    NSString *fbID = [friend objectForKey:@"id"];
+
+    
     self.userProfileView.userName.text = [friend objectForKey:@"name"];
     self.userProfileView.inputName.text = @"";
-    NSString *picurl = [[[friend objectForKey:@"picture"] objectForKey:@"data"] objectForKey:@"url"];
+    
+    NSString *picurl;// = [[[friend objectForKey:@"picture"] objectForKey:@"data"] objectForKey:@"url"];
+    
+    id picture = [friend objectForKey:@"picture"];
+    if(!IsEmpty(picture)){
+        picurl = [[[friend objectForKey:@"picture"] objectForKey:@"data"] objectForKey:@"url"];
+    } else {
+        //    http://graph.facebook.com/[user id]/picture?type=large     -------------->    for larger image
+        //    http://graph.facebook.com/[user id]/picture?type=smaller   -------------->    for smaller image
+        //    http://graph.facebook.com/[user id]/picture?type=square     -------------->    for square image
+        
+        picurl = [NSString stringWithFormat:@"http://graph.facebook.com/%@/picture?type=large",friend[@"id"]];
+    }
     
     [self.userProfileView.userImage setImageWithURL:[NSURL URLWithString:picurl]
                             placeholderImage:[UIImage imageNamed:@"placeholder.png"]];
     
+
+    NSArray *result = [SQLManager updateUser:@{ @"UserID" : @(cellUserID), @"UserName" : fbUserName,
+                                                @"UserNick" : fbUserName,  @"UserProfile" : picurl,
+                                                @"fbID" : fbID, @"fbName" : fbUserName,
+                                                @"fbProfile" : picurl }];
+    
+    NSLog(@"result = %@", result);
+    
     [self.userProfileView doneButtonClickHandler:nil];
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"AlbumContentsViewEventHandler"
+                                                        object:self
+                                                      userInfo:@{@"Msg":@"changedGalleryDB"}];
     // DB에 저장하는 부분 추가
 }
 
@@ -764,44 +814,93 @@ UserCellDelegate, GalleryViewCellDelegate>
     }];
 }
 
+
 - (void)deletePhotos
 {
+//    if(IsEmpty(selectedPhotos)) return;
+//    
+//    [self.activityController dismissViewControllerAnimated:YES completion:nil];
+// 
+//    @try
+//    {
+//        [self.collectionView performBatchUpdates:^{
+//            for (NSIndexPath *indexPath in selectedPhotos) {
+//                
+//                if( indexPath.row < [self.photos count]){
+//                    GalleryViewCell *cell = (GalleryViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
+//                    [cell showSelectIcon:NO];
+//                    NSLog(@"selected:%d / photos count:%d", indexPath.row, [self.photos count]);
+//                    NSDictionary *photo = [self.photos objectAtIndex:indexPath.row];
+//                    int userID = [[photo objectForKey:@"UserID"] intValue];
+//                    int photoID = [[photo objectForKey:@"PhotoID"] intValue];
+//                    NSLog(@"photo = %@", photo);
+//                    [SQLManager deleteUserPhoto:userID  withPhoto:photoID];
+//                    
+//                    [self.photos removeObjectAtIndex:indexPath.row];
+//                }
+//                
+//            }
+//            [self.collectionView deleteItemsAtIndexPaths:selectedPhotos];
+//            [self.userProfileView updateCell:self.user count:[self.photos count]];
+//
+//            
+//        } completion:^(BOOL finished) {
+//
+//            self.activityController = nil;
+//            NSLog(@"deletePhotos complete!");
+//            [selectedPhotos removeAllObjects];
+//            //[self editButtonClickHandler:nil];
+//            [self.collectionView reloadData];
+//            [self refreshSelectedPhotCountOnNavTilte];
+//            
+//        }];
+//    }
+//    @catch (NSException *except)
+//    {
+//        NSLog(@"DEBUG: failure to batch update.  %@", except.description);
+//    }
+
+    
     if(IsEmpty(selectedPhotos)) return;
     
     [self.activityController dismissViewControllerAnimated:YES completion:nil];
     
-    [self.collectionView performBatchUpdates:^{
-        for (NSIndexPath *indexPath in selectedPhotos) {
+    
+    for (NSIndexPath *indexPath in selectedPhotos) {
+        NSLog(@"=====> indexPath.row : %d || [self.photos count] : %d", (int)indexPath.row, (int)[self.photos count]);
+        //if( indexPath.row < [self.photos count]){
+            GalleryViewCell *cell = (GalleryViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
+            [cell showSelectIcon:NO];
+            NSDictionary *photo = [self.photos objectAtIndex:indexPath.row];
+            int userID = [[photo objectForKey:@"UserID"] intValue];
+            int photoID = [[photo objectForKey:@"PhotoID"] intValue];
+            NSLog(@"photo = %@", photo);
+            [SQLManager deleteUserPhoto:userID  withPhoto:photoID];
+            
+            //[self.photos removeObjectAtIndex:indexPath.row];
+        //}
+        
+    }
 
-            if( indexPath.row < [self.photos count]){
-                GalleryViewCell *cell = (GalleryViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
-                [cell showSelectIcon:NO];
-                NSLog(@"selected:%d / photos count:%d", indexPath.row, [self.photos count]);
-                NSDictionary *photo = [self.photos objectAtIndex:indexPath.row];
-                int userID = [[photo objectForKey:@"UserID"] intValue];
-                int photoID = [[photo objectForKey:@"PhotoID"] intValue];
-                NSLog(@"photo = %@", photo);
-                [SQLManager deleteUserPhoto:userID  withPhoto:photoID];
-                
-                [self.photos removeObjectAtIndex:indexPath.row];
-            }
+    [self refresh];
+    
+//    @try
+//    {
+//        [self.collectionView performBatchUpdates:^{
+//             [self.collectionView deleteItemsAtIndexPaths:selectedPhotos];
+//        } completion:^(BOOL finished) {
+//            
+//            [self refresh];
+//            
+//        }];
+//    }
+//    @catch (NSException *except)
+//    {
+//        NSLog(@"DEBUG: failure to batch update.  %@", except.description);
+//    }
 
-        }
-        
-        [self.collectionView deleteItemsAtIndexPaths:selectedPhotos];
-        
-        [self.userProfileView updateCell:self.user count:[self.photos count]];
-        
-    } completion:^(BOOL finished) {
-        self.activityController = nil;
-        NSLog(@"deletePhotos complete!");
-        [selectedPhotos removeAllObjects];
-        //[self editButtonClickHandler:nil];
-        [self.collectionView reloadData];
-        [self refreshSelectedPhotCountOnNavTilte];
-        
-    }];
 }
+
 
 - (BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender
 {

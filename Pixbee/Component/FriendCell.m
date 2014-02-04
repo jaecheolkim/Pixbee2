@@ -44,8 +44,20 @@
 }
 
 - (void)updateFriendCell:(NSDictionary *)friend {
+    NSString *picurl;
     
-    NSString *picurl = [[[friend objectForKey:@"picture"] objectForKey:@"data"] objectForKey:@"url"];
+    id picture = [friend objectForKey:@"picture"];
+    if(!IsEmpty(picture)){
+       picurl = [[[friend objectForKey:@"picture"] objectForKey:@"data"] objectForKey:@"url"];
+    } else {
+//    http://graph.facebook.com/[user id]/picture?type=large     -------------->    for larger image
+//    http://graph.facebook.com/[user id]/picture?type=smaller   -------------->    for smaller image
+//    http://graph.facebook.com/[user id]/picture?type=square     -------------->    for square image
+       
+        picurl = [NSString stringWithFormat:@"http://graph.facebook.com/%@/picture?type=large",friend[@"id"]];
+    }
+    
+    NSLog(@"picurl = %@", picurl);
 
     [self.friendImage setImageWithURL:[NSURL URLWithString:picurl]
                    placeholderImage:[UIImage imageNamed:@"placeholder.png"]];

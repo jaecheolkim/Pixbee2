@@ -164,6 +164,26 @@
                                   NSArray *friends = [data objectForKey:@"data"];
                                   FBHELPER.friends = friends;
                                   
+                                  [FBRequestConnection startWithGraphPath:@"/me"
+                                                               parameters:nil
+                                                               HTTPMethod:@"GET"
+                                                        completionHandler:^(
+                                                                            FBRequestConnection *connection,
+                                                                            id result,
+                                                                            NSError *error
+                                                                            ) {
+                                                            NSLog(@"ME : result = %@", result);
+                                                            
+                                                            NSMutableArray *array = [NSMutableArray arrayWithArray:FBHELPER.friends];
+                                                            [array insertObject:@{@"name":result[@"name"], @"id":result[@"id"], @"picture":[NSNull null]} atIndex:0];
+
+                                                            FBHELPER.friends = (NSArray*)array;
+                                                            
+                                                            NSLog(@"Friends = %@", FBHELPER.friends);
+                                                        }];
+                                  
+                                  
+                                  
                                   //[self goNext];
                                   //[self performSegueWithIdentifier:SEGUE_FACEANALYZE sender:self];
                               }];

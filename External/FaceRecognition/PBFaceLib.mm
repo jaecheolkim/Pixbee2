@@ -9,7 +9,11 @@
 #import "PBFaceLib.h"
 //#import "OpenCVData.h"
 #import "opencv2/highgui/ios.h"
+#include "opencv2/contrib/retina.hpp"
+
 //#import "CustomFaceRecognizer.h"
+#import "retinex.h"
+
 
 #define DEGREES_TO_RADIANS(__ANGLE__) ((__ANGLE__) * 0.01745329252f) // PI / 180
 #define RADIANS_TO_DEGREES(__ANGLE__) ((__ANGLE__) * 57.29577951f) // PI * 180
@@ -651,6 +655,10 @@ void equalizeLeftAndRightHalves(Mat &faceImg)
 
 }
 
+- (void)getRetinaImage:(cv::Mat&)image
+{
+    //Retinex(image, 20.0, 128, 128);
+}
 
 - (cv::Mat)getFaceImage:(CIImage *)ciImage feature:(CIFaceFeature *)feature orient:(UIImageOrientation)uiImageOrient landscape:(BOOL)isLandScape
 {
@@ -668,6 +676,7 @@ void equalizeLeftAndRightHalves(Mat &faceImg)
     
     cv::Mat cvImage = [FaceLib UIImageToMat:image];
     
+    //[self getRetinaImage:cvImage];
     //return cvImage;
     
     NSDictionary *detectorOptions = @{ CIDetectorAccuracy : CIDetectorAccuracyLow, CIDetectorTracking : @(NO) };

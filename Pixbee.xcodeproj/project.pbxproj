@@ -221,6 +221,8 @@
 		80AA418B189D0F4E00B7CF56 /* SFCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 80AA4184189D0F4E00B7CF56 /* SFCollectionViewCell.m */; };
 		80AA418C189D0F4E00B7CF56 /* SFCollectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 80AA4186189D0F4E00B7CF56 /* SFCollectionViewController.m */; };
 		80AA418D189D0F4E00B7CF56 /* SFAlbumViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 80AA4188189D0F4E00B7CF56 /* SFAlbumViewController.m */; };
+		80AA4193189E8F9700B7CF56 /* retinex.mm in Sources */ = {isa = PBXBuildFile; fileRef = 80AA4191189E8F9700B7CF56 /* retinex.mm */; };
+		80AA41A618A0C3C700B7CF56 /* FXBlurView.m in Sources */ = {isa = PBXBuildFile; fileRef = 80AA41A518A0C3C700B7CF56 /* FXBlurView.m */; };
 		80D2A0C0184A1C1C008D29B2 /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 78685D551848EBAC002D2BAA /* Social.framework */; };
 		80D2A0C1184A1C29008D29B2 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 69ED32DE18484EBB00127196 /* CoreGraphics.framework */; };
 		80D2A116184A1E58008D29B2 /* AlbumListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 80D2A0C7184A1E57008D29B2 /* AlbumListViewController.m */; };
@@ -315,9 +317,6 @@
 		696ECBDA1850551F00F54DB6 /* AllPhotosController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AllPhotosController.m; sourceTree = "<group>"; };
 		69766D84188BDF33003B6F8F /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
 		69766D86188BDF42003B6F8F /* Twitter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Twitter.framework; path = System/Library/Frameworks/Twitter.framework; sourceTree = SDKROOT; };
-		697C83A8186DC57A00823990 /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FacebookSDK.framework; path = ../FacebookSDK.framework; sourceTree = "<group>"; };
-		697C83A9186DC57A00823990 /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = opencv2.framework; path = ../opencv2.framework; sourceTree = "<group>"; };
-		697C83AA186DC57A00823990 /* SDWebImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDWebImage.framework; path = ../SDWebImage.framework; sourceTree = "<group>"; };
 		697C83DC186DF2FA00823990 /* MBSwitch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBSwitch.h; sourceTree = "<group>"; };
 		697C83DD186DF2FA00823990 /* MBSwitch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MBSwitch.m; sourceTree = "<group>"; };
 		698B1EA61881197D00BBBBA7 /* DeleteActivity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeleteActivity.h; sourceTree = "<group>"; };
@@ -637,6 +636,10 @@
 		80AA4186189D0F4E00B7CF56 /* SFCollectionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SFCollectionViewController.m; sourceTree = "<group>"; };
 		80AA4187189D0F4E00B7CF56 /* SFAlbumViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SFAlbumViewController.h; sourceTree = "<group>"; };
 		80AA4188189D0F4E00B7CF56 /* SFAlbumViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SFAlbumViewController.m; sourceTree = "<group>"; };
+		80AA4191189E8F9700B7CF56 /* retinex.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = retinex.mm; sourceTree = "<group>"; };
+		80AA4192189E8F9700B7CF56 /* retinex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = retinex.h; sourceTree = "<group>"; };
+		80AA41A418A0C3C700B7CF56 /* FXBlurView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FXBlurView.h; sourceTree = "<group>"; };
+		80AA41A518A0C3C700B7CF56 /* FXBlurView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FXBlurView.m; sourceTree = "<group>"; };
 		80D2A0C6184A1E57008D29B2 /* AlbumListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlbumListViewController.h; sourceTree = "<group>"; };
 		80D2A0C7184A1E57008D29B2 /* AlbumListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AlbumListViewController.m; sourceTree = "<group>"; };
 		80D2A0C8184A1E57008D29B2 /* ASAssetsLibrary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASAssetsLibrary.h; sourceTree = "<group>"; };
@@ -952,9 +955,6 @@
 				80D5B62A18759293000CD8D7 /* FacebookSDK.framework */,
 				80D5B62B18759293000CD8D7 /* opencv2.framework */,
 				80D5B62C18759293000CD8D7 /* SDWebImage.framework */,
-				697C83A8186DC57A00823990 /* FacebookSDK.framework */,
-				697C83A9186DC57A00823990 /* opencv2.framework */,
-				697C83AA186DC57A00823990 /* SDWebImage.framework */,
 				7805A5E6186589BE00B234C1 /* MobileCoreServices.framework */,
 				7805A5E4186589B300B234C1 /* MessageUI.framework */,
 				7805A5E2186589A200B234C1 /* libz.1.2.5.dylib */,
@@ -1495,9 +1495,19 @@
 			path = SFAlbum;
 			sourceTree = "<group>";
 		};
+		80AA41A318A0C3C700B7CF56 /* FXBlurView */ = {
+			isa = PBXGroup;
+			children = (
+				80AA41A418A0C3C700B7CF56 /* FXBlurView.h */,
+				80AA41A518A0C3C700B7CF56 /* FXBlurView.m */,
+			);
+			path = FXBlurView;
+			sourceTree = "<group>";
+		};
 		80D2A0C4184A1E57008D29B2 /* External */ = {
 			isa = PBXGroup;
 			children = (
+				80AA41A318A0C3C700B7CF56 /* FXBlurView */,
 				80AA417E189D0F4100B7CF56 /* SFAlbum */,
 				8065CCBE189C00E500E37716 /* RFRateMe */,
 				697C83DB186DF2FA00823990 /* MBSwitch */,
@@ -1642,6 +1652,8 @@
 				695B37FA186DF88800FC7D72 /* PBFaceLib.mm */,
 				80D55210186C710000B54974 /* FaceDetectionViewController.h */,
 				80D55211186C710000B54974 /* FaceDetectionViewController.mm */,
+				80AA4191189E8F9700B7CF56 /* retinex.mm */,
+				80AA4192189E8F9700B7CF56 /* retinex.h */,
 			);
 			name = FaceRecognition;
 			path = ../../External/FaceRecognition;
@@ -1938,6 +1950,7 @@
 			files = (
 				7805A66B18659ECC00B234C1 /* AFURLConnectionOperation.m in Sources */,
 				69A6C9531880F2C200CAABA1 /* TotalGalleryViewCell.m in Sources */,
+				80AA41A618A0C3C700B7CF56 /* FXBlurView.m in Sources */,
 				80D2A19F184B7CBB008D29B2 /* PB_DBModel.m in Sources */,
 				69C39FE818606CBD001EDDFA /* UIImage+WebP.m in Sources */,
 				80D2A11D184A1E58008D29B2 /* ASImageScrollView.m in Sources */,
@@ -2023,6 +2036,7 @@
 				696ECBDB1850551F00F54DB6 /* AllPhotosController.m in Sources */,
 				7805A64718658BA000B234C1 /* SVProgressHUD.m in Sources */,
 				78A8053D184F80E5008E81B3 /* SCTTransitionViewController.m in Sources */,
+				80AA4193189E8F9700B7CF56 /* retinex.mm in Sources */,
 				6968D9A1186EEE0000831442 /* MoveActivity.m in Sources */,
 				6968D9A6186EF7DB00831442 /* AlbumSelectionController.m in Sources */,
 				69C39FE518606CBD001EDDFA /* SDWebImageDownloaderOperation.m in Sources */,

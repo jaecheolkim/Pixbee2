@@ -449,7 +449,22 @@
     
     NSString *fbUserName = [friend objectForKey:@"name"];
     NSString *fbID = [friend objectForKey:@"id"];
-    NSString *fbProfile = [[[friend objectForKey:@"picture"] objectForKey:@"data"] objectForKey:@"url"];
+    
+    NSString *fbProfile;// = [[[friend objectForKey:@"picture"] objectForKey:@"data"] objectForKey:@"url"];
+    
+    id picture = [friend objectForKey:@"picture"];
+    if(!IsEmpty(picture)){
+        fbProfile = [[[friend objectForKey:@"picture"] objectForKey:@"data"] objectForKey:@"url"];
+    } else {
+        //    http://graph.facebook.com/[user id]/picture?type=large     -------------->    for larger image
+        //    http://graph.facebook.com/[user id]/picture?type=smaller   -------------->    for smaller image
+        //    http://graph.facebook.com/[user id]/picture?type=square     -------------->    for square image
+        
+        fbProfile = [NSString stringWithFormat:@"http://graph.facebook.com/%@/picture?type=large",friend[@"id"]];
+    }
+
+    
+    //NSString *fbProfile = [[[friend objectForKey:@"picture"] objectForKey:@"data"] objectForKey:@"url"];
 
     
     if(GlobalValue.UserID != cellUserID && ![fbID isEqualToString:cellfbID])
