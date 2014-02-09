@@ -208,6 +208,7 @@
 		801B35DA18561B9600EEB9F3 /* SMShadowedLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 801B35D718561B9600EEB9F3 /* SMShadowedLayer.m */; };
 		801B35DB18561B9600EEB9F3 /* SMTransformLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 801B35D918561B9600EEB9F3 /* SMTransformLayer.m */; };
 		801B35DF18561BC400EEB9F3 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 801B35DE18561BC400EEB9F3 /* ViewController.m */; };
+		802B6D3D18A220FA0031CD82 /* UIImage+ImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = 802B6D3C18A220FA0031CD82 /* UIImage+ImageEffects.m */; };
 		8065CCB5189A7D0700E37716 /* setting_logo@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8065CCB4189A7D0700E37716 /* setting_logo@2x.png */; };
 		8065CCB8189BC9BB00E37716 /* PBSettingTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8065CCB7189BC9BB00E37716 /* PBSettingTableViewController.m */; };
 		8065CCC3189C00E500E37716 /* RFRateMe.m in Sources */ = {isa = PBXBuildFile; fileRef = 8065CCC0189C00E500E37716 /* RFRateMe.m */; };
@@ -611,6 +612,8 @@
 		801B35D918561B9600EEB9F3 /* SMTransformLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMTransformLayer.m; sourceTree = "<group>"; };
 		801B35DD18561BC400EEB9F3 /* ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		801B35DE18561BC400EEB9F3 /* ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		802B6D3B18A220FA0031CD82 /* UIImage+ImageEffects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+ImageEffects.h"; sourceTree = "<group>"; };
+		802B6D3C18A220FA0031CD82 /* UIImage+ImageEffects.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+ImageEffects.m"; sourceTree = "<group>"; };
 		8065CCB4189A7D0700E37716 /* setting_logo@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "setting_logo@2x.png"; sourceTree = "<group>"; };
 		8065CCB6189BC9BB00E37716 /* PBSettingTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PBSettingTableViewController.h; path = Setting/PBSettingTableViewController.h; sourceTree = "<group>"; };
 		8065CCB7189BC9BB00E37716 /* PBSettingTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PBSettingTableViewController.m; path = Setting/PBSettingTableViewController.m; sourceTree = "<group>"; };
@@ -1625,6 +1628,8 @@
 				80D2A115184A1E58008D29B2 /* UIImageView+RoundMask.m */,
 				80F9DD8C187B299800A1BF21 /* UIImage+Addon.h */,
 				80F9DD8D187B299800A1BF21 /* UIImage+Addon.m */,
+				802B6D3B18A220FA0031CD82 /* UIImage+ImageEffects.h */,
+				802B6D3C18A220FA0031CD82 /* UIImage+ImageEffects.m */,
 				80F9DD8F187B9BA300A1BF21 /* UIButton+FaceIcon.h */,
 				80F9DD90187B9BA300A1BF21 /* UIButton+FaceIcon.m */,
 				80E3BE591884347F00FF4C3D /* UIExtensions.h */,
@@ -2050,6 +2055,7 @@
 				69C39FCC18606B39001EDDFA /* SDImageCache.m in Sources */,
 				80D2A189184B7B54008D29B2 /* FBHelper.m in Sources */,
 				69ED32E918484EBB00127196 /* main.m in Sources */,
+				802B6D3D18A220FA0031CD82 /* UIImage+ImageEffects.m in Sources */,
 				80F9DD91187B9BA300A1BF21 /* UIButton+FaceIcon.m in Sources */,
 				7805A63B18658BA000B234C1 /* DCCrossHairView.m in Sources */,
 				6968D99C186EE8B700831442 /* CopyActivity.m in Sources */,

@@ -159,7 +159,7 @@
 {
     UILabel *label = [[UILabel alloc] initWithFrame: CGRectMake(25.0, 2.0, 210.0, 46.0)];
     [label setTextAlignment:NSTextAlignmentLeft];
-    [label setFont:[UIFont fontWithName:@"HelveticaNeue-Bold" size:17]];
+    [label setFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:17]];
     [label setBackgroundColor:[UIColor clearColor]];
     [label setTextColor:color] ;//]RGB_COLOR(115.0, 115.0, 115.0)]; 76 114 205
     [label setTag:tag];

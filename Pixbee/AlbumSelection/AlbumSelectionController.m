@@ -26,18 +26,20 @@
 
 @implementation AlbumSelectionController
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization
-    }
-    return self;
-}
+//- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+//{
+//    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+//    if (self) {
+//        // Custom initialization
+//    }
+//    return self;
+//}
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    [[UINavigationBar appearance] setBarTintColor:[UIColor colorWithRed:246.0f/255.0f green:223.0f/255.0f blue:55.0f/255.0f alpha:1.0f]];
 	// Do any additional setup after loading the view.
     
     /************************/

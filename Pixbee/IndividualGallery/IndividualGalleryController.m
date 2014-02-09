@@ -558,7 +558,7 @@ UserCellDelegate, GalleryViewCellDelegate>
     
     controller.delegate = self;
     CGPoint convertedPoint = [self.view convertPoint:((UIButton *)sender).center fromView:((UIButton *)sender).superview];
-    int x = convertedPoint.x - 140;
+    int x = convertedPoint.x - 150;
     int y = convertedPoint.y + 14;
     
     [controller appearPopup:CGPointMake(x, y) reverse:NO];
@@ -758,60 +758,97 @@ UserCellDelegate, GalleryViewCellDelegate>
 
 - (void)copyPhotos:(int)destUserID
 {
-    [self.collectionView performBatchUpdates:^{
-        for (NSIndexPath *indexPath in selectedPhotos) {
-            // UI
-            GalleryViewCell *cell = (GalleryViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
-            [cell showSelectIcon:NO];
-            
-            NSDictionary *photo = [self.photos objectAtIndex:indexPath.row];
-            int photoID = [[photo objectForKey:@"PhotoID"] intValue];
-            int FaceNo = [[photo objectForKey:@"FaceNo"] intValue];
-            NSLog(@"photo = %@", photo);
-            
-            [SQLManager newUserPhotosWith:destUserID withPhoto:photoID withFace:FaceNo];
-
-        }
-    } completion:^(BOOL finished) {
-        self.activityController = nil;
-        NSLog(@"Operation : %@ complete!", currentAction);
-        [selectedPhotos removeAllObjects];
-        [self.collectionView reloadData];
-        [self refreshSelectedPhotCountOnNavTilte];
-    }];
+    for (NSIndexPath *indexPath in selectedPhotos) {
+        // UI
+        GalleryViewCell *cell = (GalleryViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
+        [cell showSelectIcon:NO];
+        
+        NSDictionary *photo = [self.photos objectAtIndex:indexPath.row];
+        int photoID = [[photo objectForKey:@"PhotoID"] intValue];
+        int FaceNo = [[photo objectForKey:@"FaceNo"] intValue];
+        NSLog(@"photo = %@", photo);
+        
+        [SQLManager newUserPhotosWith:destUserID withPhoto:photoID withFace:FaceNo];
+        
+    }
+    
+    [self refresh];
+    
+//    [self.collectionView performBatchUpdates:^{
+//        for (NSIndexPath *indexPath in selectedPhotos) {
+//            // UI
+//            GalleryViewCell *cell = (GalleryViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
+//            [cell showSelectIcon:NO];
+//            
+//            NSDictionary *photo = [self.photos objectAtIndex:indexPath.row];
+//            int photoID = [[photo objectForKey:@"PhotoID"] intValue];
+//            int FaceNo = [[photo objectForKey:@"FaceNo"] intValue];
+//            NSLog(@"photo = %@", photo);
+//            
+//            [SQLManager newUserPhotosWith:destUserID withPhoto:photoID withFace:FaceNo];
+//
+//        }
+//    } completion:^(BOOL finished) {
+//        self.activityController = nil;
+//        NSLog(@"Operation : %@ complete!", currentAction);
+//        [selectedPhotos removeAllObjects];
+//        [self.collectionView reloadData];
+//        [self refreshSelectedPhotCountOnNavTilte];
+//    }];
 }
 
 - (void)movePhotos:(int)destUserID
 {
-    [self.collectionView performBatchUpdates:^{
-        for (NSIndexPath *indexPath in selectedPhotos) {
-            // UI
-            GalleryViewCell *cell = (GalleryViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
-            [cell showSelectIcon:NO];
-            
-            NSDictionary *photo = [self.photos objectAtIndex:indexPath.row];
-            int userID = [[photo objectForKey:@"UserID"] intValue];
-            int photoID = [[photo objectForKey:@"PhotoID"] intValue];
-            int FaceNo = [[photo objectForKey:@"FaceNo"] intValue];
-            NSLog(@"photo = %@", photo);
-            
-            [SQLManager newUserPhotosWith:destUserID withPhoto:photoID withFace:FaceNo];
-            
-            [SQLManager deleteUserPhoto:userID  withPhoto:photoID];
-            [self.photos removeObjectAtIndex:indexPath.row];
-        }
+    if(IsEmpty(selectedPhotos)) return;
+    
+    for (NSIndexPath *indexPath in selectedPhotos) {
+        // UI
+        GalleryViewCell *cell = (GalleryViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
+        [cell showSelectIcon:NO];
         
-        [self.collectionView deleteItemsAtIndexPaths:selectedPhotos];
+        NSDictionary *photo = [self.photos objectAtIndex:indexPath.row];
+        int userID = [[photo objectForKey:@"UserID"] intValue];
+        int photoID = [[photo objectForKey:@"PhotoID"] intValue];
+        int FaceNo = [[photo objectForKey:@"FaceNo"] intValue];
+        NSLog(@"photo = %@", photo);
+        
+        [SQLManager newUserPhotosWith:destUserID withPhoto:photoID withFace:FaceNo];
+        
+        [SQLManager deleteUserPhoto:userID  withPhoto:photoID];
+        //[self.photos removeObjectAtIndex:indexPath.row];
+    }
 
-        [self.userProfileView updateCell:self.user count:[self.photos count]];
-        
-    } completion:^(BOOL finished) {
-        self.activityController = nil;
-        NSLog(@"Operation : %@ complete!", currentAction);
-        [selectedPhotos removeAllObjects];
-        [self.collectionView reloadData];
-        [self refreshSelectedPhotCountOnNavTilte];
-    }];
+    [self refresh];
+    
+//    [self.collectionView performBatchUpdates:^{
+//        for (NSIndexPath *indexPath in selectedPhotos) {
+//            // UI
+//            GalleryViewCell *cell = (GalleryViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
+//            [cell showSelectIcon:NO];
+//            
+//            NSDictionary *photo = [self.photos objectAtIndex:indexPath.row];
+//            int userID = [[photo objectForKey:@"UserID"] intValue];
+//            int photoID = [[photo objectForKey:@"PhotoID"] intValue];
+//            int FaceNo = [[photo objectForKey:@"FaceNo"] intValue];
+//            NSLog(@"photo = %@", photo);
+//            
+//            [SQLManager newUserPhotosWith:destUserID withPhoto:photoID withFace:FaceNo];
+//            
+//            [SQLManager deleteUserPhoto:userID  withPhoto:photoID];
+//            [self.photos removeObjectAtIndex:indexPath.row];
+//        }
+//        
+//        [self.collectionView deleteItemsAtIndexPaths:selectedPhotos];
+//
+//        [self.userProfileView updateCell:self.user count:[self.photos count]];
+//        
+//    } completion:^(BOOL finished) {
+//        self.activityController = nil;
+//        NSLog(@"Operation : %@ complete!", currentAction);
+//        [selectedPhotos removeAllObjects];
+//        [self.collectionView reloadData];
+//        [self refreshSelectedPhotCountOnNavTilte];
+//    }];
 }
 
 

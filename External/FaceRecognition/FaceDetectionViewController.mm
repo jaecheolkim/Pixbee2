@@ -1580,27 +1580,6 @@ bail:
             }
         }
     }
-    
-//    int trackingID = feature.trackingID;
-//    int count = [processing[@(trackingID)] intValue];
-//    if(count < 3){
-//        processing[@(trackingID)] = [NSString stringWithFormat:@"%d", count + 1];
-//        
-//        if(feature.hasLeftEyePosition && feature.hasRightEyePosition){
-//            
-//            UIImageOrientation imageOrient = [[MotionOrientation sharedInstance] currentImageOrientationWithFrontCamera:isUsingFrontFacingCamera MirrorFlip:NO];
-//            BOOL isLandScape = [[MotionOrientation sharedInstance] deviceIsLandscape];
-//            cv::Mat cvImage = [FaceLib getFaceImage:ciImage feature:feature orient:imageOrient landscape:isLandScape];
-//            
-//            if(cvImage.data != NULL){
-//                [self parseFace:cvImage
-//                          forId:trackingID];
-//                
-//            }
-//            
-//        }
-//    }
-
 }
 
 - (void)parseFace:(cv::Mat &)image forId:(int)trackingID
