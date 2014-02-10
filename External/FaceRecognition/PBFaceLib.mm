@@ -141,6 +141,42 @@ using namespace cv;
     }
 }
 
+- (BOOL)trainModel:(NSArray *)models withOut:(NSMutableArray*)exceptIDs
+{
+    if(IsEmpty(models) || IsEmpty(exceptIDs)) return NO;
+    
+    std::vector<cv::Mat> images;
+    std::vector<int> labels;
+    
+    for(NSDictionary *model in models){
+        int UserID = [model[@"UserID"] intValue];
+        if(![exceptIDs containsObject:@(UserID)]) {
+        //if(UserID != exceptID){
+            NSLog(@"UserID = %d model Added..", UserID);
+            NSData *imageData = model[@"imageData"];
+            
+            // Then convert NSData to a cv::Mat. Images are standardized into 100x100
+            cv::Mat faceData = [self dataToMat:imageData
+                                         width:@100 //[NSNumber numberWithInt:100]
+                                        height:@100]; //[NSNumber numberWithInt:100]];
+            // Put this image into the model
+            images.push_back(faceData);
+            labels.push_back(UserID);
+        }
+
+        
+    }
+    
+    if (images.size() > 0 && labels.size() > 0) {
+        _model->train(images, labels);
+        return YES;
+    }
+    else {
+        return NO;
+    }
+   
+}
+
 - (BOOL)updateModel:(NSArray *)models
 {
     std::vector<cv::Mat> images;

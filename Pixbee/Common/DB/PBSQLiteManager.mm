@@ -837,6 +837,35 @@ for (id param in params ) {
     return (NSArray*)models;
 }
 
+- (NSArray*)getTrainModelsExceptID:(int)UserID
+{
+    NSMutableArray *models = [NSMutableArray array];
+    
+    const char* selectSQL = "SELECT UserID, image FROM FaceData where UserID IS NOT ?";
+    sqlite3_stmt *statement;
+    
+    sqlite3 *sqlDB = [SQLManager getDBContext];
+    
+    if (sqlite3_prepare_v2(sqlDB, selectSQL, -1, &statement, nil) == SQLITE_OK) {
+        sqlite3_bind_int(statement, 1, UserID);
+        while (sqlite3_step(statement) == SQLITE_ROW) {
+            int imageSize = sqlite3_column_bytes(statement, 1);
+            NSData *imageData = [NSData dataWithBytes:sqlite3_column_blob(statement, 1) length:imageSize];
+            
+            cv::Mat data = [FaceLib dataToMat:imageData width:@(100) height:@(100)];
+            UIImage *image = [FaceLib MatToUIImage:data];
+            [models addObject:image];
+            
+        }
+    }
+    
+    sqlite3_finalize(statement);
+    
+    
+    return (NSArray*)models;
+}
+
+
 - (NSArray*)getUsersFaces
 {
     NSMutableArray *usersPhotos = [NSMutableArray array];

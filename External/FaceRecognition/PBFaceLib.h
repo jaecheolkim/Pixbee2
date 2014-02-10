@@ -36,6 +36,7 @@ typedef enum{
 
 #pragma mark trainModel Operations
 - (BOOL)trainModel:(NSArray *)models;
+- (BOOL)trainModel:(NSArray *)models withOut:(NSMutableArray*)exceptIDs;
 
 #pragma mark Detect Operations
 - (NSArray*)detectFace:(CIImage*)ciImage options:(NSDictionary *)options;

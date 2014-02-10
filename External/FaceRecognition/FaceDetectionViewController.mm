@@ -104,6 +104,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     CIDetector *faceDetector;
     
     NSMutableArray *selectedUsers;
+    NSMutableArray *unSelectedUSers;
     
     cv::Mat old_prepreprocessedFace;
     double old_time;
@@ -173,6 +174,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     recognisedFaces = @{}.mutableCopy;
     processing = @{}.mutableCopy;
     selectedUsers = [NSMutableArray array];
+    unSelectedUSers = [NSMutableArray array];
     
     guideImage = [UIImage imageNamed:@"hive_line"];
  
@@ -245,6 +247,8 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 	[super viewWillDisappear:animated];
     isReadyToScanFace = NO;
     [self teardownAVCapture];
+    [selectedUsers removeAllObjects];
+    [unSelectedUSers removeAllObjects];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:MotionOrientationChangedNotification object:nil];
 }
 
@@ -688,7 +692,8 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
         [button0 removeFromSuperview];
         
         int userid = button0.UserID;
-        [selectedUsers removeObject:@(userid)];
+        
+        [self exceptUSerFromTrainDB:userid];
         
         NSLog(@"REMOVE || selectedUsers = %@", selectedUsers);
         
@@ -716,6 +721,38 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
         [button0 setBackgroundImage:nil forState:UIControlStateNormal];
         [_faceListScrollView addSubview:button0];
     }
+}
+
+- (void)exceptUSerFromTrainDB:(int)userid
+{
+    [selectedUsers removeObject:@(userid)];
+    [unSelectedUSers addObject:@(userid)];
+    //if(![unSelectedUSers containsObject:@(userid)])
+        
+    
+    NSArray *users = [SQLManager getAllUsers];
+    int userCount = (int)[users count];
+    int unSelectedUserCount = (int)[unSelectedUSers count];
+    
+    [self clearGuide];
+    
+    isFaceRecRedy = NO;
+    
+    if(userCount > unSelectedUserCount) {
+        NSArray *trainModel = [SQLManager getTrainModels];
+        if(!IsEmpty(trainModel))
+            [FaceLib trainModel:trainModel withOut:unSelectedUSers];
+    }
+    else if(userCount <= unSelectedUserCount){
+        [unSelectedUSers removeAllObjects];
+        NSArray *trainModel = [SQLManager getTrainModels];
+        if(!IsEmpty(trainModel))
+            [FaceLib trainModel:trainModel];
+
+    }
+
+    isFaceRecRedy = YES;
+
 }
 
 #pragma mark - AV setup
@@ -1315,6 +1352,19 @@ bail:
                 name = nil;
             }
             
+            if(!IsEmpty(name)){
+                if(!GlobalValue.testMode) {
+
+                    if ([name rangeOfString:@"Unknown"].location != NSNotFound) {
+                        name = @"Unknown";
+                    }
+                    
+                    else {
+                        name = [self getPrefix:name divider:@":"];
+                    }
+                }
+            }
+            
             [self showFaceRect:faceRect withName:name];
             
             currentFeature++;
@@ -1582,6 +1632,28 @@ bail:
     }
 }
 
+- (NSString *)getPrefix:(NSString*)str divider:(NSString*)div
+{
+    NSRange range = [str rangeOfString:div];
+    NSInteger start = 0;
+    NSInteger size = range.location ;
+    NSRange searchRange = NSMakeRange(start,size);
+    NSString *string = [str substringWithRange:searchRange];
+    return string;
+}
+
+- (NSString *)getSuffix:(NSString*)str divider:(NSString*)div
+{
+    NSRange range = [str rangeOfString:div];
+    NSInteger start = range.location + 1;
+    NSInteger size = [str length] - start;
+    NSRange searchRange = NSMakeRange(start,size);
+    NSString *string = [str substringWithRange:searchRange];
+    return string;
+}
+
+
+
 - (void)parseFace:(cv::Mat &)image forId:(int)trackingID
 {
     NSDictionary *match = [FaceLib recognizeFace:image];
@@ -1612,63 +1684,104 @@ bail:
         PBFaceRecognizer currentRecognizerType = (PBFaceRecognizer)[match[@"currentRecognizerType"] intValue];
         double confidence = [match[@"confidence"] doubleValue];
     
+        NSString *dbUserName = [SQLManager getUserName:UserID];
+        //NSString *score;
+        NSString *name;
+        
         if(currentRecognizerType == LBPHFaceRecognizer)
         {
-            NSString *name;
+           
             if(confidence < 50.f){ // For LBPH
-                if(GlobalValue.testMode)
-                    name = [NSString stringWithFormat:@"%@:%.2f", [SQLManager getUserName:UserID], confidence];
-                else
-                    name = [NSString stringWithFormat:@"%@ ", [SQLManager getUserName:UserID]];
+//                if(GlobalValue.testMode)
+                    name = [NSString stringWithFormat:@"%@:%.2f", dbUserName, confidence];
+//                else
+//                    name = [NSString stringWithFormat:@"%@ ", tmpUserName];
                 isFindFace = YES;
             }
             //else if(confidence > 50.f && confidence < 60.f){ // For LBPH
             else if(confidence > 50.f && confidence < 80.f){ // For LBPH
-                if(GlobalValue.testMode)
-                    name = [NSString stringWithFormat:@"? %@:%.2f", [SQLManager getUserName:UserID], confidence];
-                else
-                    name = [NSString stringWithFormat:@"? %@ ", [SQLManager getUserName:UserID]];
+//                if(GlobalValue.testMode)
+                    name = [NSString stringWithFormat:@"? %@:%.2f", dbUserName, confidence];
+//                else
+//                    name = [NSString stringWithFormat:@"? %@ ", tmpUserName];
                 isFindFace = YES;
             }
             else {
-                if(GlobalValue.testMode)
+//                if(GlobalValue.testMode)
                     name = [NSString stringWithFormat:@"Unknown[%d:%.2f]", UserID, confidence];
-                else
-                    name = [NSString stringWithFormat:@"Unknown"];
+//                else
+//                    name = [NSString stringWithFormat:@"Unknown"];
                 isFindFace = NO;
             }
             
-            recognisedFaces[@(trackingID)] = name;
+            
         }
         else if(currentRecognizerType == EigenFaceRecognizer || currentRecognizerType == FisherFaceRecognizer)
         {
-            NSString *name;
+            //NSString *name;
             if(confidence >= 0.8f){ // For EigenFace
-                if(GlobalValue.testMode)
-                    name = [NSString stringWithFormat:@"%@:%.2f", [SQLManager getUserName:UserID], confidence];
-                else
-                    name = [NSString stringWithFormat:@"%@ ", [SQLManager getUserName:UserID]];
-                    
+//                if(GlobalValue.testMode)
+                    name = [NSString stringWithFormat:@"%@:%.2f", dbUserName, confidence];
+//                else
+//                    name = [NSString stringWithFormat:@"%@ ", tmpUserName];
+                
                 isFindFace = YES;
             }
             else if(confidence > 0.7f && confidence < 0.8f){ // For EigenFace
-                if(GlobalValue.testMode)
-                    name = [NSString stringWithFormat:@"? %@:%.2f", [SQLManager getUserName:UserID], confidence];
-                else
-                    name = [NSString stringWithFormat:@"? %@ ", [SQLManager getUserName:UserID]];
+//                if(GlobalValue.testMode)
+                    name = [NSString stringWithFormat:@"? %@:%.2f", dbUserName, confidence];
+//                else
+//                    name = [NSString stringWithFormat:@"? %@ ", tmpUserName];
                 
                 isFindFace = YES;
             }
             else {
-                if(GlobalValue.testMode)
+//                if(GlobalValue.testMode)
                     name = [NSString stringWithFormat:@"Unknown[%d:%.2f]", UserID, confidence];
-                else
-                    name = [NSString stringWithFormat:@"Unknown"];
+//                else
+//                    name = [NSString stringWithFormat:@"Unknown"];
                 isFindFace = NO;
             }
-            recognisedFaces[@(trackingID)] = name;
+            //recognisedFaces[@(trackingID)] = name;
+        }
+        
+        recognisedFaces[@(trackingID)] = name;
+        NSLog(@"BEFORE :: recognisedFaces = %@",recognisedFaces);
+        
+        NSArray *allkeys = recognisedFaces.allKeys;
+        if(allkeys.count > 1){
+            for(NSNumber *key in allkeys)
+            {
+                //rint cTrackingID = [key intValue];
+                NSString *value = recognisedFaces[key];
+                
+                
+                //if(cTrackingID == trackingID) continue;
+                
+                
+                if(([value rangeOfString:dbUserName].location != NSNotFound) ||
+                   ([value rangeOfString:[NSString stringWithFormat:@"? %@",dbUserName]].location != NSNotFound))
+                    //if([value hasPrefix:tmpUserName] || [value hasPrefix:[NSString stringWithFormat:@"? %@",tmpUserName]])
+                {
+                    //NSString *vName = [self getPrefix:value divider:@":"];
+                    double vConfidence = [[self getSuffix:value divider:@":"] doubleValue];
+                    if(confidence > vConfidence){
+                        recognisedFaces[@(trackingID)] = @"Unknown";
+                    }
+                    else {
+                        recognisedFaces[key] = @"Unknown";
+                    }
+                    
+                    isFindFace = NO;
+                    break;
+                }
+            }
         }
 
+        
+        
+        NSLog(@"AFTER :: recognisedFaces = %@",recognisedFaces);
+        
         dispatch_async(dispatch_get_main_queue(), ^{
             if(isFindFace)
                 [self addNewFaceIcon:UserID];
