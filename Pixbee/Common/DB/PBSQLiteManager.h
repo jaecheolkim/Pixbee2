@@ -74,6 +74,7 @@ enum errorCodes {
 
 - (NSInteger)numberOfFacesForUserID:(int)UserID;
 - (NSArray*)getTrainModels;
+- (NSArray*)getTrainModelsForID:(int)UserID;
 - (void)setTrainModelForUserID:(int)UserID withFaceData:(NSData*)FaceData;
 //테스트용 사용자별 얼굴 리스트
 - (NSArray*)getUsersFaces;

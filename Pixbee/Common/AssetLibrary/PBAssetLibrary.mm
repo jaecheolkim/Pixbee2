@@ -499,7 +499,7 @@
     if(!isFaceRecRedy){
         //[FaceLib initDetector:CIDetectorAccuracyLow Tacking:NO];
         
-        NSArray *trainModel = [SQLManager getTrainModels];
+        NSArray *trainModel = [SQLManager getTrainModelsForID:UserID];
         
         if(!IsEmpty(trainModel)){
             isFaceRecRedy = [FaceLib initRecognizer:LBPHFaceRecognizer models:trainModel];

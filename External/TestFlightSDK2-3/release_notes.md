@@ -1,6 +1,29 @@
+## 2.2.1
+
+- Consolidate both SDK versions into one which removes all access to `ASIdentifierManager`
+
+## 2.2
+
+- Restore In App Updates
+- Automatic identification of beta testers
+
+## 2.1.3
+
+- Fix bug in 2.1.2-noadid which caused adid to be collected
+
+## 2.1.2
+
+- Fix for bug that caused events to not get sent properly when using the `TFOptionSessionKeepAliveTimeout` option
+- Fix for bug that caused logs that were sent immediately after start session to sometimes not be sent to server
+
+## 2.1.1
+
+- Create sdk version that removes all access to `ASIdentifierManager`
+- Add UIDevice's `identifierForVendor`
+
 ## 2.1
 
-- iPhone 5s 64bit support. The SDK includes support for iOS 4.3 and up and arm64.
+- Full support for the iPhone 5s’ ARM64 processor while still supporting down to iOS 4.3
 
 ## 2.0.2
 
