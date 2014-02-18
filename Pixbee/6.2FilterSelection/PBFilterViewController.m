@@ -8,6 +8,7 @@
 
 #import "PBFilterViewController.h"
 #import "UIImage+Addon.h"
+#import "CIFilter+ColorLUT.h"
 #import "TagNShareViewController.h"
 
 @interface PBFilterViewController () <UIScrollViewDelegate>
@@ -79,14 +80,18 @@
 - (void)setUpFilters
 {
     self.filters = @[@"Original",
-                     @"CILinearToSRGBToneCurve",
+                     @"CITemperatureAndTint",
+                     @"CIDotScreen",
                      @"CIPhotoEffectChrome",
+                     
                      @"CIPhotoEffectFade",
                      @"CIPhotoEffectInstant",
-                     @"CIBloom",
-                     @"CIPhotoEffectMono",
+                     @"CIGloom",
+                     
                      @"CIPhotoEffectNoir",
                      @"CIPhotoEffectProcess",
+                     @"CIPhotoEffectMono",
+                     @"CILinearToSRGBToneCurve",
                      @"CIPhotoEffectTonal",
                      @"CIPhotoEffectTransfer",
                      @"CISRGBToneCurveToLinear",
@@ -261,12 +266,24 @@
         return;
     }
     CIImage *ciImage = [CIImage imageWithCGImage:originalImage.CGImage];
+    
+//    //    //// add auto enhance
+//    NSArray* adjustments = [ciImage autoAdjustmentFiltersWithOptions:[NSDictionary dictionaryWithObject:[NSNumber numberWithBool:NO] forKey:kCIImageAutoAdjustRedEye]];
+//    
+//	for (CIFilter* filter in adjustments)
+//	{
+//		[filter setValue:ciImage forKey:kCIInputImageKey];
+//		ciImage = filter.outputImage;
+//	}
+//    //    //// add auto enhance
+    
+    
     CIFilter *filter = [CIFilter filterWithName:self.filters[index]
                                   keysAndValues:kCIInputImageKey, ciImage, nil];
     [filter setDefaults];
-    
-    CIContext *context = [CIContext contextWithOptions:nil];
+  
     CIImage *outputImage = [filter outputImage];
+    CIContext *context = [CIContext contextWithOptions:nil];
     CGImageRef cgImage = [context createCGImage:outputImage
                                        fromRect:[outputImage extent]];
     

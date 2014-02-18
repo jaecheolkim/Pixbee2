@@ -477,11 +477,17 @@ void equalizeLeftAndRightHalves(Mat &faceImg)
 //            filtered = Mat(warped.size(), CV_8U);
 //            cv::bilateralFilter(warped, filtered, 0, 20.0, 2.0);
 //        }
-        
+ 
+//        {
+//            filtered = [self getRetinexImage:warped];
+//        }
 
-        {   //맨 마지막 버전 (1/31)
+        {   //맨 마지막 버전 (1/31) 최종 배포 버전.
             filtered = warped;
         }
+        
+
+        
         
         
         

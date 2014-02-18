@@ -555,6 +555,12 @@
                                 if(face.bounds.size.width < 50.f) { // 얼굴이 작은 이미지는 스킵하자...
                                     continue;
                                 }
+
+//                                //눈 코 입 모두 있을 때만 얼굴 인식.
+//                                if(!(face.hasLeftEyePosition && face.hasRightEyePosition && face.hasMouthPosition)) {
+//                                    continue;
+//                                }
+                                
                                 // Save DB. [Faces]
                                 cv::Mat cvImage =  [FaceLib getFaceCVData:ciImage feature:face];
                                 

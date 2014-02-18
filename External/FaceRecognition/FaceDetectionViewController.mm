@@ -1056,6 +1056,16 @@ bail:
 	if (attachments)
 		CFRelease(attachments);
     
+//    //// add auto enhance
+//    NSArray* adjustments = [ciImage autoAdjustmentFiltersWithOptions:[NSDictionary dictionaryWithObject:[NSNumber numberWithBool:NO] forKey:kCIImageAutoAdjustRedEye]];
+//    
+//	for (CIFilter* filter in adjustments)
+//	{
+//		[filter setValue:ciImage forKey:kCIInputImageKey];
+//		ciImage = filter.outputImage;
+//	}
+//    //// add auto enhance
+    
 	UIDeviceOrientation curDeviceOrientation = [[MotionOrientation sharedInstance] deviceOrientation];
     // [[UIDevice currentDevice] orientation];
 	int exifOrientation;
@@ -1656,7 +1666,22 @@ bail:
 
 - (void)parseFace:(cv::Mat &)image forId:(int)trackingID
 {
-    NSDictionary *match = [FaceLib recognizeFace:image];
+    
+    NSDictionary *match =[FaceLib recognizeFace:image];
+
+//    int pValue = 80;
+//    int mValue = -80;
+//    cv::Mat brightImage = image + cv::Scalar(pValue, pValue, pValue);
+//    cv::Mat darkImage = image + cv::Scalar(mValue, mValue, mValue);
+//    
+//    NSDictionary *match1 = [FaceLib recognizeFace:brightImage];
+//    NSDictionary *match2 = [FaceLib recognizeFace:darkImage];
+//
+//    for(int i = 0; i < 3; i++){
+//        match = ([match[@"confidence"] doubleValue] < [match1[@"confidence"] doubleValue])?match : match1 ;
+//        match = ([match[@"confidence"] doubleValue] < [match2[@"confidence"] doubleValue])?match : match2 ;
+//    }
+    
     if(IsEmpty(match)) return;
     
     BOOL isFindFace = NO;
