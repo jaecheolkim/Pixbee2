@@ -569,8 +569,9 @@
                                 NSString *faceBound = NSStringFromCGRect(face.bounds);
                                 NSDictionary *faceDic = @{@"PhotoBound": PhotoBound, @"faceBound":faceBound,
                                                           @"image": serialized};
+                               
                                 
-                                faceImage = [FaceLib MatToUIImage:cvImage];
+                                faceImage = [FaceLib getFaceUIImage:ciImage bound:face.bounds];// [FaceLib MatToUIImage:cvImage];
                                 
                                 if(faceDic)
                                 {
@@ -622,7 +623,7 @@
                                                         NSLog(@"UserID => %d Added confidence = %f",[match[@"UserID"] intValue], [match[@"confidence"] doubleValue]);
                                                         
                                                         scaledImage = [UIImage imageWithCGImage:cgImage];
-                                                        [_faceAssets addObject:@{@"Asset": photoAsset, @"UserID" : @(UserID), @"PhotoID" : @(PhotoID)}];
+                                                        [_faceAssets addObject:@{@"Asset": photoAsset, @"UserID" : @(UserID), @"PhotoID" : @(PhotoID), @"faceBound": faceBound }];
                                                         
                                                         _matchCount++;
                                                     }

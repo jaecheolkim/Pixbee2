@@ -47,7 +47,7 @@ typedef enum{
 - (NSData *)serializeCvMat:(cv::Mat&)cvMat;
 
 - (CGImageRef)getFaceCGImage:(CIImage *)ciImage bound:(CGRect)faceRect;
-
+- (UIImage *)getFaceUIImage:(CIImage *)ciImage bound:(CGRect)faceRect;
 - (cv::Mat)getFaceCVData:(CIImage *)ciImage feature:(CIFaceFeature *)face;
 - (NSDictionary*)getFaceData:(CIImage *)ciImage feature:(CIFaceFeature *)face;
 

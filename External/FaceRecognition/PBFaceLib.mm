@@ -960,6 +960,15 @@ void equalizeLeftAndRightHalves(Mat &faceImg)
     return img;
 }
 
+- (UIImage *)getFaceUIImage:(CIImage *)ciImage bound:(CGRect)faceRect
+{
+    CGImageRef img = [_context createCGImage:ciImage fromRect:faceRect];
+    UIImage *tmpImage = [UIImage imageWithCGImage:img];
+    if(img) CGImageRelease(img);
+
+    return tmpImage;
+}
+
 - (cv::Mat)getFaceCVData:(CIImage *)ciImage feature:(CIFaceFeature *)face
 {
     CGRect faceRect = face.bounds;

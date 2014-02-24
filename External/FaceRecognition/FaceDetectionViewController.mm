@@ -20,10 +20,15 @@
 #import "MBSwitch.h"
 
 #import "PBFilterViewController.h"
-#import "AddingFaceToAlbumController.h"
+//#import "AddingFaceToAlbumController.h"
+#import "PBSearchFaceViewController.h"
 #import "AllPhotosController.h"
 #import "UIButton+FaceIcon.h"
 #import "NSTimer+Pause.h"
+
+#import "RMDownloadIndicator.h"
+#import "UIImage+ImageEffects.h"
+#import "SDImageCache.h"
 
 static void *IsAdjustingFocusingContext = &IsAdjustingFocusingContext;
 
@@ -117,7 +122,10 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     BOOL isFeedingSafe;
 
 }
+@property (weak, nonatomic) IBOutlet UIView *topView;
+@property (weak, nonatomic) IBOutlet UILabel *timeLabel;
 @property (weak, nonatomic) IBOutlet UILabel *instructionsLabel;
+@property (weak, nonatomic) IBOutlet UILabel *nameLabel;
 @property (nonatomic) NSInteger frameNum;
 @property (nonatomic) NSInteger numPicsTaken;
 @property (weak, nonatomic) IBOutlet UIButton *closeButton;
@@ -134,6 +142,9 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 @property (weak, nonatomic) IBOutlet UIButton *GalleryButton;
 @property (nonatomic, retain) CALayer *adjustingFocusLayer;
 
+@property (weak, nonatomic) RMDownloadIndicator *mixedIndicator;
+@property (assign, nonatomic)CGFloat downloadedBytes;
+
 - (IBAction)toggleFlash:(id)sender;
 - (IBAction)switchCameras:(id)sender;
 - (IBAction)closeCamera:(id)sender;
@@ -148,6 +159,8 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    _topView.backgroundColor = [UIColor clearColor];
     
     old_time = 0;
     old_prepreprocessedFace = cv::Mat();
@@ -177,7 +190,10 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     unSelectedUSers = [NSMutableArray array];
     
     guideImage = [UIImage imageNamed:@"hive_line"];
- 
+    
+    _instructionsLabel.hidden = YES;
+    _nameLabel.hidden = YES;
+    
     [_faceListScrollView setBackgroundColor:[UIColor blackColor]];
     [_faceListScrollView setAlpha:0.7];
     [_faceListScrollView setHidden:YES];
@@ -185,8 +201,46 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     if(self.faceMode == FaceModeCollect){
         self.navigationController.navigationBarHidden = YES;
         [_CameraBottomView setHidden:YES];
+        _timeLabel.hidden = YES;
+
+        
         [self setupGuide];
         self.numPicsTaken = 0;
+        
+        [_hiveImageView setHidden:YES];
+        RMDownloadIndicator *mixedIndicator = [[RMDownloadIndicator alloc]initWithFrame:CGRectMake(115, 450, 90, 90) type:kRMMixedIndictor];
+        [mixedIndicator setBackgroundColor:[UIColor clearColor]];
+        
+        //    [mixedIndicator setFillColor:[UIColor colorWithRed:16./255 green:119./255 blue:234./255 alpha:1.0f]];
+        //    [mixedIndicator setStrokeColor:[UIColor colorWithRed:16./255 green:119./255 blue:234./255 alpha:1.0f]];
+        [mixedIndicator setFillColor:[UIColor colorWithRed:237.0/255.0 green:188.0/255.0 blue:49.0/255.0 alpha:1.0]];
+        [mixedIndicator setStrokeColor:[UIColor colorWithRed:237.0/255.0 green:188.0/255.0 blue:49.0/255.0 alpha:1.0]];
+        mixedIndicator.radiusPercent = 0.45;
+        [self.view addSubview:mixedIndicator];
+        [mixedIndicator loadIndicator];
+        _mixedIndicator = mixedIndicator;
+        
+        _instructionsLabel.hidden = NO;
+        [_instructionsLabel setText:@"Please Smile !"];
+        [_instructionsLabel setFont:[UIFont fontWithName:@"HelveticaNeue-light" size:16]];//[UIFont systemFontOfSize:16]];
+        [_instructionsLabel setTextColor:[UIColor whiteColor]];
+        [_instructionsLabel setShadowColor:[UIColor grayColor]];
+        [_instructionsLabel setShadowOffset:CGSizeMake(1, 1)];
+        [_instructionsLabel setNumberOfLines:2];
+        [_instructionsLabel setBackgroundColor:[UIColor clearColor]];
+        [_instructionsLabel setTextAlignment:NSTextAlignmentCenter];
+        
+        _nameLabel.hidden = NO;
+        
+        [_nameLabel setText:@"Sahra"];
+        [_nameLabel setFont:[UIFont fontWithName:@"HelveticaNeue-light" size:16]];
+        [_nameLabel setTextColor:[UIColor whiteColor]];
+        [_nameLabel setShadowColor:[UIColor grayColor]];
+        [_nameLabel setShadowOffset:CGSizeMake(1, 1)];
+        [_nameLabel setNumberOfLines:2];
+        [_nameLabel setBackgroundColor:[UIColor clearColor]];
+        [_nameLabel setTextAlignment:NSTextAlignmentCenter];
+        
     } else {
         //[_closeButton setHidden:YES];
         [_hiveImageView setHidden:YES];
@@ -207,6 +261,8 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     ani_step = 0;
     currentAngle = 0.0;
     //[self startTimer];
+    
+
     
     UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapScreen:)];
     [self.view addGestureRecognizer:tapGestureRecognizer];
@@ -582,7 +638,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 //    }
 //    else
     if([segue.identifier isEqualToString:SEGUE_6_1_TO_2_2]){
-        AddingFaceToAlbumController *destination = segue.destinationViewController;
+        PBSearchFaceViewController *destination = segue.destinationViewController;
         destination.UserName = self.UserName;
         destination.UserID = self.UserID;
     }
@@ -1122,18 +1178,9 @@ bail:
             if(ciImage && [features count] == 1){
                 dispatch_async(dispatch_get_main_queue(), ^(void) {
 
-                    UIView *flashView = [[UIView alloc] initWithFrame:[[self view] frame]];
-                    [flashView setBackgroundColor:[UIColor whiteColor]];
-                    [[[self view] window] addSubview:flashView];
-                    [UIView animateWithDuration:.4f
-                                     animations:^{
-                                         [flashView setAlpha:0.f];
-                                     }
-                                     completion:^(BOOL finished){
-                                         [flashView removeFromSuperview];
-                                         [self collectFace:feature inImage:ciImage ofUserID:_UserID];
-                                     }
-                     ];
+                    [self collectFace:feature inImage:ciImage ofUserID:_UserID];
+                    
+
                     
                 });
                 
@@ -1591,6 +1638,9 @@ bail:
                 
                 if ((imageDiff > CHANGE_IN_IMAGE_FOR_COLLECTION) && (timeDiff_seconds > CHANGE_IN_SECONDS_FOR_COLLECTION)) {
                     // Also add the mirror image to the training set, so we have more training data, as well as to deal with faces looking to the left or right.
+                    
+                    [self showShutterFlash];
+                    
                     cv::Mat mirroredFace;
                     cv::flip(preprocessedFace, mirroredFace, 1);
                     
@@ -1606,8 +1656,10 @@ bail:
                     }
                     
                     if(_numPicsTaken%2 == 0){
-                        NSString *imagePath = [NSString stringWithFormat:@"hive%d.png", (int)_numPicsTaken * TOTAL_COLLECT];
-                        [_hiveImageView setImage:[UIImage imageNamed:imagePath]];
+//                        NSString *imagePath = [NSString stringWithFormat:@"hive%d.png", (int)_numPicsTaken * TOTAL_COLLECT];
+//                        [_hiveImageView setImage:[UIImage imageNamed:imagePath]];
+                        
+                        [_mixedIndicator updateWithTotalBytes:100 downloadedBytes:(int)_numPicsTaken * TOTAL_COLLECT];
                     }
                     
                     self.instructionsLabel.text = [NSString stringWithFormat:@"Taken %d / 10", (int)self.numPicsTaken];
@@ -1622,6 +1674,15 @@ bail:
                         
                         //UIImage *profileImage = [UIImage imageWithCIImage:ciImage];
                         [SQLManager setUserProfileImage:profileImage UserID:UserID];
+                        
+                        //최종 사진을 Blur 처리해서 이미지 저장.
+                        cgimage = [FaceLib getFaceCGImage:ciImage bound:ciImage.extent];
+                        profileImage = [UIImage imageWithCGImage:cgimage scale:1.0 orientation:imageOrient];
+                        CGImageRelease(cgimage);
+                        profileImage = [profileImage fixRotation];
+
+                        [[SDImageCache sharedImageCache] storeImage:profileImage forKey:@"LastImage" toDisk:YES];
+                        //UIImage *lastImage = [[SDImageCache sharedImageCache] imageFromDiskCacheForKey:@"LastImage"];
                         
                         //if(UserID > 1) // 처음 사용자 아니면
                         //    [self performSelector:@selector(goAlbum) withObject:nil afterDelay:2];

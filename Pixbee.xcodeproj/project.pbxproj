@@ -230,6 +230,15 @@
 		8065CCC4189C00E500E37716 /* UIAlertView+NSCookbook.m in Sources */ = {isa = PBXBuildFile; fileRef = 8065CCC2189C00E500E37716 /* UIAlertView+NSCookbook.m */; };
 		807DD91E18B9093A003EBF30 /* Default_Intro.png in Resources */ = {isa = PBXBuildFile; fileRef = 807DD91C18B9093A003EBF30 /* Default_Intro.png */; };
 		807DD91F18B9093A003EBF30 /* Login_Page.png in Resources */ = {isa = PBXBuildFile; fileRef = 807DD91D18B9093A003EBF30 /* Login_Page.png */; };
+		807DD92818BAFDB8003EBF30 /* RMDownloadIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 807DD92718BAFDB8003EBF30 /* RMDownloadIndicator.m */; };
+		807DD93518BB016E003EBF30 /* RMDisplayLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 807DD93418BB016E003EBF30 /* RMDisplayLabel.m */; };
+		807DD93E18BB1557003EBF30 /* PBSearchFaceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 807DD93D18BB1557003EBF30 /* PBSearchFaceViewController.m */; };
+		807DD94018BB1803003EBF30 /* 2_2_0_1_adding faces.png in Resources */ = {isa = PBXBuildFile; fileRef = 807DD93F18BB1803003EBF30 /* 2_2_0_1_adding faces.png */; };
+		807DD94518BB5ACA003EBF30 /* iCarousel.m in Sources */ = {isa = PBXBuildFile; fileRef = 807DD94418BB5ACA003EBF30 /* iCarousel.m */; };
+		807DD95218BB5B9A003EBF30 /* FXImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 807DD94F18BB5B9A003EBF30 /* FXImageView.m */; };
+		807DD95318BB5B9A003EBF30 /* UIImage+FX.m in Sources */ = {isa = PBXBuildFile; fileRef = 807DD95118BB5B9A003EBF30 /* UIImage+FX.m */; };
+		807DD95718BB6616003EBF30 /* CircleShadowImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 807DD95618BB6616003EBF30 /* CircleShadowImageView.m */; };
+		807DD95B18BB6B12003EBF30 /* TWRProgressView.m in Sources */ = {isa = PBXBuildFile; fileRef = 807DD95A18BB6B12003EBF30 /* TWRProgressView.m */; };
 		807E75C81851576100B1AD7E /* THBinder.m in Sources */ = {isa = PBXBuildFile; fileRef = 807E75C31851576100B1AD7E /* THBinder.m */; };
 		807E75C91851576100B1AD7E /* THObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = 807E75C51851576100B1AD7E /* THObserver.m */; };
 		80812839184D22960000CF3E /* DB_text.txt in Resources */ = {isa = PBXBuildFile; fileRef = 80812838184D22960000CF3E /* DB_text.txt */; };
@@ -677,6 +686,23 @@
 		8065CCC2189C00E500E37716 /* UIAlertView+NSCookbook.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIAlertView+NSCookbook.m"; sourceTree = "<group>"; };
 		807DD91C18B9093A003EBF30 /* Default_Intro.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default_Intro.png; sourceTree = "<group>"; };
 		807DD91D18B9093A003EBF30 /* Login_Page.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Login_Page.png; sourceTree = "<group>"; };
+		807DD92618BAFDB8003EBF30 /* RMDownloadIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMDownloadIndicator.h; sourceTree = "<group>"; };
+		807DD92718BAFDB8003EBF30 /* RMDownloadIndicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMDownloadIndicator.m; sourceTree = "<group>"; };
+		807DD93318BB016E003EBF30 /* RMDisplayLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMDisplayLabel.h; sourceTree = "<group>"; };
+		807DD93418BB016E003EBF30 /* RMDisplayLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMDisplayLabel.m; sourceTree = "<group>"; };
+		807DD93C18BB1557003EBF30 /* PBSearchFaceViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBSearchFaceViewController.h; sourceTree = "<group>"; };
+		807DD93D18BB1557003EBF30 /* PBSearchFaceViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBSearchFaceViewController.m; sourceTree = "<group>"; };
+		807DD93F18BB1803003EBF30 /* 2_2_0_1_adding faces.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "2_2_0_1_adding faces.png"; sourceTree = "<group>"; };
+		807DD94318BB5ACA003EBF30 /* iCarousel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iCarousel.h; sourceTree = "<group>"; };
+		807DD94418BB5ACA003EBF30 /* iCarousel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iCarousel.m; sourceTree = "<group>"; };
+		807DD94E18BB5B9A003EBF30 /* FXImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FXImageView.h; sourceTree = "<group>"; };
+		807DD94F18BB5B9A003EBF30 /* FXImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FXImageView.m; sourceTree = "<group>"; };
+		807DD95018BB5B9A003EBF30 /* UIImage+FX.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+FX.h"; sourceTree = "<group>"; };
+		807DD95118BB5B9A003EBF30 /* UIImage+FX.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+FX.m"; sourceTree = "<group>"; };
+		807DD95518BB6616003EBF30 /* CircleShadowImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CircleShadowImageView.h; sourceTree = "<group>"; };
+		807DD95618BB6616003EBF30 /* CircleShadowImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CircleShadowImageView.m; sourceTree = "<group>"; };
+		807DD95918BB6B12003EBF30 /* TWRProgressView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TWRProgressView.h; sourceTree = "<group>"; };
+		807DD95A18BB6B12003EBF30 /* TWRProgressView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TWRProgressView.m; sourceTree = "<group>"; };
 		807E75C21851576100B1AD7E /* THBinder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = THBinder.h; sourceTree = "<group>"; };
 		807E75C31851576100B1AD7E /* THBinder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = THBinder.m; sourceTree = "<group>"; };
 		807E75C41851576100B1AD7E /* THObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = THObserver.h; sourceTree = "<group>"; };
@@ -1225,6 +1251,7 @@
 		7856F6F11849D1B700A17349 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				807DD93F18BB1803003EBF30 /* 2_2_0_1_adding faces.png */,
 				807DD91C18B9093A003EBF30 /* Default_Intro.png */,
 				807DD91D18B9093A003EBF30 /* Login_Page.png */,
 				80D6C0A4189CC5B800BD6C74 /* refresh@2x.png */,
@@ -1356,6 +1383,8 @@
 			children = (
 				78685D5B1848FA29002D2BAA /* AddingFaceToAlbumController.h */,
 				78685D5C1848FA29002D2BAA /* AddingFaceToAlbumController.mm */,
+				807DD93C18BB1557003EBF30 /* PBSearchFaceViewController.h */,
+				807DD93D18BB1557003EBF30 /* PBSearchFaceViewController.m */,
 			);
 			path = AddFace;
 			sourceTree = "<group>";
@@ -1597,6 +1626,55 @@
 			path = RFRateMe;
 			sourceTree = "<group>";
 		};
+		807DD92518BAFDB8003EBF30 /* RMDownloadIndicator */ = {
+			isa = PBXGroup;
+			children = (
+				807DD93318BB016E003EBF30 /* RMDisplayLabel.h */,
+				807DD93418BB016E003EBF30 /* RMDisplayLabel.m */,
+				807DD92618BAFDB8003EBF30 /* RMDownloadIndicator.h */,
+				807DD92718BAFDB8003EBF30 /* RMDownloadIndicator.m */,
+			);
+			path = RMDownloadIndicator;
+			sourceTree = "<group>";
+		};
+		807DD94218BB5ACA003EBF30 /* iCarousel */ = {
+			isa = PBXGroup;
+			children = (
+				807DD94318BB5ACA003EBF30 /* iCarousel.h */,
+				807DD94418BB5ACA003EBF30 /* iCarousel.m */,
+			);
+			path = iCarousel;
+			sourceTree = "<group>";
+		};
+		807DD94D18BB5B9A003EBF30 /* FXImageView */ = {
+			isa = PBXGroup;
+			children = (
+				807DD94E18BB5B9A003EBF30 /* FXImageView.h */,
+				807DD94F18BB5B9A003EBF30 /* FXImageView.m */,
+				807DD95018BB5B9A003EBF30 /* UIImage+FX.h */,
+				807DD95118BB5B9A003EBF30 /* UIImage+FX.m */,
+			);
+			path = FXImageView;
+			sourceTree = "<group>";
+		};
+		807DD95418BB6616003EBF30 /* CircleShadowImageView */ = {
+			isa = PBXGroup;
+			children = (
+				807DD95518BB6616003EBF30 /* CircleShadowImageView.h */,
+				807DD95618BB6616003EBF30 /* CircleShadowImageView.m */,
+			);
+			path = CircleShadowImageView;
+			sourceTree = "<group>";
+		};
+		807DD95818BB6B12003EBF30 /* TWRProgressView */ = {
+			isa = PBXGroup;
+			children = (
+				807DD95918BB6B12003EBF30 /* TWRProgressView.h */,
+				807DD95A18BB6B12003EBF30 /* TWRProgressView.m */,
+			);
+			path = TWRProgressView;
+			sourceTree = "<group>";
+		};
 		807E75C11851576100B1AD7E /* THObserversAndBinders */ = {
 			isa = PBXGroup;
 			children = (
@@ -1647,6 +1725,11 @@
 		80D2A0C4184A1E57008D29B2 /* External */ = {
 			isa = PBXGroup;
 			children = (
+				807DD95818BB6B12003EBF30 /* TWRProgressView */,
+				807DD95418BB6616003EBF30 /* CircleShadowImageView */,
+				807DD94D18BB5B9A003EBF30 /* FXImageView */,
+				807DD94218BB5ACA003EBF30 /* iCarousel */,
+				807DD92518BAFDB8003EBF30 /* RMDownloadIndicator */,
 				805CA42618B1E56A00764FE1 /* LXReorderableCollectionViewFlowLayout */,
 				80AA41A318A0C3C700B7CF56 /* FXBlurView */,
 				80AA417E189D0F4100B7CF56 /* SFAlbum */,
@@ -2025,6 +2108,7 @@
 				78C1EB64186B0A790072E7DB /* rotate_camera_select@2x.png in Resources */,
 				7805A6DB1866E7B800B234C1 /* edit@2x.png in Resources */,
 				78C1EB54186B0A790072E7DB /* individualphoto@2x.png in Resources */,
+				807DD94018BB1803003EBF30 /* 2_2_0_1_adding faces.png in Resources */,
 				78C1EB6F186B0A790072E7DB /* social_twitter_act@2x.png in Resources */,
 				69ED32F518484EBB00127196 /* Images.xcassets in Resources */,
 				7805A6E61866E7B800B234C1 /* profile@2x.png in Resources */,
@@ -2101,6 +2185,7 @@
 				80D2A19F184B7CBB008D29B2 /* PB_DBModel.m in Sources */,
 				69C39FE818606CBD001EDDFA /* UIImage+WebP.m in Sources */,
 				80D2A11D184A1E58008D29B2 /* ASImageScrollView.m in Sources */,
+				807DD95218BB5B9A003EBF30 /* FXImageView.m in Sources */,
 				7805A63E18658BA000B234C1 /* DCStatusBarOverlay.m in Sources */,
 				69F5A8F9187847A60054A640 /* AccountCell.m in Sources */,
 				78564EDF1869F259000FB03C /* FPPopoverKeyboardResponsiveController.m in Sources */,
@@ -2140,9 +2225,11 @@
 				78A8053E184F80E5008E81B3 /* SCT3DFlip.m in Sources */,
 				801B35DF18561BC400EEB9F3 /* ViewController.m in Sources */,
 				69C39FD318606B39001EDDFA /* UIImage+Alpha.m in Sources */,
+				807DD93E18BB1557003EBF30 /* PBSearchFaceViewController.m in Sources */,
 				69ED32F318484EBB00127196 /* PBViewController.mm in Sources */,
 				805CA41B18ACAC6A00764FE1 /* CJCViewController.m in Sources */,
 				80D2A116184A1E58008D29B2 /* AlbumListViewController.m in Sources */,
+				807DD92818BAFDB8003EBF30 /* RMDownloadIndicator.m in Sources */,
 				80D2A121184A1E58008D29B2 /* ASLoadImageBackgroundOperation.m in Sources */,
 				7805A66518659ECC00B234C1 /* AFHTTPClient.m in Sources */,
 				69B1B2FF18587D9200774382 /* IntroView.m in Sources */,
@@ -2160,6 +2247,7 @@
 				805CA40118AC99D400764FE1 /* UIImage+Blurring.m in Sources */,
 				69C39FD218606B39001EDDFA /* UIImageView+WebCache.m in Sources */,
 				69C39FE418606CBD001EDDFA /* SDWebImageCompat.m in Sources */,
+				807DD95718BB6616003EBF30 /* CircleShadowImageView.m in Sources */,
 				80D2A118184A1E58008D29B2 /* GalleryViewController.m in Sources */,
 				80AA418A189D0F4E00B7CF56 /* SFStackLayout.m in Sources */,
 				80D2A139184A1E58008D29B2 /* UIButton+Bootstrap.m in Sources */,
@@ -2168,6 +2256,7 @@
 				80D2A122184A1E58008D29B2 /* ASLoadImageQueue.m in Sources */,
 				697C83DE186DF2FA00823990 /* MBSwitch.m in Sources */,
 				807E75C81851576100B1AD7E /* THBinder.m in Sources */,
+				807DD94518BB5ACA003EBF30 /* iCarousel.m in Sources */,
 				69C39FCB18606B39001EDDFA /* MKAnnotationView+WebCache.m in Sources */,
 				698B1EA81881197D00BBBBA7 /* DeleteActivity.m in Sources */,
 				80D2A123184A1E58008D29B2 /* NSOperation+AS.m in Sources */,
@@ -2181,6 +2270,7 @@
 				805CA40518AC99D400764FE1 /* UIImage+Reflection.m in Sources */,
 				80D55214186C710000B54974 /* FaceDetectionViewController.mm in Sources */,
 				78C156DD186491A5007BA1DF /* FPTouchView.m in Sources */,
+				807DD93518BB016E003EBF30 /* RMDisplayLabel.m in Sources */,
 				78A8052C184F7ABE008E81B3 /* FullScreenPhotoController.m in Sources */,
 				69F5A8FC187847B70054A640 /* SegmentCell.m in Sources */,
 				7856F6EC1849CD9B00A17349 /* OpenPhotoSegue.m in Sources */,
@@ -2220,9 +2310,11 @@
 				805CA41A18ACAC6A00764FE1 /* CJCAnonymousFacesFilter.m in Sources */,
 				805CA40818AC99D400764FE1 /* UIImage+Saving.m in Sources */,
 				7805A64018658BA000B234C1 /* IDMPhoto.m in Sources */,
+				807DD95318BB5B9A003EBF30 /* UIImage+FX.m in Sources */,
 				7856F6F71849D29E00A17349 /* AlbumPageController.m in Sources */,
 				69C39FD018606B39001EDDFA /* SDWebImagePrefetcher.m in Sources */,
 				7805A63D18658BA000B234C1 /* DCIntrospect.m in Sources */,
+				807DD95B18BB6B12003EBF30 /* TWRProgressView.m in Sources */,
 				805CA40618AC99D400764FE1 /* UIImage+Resizing.m in Sources */,
 				80E3BE581884346200FF4C3D /* UIAlertView+Blocks.m in Sources */,
 				78C156E0186491F9007BA1DF /* FBFriendController.m in Sources */,
