@@ -10,6 +10,7 @@
 #import "PBViewController.h"
 #import "FBHelper.h"
 #import "FaceDetectionViewController.h"
+#import <Parse/Parse.h>
 
 @interface PBViewController () <FBHelperDelegate>
 {
@@ -21,6 +22,7 @@
 @property (strong, nonatomic) IBOutlet UIView *viewFBLoginViewArea;
 @property (strong, nonatomic) IBOutlet UIImageView *PixbeeLogo;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *indicator;
+@property (weak, nonatomic) IBOutlet UIButton *FBLoginButton;
 
 @end
 
@@ -31,16 +33,52 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    //_indicator.hidden = YES;
+    _FBLoginButton.hidden = YES;
+    
+
+}
+
+- (void)viewDidUnload
+{
+    //    self.loginButton = nil;
+    self.PixbeeLogo = nil;
+    
+    [super viewDidUnload];
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
 
-    [FBHELPER loadFBLoginView:self.viewFBLoginViewArea];
-    FBHELPER.delegate = self;
+//    [FBHELPER loadFBLoginView:self.viewFBLoginViewArea];
+//    FBHELPER.delegate = self;
+//    
+//    [_indicator setHidesWhenStopped:YES];
     
-    [_indicator setHidesWhenStopped:YES];
+    // Check if user is cached and linked to Facebook, if so, bypass login
+    if ([PFUser currentUser] && [PFFacebookUtils isLinkedWithUser:[PFUser currentUser]]) {
+        NSDictionary *profile = [[PFUser currentUser] objectForKey:@"profile"];
+        
+        NSLog(@"Current User = %@", profile);
+        
+        [self checkNexProcess:profile];
+        
+    } else {
+        
+        [UIView transitionWithView:_PixbeeLogo
+                          duration:1.5
+                           options:UIViewAnimationOptionTransitionCrossDissolve
+                        animations:^{
+                            _PixbeeLogo.image = [UIImage imageNamed:@"Login_Page"];
+                        }
+                        completion:^(BOOL finished) {
+                            _FBLoginButton.hidden = NO;
+                        }];
+        
+        
+    }
 }
 
 - (void)didReceiveMemoryWarning
@@ -51,13 +89,13 @@
 
 #pragma mark Template generated code
 
-- (void)viewDidUnload
+- (void)checkNexProcess:(NSDictionary*)profile
 {
-//    self.loginButton = nil;
-    self.PixbeeLogo = nil;
+    [FBHELPER getFBFriend];
     
-    [super viewDidUnload];
+    [self checkNewPhotos];
 }
+
 
 - (void)checkNewPhotos
 {
@@ -65,7 +103,7 @@
     isCalledCheckNewPhotos = YES;
     
     [_viewFBLoginViewArea setHidden:YES];
-    [_indicator startAnimating];
+    //[_indicator startAnimating];
     
     //Check new photos and go main dashboard
     [AssetLib syncAlbumToDB:^(NSArray *result) {
@@ -109,87 +147,161 @@
 }
 
 
+#pragma mark - Login mehtods
+
+/* Login to facebook method */
+- (IBAction)loginButtonTouchHandler:(id)sender
+{
+    [_indicator startAnimating];
+    
+    // Set permissions required from the facebook user account
+    NSArray *permissionsArray = @[ @"user_about_me", @"user_relationships", @"user_birthday", @"user_location"];
+    //NSArray *permissionsArray = @[@"basic_info", @"email", @"user_likes"];
+    // Login PFUser using facebook
+    [PFFacebookUtils logInWithPermissions:permissionsArray block:^(PFUser *user, NSError *error) {
+         // Hide loading indicator
+        
+        if (!user) {
+            if (!error) {
+                NSLog(@"Uh oh. The user cancelled the Facebook login.");
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Log In Error" message:@"Uh oh. The user cancelled the Facebook login." delegate:nil cancelButtonTitle:nil otherButtonTitles:@"Dismiss", nil];
+                [alert show];
+            } else {
+                NSLog(@"Uh oh. An error occurred: %@", error);
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Log In Error" message:[error description] delegate:nil cancelButtonTitle:nil otherButtonTitles:@"Dismiss", nil];
+                [alert show];
+            }
+        } else {
+            if (user.isNew) {
+                NSLog(@"User with facebook signed up and logged in! = %@", user);
+                
+//                [FBHelper saveUserInfoToServer];
+                
+                isFirstVisit = YES;
+                
+            } else {
+                NSLog(@"User with facebook logged in! = %@", user);
+                
+                isFirstVisit = NO;
+            }
+            
+            NSDictionary *profile = user[@"profile"];
+            
+            NSLog(@"Current User = %@", profile);
+            
+            [self checkNexProcess:profile];
+            
+//            [PFFacebookUtils reauthorizeUser:[PFUser currentUser]
+//                      withPublishPermissions:@[@"publish_stream", @"read_stream", @"offline_access"]
+//                                    audience:FBSessionDefaultAudienceFriends
+//                                       block:^(BOOL succeeded, NSError *error) {
+//                                           if (succeeded) {
+//                                               // Your app now has publishing permissions for the user
+//                                               NSLog(@"now has publishing permissions for the user");
+//                                           }
+//                                           else if (error) {
+//                                               NSLog(@"Error: %@", error.description);
+//                                           }
+//                                           
+//                                           NSDictionary *profile = user[@"profile"];
+//                                           
+//                                           NSLog(@"Current User = %@", profile);
+//                                           
+//                                           [self checkNexProcess:profile];
+//
+//
+//                                       }];
+            
+ 
+        }
+        
+    }];
+    
+    //[_indicator startAnimating]; // Show loading indicator until login is finished
+}
+
+
 
 #pragma mark FBHelperDelegate
 
-//맨 마지막에 호출 됨.
-- (void)FBLoginFetchedUserInfo:(id<FBGraphUser>)user
-{
-    NSLog(@"====== FB Loged in... user :%@", user );
-    NSLog(@"========================FB Loged user : %@", user.name );
-    
-    if(IsEmpty(GlobalValue.userName)) {
-        int UserID = [SQLManager newUserWithFBUser:user];
-        
-        GlobalValue.userName = user.name;
-        GlobalValue.UserID = UserID;
-        NSLog(@"Default user name = %@ / id = %d", GlobalValue.userName, UserID);
-        isFirstVisit = YES;
-    }
-#warning 이상하게 이게 두번 호출되어서 다음 NavigationController 문제가 생겼음 (결국 Push를 두번 한 꼴.)
-    [self checkNewPhotos];
-
-}
-
-- (void)FBLogedInUser
-{
-    [self getFBFriend];
-}
-
-- (void)FBHandleError {
-    
-    //[self performSegueWithIdentifier:SEGUE_FACEANALYZE sender:self];
-}
-
-- (void)getFBFriend {
-    dispatch_async(dispatch_get_main_queue(), ^(void) {
-        FBHELPER.friends = nil;
-        
-        // 사진(small, normal, large, square
-        NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
-                                @"name,id,picture.type(normal)", @"fields",
-                                nil
-                                ];
-        
-        [FBRequestConnection startWithGraphPath:@"/me/friends"
-                                     parameters:params
-                                     HTTPMethod:@"GET"
-                              completionHandler:^(
-                                                  FBRequestConnection *connection,
-                                                  id result,
-                                                  NSError *error
-                                                  ) {
-                                  /* handle the result */
-                                  NSDictionary *data = (NSDictionary *)result;
-                                  NSArray *friends = [data objectForKey:@"data"];
-                                  FBHELPER.friends = friends;
-                                  
-                                  [FBRequestConnection startWithGraphPath:@"/me"
-                                                               parameters:nil
-                                                               HTTPMethod:@"GET"
-                                                        completionHandler:^(
-                                                                            FBRequestConnection *connection,
-                                                                            id result,
-                                                                            NSError *error
-                                                                            ) {
-                                                            NSLog(@"ME : result = %@", result);
-                                                            
-                                                            NSMutableArray *array = [NSMutableArray arrayWithArray:FBHELPER.friends];
-                                                            [array insertObject:@{@"name":result[@"name"], @"id":result[@"id"], @"picture":[NSNull null]} atIndex:0];
-
-                                                            FBHELPER.friends = (NSArray*)array;
-                                                            
-                                                            NSLog(@"Friends = %@", FBHELPER.friends);
-                                                        }];
-                                  
-                                  
-                                  
-                                  //[self goNext];
-                                  //[self performSegueWithIdentifier:SEGUE_FACEANALYZE sender:self];
-                              }];
-
-    });
-}
+////맨 마지막에 호출 됨.
+//- (void)FBLoginFetchedUserInfo:(id<FBGraphUser>)user
+//{
+//    NSLog(@"====== FB Loged in... user :%@", user );
+//    NSLog(@"========================FB Loged user : %@", user.name );
+//    
+//    if(IsEmpty(GlobalValue.userName)) {
+//        int UserID = [SQLManager newUserWithFBUser:user];
+//        
+//        GlobalValue.userName = user.name;
+//        GlobalValue.UserID = UserID;
+//        NSLog(@"Default user name = %@ / id = %d", GlobalValue.userName, UserID);
+//        isFirstVisit = YES;
+//    }
+//#warning 이상하게 이게 두번 호출되어서 다음 NavigationController 문제가 생겼음 (결국 Push를 두번 한 꼴.)
+//    [self checkNewPhotos];
+//
+//}
+//
+//- (void)FBLogedInUser
+//{
+//    [self getFBFriend];
+//}
+//
+//- (void)FBHandleError {
+//    
+//    //[self performSegueWithIdentifier:SEGUE_FACEANALYZE sender:self];
+//}
+//
+//- (void)getFBFriend {
+//    dispatch_async(dispatch_get_main_queue(), ^(void) {
+//        FBHELPER.friends = nil;
+//        
+//        // 사진(small, normal, large, square
+//        NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
+//                                @"name,id,picture.type(normal)", @"fields",
+//                                nil
+//                                ];
+//        
+//        [FBRequestConnection startWithGraphPath:@"/me/friends"
+//                                     parameters:params
+//                                     HTTPMethod:@"GET"
+//                              completionHandler:^(
+//                                                  FBRequestConnection *connection,
+//                                                  id result,
+//                                                  NSError *error
+//                                                  ) {
+//                                  /* handle the result */
+//                                  NSDictionary *data = (NSDictionary *)result;
+//                                  NSArray *friends = [data objectForKey:@"data"];
+//                                  FBHELPER.friends = friends;
+//                                  
+//                                  [FBRequestConnection startWithGraphPath:@"/me"
+//                                                               parameters:nil
+//                                                               HTTPMethod:@"GET"
+//                                                        completionHandler:^(
+//                                                                            FBRequestConnection *connection,
+//                                                                            id result,
+//                                                                            NSError *error
+//                                                                            ) {
+//                                                            NSLog(@"ME : result = %@", result);
+//                                                            
+//                                                            NSMutableArray *array = [NSMutableArray arrayWithArray:FBHELPER.friends];
+//                                                            [array insertObject:@{@"name":result[@"name"], @"id":result[@"id"], @"picture":[NSNull null]} atIndex:0];
+//
+//                                                            FBHELPER.friends = (NSArray*)array;
+//                                                            
+//                                                            NSLog(@"Friends = %@", FBHELPER.friends);
+//                                                        }];
+//                                  
+//                                  
+//                                  
+//                                  //[self goNext];
+//                                  //[self performSegueWithIdentifier:SEGUE_FACEANALYZE sender:self];
+//                              }];
+//
+//    });
+//}
 
 //
 ////친구 리스트를 다 받았을 때 위임되는 함수.

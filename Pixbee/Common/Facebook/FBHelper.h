@@ -25,8 +25,12 @@
 + (FBHelper *)sharedInstance;
 
 - (void)loadFBLoginView:(UIView *)_view ;
+
+- (void)saveUserInfoToServer;
+
 - (void)saveFriendList;
 - (BOOL)loadFriendList;
+- (void)getFBFriend;
 
 @end
 

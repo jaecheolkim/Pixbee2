@@ -127,11 +127,11 @@
     
     [self.tableView reloadData];
     
-    NSInteger section = [self.tableView numberOfSections] - 1;
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[self.tableView numberOfRowsInSection:section]-1 inSection:section];
+//    NSInteger section = [self.tableView numberOfSections] - 1;
+//    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[self.tableView numberOfRowsInSection:section]-1 inSection:section];
     
-    if(indexPath != nil)
-        [self.tableView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionBottom animated:NO];
+//    if(indexPath != nil)
+//        [self.tableView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionBottom animated:NO];
     
 }
 

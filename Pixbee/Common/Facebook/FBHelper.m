@@ -22,6 +22,7 @@
 
 #import "FBHelper.h"
 #import <CoreLocation/CoreLocation.h>
+#import <Parse/Parse.h>
 
 @interface FBHelper ()
 
@@ -147,6 +148,125 @@
     if ([[self delegate] respondsToSelector:@selector(FBHandleError)]) {
         [[self delegate] FBHandleError];
     }
+}
+
+
+- (void)saveUserInfoToServer
+{
+    // Send request to Facebook
+    FBRequest *request = [FBRequest requestForMe];
+    [request startWithCompletionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
+        // handle response
+        if (!error) {
+            // Parse the data received
+            NSDictionary *userData = (NSDictionary *)result;
+            
+            NSString *facebookID = userData[@"id"];
+            
+            NSURL *pictureURL = [NSURL URLWithString:[NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?type=large&return_ssl_resources=1", facebookID]];
+            
+            
+            NSMutableDictionary *userProfile = [NSMutableDictionary dictionaryWithCapacity:7];
+            
+            if (facebookID) {
+                userProfile[@"facebookId"] = facebookID;
+            }
+            
+            if (userData[@"name"]) {
+                userProfile[@"name"] = userData[@"name"];
+            }
+            
+            if (userData[@"location"][@"name"]) {
+                userProfile[@"location"] = userData[@"location"][@"name"];
+            }
+            
+            if (userData[@"gender"]) {
+                userProfile[@"gender"] = userData[@"gender"];
+            }
+            
+            if (userData[@"birthday"]) {
+                userProfile[@"birthday"] = userData[@"birthday"];
+            }
+            
+            if (userData[@"relationship_status"]) {
+                userProfile[@"relationship"] = userData[@"relationship_status"];
+            }
+            
+            if ([pictureURL absoluteString]) {
+                userProfile[@"pictureURL"] = [pictureURL absoluteString];
+            }
+            
+            [[PFUser currentUser] setObject:userProfile forKey:@"profile"];
+            [[PFUser currentUser] saveInBackground];
+            
+            
+            if(IsEmpty(GlobalValue.userName)) {
+                int UserID = [SQLManager newUserWithPFUser:userProfile];
+                
+                GlobalValue.userName = userProfile[@"name"]; // user.name;
+                GlobalValue.UserID = UserID;
+                NSLog(@"Default user name = %@ / id = %d", GlobalValue.userName, UserID);
+
+            }
+            
+        } else if ([[[[error userInfo] objectForKey:@"error"] objectForKey:@"type"]
+                    isEqualToString: @"OAuthException"]) { // Since the request failed, we can check if it was due to an invalid session
+            NSLog(@"The facebook session was invalidated");
+
+        } else {
+            NSLog(@"Some other error: %@", error);
+        }
+    }];
+
+}
+
+
+
+- (void)getFBFriend
+{
+    dispatch_async(dispatch_get_main_queue(), ^(void) {
+        FBHELPER.friends = nil;
+        
+        // 사진(small, normal, large, square
+        NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
+                                @"name,id,picture.type(normal)", @"fields",
+                                nil
+                                ];
+        
+        [FBRequestConnection startWithGraphPath:@"/me/friends"
+                                     parameters:params
+                                     HTTPMethod:@"GET"
+                              completionHandler:^(
+                                                  FBRequestConnection *connection,
+                                                  id result,
+                                                  NSError *error
+                                                  ) {
+                                  /* handle the result */
+                                  NSDictionary *data = (NSDictionary *)result;
+                                  NSArray *friends = [data objectForKey:@"data"];
+                                  FBHELPER.friends = friends;
+                                  
+                                  [FBRequestConnection startWithGraphPath:@"/me"
+                                                               parameters:nil
+                                                               HTTPMethod:@"GET"
+                                                        completionHandler:^(
+                                                                            FBRequestConnection *connection,
+                                                                            id result,
+                                                                            NSError *error
+                                                                            ) {
+                                                            NSLog(@"ME : result = %@", result);
+                                                            
+                                                            NSMutableArray *array = [NSMutableArray arrayWithArray:FBHELPER.friends];
+                                                            [array insertObject:@{@"name":result[@"name"], @"id":result[@"id"], @"picture":[NSNull null]} atIndex:0];
+                                                            
+                                                            FBHELPER.friends = (NSArray*)array;
+                                                            
+                                                            NSLog(@"Friends = %@", FBHELPER.friends);
+                                                        }];
+
+                              }];
+        
+    });
 }
 
 

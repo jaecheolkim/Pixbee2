@@ -38,7 +38,8 @@ enum errorCodes {
 - (NSArray *)newUser;
 // FB로그인 사용자용 newUser
 - (int)newUserWithFBUser:(id<FBGraphUser>)user;
-
+// Parse FB로그인 사용자용 newUser
+- (int)newUserWithPFUser:(NSDictionary*)profile;
 
 // Users 테이블 업데이트
 // Param must inclue belows

@@ -496,7 +496,50 @@
     return result;
 }
 
-
+// Parse의 facebook session 사용할 때.
+- (int)newUserWithPFUser:(NSDictionary*)profile
+{
+    int UserID = -1;
+    
+    if(IsEmpty(profile)) return UserID;
+    
+    NSString *UserName = profile[@"name"]; //user.name;
+    
+    NSString *query = [NSString stringWithFormat:@"SELECT UserID, UserName FROM Users WHERE UserName = '%@';", UserName];
+    NSArray *result = [SQLManager getRowsForQuery:query];
+    NSLog(@"[Users] QUERY result = %@", result);
+    if([result count] > 0 && result != nil)
+    {
+        UserID = [[[result objectAtIndex:0] objectForKey:@"UserID"] intValue];
+        return UserID;
+    }
+    
+    if(![result count]){
+        NSString *fbID = profile[@"facebookId"]; // user.id;
+        NSString *fbProfileURL = profile[@"pictureURL"]; //[NSString stringWithFormat:@"http://graph.facebook.com/%@/picture?type=large", user.id];
+        //NSString *fbBirthday = user.birthday;
+        NSString *fbNickName = profile[@"name"]; //user.username;
+        
+        NSString *sqlStr = [NSString stringWithFormat:
+                            @"INSERT INTO Users (UserName, UserNick, UserProfile, fbID, fbName, fbProfile ) VALUES ('%@', '%@', '%@', '%@', '%@', '%@');",
+                            UserName, fbNickName, fbProfileURL, fbID, fbNickName, fbProfileURL];
+        NSLog(@"inser qury :: user = %@", sqlStr);
+        NSError *error = [SQLManager doQuery:sqlStr];
+        if (error != nil) {
+            NSLog(@"Error: %@",[error localizedDescription]);
+        }
+    }
+    
+    result = [SQLManager getRowsForQuery:query];
+    NSLog(@"[Users] INSERT result = %@", result);
+    if([result count] > 0 && result != nil)
+    {
+        UserID = [[[result objectAtIndex:0] objectForKey:@"UserID"] intValue];
+    }
+    
+    return UserID;
+    
+}
 
 // facebook user 정보 포함된 새로운 User 추가.
 - (int)newUserWithFBUser:(id<FBGraphUser>)user

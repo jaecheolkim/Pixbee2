@@ -16,9 +16,7 @@
 
 @interface AddingFaceToAlbumController () <PBAssetsLibraryDelegate, SBPageFlowViewDelegate, SBPageFlowViewDataSource, FBFriendControllerDelegate, UITextFieldDelegate>
 {
-    // 만약 현재 얼굴 검출중인데 멈추고 싶으면 isActive를 No로 해주면 됨..
-    BOOL isActive;
-    
+
     // 보여지는 이미지의 인덱스
     NSInteger    _currentPage;
 }
@@ -79,8 +77,7 @@
     self.navigationItem.titleView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"pixbee.png"]];
 
 	// Do any additional setup after loading the view.
-    isActive = YES;
-    
+
     self.assets = [NSMutableArray array];
     
     self.skipButton.enabled = NO;
@@ -103,6 +100,12 @@
     self.nameField.text = self.UserName;
     [self.nameField addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
     
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    AssetLib.faceProcessStop = YES;
 }
 
 - (void)viewDidAppear:(BOOL)animated

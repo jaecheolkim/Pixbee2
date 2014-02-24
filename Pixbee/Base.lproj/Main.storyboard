@@ -17,18 +17,23 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="Default_main.png" translatesAutoresizingMaskIntoConstraints="NO" id="qik-qn-gRq">
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="Default_Intro.png" translatesAutoresizingMaskIntoConstraints="NO" id="qik-qn-gRq">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <color key="backgroundColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                             </imageView>
-                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Y6c-gn-Kh1">
-                                <rect key="frame" x="0.0" y="510" width="320" height="58"/>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="kSL-e2-Ew1">
+                                <rect key="frame" x="87" y="428" width="144" height="44"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-                            </view>
-                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="qb8-m8-uLT">
-                                <rect key="frame" x="142" y="297" width="37" height="37"/>
+                                <state key="normal">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="loginButtonTouchHandler:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="8tx-LY-71l"/>
+                                </connections>
+                            </button>
+                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" hidesWhenStopped="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="qb8-m8-uLT">
+                                <rect key="frame" x="141" y="350" width="37" height="37"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </activityIndicatorView>
                         </subviews>
@@ -37,9 +42,9 @@
                     <navigationItem key="navigationItem" id="URr-uh-msq"/>
                     <nil key="simulatedTopBarMetrics"/>
                     <connections>
+                        <outlet property="FBLoginButton" destination="kSL-e2-Ew1" id="eNG-Bg-agF"/>
                         <outlet property="PixbeeLogo" destination="qik-qn-gRq" id="4nf-we-QGI"/>
                         <outlet property="indicator" destination="qb8-m8-uLT" id="lW3-sh-1kF"/>
-                        <outlet property="viewFBLoginViewArea" destination="Y6c-gn-Kh1" id="0RT-jS-GnH"/>
                         <segue destination="5fn-Qj-G3E" kind="push" identifier="Segue1_2to3_1" id="b0A-hU-Ygo"/>
                         <segue destination="yxo-B7-XCy" kind="modal" identifier="SegueFaceAnalyze" id="RFS-Cc-Rzr"/>
                     </connections>
@@ -521,7 +526,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="192" height="28"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="0D044C38-2742-488B-B6B5-CA7839FEBFD6" translatesAutoresizingMaskIntoConstraints="NO" id="6aK-Ak-lFj">
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="4D6A87AA-48DA-4FD2-8B15-84A863378B36" translatesAutoresizingMaskIntoConstraints="NO" id="6aK-Ak-lFj">
                                                     <rect key="frame" x="0.0" y="0.0" width="28" height="29"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
@@ -1740,7 +1745,7 @@ more Alex's Photo</string>
                         </collectionViewFlowLayout>
                         <cells>
                             <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="Uou-Am-qTZ">
-                                <rect key="frame" x="0.0" y="0.0" width="100" height="100"/>
+                                <rect key="frame" x="0.0" y="64" width="100" height="100"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                     <rect key="frame" x="0.0" y="0.0" width="100" height="100"/>
@@ -1782,7 +1787,7 @@ more Alex's Photo</string>
                         </collectionViewFlowLayout>
                         <cells>
                             <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="tAq-Md-ymg" customClass="SFCollectionViewCell">
-                                <rect key="frame" x="0.0" y="0.0" width="150" height="150"/>
+                                <rect key="frame" x="0.0" y="64" width="150" height="150"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                     <rect key="frame" x="0.0" y="0.0" width="150" height="150"/>
@@ -1804,7 +1809,7 @@ more Alex's Photo</string>
         </scene>
     </scenes>
     <resources>
-        <image name="0D044C38-2742-488B-B6B5-CA7839FEBFD6" width="628" height="152">
+        <image name="4D6A87AA-48DA-4FD2-8B15-84A863378B36" width="628" height="152">
             <mutableData key="keyedArchiveRepresentation">
 YnBsaXN0MDDUAQIDBAUGPj9YJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoK4HCBMU
 GR4fIyQsLzI4O1UkbnVsbNUJCgsMDQ4PEBESVk5TU2l6ZVYkY2xhc3NcTlNJbWFnZUZsYWdzVk5TUmVw
@@ -8221,7 +8226,7 @@ Bd1qAAXdcQAF3XkABd2GAAXdiwAF3Y0ABd2PAAXdlAAF3ZwABd2fAAXdpAAF3awABd2vAAXdwQAF3cQA
 Bd3JAAAAAAAABAEAAAAAAAAAQgAAAAAAAAAAAAAAAAAF3cs
 </mutableData>
         </image>
-        <image name="Default_main.png" width="640" height="1136"/>
+        <image name="Default_Intro.png" width="640" height="1136"/>
         <image name="addfacetab.png" width="30" height="30"/>
         <image name="addfacetab_select.png" width="30" height="30"/>
         <image name="allphoto.png" width="39" height="33"/>
@@ -8275,10 +8280,10 @@ Bd3JAAAAAAAABAEAAAAAAAAAQgAAAAAAAAAAAAAAAAAF3cs
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
+        <segue reference="b0A-hU-Ygo"/>
         <segue reference="GxS-RG-54L"/>
-        <segue reference="oBg-YQ-6ww"/>
         <segue reference="Re6-n5-khJ"/>
-        <segue reference="tjK-aR-fac"/>
         <segue reference="Zhm-J1-mzh"/>
+        <segue reference="tjK-aR-fac"/>
     </inferredMetricsTieBreakers>
 </document>

@@ -1121,7 +1121,20 @@ bail:
         if (self.frameNum == 15) { //매 0.5초마다 검사.
             if(ciImage && [features count] == 1){
                 dispatch_async(dispatch_get_main_queue(), ^(void) {
-                    [self collectFace:feature inImage:ciImage ofUserID:_UserID];
+
+                    UIView *flashView = [[UIView alloc] initWithFrame:[[self view] frame]];
+                    [flashView setBackgroundColor:[UIColor whiteColor]];
+                    [[[self view] window] addSubview:flashView];
+                    [UIView animateWithDuration:.4f
+                                     animations:^{
+                                         [flashView setAlpha:0.f];
+                                     }
+                                     completion:^(BOOL finished){
+                                         [flashView removeFromSuperview];
+                                         [self collectFace:feature inImage:ciImage ofUserID:_UserID];
+                                     }
+                     ];
+                    
                 });
                 
             }
@@ -1539,6 +1552,21 @@ bail:
 //        }
 //    }
 //}
+
+- (void)showShutterFlash
+{
+    UIView *flashView = [[UIView alloc] initWithFrame:[[self view] frame]];
+    [flashView setBackgroundColor:[UIColor whiteColor]];
+    [[[self view] window] addSubview:flashView];
+    [UIView animateWithDuration:.4f
+                     animations:^{
+                         [flashView setAlpha:0.f];
+                     }
+                     completion:^(BOOL finished){
+                         [flashView removeFromSuperview];
+                     }
+     ];
+}
 
 - (void)collectFace:(CIFaceFeature *)feature inImage:(CIImage *)ciImage ofUserID:(int)UserID
 {
