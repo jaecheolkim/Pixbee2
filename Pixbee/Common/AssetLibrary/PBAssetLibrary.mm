@@ -541,7 +541,8 @@
                     NSArray *fs = [cFaceDetector featuresInImage:ciImage];
                     
                     UIImage *faceImage = nil;
-                    UIImage *profileImage = nil;
+                    //UIImage *profileImage = nil;
+                    NSString *faceBound;
                     
                     if(!IsEmpty(fs)) {
                         // 신규 포토 저장.
@@ -566,7 +567,7 @@
                                 
                                 NSData *serialized = [FaceLib serializeCvMat:cvImage];
                                 NSString *PhotoBound = NSStringFromCGRect(ciImage.extent);
-                                NSString *faceBound = NSStringFromCGRect(face.bounds);
+                                faceBound = NSStringFromCGRect(face.bounds);
                                 NSDictionary *faceDic = @{@"PhotoBound": PhotoBound, @"faceBound":faceBound,
                                                           @"image": serialized};
                                
@@ -602,7 +603,7 @@
                                                         NSLog(@"UserID => %d Added confidence = %f",[match[@"UserID"] intValue], [match[@"confidence"] doubleValue]);
                                                         
                                                         scaledImage = [UIImage imageWithCGImage:cgImage];
-                                                        [_faceAssets addObject:@{@"Asset": photoAsset, @"UserID" : @(UserID), @"PhotoID" : @(PhotoID)}];
+                                                        [_faceAssets addObject:@{@"Asset": photoAsset, @"UserID" : @(UserID), @"PhotoID" : @(PhotoID), @"faceBound": faceBound }];
                                                         
                                                         _matchCount++;
                                                     }

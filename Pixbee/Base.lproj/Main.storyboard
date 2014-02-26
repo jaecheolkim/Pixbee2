@@ -524,7 +524,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="192" height="28"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="DC3695E1-4B22-4BC8-823D-DED440AE2D07" translatesAutoresizingMaskIntoConstraints="NO" id="6aK-Ak-lFj">
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="3B85CCC0-6B4E-41AB-A497-1F84A85428DB" translatesAutoresizingMaskIntoConstraints="NO" id="6aK-Ak-lFj">
                                                     <rect key="frame" x="0.0" y="0.0" width="28" height="29"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
@@ -1848,6 +1848,19 @@ more Alex's Photo</string>
                                 <state key="normal" title="Skip">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
+                                <connections>
+                                    <action selector="skipButtonHandler:" destination="ycL-kc-Lg3" eventType="touchUpInside" id="d14-9j-Q8v"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Sy2-q5-pRF">
+                                <rect key="frame" x="117.5" y="494" width="85" height="40"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="+ Add">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="addButtonHandler:" destination="ycL-kc-Lg3" eventType="touchUpInside" id="bHD-by-Iop"/>
+                                </connections>
                             </button>
                             <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3Ln-p5-wPT" userLabel="View - face paging" customClass="iCarousel">
                                 <rect key="frame" x="0.0" y="154" width="320" height="160"/>
@@ -1858,7 +1871,7 @@ more Alex's Photo</string>
                                     <outlet property="delegate" destination="ycL-kc-Lg3" id="gDJ-nP-0qB"/>
                                 </connections>
                             </view>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="16" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xbX-w9-XYl" userLabel="Label - face count">
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="0" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xbX-w9-XYl" userLabel="Label - face count">
                                 <rect key="frame" x="112" y="330" width="97" height="48"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="40"/>
@@ -1869,13 +1882,14 @@ more Alex's Photo</string>
                     </view>
                     <navigationItem key="navigationItem" id="Wcp-jE-XHs"/>
                     <connections>
+                        <outlet property="addButton" destination="Sy2-q5-pRF" id="OHb-fi-CCb"/>
                         <outlet property="backgroundImageView" destination="3qB-S5-X8G" id="TRV-0L-cey"/>
                         <outlet property="descriptionLabel" destination="gfZ-8W-ioz" id="Uuc-BN-nmW"/>
                         <outlet property="faceCarousel" destination="3Ln-p5-wPT" id="Lct-6g-NsN"/>
                         <outlet property="faceCountLabel" destination="xbX-w9-XYl" id="LFP-4G-vzH"/>
                         <outlet property="progressView" destination="Mgj-ko-Spe" id="iPx-4R-9xM"/>
                         <outlet property="searchingImageView" destination="pix-1N-uOt" id="66y-dB-8iT"/>
-                        <outlet property="skipButton" destination="0v1-LL-ZXE" id="goD-Pp-Pti"/>
+                        <outlet property="skipButton" destination="0v1-LL-ZXE" id="VJg-bJ-TB6"/>
                         <segue destination="KFK-YT-ZKu" kind="push" identifier="Segue2_2to1_4" id="aik-Zb-hbA"/>
                         <segue destination="5fn-Qj-G3E" kind="push" identifier="Segue2_2to3_1" id="8aD-9d-Ram"/>
                     </connections>
@@ -1886,7 +1900,7 @@ more Alex's Photo</string>
         </scene>
     </scenes>
     <resources>
-        <image name="DC3695E1-4B22-4BC8-823D-DED440AE2D07" width="628" height="152">
+        <image name="3B85CCC0-6B4E-41AB-A497-1F84A85428DB" width="628" height="152">
             <mutableData key="keyedArchiveRepresentation">
 YnBsaXN0MDDUAQIDBAUGPj9YJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoK4HCBMU
 GR4fIyQsLzI4O1UkbnVsbNUJCgsMDQ4PEBESVk5TU2l6ZVYkY2xhc3NcTlNJbWFnZUZsYWdzVk5TUmVw

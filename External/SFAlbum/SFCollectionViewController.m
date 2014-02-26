@@ -25,6 +25,10 @@ static const int MaxItemsCountOnScreen = 15;
 
 #pragma mark -
 #pragma mark init
+- (BOOL)prefersStatusBarHidden {
+    return YES;
+}
+
 
 -(id)initWithCollectionViewLayout:(UICollectionViewFlowLayout *)layout
 {

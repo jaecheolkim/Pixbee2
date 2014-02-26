@@ -22,8 +22,8 @@
     self = [super init];
     
     if (self) {
-        _stackCount = 2;
-        _itemSize = CGSizeMake(80, 120);
+        _stackCount = 3;
+        _itemSize = CGSizeMake(80, 80);//120);
         _angles = [[NSMutableArray alloc] initWithCapacity:_stackCount * 10];
     }
     return self;

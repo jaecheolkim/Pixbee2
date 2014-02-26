@@ -27,6 +27,9 @@
 
 #pragma mark -
 #pragma mark View Life Cycle
+- (BOOL)prefersStatusBarHidden {
+    return YES;
+}
 
 - (void)viewDidLoad
 {

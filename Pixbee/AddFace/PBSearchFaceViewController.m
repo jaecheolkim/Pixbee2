@@ -12,6 +12,7 @@
 #import "TWRProgressView.h"
 #import "FXBlurView.h"
 #import "UIImageView+UIImageView_FaceAwareFill.h"
+#import "UIImage+FX.h"
 @interface PBSearchFaceViewController () <PBAssetsLibraryDelegate, iCarouselDataSource, iCarouselDelegate>
 
 
@@ -20,6 +21,7 @@
 @property (weak, nonatomic) IBOutlet TWRProgressView *progressView;
 @property (weak, nonatomic) IBOutlet UILabel *descriptionLabel;
 @property (weak, nonatomic) IBOutlet UIButton *skipButton;
+@property (weak, nonatomic) IBOutlet UIButton *addButton;
 
 
 // iCarousel for faceCarousel
@@ -31,6 +33,9 @@
 @property (nonatomic, strong) UIView *currentView;
 @property (nonatomic, strong) id currentObject;
 @property (nonatomic, assign) NSInteger *currentIndex;
+
+- (IBAction)skipButtonHandler:(id)sender;
+- (IBAction)addButtonHandler:(id)sender;
 
 @end
 
@@ -71,7 +76,8 @@
     
     self.assets = [NSMutableArray array];
     
-    self.skipButton.enabled = NO;
+
+    self.addButton.hidden = YES;
     
     // 제일 마지막에 저장된 사진의 Blur Image를 백그라운드 깔아 준다.
     UIImage *lastImage = [[SDImageCache sharedImageCache] imageFromDiskCacheForKey:@"LastImage"];
@@ -92,6 +98,10 @@
 
     
     // Do any additional setup after loading the view.
+    
+    [self resetFontShape:_descriptionLabel];
+    [self resetFontShape:_faceCountLabel];
+    
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -155,7 +165,8 @@
                                    
                                }
                                completion:^(BOOL finished) {
-                                   self.skipButton.enabled = YES;
+                                   self.skipButton.hidden = YES;
+                                   self.addButton.hidden = NO;
                                }];
 
           });
@@ -180,6 +191,24 @@
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+#pragma mark - For UI
+- (void)refreshFaceCount
+{
+    NSInteger count = [self.assets count];
+    [self.faceCountLabel setText:[NSString stringWithFormat:@"%d", (int)count]];
+}
+
+- (void)resetFontShape:(UILabel*)label
+{
+    [label setTextColor:[UIColor whiteColor]];
+    [label setShadowColor:[UIColor grayColor]];
+    [label setShadowOffset:CGSizeMake(1, 1)];
+    [label setNumberOfLines:1];
+    [label setBackgroundColor:[UIColor clearColor]];
+    [label setTextAlignment:NSTextAlignmentCenter];
+
 }
 
 
@@ -233,6 +262,7 @@
 }
 
 #pragma mark - For FaceCarousel
+
 - (void)initFaceCarousel
 {
     //configure carousel
@@ -275,18 +305,31 @@
         [self.assets insertObject:_currentObject atIndex:index];
         [_faceCarousel insertItemAtIndex:index animated:YES];
         _currentObject = nil;
+        [self refreshFaceCount];
     }
 
 }
+
 
 - (void)removeItem
 {
     if (_faceCarousel.numberOfItems > 0)
     {
-        NSInteger index = _faceCarousel.currentItemIndex;
-        _currentObject = [self.assets objectAtIndex:index];
-        [self.assets removeObjectAtIndex:index];
-        [_faceCarousel removeItemAtIndex:index animated:YES];
+        if(!IsEmpty(self.assets)){
+            NSInteger index = _faceCarousel.currentItemIndex;
+            
+            NSDictionary *PhotoInfo = [self.assets objectAtIndex:index];
+            int userID = [PhotoInfo[@"UserID"] intValue];
+            int photoID = [PhotoInfo[@"PhotoID"] intValue];
+            [SQLManager deleteUserPhoto:userID  withPhoto:photoID];
+            
+            _currentObject = [self.assets objectAtIndex:index];
+            [self.assets removeObjectAtIndex:index];
+            [_faceCarousel removeItemAtIndex:index animated:YES];
+            [self refreshFaceCount];
+        }
+        
+
     }
 }
 
@@ -360,7 +403,7 @@
         //recycled and used with other index values later
         view = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 160.0f, 160.0f)];
         //((UIImageView *)view).image = [UIImage imageNamed:@"page.png"];
-        view.contentMode = UIViewContentModeScaleAspectFit;
+        
         view.backgroundColor = [UIColor lightGrayColor];
 //        label = [[UILabel alloc] initWithFrame:view.bounds];
 //        label.backgroundColor = [UIColor clearColor];
@@ -382,18 +425,26 @@
     CGRect faceRect = CGRectFromString(rectString);
     
     CGImageRef iref = [photoAsset aspectRatioThumbnail];
-//    CIImage *ciImage = [CIImage imageWithCGImage:iref];
+    CIImage *ciImage = [CIImage imageWithCGImage:iref];
+
+    CIContext* ctx = [CIContext contextWithOptions:nil];
+	CGImageRef cgImage = [ctx createCGImage:ciImage fromRect:faceRect];
+	UIImage* thumbnail = [UIImage imageWithCGImage:cgImage];
+	CGImageRelease(cgImage);
+    
 //
 //    CGImageRef img = [[CIContext contextWithOptions:nil] createCGImage:ciImage fromRect:faceRect];
 //    UIImage *faceImage = [UIImage imageWithCGImage:img];
 //    if(img) CGImageRelease(img);
     
-    UIImage *thumbnail = [UIImage imageWithCGImage:iref];
-
+    //UIImage *thumbnail = [UIImage imageWithCGImage:iref];
+    //thumbnail = [thumbnail imageCroppedToRect:faceRect];
+    
+    view.contentMode = UIViewContentModeScaleAspectFit;
+    
     if (!IsEmpty(thumbnail)) {
         ((UIImageView *)view).image = thumbnail;
         //[(UIImageView *)view faceAwareFill];
-
     };
 
     
@@ -454,27 +505,12 @@
     }
 }
 
-#pragma mark ButtonAction
-
-- (IBAction)skipButtonClickHandler:(id)sender {
-//    AssetLib.faceProcessStop = YES;
-//    
-//    if(!IsEmpty(self.assets)){
-//        NSDictionary *PhotoInfo = [self.assets objectAtIndex:_currentPage];
-//        
-//        //ALAsset *photoAsset = PhotoInfo[@"Asset"];
-//        int userID = [PhotoInfo[@"UserID"] intValue];
-//        int photoID = [PhotoInfo[@"PhotoID"] intValue];
-//        
-//        [SQLManager deleteUserPhoto:userID  withPhoto:photoID];
-//        
-//        [self.assets removeObjectAtIndex:_currentPage];
-//        
-//        [self.flowView reloadData];
-//    }
+#pragma mark ButtonHandler
+- (IBAction)skipButtonHandler:(id)sender {
+    [self performSegueWithIdentifier:@"Segue2_2to3_1" sender:self];
 }
 
-- (IBAction)addButtonClickHandler:(id)sender {
+- (IBAction)addButtonHandler:(id)sender {
     [self performSegueWithIdentifier:@"Segue2_2to3_1" sender:self];
 }
 
@@ -483,6 +519,4 @@
 {
     AssetLib.faceProcessStop = YES;
 }
-
-
 @end
