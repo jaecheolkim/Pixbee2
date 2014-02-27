@@ -30,12 +30,20 @@
 
 @synthesize PixbeeLogo = _PixbeeLogo;
 
+- (BOOL)prefersStatusBarHidden {
+    return YES;
+}
+
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
     //_indicator.hidden = YES;
     _FBLoginButton.hidden = YES;
+    
+    if(IsEmpty(GlobalValue.userName)) isFirstVisit = YES;
+    else isFirstVisit = NO;
     
 
 }
@@ -66,7 +74,7 @@
         [self checkNexProcess:profile];
         
     } else {
-        
+
         [UIView transitionWithView:_PixbeeLogo
                           duration:1.5
                            options:UIViewAnimationOptionTransitionCrossDissolve
@@ -153,14 +161,11 @@
 - (IBAction)loginButtonTouchHandler:(id)sender
 {
     [_indicator startAnimating];
-    
-    // Set permissions required from the facebook user account
+
     NSArray *permissionsArray = @[ @"user_about_me", @"user_relationships", @"user_birthday", @"user_location"];
-    //NSArray *permissionsArray = @[@"basic_info", @"email", @"user_likes"];
-    // Login PFUser using facebook
+
     [PFFacebookUtils logInWithPermissions:permissionsArray block:^(PFUser *user, NSError *error) {
-         // Hide loading indicator
-        
+
         if (!user) {
             if (!error) {
                 NSLog(@"Uh oh. The user cancelled the Facebook login.");
@@ -172,45 +177,35 @@
                 [alert show];
             }
         } else {
-            if (user.isNew) {
-                NSLog(@"User with facebook signed up and logged in! = %@", user);
-                
-//                [FBHelper saveUserInfoToServer];
-                
-                isFirstVisit = YES;
-                
-            } else {
-                NSLog(@"User with facebook logged in! = %@", user);
-                
-                isFirstVisit = NO;
-            }
-            
             NSDictionary *profile = user[@"profile"];
-            
             NSLog(@"Current User = %@", profile);
             
-            [self checkNexProcess:profile];
+            if (user.isNew) {
+                NSLog(@"User with facebook signed up and logged in! = %@", user);
+ 
+                [[PFUser currentUser] setObject:profile forKey:@"profile"];
+                [[PFUser currentUser] saveInBackground];
+                
+             } else {
+                NSLog(@"User with facebook logged in! = %@", user);
+ 
+             }
             
-//            [PFFacebookUtils reauthorizeUser:[PFUser currentUser]
-//                      withPublishPermissions:@[@"publish_stream", @"read_stream", @"offline_access"]
-//                                    audience:FBSessionDefaultAudienceFriends
-//                                       block:^(BOOL succeeded, NSError *error) {
-//                                           if (succeeded) {
-//                                               // Your app now has publishing permissions for the user
-//                                               NSLog(@"now has publishing permissions for the user");
-//                                           }
-//                                           else if (error) {
-//                                               NSLog(@"Error: %@", error.description);
-//                                           }
-//                                           
-//                                           NSDictionary *profile = user[@"profile"];
-//                                           
-//                                           NSLog(@"Current User = %@", profile);
-//                                           
-//                                           [self checkNexProcess:profile];
-//
-//
-//                                       }];
+            if(IsEmpty(GlobalValue.userName)) {
+                int UserID = [SQLManager newUserWithPFUser:profile];
+                
+                GlobalValue.userName = profile[@"name"]; // user.name;
+                GlobalValue.UserID = UserID;
+                NSLog(@"Default user name = %@ / id = %d", GlobalValue.userName, UserID);
+                
+                isFirstVisit = YES;
+            } else {
+                 isFirstVisit = NO;
+            }
+                
+            
+ 
+            [self checkNexProcess:profile];
             
  
         }
@@ -232,7 +227,7 @@
 //    
 //    if(IsEmpty(GlobalValue.userName)) {
 //        int UserID = [SQLManager newUserWithFBUser:user];
-//        
+//
 //        GlobalValue.userName = user.name;
 //        GlobalValue.UserID = UserID;
 //        NSLog(@"Default user name = %@ / id = %d", GlobalValue.userName, UserID);
@@ -311,6 +306,7 @@
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
+    NSLog(@"segue id = %@", segue.identifier);
     if ([segue.identifier isEqualToString:SEGUE_FACEANALYZE]) {
         
         int UserID = [SQLManager getUserID:GlobalValue.userName];
