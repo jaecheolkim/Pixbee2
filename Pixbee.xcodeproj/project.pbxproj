@@ -298,6 +298,7 @@
 		80AA418D189D0F4E00B7CF56 /* SFAlbumViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 80AA4188189D0F4E00B7CF56 /* SFAlbumViewController.m */; };
 		80AA4193189E8F9700B7CF56 /* retinex.mm in Sources */ = {isa = PBXBuildFile; fileRef = 80AA4191189E8F9700B7CF56 /* retinex.mm */; };
 		80AA41A618A0C3C700B7CF56 /* FXBlurView.m in Sources */ = {isa = PBXBuildFile; fileRef = 80AA41A518A0C3C700B7CF56 /* FXBlurView.m */; };
+		80B5BD8318BF5FE40016D507 /* PBDisolveSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = 80B5BD8218BF5FE40016D507 /* PBDisolveSegue.m */; };
 		80D2A0C0184A1C1C008D29B2 /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 78685D551848EBAC002D2BAA /* Social.framework */; };
 		80D2A0C1184A1C29008D29B2 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 69ED32DE18484EBB00127196 /* CoreGraphics.framework */; };
 		80D2A116184A1E58008D29B2 /* AlbumListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 80D2A0C7184A1E57008D29B2 /* AlbumListViewController.m */; };
@@ -826,6 +827,8 @@
 		80AA4192189E8F9700B7CF56 /* retinex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = retinex.h; sourceTree = "<group>"; };
 		80AA41A418A0C3C700B7CF56 /* FXBlurView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FXBlurView.h; sourceTree = "<group>"; };
 		80AA41A518A0C3C700B7CF56 /* FXBlurView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FXBlurView.m; sourceTree = "<group>"; };
+		80B5BD8118BF5FE40016D507 /* PBDisolveSegue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBDisolveSegue.h; sourceTree = "<group>"; };
+		80B5BD8218BF5FE40016D507 /* PBDisolveSegue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBDisolveSegue.m; sourceTree = "<group>"; };
 		80D2A0C6184A1E57008D29B2 /* AlbumListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlbumListViewController.h; sourceTree = "<group>"; };
 		80D2A0C7184A1E57008D29B2 /* AlbumListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AlbumListViewController.m; sourceTree = "<group>"; };
 		80D2A0C8184A1E57008D29B2 /* ASAssetsLibrary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASAssetsLibrary.h; sourceTree = "<group>"; };
@@ -1349,6 +1352,8 @@
 				7856F6E91849CD9B00A17349 /* OpenPhotoSegue.m */,
 				7856F6EA1849CD9B00A17349 /* OpenPhotoUnwindSegue.h */,
 				7856F6EB1849CD9B00A17349 /* OpenPhotoUnwindSegue.m */,
+				80B5BD8118BF5FE40016D507 /* PBDisolveSegue.h */,
+				80B5BD8218BF5FE40016D507 /* PBDisolveSegue.m */,
 			);
 			path = Segue;
 			sourceTree = "<group>";
@@ -2492,6 +2497,7 @@
 				697C83DE186DF2FA00823990 /* MBSwitch.m in Sources */,
 				807E75C81851576100B1AD7E /* THBinder.m in Sources */,
 				80E2D83118BDD7E3000924AE /* PBCommonNavigationController.m in Sources */,
+				80B5BD8318BF5FE40016D507 /* PBDisolveSegue.m in Sources */,
 				807DD94518BB5ACA003EBF30 /* iCarousel.m in Sources */,
 				69C39FCB18606B39001EDDFA /* MKAnnotationView+WebCache.m in Sources */,
 				698B1EA81881197D00BBBBA7 /* DeleteActivity.m in Sources */,

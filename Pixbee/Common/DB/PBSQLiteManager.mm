@@ -62,7 +62,7 @@
     
     NSString *createGroupsTable = @"CREATE TABLE IF NOT EXISTS 'Groups' ('GroupURL' TEXT PRIMARY KEY  NOT NULL , 'GroupName' TEXT, 'AssetCount' INTEGER, 'timestamp' DATETIME DEFAULT CURRENT_TIMESTAMP);";
     
-    NSString *createUsersTable = @"CREATE TABLE IF NOT EXISTS 'Users' ('UserID' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE , 'UserName' TEXT, 'GUID' TEXT, 'UserNick' TEXT, 'UserProfile' TEXT, 'fbID' TEXT, 'fbName' TEXT, 'fbProfile' TEXT, 'timestamp' DATETIME DEFAULT CURRENT_TIMESTAMP);";
+    NSString *createUsersTable = @"CREATE TABLE IF NOT EXISTS 'Users' ('UserID' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE , 'UserName' TEXT, 'GUID' TEXT, 'UserNick' TEXT, 'UserProfile' TEXT, 'fbID' TEXT, 'fbName' TEXT, 'fbProfile' TEXT, 'seq' INTEGER, 'color' INTEGER,  'timestamp' DATETIME DEFAULT CURRENT_TIMESTAMP);";
     
     NSString *createPhotosTable = @"CREATE TABLE IF NOT EXISTS 'Photos' ('PhotoID' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE , 'AssetURL' TEXT, 'GroupURL' TEXT, 'FilePath' TEXT, 'Date' DOUBLE, 'AssetType' INTEGER, 'Longitude' DOUBLE, 'Latitude' DOUBLE, 'Duration' DOUBLE, 'CheckType' INTEGER DEFAULT -1, 'timestamp' DATETIME DEFAULT CURRENT_TIMESTAMP);";
 

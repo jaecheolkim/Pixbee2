@@ -22,6 +22,7 @@
 <LXReorderableCollectionViewDataSource, LXReorderableCollectionViewDelegateFlowLayout>
 {
     BOOL EDIT_MODE;
+    int totalCellCount;
 }
 
 
@@ -32,7 +33,7 @@
 
 @property (strong, nonatomic) NSMutableArray *deck;
 
-@property (weak, nonatomic) NSMutableArray *usersPhotos;
+@property (weak, nonatomic) NSMutableArray *users;
 
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *leftBarButton;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *rightBarButton;
@@ -46,14 +47,17 @@
 
 @implementation PBMainDashBoardViewController
 
+- (void)reloadData
+{
+    self.users = (NSMutableArray*)[SQLManager getAllUsers];
+    totalCellCount = 10;//(int)[self.users count];
+
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
 
     EDIT_MODE = NO;
-
-    self.title = @"11 Faces";
-
 
     // 제일 마지막에 저장된 사진의 Blur Image를 백그라운드 깔아 준다.
     UIImage *lastImage = [[SDImageCache sharedImageCache] imageFromDiskCacheForKey:@"LastImage"];
@@ -64,12 +68,16 @@
     [self.collectionBGView setImage:lastImage];
     
 
+    [self reloadData];
     
-    self.usersPhotos = [SQLManager getAllUserPhotos];
-    NSLog(@"self.usersPhotos = %@", self.usersPhotos);
+    
+    NSLog(@"self.usersPhotos = %@", self.users);
+    
+    
+    self.title = [NSString stringWithFormat:@"%d Faces", totalCellCount];// @"11 Faces";
     
     self.deck = [self constructsDeck];
-    NSLog(@"self.deck = %@", self.deck);
+    //NSLog(@"self.deck = %@", self.deck);
 }
 
 - (NSMutableArray *)constructsDeck {
@@ -115,17 +123,31 @@
 #pragma mark - UICollectionViewDataSource methods
 
 - (NSInteger)collectionView:(UICollectionView *)theCollectionView numberOfItemsInSection:(NSInteger)theSectionIndex {
-    return self.deck.count;
+    return totalCellCount + 1; //self.deck.count;
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
-    ProfileCard *profileCard = [self.deck objectAtIndex:indexPath.item];
-    ProfileCardCell *profileCardCell = [collectionView dequeueReusableCellWithReuseIdentifier:@"ProfileCardCell" forIndexPath:indexPath];
-    profileCardCell.profileCard = profileCard;
-    [(UICollectionViewCell *)profileCardCell setSelected:NO];
-    profileCardCell.checkImageView.hidden = YES;
     
-    return profileCardCell;
+    if(indexPath.section == 0){
+        if (indexPath.row == totalCellCount) {
+            
+            
+            UICollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"AddCell" forIndexPath:indexPath];
+            
+            return cell;
+        } else {
+            ProfileCard *profileCard = [self.deck objectAtIndex:indexPath.item];
+            ProfileCardCell *profileCardCell = [collectionView dequeueReusableCellWithReuseIdentifier:@"ProfileCardCell" forIndexPath:indexPath];
+            profileCardCell.profileCard = profileCard;
+            [(UICollectionViewCell *)profileCardCell setSelected:NO];
+            profileCardCell.checkImageView.hidden = YES;
+            
+            return profileCardCell;
+
+        }
+    }
+    
+    return nil;
 }
 
 
@@ -166,39 +188,52 @@
 //}
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
-
-    ProfileCardCell *playingCardCell = (ProfileCardCell *)[collectionView cellForItemAtIndexPath:indexPath];
-    
-    if(EDIT_MODE){
-        if(!playingCardCell.checkImageView.hidden)
-        {
-            [self.collectionView deselectItemAtIndexPath:indexPath animated:YES];
-            
-            [(UICollectionViewCell *)playingCardCell setSelected:NO];
-            playingCardCell.checkImageView.hidden = YES;
-        }
-        else {
-           [(UICollectionViewCell *)playingCardCell setSelected:YES];
-            playingCardCell.checkImageView.hidden = NO;
-        }
+    if(indexPath.section == 0){
+        if (indexPath.row == totalCellCount) {
         
-    } else {
-        NSLog(@"go to detail view");
+        } else {
+
+            ProfileCardCell *playingCardCell = (ProfileCardCell *)[collectionView cellForItemAtIndexPath:indexPath];
+            
+            if(EDIT_MODE){
+                if(!playingCardCell.checkImageView.hidden)
+                {
+                    [self.collectionView deselectItemAtIndexPath:indexPath animated:YES];
+                    
+                    [(UICollectionViewCell *)playingCardCell setSelected:NO];
+                    playingCardCell.checkImageView.hidden = YES;
+                }
+                else {
+                    [(UICollectionViewCell *)playingCardCell setSelected:YES];
+                    playingCardCell.checkImageView.hidden = NO;
+                }
+                
+            } else {
+                NSLog(@"go to detail view");
+            }
+            
+            NSLog(@"didSelectItemAtIndexPath : %@", self.collectionView.indexPathsForSelectedItems);
+        }
     }
-    
-     NSLog(@"didSelectItemAtIndexPath : %@", self.collectionView.indexPathsForSelectedItems);
-    
+
 }
 - (void)collectionView:(UICollectionView *)collectionView didDeselectItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSLog(@"didDeselectItemAtIndexPath : %@", self.collectionView.indexPathsForSelectedItems);
-    
-    if(EDIT_MODE){
+    if(indexPath.section == 0){
+        if (indexPath.row == totalCellCount) {
         
-        ProfileCardCell *playingCardCell = (ProfileCardCell *)[collectionView cellForItemAtIndexPath:indexPath];
+        } else {
+            NSLog(@"didDeselectItemAtIndexPath : %@", self.collectionView.indexPathsForSelectedItems);
+            
+            if(EDIT_MODE){
+                
+                ProfileCardCell *playingCardCell = (ProfileCardCell *)[collectionView cellForItemAtIndexPath:indexPath];
+                
+                [(UICollectionViewCell *)playingCardCell setSelected:NO];
+                playingCardCell.checkImageView.hidden = YES;
+            }
 
-        [(UICollectionViewCell *)playingCardCell setSelected:NO];
-        playingCardCell.checkImageView.hidden = YES;
+        }
     }
 
 }
@@ -232,18 +267,43 @@
 #pragma mark - LXReorderableCollectionViewDataSource methods
 
 - (void)collectionView:(UICollectionView *)collectionView itemAtIndexPath:(NSIndexPath *)fromIndexPath willMoveToIndexPath:(NSIndexPath *)toIndexPath {
-    ProfileCard *profileCard = [self.deck objectAtIndex:fromIndexPath.item];
+
+    if(fromIndexPath.section == 0){
+        if (fromIndexPath.row == totalCellCount) {
+        
+        } else {
+            ProfileCard *profileCard = [self.deck objectAtIndex:fromIndexPath.item];
+            
+            [self.deck removeObjectAtIndex:fromIndexPath.item];
+            [self.deck insertObject:profileCard atIndex:toIndexPath.item];
+
+        }
+    }
     
-    [self.deck removeObjectAtIndex:fromIndexPath.item];
-    [self.deck insertObject:profileCard atIndex:toIndexPath.item];
 }
 
 - (BOOL)collectionView:(UICollectionView *)collectionView canMoveItemAtIndexPath:(NSIndexPath *)indexPath {
-    return YES;
+    
+    if(indexPath.section == 0){
+        if (indexPath.row == totalCellCount) {
+            return NO;
+        } else {
+            return YES;
+        }
+    }
+    return NO;
 }
 
 - (BOOL)collectionView:(UICollectionView *)collectionView itemAtIndexPath:(NSIndexPath *)fromIndexPath canMoveToIndexPath:(NSIndexPath *)toIndexPath {
-    return YES;
+
+    if(toIndexPath.section == 0){
+        if (toIndexPath.row == totalCellCount) {
+            return NO;
+        } else {
+            return YES;
+        }
+    }
+    return NO;
 }
 
 #pragma mark - LXReorderableCollectionViewDelegateFlowLayout methods
@@ -289,9 +349,13 @@
         NSLog(@"clean selectItemAtIndexPath : %@", self.collectionView.indexPathsForSelectedItems);
         
         for (NSIndexPath *indexPath in self.collectionView.indexPathsForSelectedItems) {
-            ProfileCardCell *profileCardCell = (ProfileCardCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
-            [(UICollectionViewCell *)profileCardCell setSelected:NO];
-            profileCardCell.checkImageView.hidden = YES;
+            id collectionViewCell = [self.collectionView cellForItemAtIndexPath:indexPath];
+            if([@"ProfileCardCell" isEqual:NSStringFromClass([collectionViewCell class])]){
+                ProfileCardCell *profileCardCell = (ProfileCardCell *)collectionViewCell;
+                [(UICollectionViewCell *)profileCardCell setSelected:NO];
+                profileCardCell.checkImageView.hidden = YES;
+            }
+
         }
     }
 
