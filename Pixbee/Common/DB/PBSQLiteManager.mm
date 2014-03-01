@@ -609,8 +609,8 @@
     NSString *imagePath = [NSString stringWithFormat:@"profileImage_%d.png",UserID];
     UIImage *profileImage = [[SDImageCache sharedImageCache] imageFromDiskCacheForKey:imagePath];
     if(IsEmpty(profileImage)) {
-        UIImage *image = [UIImage imageNamed:@"noname@2x.png"];
-        profileImage = [UIImage maskImage:image withMask:[UIImage imageNamed:@"photo_profile_hive@2x.png"]];
+        profileImage = [UIImage imageNamed:@"noname@2x.png"];
+        //profileImage = [UIImage maskImage:image withMask:[UIImage imageNamed:@"photo_profile_hive@2x.png"]];
         //[[SDImageCache sharedImageCache] storeImage:profileImage forKey:imagePath toDisk:YES];
     }
     return profileImage;
@@ -1211,6 +1211,7 @@ static inline NSDate* convertDouble2Date(double date){ return [NSDate dateWithTi
     if(!IsEmpty(users)){
         NSDictionary *user= users[0];
         NSString *query = [NSString stringWithFormat:@"SELECT U.UserID, U.PhotoID, U.FaceNo, P.AssetURL FROM UserPhotos AS U  JOIN Photos As P ON U.PhotoID = P.PhotoID WHERE U.UserID = %d",UserID];
+        NSLog(@"Query : %@",query);
         
         NSArray *result = [SQLManager getRowsForQuery:query];
 

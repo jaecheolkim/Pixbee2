@@ -160,6 +160,8 @@
 /* Login to facebook method */
 - (IBAction)loginButtonTouchHandler:(id)sender
 {
+    _FBLoginButton.enabled = NO;
+    
     [_indicator startAnimating];
 
     NSArray *permissionsArray = @[ @"user_about_me", @"user_relationships", @"user_birthday", @"user_location"];
@@ -312,8 +314,10 @@
         int UserID = [SQLManager getUserID:GlobalValue.userName];
         
         if(UserID) {
-            UINavigationController *navi = segue.destinationViewController;
-            FaceDetectionViewController *destination = [navi.viewControllers objectAtIndex:0];
+//            UINavigationController *navi = segue.destinationViewController;
+//            FaceDetectionViewController *destination = [navi.viewControllers objectAtIndex:0];
+            
+            FaceDetectionViewController *destination = segue.destinationViewController;
             destination.UserID = UserID;
             destination.UserName = GlobalValue.userName;
             destination.faceMode = FaceModeCollect;

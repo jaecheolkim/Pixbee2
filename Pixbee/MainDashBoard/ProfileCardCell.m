@@ -7,15 +7,20 @@
 //
 
 #import "ProfileCardCell.h"
-#import "ProfileCard.h"
+#import "UIImageView+WebCache.h"
 
 @implementation ProfileCardCell
-//@synthesize profileCard;
 
-- (void)setPlayingCard:(ProfileCard *)profileCard
+- (void)setUserInfo:(NSDictionary *)userInfo
 {
-    _profileCard = profileCard;
-    _profileImageView.image = [UIImage imageNamed:@"AlbumButton"];
+    _userInfo = userInfo;
+    NSString *userImage = _userInfo[@"UserProfile"];
+    NSString *userName = _userInfo[@"UserName"];
+    
+    int UserID = [_userInfo[@"UserID"] intValue];
+    [_profileImageView setImage:[SQLManager getUserProfileImage:UserID]];
+     _nameLabel.text = userName;
+    
 }
 
 - (void)setHighlighted:(BOOL)highlighted
@@ -26,6 +31,7 @@
 
 - (void)setSelected:(BOOL)selected
 {
+    NSLog(@"setSelected");
 }
 
 @end

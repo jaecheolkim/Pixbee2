@@ -8,12 +8,13 @@
 
 #import <UIKit/UIKit.h>
 
-@class ProfileCard;
 
 @interface ProfileCardCell : UICollectionViewCell
-@property (strong, nonatomic) ProfileCard *profileCard;
+@property (weak, nonatomic) NSDictionary *userInfo;
 @property (weak, nonatomic) IBOutlet UIImageView *profileImageView;
 @property (weak, nonatomic) IBOutlet UIImageView *checkImageView;
 @property (weak, nonatomic) IBOutlet UILabel *nameLabel;
+@property (weak, nonatomic) IBOutlet UITextField *nameTextField;
+
 
 @end

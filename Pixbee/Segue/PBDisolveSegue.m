@@ -15,32 +15,44 @@
     UIViewController *src  = (UIViewController *)self.sourceViewController;
     UIViewController *dest = (UIViewController *)self.destinationViewController;
     
-    CGRect f = src.view.frame;
-    CGRect originalSourceRect = src.view.frame;
-    f.origin.y = f.size.height;
+//    CGRect f = src.view.frame;
+//    CGRect originalSourceRect = src.view.frame;
+//    f.origin.y = f.size.height;
+//    
+//    [UIView animateWithDuration:0.3 animations:^
+//     {
+//         src.view.frame = f;
+//     } completion:^(BOOL finished){
+//         src.view.alpha = 0;
+//         dest.view.frame = f;
+//         dest.view.alpha = 0.0f;
+//         [[src.view superview] addSubview:dest.view];
+//         
+//         [UIView animateWithDuration:0.3 animations:^
+//          {
+//              dest.view.frame = originalSourceRect;
+//              dest.view.alpha = 1.0f;
+//          } completion:^(BOOL finished) {
+//              [dest.view removeFromSuperview];
+//              src.view.alpha = 1.0f;
+//              
+//              [src presentViewController:dest animated:NO completion:nil];
+//              
+//              //[src.navigationController pushViewController:dest animated:NO];
+//          }];
+//     }];
     
-    [UIView animateWithDuration:0.3 animations:^
-     {
-         src.view.frame = f;
-     } completion:^(BOOL finished){
-         src.view.alpha = 0;
-         dest.view.frame = f;
-         dest.view.alpha = 0.0f;
-         [[src.view superview] addSubview:dest.view];
-         
-         [UIView animateWithDuration:0.3 animations:^
-          {
-              dest.view.frame = originalSourceRect;
-              dest.view.alpha = 1.0f;
-          } completion:^(BOOL finished) {
-              [dest.view removeFromSuperview];
-              src.view.alpha = 1.0f;
-              
-              [src presentViewController:dest animated:NO completion:nil];
-              
-              //[src.navigationController pushViewController:dest animated:NO];
-          }];
-     }];
+    
+    [UIView transitionWithView:src.navigationController.view
+                      duration:.7
+                       options:UIViewAnimationOptionTransitionCrossDissolve //dissolves from one view to the next.
+                    animations:^{
+                        
+                        [src presentViewController:dest animated:NO completion:nil];
+                    }
+                    completion:^(BOOL finished) {
+                        //NSLog(@"Transition Completed");
+                    }];
 }
 
 @end
