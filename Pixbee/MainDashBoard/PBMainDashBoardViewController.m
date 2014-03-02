@@ -66,7 +66,7 @@ UIActionSheetDelegate>
     self.users = (NSMutableArray*)[SQLManager getAllUsers];
     NSLog(@"self.usersPhotos = %@", self.users);
     totalCellCount = (int)[self.users count];
-
+    [self.collectionView reloadData];
 }
 
 - (void)viewDidLoad {
@@ -74,12 +74,18 @@ UIActionSheetDelegate>
 
     [self showBlurBG];
 
-    [self reloadData];
-    self.title = [NSString stringWithFormat:@"%d Faces", totalCellCount];// @"11 Faces";
-    
-    self.deck = [self constructsDeck];
 
     EDIT_MODE = NO;
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    [self reloadData];
+    self.title = [NSString stringWithFormat:@"%d Faces", totalCellCount];// @"11 Faces";
+    self.deck = [self constructsDeck];
+
 }
 
 - (void)viewDidAppear:(BOOL)animated
