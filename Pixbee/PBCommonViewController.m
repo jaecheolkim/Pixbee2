@@ -7,6 +7,8 @@
 //
 
 #import "PBCommonViewController.h"
+#import "SDImageCache.h"
+#import "UIImage+ImageEffects.h"
 
 @interface PBCommonViewController ()
 
@@ -19,25 +21,61 @@
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         // Custom initialization
+        
+
+
     }
     return self;
+}
+
+- (void)refreshNavigationBarColor:(UIColor*)color
+{
+    if(color != nil){
+//        [[UINavigationBar appearance] setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
+//        [[UINavigationBar appearance] setShadowImage:nil];
+
+        [[UINavigationBar appearance] setBarTintColor:color];
+    } else {
+        //Clear Navigationbar
+        [[UINavigationBar appearance] setBackgroundImage:[UIImage new] forBarMetrics:UIBarMetricsDefault];
+        [[UINavigationBar appearance] setShadowImage:[UIImage new]];
+
+    }
+}
+
+- (void)refreshBGImage:(UIImage*)image
+{
+
+    if(IsEmpty(_bgImageView))
+        _bgImageView = [[UIImageView alloc] initWithFrame:[UIScreen mainScreen].bounds];
+
+    UIImage *lastImage;
+    
+    if(image != nil) {
+        lastImage = image;
+    } else {
+        lastImage = [[SDImageCache sharedImageCache] imageFromDiskCacheForKey:@"LastImage"];
+        if(IsEmpty(lastImage)) {
+            lastImage = [UIImage imageNamed:@"bg.png"];
+        }
+    }
+    
+    
+    lastImage = [lastImage applyLightEffect];
+    _bgImageView.image = lastImage;
+
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-    //[[UINavigationBar appearance] setBarTintColor:[UIColor colorWithRed:246.0f/255.0f green:223.0f/255.0f blue:55.0f/255.0f alpha:1.0f]];
-    
-    
-    [self.view setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"background"]]];
-    
+
     NSShadow *shadow = [[NSShadow alloc] init];
-    shadow.shadowColor = [UIColor colorWithRed:0.0 green:0.0 blue:0.0 alpha:0.8];
-    shadow.shadowOffset = CGSizeMake(0, 1);
+    shadow.shadowColor = [UIColor grayColor];// [UIColor colorWithRed:0.0 green:0.0 blue:0.0 alpha:0.8];
+    shadow.shadowOffset = CGSizeMake(0, 0);
     [[UINavigationBar appearance] setTitleTextAttributes: [NSDictionary dictionaryWithObjectsAndKeys:
-                                                           [UIColor colorWithRed:32.0/255.0 green:29.0/255.0 blue:7.0/255.0 alpha:1.0], NSForegroundColorAttributeName,
-                                                           //shadow, NSShadowAttributeName,
+                                                           NAVIGATION_TITLE_COLOR, NSForegroundColorAttributeName,
+                                                           shadow, NSShadowAttributeName,
                                                            [UIFont fontWithName:@"GillSans-Medium" size:21.0], NSFontAttributeName, nil]];
 
     

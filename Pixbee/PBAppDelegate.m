@@ -18,8 +18,6 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackTranslucent];
-    
 
     [TestFlight takeOff:@"0d73a652-a45f-4b76-9fec-026bd931c1f7"];
     
@@ -30,13 +28,6 @@
     [self setGalleryFilter];
     
     [self checkIntroShown];
-
-//    [[UINavigationBar appearance] setBarTintColor:[UIColor colorWithRed:246.0f/255.0f green:223.0f/255.0f blue:55.0f/255.0f alpha:1.0f]];
-    
-    
-    
-
-  
 
     [self.window makeKeyAndVisible];
 

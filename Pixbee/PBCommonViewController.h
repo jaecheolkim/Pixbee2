@@ -9,5 +9,7 @@
 #import <UIKit/UIKit.h>
 
 @interface PBCommonViewController : UIViewController
-
+@property (strong, nonatomic) UIImageView *bgImageView;
+- (void)refreshBGImage:(UIImage*)image;
+- (void)refreshNavigationBarColor:(UIColor*)color;
 @end

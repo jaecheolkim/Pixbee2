@@ -41,6 +41,16 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    [self refreshNavigationBarColor:nil];
+    [self refreshBGImage:nil];
+
+    
+    self.collectionView.backgroundColor = [UIColor clearColor];
+    self.collectionView.backgroundView = self.bgImageView;
+
+    
+    
     [self initialNotification];
     
     self.title = @"ALL PHOTOS";

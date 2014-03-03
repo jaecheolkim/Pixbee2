@@ -14,8 +14,7 @@
 
 #import "ProfileCard.h"
 #import "ProfileCardCell.h"
-#import "SDImageCache.h"
-#import "UIImage+ImageEffects.h"
+
 
 
 
@@ -59,6 +58,7 @@ UIActionSheetDelegate>
 
 @implementation PBMainDashBoardViewController
 
+
 - (void)reloadData
 {
     self.users = (NSMutableArray*)[SQLManager getAllUsers];
@@ -69,17 +69,21 @@ UIActionSheetDelegate>
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-
-    [self showBlurBG];
-
-
+    
+    [self refreshNavigationBarColor:nil];
+    [self refreshBGImage:nil];
+    self.collectionView.backgroundColor = [UIColor clearColor];
+    self.collectionView.backgroundView = self.bgImageView;
+    
+ 
+    
     EDIT_MODE = NO;
-}
+ }
 
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    
+
     [self reloadData];
     self.title = [NSString stringWithFormat:@"%d Faces", totalCellCount];
 }
@@ -87,21 +91,24 @@ UIActionSheetDelegate>
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
+    
+    
     [self showToolBar:NO];
 }
 
 
+
 #pragma mark - UI Control methods
-- (void)showBlurBG
-{
-    // 제일 마지막에 저장된 사진의 Blur Image를 백그라운드 깔아 준다.
-    UIImage *lastImage = [[SDImageCache sharedImageCache] imageFromDiskCacheForKey:@"LastImage"];
-    lastImage = [lastImage applyLightEffect];
-    
-    if(IsEmpty(lastImage)) lastImage = [UIImage imageNamed:@"defaultBG"];
-    
-    [self.collectionBGView setImage:lastImage];
-}
+//- (void)showBlurBG
+//{
+//    // 제일 마지막에 저장된 사진의 Blur Image를 백그라운드 깔아 준다.
+//    UIImage *lastImage = [[SDImageCache sharedImageCache] imageFromDiskCacheForKey:@"LastImage"];
+//    lastImage = [lastImage applyLightEffect];
+//    
+//    if(IsEmpty(lastImage)) lastImage = [UIImage imageNamed:@"defaultBG"];
+//    
+//    [self.collectionBGView setImage:lastImage];
+//}
 
 - (void)showToolBar:(BOOL)show
 {
@@ -144,18 +151,26 @@ UIActionSheetDelegate>
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     
     if(indexPath.section == 0){
-        if (indexPath.row == totalCellCount) {
+        if (indexPath.row == totalCellCount) { // Add new facetab cell
             
             
             UICollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"AddCell" forIndexPath:indexPath];
             
             return cell;
-        } else {
+            
+        } else { // Profile facetab cell
+            
             NSDictionary *userInfo = [self.users  objectAtIndex:indexPath.item];
             ProfileCardCell *profileCardCell = [collectionView dequeueReusableCellWithReuseIdentifier:@"ProfileCardCell" forIndexPath:indexPath];
             profileCardCell.userInfo = userInfo;
             [(UICollectionViewCell *)profileCardCell setSelected:NO];
             profileCardCell.checkImageView.hidden = YES;
+            
+            if(EDIT_MODE){
+                profileCardCell.nameTextField.enabled = YES;
+            } else {
+                profileCardCell.nameTextField.enabled = NO;
+            }
             
             return profileCardCell;
 
@@ -226,8 +241,12 @@ UIActionSheetDelegate>
                     profileCardCell.checkImageView.hidden = NO;
                 }
                 
+//                if(!profileCardCell.nameTextField.enabled)
+//                    profileCardCell.nameTextField.enabled = YES;
+                
             } else {
                 NSLog(@"go to detail view");
+//                profileCardCell.nameTextField.enabled = NO;
                 [self performSegueWithIdentifier:SEGUE_3_1_TO_4_1 sender:self];
             }
             
@@ -293,6 +312,12 @@ UIActionSheetDelegate>
         if (fromIndexPath.row == totalCellCount) {
         
         } else {
+            
+            NSDictionary *userInfo = [self.users  objectAtIndex:fromIndexPath.item];
+            [self.users removeObjectAtIndex:fromIndexPath.item];
+            [self.users insertObject:userInfo atIndex:toIndexPath.item];
+
+            
 //            ProfileCard *profileCard = [self.deck objectAtIndex:fromIndexPath.item];
 //            
 //            [self.deck removeObjectAtIndex:fromIndexPath.item];
@@ -347,6 +372,24 @@ UIActionSheetDelegate>
 
 - (void)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout didEndDraggingItemAtIndexPath:(NSIndexPath *)indexPath {
     NSLog(@"did end drag");
+    [self updateProfileDBSeq];
+}
+
+
+- (void)updateProfileDBSeq
+{
+    if(IsEmpty(self.users)) return;
+    
+    int seq = 0;
+    for(NSDictionary *userInfo in self.users)
+    {
+        int UserID = [userInfo[@"UserID"] intValue];
+        
+        NSArray *result = [SQLManager updateUser:@{ @"UserID" : @(UserID), @"seq" :@(seq)}];
+        NSLog(@"result = %@", result);
+        seq++;
+    }
+    
 }
 
 
@@ -389,6 +432,7 @@ UIActionSheetDelegate>
     
     [self showToolBar:EDIT_MODE];
     [self.collectionView setAllowsMultipleSelection:EDIT_MODE];
+    [self.collectionView reloadData];
 }
 
 - (IBAction)galleryButtonHandler:(id)sender {
@@ -427,19 +471,19 @@ UIActionSheetDelegate>
 
 #pragma mark - Logic Handler
 
-// This method is for deleting the selected user from the data source array
--(void)deleteItemsFromDataSourceAtIndexPaths:(NSArray  *)itemPaths
-{
-    NSMutableIndexSet *indexSet = [NSMutableIndexSet indexSet];
-    for (NSIndexPath *itemPath  in itemPaths) {
-        [indexSet addIndex:itemPath.row];
-        
-    }
-    
-    [self.users removeObjectsAtIndexes:indexSet]; // self.images is my data source
-    NSLog(@"self.users = %@", self.users);
-    
-}
+//// This method is for deleting the selected user from the data source array
+//-(void)deleteItemsFromDataSourceAtIndexPaths:(NSArray  *)itemPaths
+//{
+//    NSMutableIndexSet *indexSet = [NSMutableIndexSet indexSet];
+//    for (NSIndexPath *itemPath  in itemPaths) {
+//        [indexSet addIndex:itemPath.row];
+//        
+//    }
+//    
+//    [self.users removeObjectsAtIndexes:indexSet]; // self.images is my data source
+//    NSLog(@"self.users = %@", self.users);
+//    
+//}
 
 // CollectionView delete batch and animation
 - (void)deleteSelectedCell
@@ -465,9 +509,6 @@ UIActionSheetDelegate>
             NSLog(@"Can't delete Users db row..");
 #warning Error message 뿌려주기
         }
-        
-        
-        
     }
     
     //[self reloadData];
@@ -487,6 +528,33 @@ UIActionSheetDelegate>
 //        
 //    }];
 }
+
+//- (void)doneUserCell:(UserCell *)cell {
+//    NSIndexPath *indexPath = editIndexPath;
+//    
+//    NSString *inputUserName = cell.inputName.text;
+//    //NSString *cellUserName = [cell.user objectForKey:@"UserName"];
+//    int cellUserID = [[cell.user objectForKey:@"UserID"] intValue];
+//    
+//    if(!IsEmpty(inputUserName)){
+//        //Update DB
+//        NSArray *result = [SQLManager updateUser:@{ @"UserID" : @(cellUserID), @"UserName" :inputUserName}];
+//        if(!IsEmpty(result)){
+//            cell.userName.text = inputUserName;
+//            
+//            NSDictionary *users = [self.usersPhotos objectAtIndex:indexPath.row];
+//            NSArray *photos = users[@"photos"];
+//            NSDictionary *user =result[0];
+//            [self.usersPhotos replaceObjectAtIndex:indexPath.row withObject:@{@"user":user,@"photos":photos}];
+//            
+//        }
+//    }
+//    NSLog(@"Input text : %@", cell.inputName.text);
+//    [self.tableView setEditing:NO];
+//    [self.tableView setScrollEnabled:YES];
+//    self.editCell = nil;
+//}
+
 
 
 #pragma mark UIActionSheetDelegate
@@ -554,18 +622,25 @@ UIActionSheetDelegate>
     }
     
     else if ([segue.identifier isEqualToString:SEGUE_3_1_TO_6_1]) { // add new face tab from camera
-        NSArray *result = [SQLManager newUser];
-        NSDictionary *user = [result objectAtIndex:0];
-        NSString *UserName = [user objectForKey:@"UserName"];
-        int UserID = [[user objectForKey:@"UserID"] intValue];
-        
-        if(UserID) {
+        if(facemode == FaceModeRecognize) {
             FaceDetectionViewController *destination = segue.destinationViewController;
-            destination.UserID = UserID;
-            destination.UserName = UserName;
             destination.faceMode = facemode;
             destination.segueid = SEGUE_3_1_TO_6_1;
+        } else if(facemode == FaceModeCollect) {
+            NSArray *result = [SQLManager newUser];
+            NSDictionary *user = [result objectAtIndex:0];
+            NSString *UserName = [user objectForKey:@"UserName"];
+            int UserID = [[user objectForKey:@"UserID"] intValue];
+            
+            if(UserID) {
+                FaceDetectionViewController *destination = segue.destinationViewController;
+                destination.UserID = UserID;
+                destination.UserName = UserName;
+                destination.faceMode = facemode;
+                destination.segueid = SEGUE_3_1_TO_6_1;
+            }
         }
+
     }
     
 }

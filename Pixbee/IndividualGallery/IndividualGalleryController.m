@@ -61,7 +61,14 @@ UserCellDelegate, GalleryViewCellDelegate>
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    _collectionView.backgroundColor = [UIColor clearColor];
+    
+
+    [self refreshNavigationBarColor:COLOR_BLUE];
+    [self refreshBGImage:nil];
+
+    self.collectionView.backgroundColor = [UIColor clearColor];
+    self.collectionView.backgroundView = self.bgImageView;
+
     _shareButton.enabled = NO;
     
     self.userProfileView.delegate = self;
@@ -693,6 +700,7 @@ UserCellDelegate, GalleryViewCellDelegate>
      }];
 
 }
+
 
 - (void)newFaceTab {
     if(selectedPhotos.count < 5){

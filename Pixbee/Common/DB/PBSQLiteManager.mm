@@ -62,7 +62,7 @@
     
     NSString *createGroupsTable = @"CREATE TABLE IF NOT EXISTS 'Groups' ('GroupURL' TEXT PRIMARY KEY  NOT NULL , 'GroupName' TEXT, 'AssetCount' INTEGER, 'timestamp' DATETIME DEFAULT CURRENT_TIMESTAMP);";
     
-    NSString *createUsersTable = @"CREATE TABLE IF NOT EXISTS 'Users' ('UserID' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE , 'UserName' TEXT, 'GUID' TEXT, 'UserNick' TEXT, 'UserProfile' TEXT, 'fbID' TEXT, 'fbName' TEXT, 'fbProfile' TEXT, 'seq' INTEGER, 'color' INTEGER,  'timestamp' DATETIME DEFAULT CURRENT_TIMESTAMP);";
+    NSString *createUsersTable = @"CREATE TABLE IF NOT EXISTS 'Users' ('UserID' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE , 'UserName' TEXT, 'GUID' TEXT, 'UserNick' TEXT, 'UserProfile' TEXT, 'fbID' TEXT, 'fbName' TEXT, 'fbProfile' TEXT, 'seq' INTEGER DEFAULT 0, 'color' INTEGER DEFAULT 0,  'timestamp' DATETIME DEFAULT CURRENT_TIMESTAMP);";
     
     NSString *createPhotosTable = @"CREATE TABLE IF NOT EXISTS 'Photos' ('PhotoID' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE , 'AssetURL' TEXT, 'GroupURL' TEXT, 'FilePath' TEXT, 'Date' DOUBLE, 'AssetType' INTEGER, 'Longitude' DOUBLE, 'Latitude' DOUBLE, 'Duration' DOUBLE, 'CheckType' INTEGER DEFAULT -1, 'timestamp' DATETIME DEFAULT CURRENT_TIMESTAMP);";
 
@@ -477,12 +477,16 @@
     NSString *query = @"SELECT * FROM Users WHERE UserName LIKE 'Unknown%';";
     NSArray *result = [SQLManager getRowsForQuery:query];
     NSLog(@"[Users] QUERY result = %@", result);
+    int seq = 0;
+    int color = arc4random_uniform(10);
     if(!IsEmpty(result))
     {
-        UserName = [NSString stringWithFormat:@"Unknown%d", (int)[result count]];
+        seq = (int)[result count];
+        UserName = [NSString stringWithFormat:@"Unknown%d", seq];
     }
-    
-    NSString *sqlStr = [NSString stringWithFormat:@"INSERT INTO Users (UserName) VALUES ('%@');", UserName];
+    //INSERT INTO Users (UserName, seq, color) VALUES ('unknown1',  5, 1);
+    //NSString *sqlStr = [NSString stringWithFormat:@"INSERT INTO Users (UserName) VALUES ('%@');", UserName];
+    NSString *sqlStr = [NSString stringWithFormat:@"INSERT INTO Users (UserName, seq, color) VALUES ('%@', %d, %d);", UserName, seq, color];
     NSError *error = [SQLManager doQuery:sqlStr];
     if (error != nil) {
         NSLog(@"Error: %@",[error localizedDescription]);
@@ -659,7 +663,8 @@
 // 모든 등록된 User 정보 가져오기
 - (NSArray*)getAllUsers
 {
-    NSString *query = @"SELECT * FROM Users ORDER BY timestamp ASC";
+    //select * From Users Order by seq asc
+    NSString *query = @"SELECT * FROM Users ORDER BY seq ASC";
     NSArray *result = [SQLManager getRowsForQuery:query];
     return result;
 }
@@ -800,6 +805,27 @@ for (id param in params ) {
     }
     
     return success;
+}
+
+- (UIColor*)getUserColor:(int)colorID
+{
+    UIColor *color;
+    
+    switch (colorID) {
+        case 0: color = COLOR_PINK; break;
+        case 1: color = COLOR_RED; break;
+        case 2: color = COLOR_AMERICANROSE; break;
+        case 3: color = COLOR_ORANGE; break;
+        case 4: color = COLOR_YELLOW; break;
+        case 5: color = COLOR_GREEN; break;
+        case 6: color = COLOR_TURQUOISE; break;
+        case 7: color = COLOR_BLUE; break;
+        case 8: color = COLOR_DARKBLUE; break;
+        case 9: color = COLOR_PURPLE; break;
+        default: color = COLOR_PINK; break;
+    }
+    
+    return color;
 }
 
 #pragma mark FaceData Table

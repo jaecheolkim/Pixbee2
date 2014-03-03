@@ -9,6 +9,6 @@
 #import <UIKit/UIKit.h>
 
 
-@interface PBMainDashBoardViewController : UIViewController
+@interface PBMainDashBoardViewController : PBCommonViewController
 
 @end

@@ -18,9 +18,24 @@
     NSString *userName = _userInfo[@"UserName"];
     
     int UserID = [_userInfo[@"UserID"] intValue];
+    
+    int colorValue = 0;
+    if(!IsEmpty(_userInfo[@"color"])) {
+        colorValue = [_userInfo[@"color"] intValue] ;
+    }
+    
+    [self setUserColor:colorValue];
+
     [_profileImageView setImage:[SQLManager getUserProfileImage:UserID]];
      _nameLabel.text = userName;
+    _nameTextField.placeholder = userName;
     
+}
+
+- (void)setUserColor:(int)userColor
+{
+    UIColor *color = [SQLManager getUserColor:userColor];
+    [_nameLabel setBackgroundColor:color];
 }
 
 - (void)setHighlighted:(BOOL)highlighted
