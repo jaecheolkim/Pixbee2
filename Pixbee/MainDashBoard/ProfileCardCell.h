@@ -1,15 +1,16 @@
 //
-//  PlayingCardCell.h
-//  LXRCVFL Example using Storyboard
+//  ProfileCardCell.h
+//  Pixbee
 //
-//  Created by Stan Chang Khin Boon on 3/10/12.
-//  Copyright (c) 2012 d--buzz. All rights reserved.
+//  Created by jaecheol kim on 2/26/14.
+//  Copyright (c) 2014 Pixbee. All rights reserved.
 //
+
 
 #import <UIKit/UIKit.h>
 
-
 @interface ProfileCardCell : UICollectionViewCell
+
 @property (weak, nonatomic) NSDictionary *userInfo;
 @property (weak, nonatomic) IBOutlet UIImageView *profileImageView;
 @property (weak, nonatomic) IBOutlet UIImageView *checkImageView;
@@ -18,3 +19,4 @@
 @property (nonatomic) int userColor;
 
 @end
+

@@ -22,7 +22,7 @@
 
 @interface PBMainDashBoardViewController()
 <LXReorderableCollectionViewDataSource, LXReorderableCollectionViewDelegateFlowLayout,
-UIActionSheetDelegate>
+UIActionSheetDelegate, UITextFieldDelegate >
 {
     BOOL EDIT_MODE;
     int totalCellCount;
@@ -32,11 +32,12 @@ UIActionSheetDelegate>
     NSIndexPath *currentIndexPath;
     
     FaceMode facemode;
+    
+    ProfileCardCell *currentSelectedCell;
 }
 
 
 @property (weak, nonatomic) IBOutlet UICollectionView *collectionView;
-@property (weak, nonatomic) IBOutlet UIImageView *collectionBGView;
 @property (strong, nonatomic) IBOutlet UIButton *galleryButton;
 @property (weak, nonatomic) IBOutlet UIButton *shutterButton;
 @property (weak, nonatomic) IBOutlet UIView *toolBar;
@@ -74,8 +75,7 @@ UIActionSheetDelegate>
     [self refreshBGImage:nil];
     self.collectionView.backgroundColor = [UIColor clearColor];
     self.collectionView.backgroundView = self.bgImageView;
-    
- 
+
     
     EDIT_MODE = NO;
  }
@@ -99,16 +99,6 @@ UIActionSheetDelegate>
 
 
 #pragma mark - UI Control methods
-//- (void)showBlurBG
-//{
-//    // 제일 마지막에 저장된 사진의 Blur Image를 백그라운드 깔아 준다.
-//    UIImage *lastImage = [[SDImageCache sharedImageCache] imageFromDiskCacheForKey:@"LastImage"];
-//    lastImage = [lastImage applyLightEffect];
-//    
-//    if(IsEmpty(lastImage)) lastImage = [UIImage imageNamed:@"defaultBG"];
-//    
-//    [self.collectionBGView setImage:lastImage];
-//}
 
 - (void)showToolBar:(BOOL)show
 {
@@ -163,13 +153,21 @@ UIActionSheetDelegate>
             NSDictionary *userInfo = [self.users  objectAtIndex:indexPath.item];
             ProfileCardCell *profileCardCell = [collectionView dequeueReusableCellWithReuseIdentifier:@"ProfileCardCell" forIndexPath:indexPath];
             profileCardCell.userInfo = userInfo;
-            [(UICollectionViewCell *)profileCardCell setSelected:NO];
-            profileCardCell.checkImageView.hidden = YES;
-            
+
             if(EDIT_MODE){
+
                 profileCardCell.nameTextField.enabled = YES;
+                profileCardCell.nameTextField.placeholder = profileCardCell.nameLabel.text;
+                profileCardCell.nameTextField.delegate = self;
+                [profileCardCell.nameTextField addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
+                
+                profileCardCell.checkImageView.hidden = NO;
+                
             } else {
+                
                 profileCardCell.nameTextField.enabled = NO;
+
+                profileCardCell.checkImageView.hidden = YES;
             }
             
             return profileCardCell;
@@ -216,37 +214,33 @@ UIActionSheetDelegate>
 //{
 //    return NO;
 //}
+
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    
-    
     if(indexPath.section == 0){
         if (indexPath.row == totalCellCount) {
         
         } else {
 
             currentIndexPath = indexPath;
-            ProfileCardCell *profileCardCell = (ProfileCardCell *)[collectionView cellForItemAtIndexPath:indexPath];
+//            ProfileCardCell *profileCardCell = (ProfileCardCell *)[collectionView cellForItemAtIndexPath:indexPath];
+            
             
             if(EDIT_MODE){
-                if(!profileCardCell.checkImageView.hidden)
-                {
-                    [self.collectionView deselectItemAtIndexPath:indexPath animated:YES];
-                    
-                    [(UICollectionViewCell *)profileCardCell setSelected:NO];
-                    profileCardCell.checkImageView.hidden = YES;
-                }
-                else {
-                    [(UICollectionViewCell *)profileCardCell setSelected:YES];
-                    profileCardCell.checkImageView.hidden = NO;
-                }
-                
-//                if(!profileCardCell.nameTextField.enabled)
-//                    profileCardCell.nameTextField.enabled = YES;
+//                if(profileCardCell.selected)
+//                {
+//                    [self.collectionView deselectItemAtIndexPath:indexPath animated:YES];
+//                    
+//                    [(UICollectionViewCell *)profileCardCell setSelected:NO];
+//                    //profileCardCell.checkImageView.hidden = YES;
+//                }
+//                else {
+//                    [(UICollectionViewCell *)profileCardCell setSelected:YES];
+//                    //profileCardCell.checkImageView.hidden = NO;
+//                }
                 
             } else {
                 NSLog(@"go to detail view");
-//                profileCardCell.nameTextField.enabled = NO;
                 [self performSegueWithIdentifier:SEGUE_3_1_TO_4_1 sender:self];
             }
             
@@ -265,10 +259,10 @@ UIActionSheetDelegate>
             
             if(EDIT_MODE){
                 
-                ProfileCardCell *profileCardCell = (ProfileCardCell *)[collectionView cellForItemAtIndexPath:indexPath];
+                //ProfileCardCell *profileCardCell = (ProfileCardCell *)[collectionView cellForItemAtIndexPath:indexPath];
                 
-                [(UICollectionViewCell *)profileCardCell setSelected:NO];
-                profileCardCell.checkImageView.hidden = YES;
+                //[(UICollectionViewCell *)profileCardCell setSelected:NO];
+                //profileCardCell.checkImageView.hidden = YES;
             }
 
         }
@@ -316,13 +310,7 @@ UIActionSheetDelegate>
             NSDictionary *userInfo = [self.users  objectAtIndex:fromIndexPath.item];
             [self.users removeObjectAtIndex:fromIndexPath.item];
             [self.users insertObject:userInfo atIndex:toIndexPath.item];
-
             
-//            ProfileCard *profileCard = [self.deck objectAtIndex:fromIndexPath.item];
-//            
-//            [self.deck removeObjectAtIndex:fromIndexPath.item];
-//            [self.deck insertObject:profileCard atIndex:toIndexPath.item];
-
         }
     }
     
@@ -376,24 +364,6 @@ UIActionSheetDelegate>
 }
 
 
-- (void)updateProfileDBSeq
-{
-    if(IsEmpty(self.users)) return;
-    
-    int seq = 0;
-    for(NSDictionary *userInfo in self.users)
-    {
-        int UserID = [userInfo[@"UserID"] intValue];
-        
-        NSArray *result = [SQLManager updateUser:@{ @"UserID" : @(UserID), @"seq" :@(seq)}];
-        NSLog(@"result = %@", result);
-        seq++;
-    }
-    
-}
-
-
-
 #pragma mark - Button Handler
 
 //Settung Button
@@ -419,15 +389,15 @@ UIActionSheetDelegate>
         
         NSLog(@"clean selectItemAtIndexPath : %@", self.collectionView.indexPathsForSelectedItems);
         
-        for (NSIndexPath *indexPath in self.collectionView.indexPathsForSelectedItems) {
-            id collectionViewCell = [self.collectionView cellForItemAtIndexPath:indexPath];
-            if([@"ProfileCardCell" isEqual:NSStringFromClass([collectionViewCell class])]){
-                ProfileCardCell *profileCardCell = (ProfileCardCell *)collectionViewCell;
-                [(UICollectionViewCell *)profileCardCell setSelected:NO];
-                profileCardCell.checkImageView.hidden = YES;
-            }
-            
-        }
+//        for (NSIndexPath *indexPath in self.collectionView.indexPathsForSelectedItems) {
+//            id collectionViewCell = [self.collectionView cellForItemAtIndexPath:indexPath];
+//            if([@"ProfileCardCell" isEqual:NSStringFromClass([collectionViewCell class])]){
+//                ProfileCardCell *profileCardCell = (ProfileCardCell *)collectionViewCell;
+//                [(UICollectionViewCell *)profileCardCell setSelected:NO];
+//                profileCardCell.checkImageView.hidden = YES;
+//            }
+//            
+//        }
     }
     
     [self showToolBar:EDIT_MODE];
@@ -471,19 +441,20 @@ UIActionSheetDelegate>
 
 #pragma mark - Logic Handler
 
-//// This method is for deleting the selected user from the data source array
-//-(void)deleteItemsFromDataSourceAtIndexPaths:(NSArray  *)itemPaths
-//{
-//    NSMutableIndexSet *indexSet = [NSMutableIndexSet indexSet];
-//    for (NSIndexPath *itemPath  in itemPaths) {
-//        [indexSet addIndex:itemPath.row];
-//        
-//    }
-//    
-//    [self.users removeObjectsAtIndexes:indexSet]; // self.images is my data source
-//    NSLog(@"self.users = %@", self.users);
-//    
-//}
+- (void)updateProfileDBSeq
+{
+    if(IsEmpty(self.users)) return;
+    
+    int seq = 0;
+    for(NSDictionary *userInfo in self.users)
+    {
+        int UserID = [userInfo[@"UserID"] intValue];
+        
+        NSArray *result = [SQLManager updateUser:@{ @"UserID" : @(UserID), @"seq" :@(seq)}];
+        NSLog(@"result = %@", result);
+        seq++;
+    }
+}
 
 // CollectionView delete batch and animation
 - (void)deleteSelectedCell
@@ -510,23 +481,6 @@ UIActionSheetDelegate>
 #warning Error message 뿌려주기
         }
     }
-    
-    //[self reloadData];
-
-    
-    
-//    [self.collectionView performBatchUpdates:^{
-//        
-//        //NSLog(@"before of self.users = %@", self.users);
-//        //[self.users removeObjectsAtIndexes:indexSet]; // self.images is my data source
-//        NSLog(@"result of self.users = %@", self.users);
-//        
-//        // Now delete the items from the collection view.
-//        [self.collectionView deleteItemsAtIndexPaths:selectedItemsIndexPaths];
-//        
-//    } completion:^(BOOL finished){
-//        
-//    }];
 }
 
 //- (void)doneUserCell:(UserCell *)cell {
@@ -663,5 +617,112 @@ UIActionSheetDelegate>
     
     
 }
+
+
+// ProfileCardCell Delegate
+- (void)frientList:(ProfileCardCell *)cell appear:(BOOL)show
+{
+    currentSelectedCell = cell;
+    if(show) {
+        // show friend Picker
+        NSLog(@"show friend Picker ");
+    } else {
+        // hide friend Picker
+        NSLog(@"hide friend Picker ");
+    }
+}
+- (void)searchFriend:(ProfileCardCell *)cell name:(NSString *)name
+{
+    currentSelectedCell = cell;
+    NSLog(@"changed Name = %@", name);
+}
+
+
+
+//Override Keyboard noti handler from PBcommonViewController
+-(void)keyboardWillShow:(NSNotification*)notification
+{
+    NSDictionary *info = notification.userInfo;
+    CGRect keyboardRect = [[info valueForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue];
+    int keyboardHeight = keyboardRect.size.height;
+    float duration = [[info valueForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
+    
+    CGRect rect = self.view.frame;
+    
+    
+
+    float toHeight = rect.size.height - keyboardHeight - 25;
+    
+    [UIView animateWithDuration:duration
+                     animations:^{
+                         self.colorBar.frame = CGRectMake(0, toHeight, 320, 25);
+                         [self.view addSubview:self.colorBar];
+//                         [self.view setFrame:CGRectMake(rect.origin.x, -keyboardHeight, rect.size.width, rect.size.height)];
+                     }
+                     completion:^(BOOL finished){
+                         
+                     }];
+ 
+}
+-(void)keyboardDidShow:(NSNotification*)notification
+{
+    
+}
+-(void)keyboardWillHide:(NSNotification*)notification
+{
+    //int keyboardHeight = 0.0;
+    NSDictionary *info = notification.userInfo;
+    float duration = [[info valueForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
+    CGRect rect = self.view.frame;
+    
+    [UIView animateWithDuration:duration
+                     animations:^{
+                         self.colorBar.frame = CGRectMake(0, rect.size.height, 320, 25);
+                         [self.colorBar removeFromSuperview];
+                     }
+                     completion:^(BOOL finished){
+                         
+                     }];
+
+    
+}
+-(void)keyboardDidHide:(NSNotification*)notification
+{
+    
+}
+
+//Override colorButtonHandler from PBCommonViewController
+- (void)colorButtonHandler:(id)sender
+{
+    UIButton *colorButton = (UIButton*)sender;
+    int color = (int)colorButton.tag;
+    NSLog(@"ColorBar Selected = %d", color );
+    
+    if(currentSelectedCell){
+        currentSelectedCell.nameLabel.backgroundColor = [SQLManager getUserColor:color];
+    }
+}
+
+
+- (void)textFieldDidBeginEditing:(UITextField *)textField {
+    textField.backgroundColor = [UIColor blackColor];
+    //currentSelectedCell.nameLabel.hidden = YES;
+    NSLog(@"textFieldDidBeginEditing:");
+}
+- (void)textFieldDidEndEditing:(UITextField *)textField {
+    textField.backgroundColor = [UIColor clearColor];
+    NSLog(@"textFieldDidEndEditing:");
+}
+- (void)textFieldDidChange:(id)sender {
+    //currentSelectedCell.nameLabel.hidden = NO;
+    
+    NSLog(@"textFieldDidChange:");
+}
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+    
+    NSLog(@"textFieldShouldReturn:");
+    return [textField resignFirstResponder];
+}
+
 
 @end

@@ -1,20 +1,26 @@
 //
-//  PlayingCardCell.m
-//  LXRCVFL Example using Storyboard
+//  ProfileCardCell.m
+//  Pixbee
 //
-//  Created by Stan Chang Khin Boon on 3/10/12.
-//  Copyright (c) 2012 d--buzz. All rights reserved.
+//  Created by jaecheol kim on 2/26/14.
+//  Copyright (c) 2014 Pixbee. All rights reserved.
 //
+
 
 #import "ProfileCardCell.h"
 #import "UIImageView+WebCache.h"
+
+@interface ProfileCardCell ()
+{
+}
+@end
 
 @implementation ProfileCardCell
 
 - (void)setUserInfo:(NSDictionary *)userInfo
 {
     _userInfo = userInfo;
-    NSString *userImage = _userInfo[@"UserProfile"];
+    
     NSString *userName = _userInfo[@"UserName"];
     
     int UserID = [_userInfo[@"UserID"] intValue];
@@ -28,8 +34,6 @@
 
     [_profileImageView setImage:[SQLManager getUserProfileImage:UserID]];
      _nameLabel.text = userName;
-    _nameTextField.placeholder = userName;
-    
 }
 
 - (void)setUserColor:(int)userColor
@@ -46,7 +50,10 @@
 
 - (void)setSelected:(BOOL)selected
 {
-    NSLog(@"setSelected");
+    [super setSelected:selected];
+    
+    if(self.selected) _checkImageView.image = [UIImage imageNamed:@"checked"];
+    else _checkImageView.image = [UIImage imageNamed:@"checkbox"];
 }
 
 @end
