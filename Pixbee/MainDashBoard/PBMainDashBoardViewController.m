@@ -43,8 +43,6 @@ UIActionSheetDelegate>
 @property (weak, nonatomic) IBOutlet UIView *toolBar;
 @property (weak, nonatomic) IBOutlet UIButton *deleteButton;
 
-@property (strong, nonatomic) NSMutableArray *deck;
-
 @property (strong, nonatomic) NSMutableArray *users;
 
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *leftBarButton;
@@ -83,9 +81,7 @@ UIActionSheetDelegate>
     [super viewWillAppear:animated];
     
     [self reloadData];
-    self.title = [NSString stringWithFormat:@"%d Faces", totalCellCount];// @"11 Faces";
-    self.deck = [self constructsDeck];
-
+    self.title = [NSString stringWithFormat:@"%d Faces", totalCellCount];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -94,45 +90,6 @@ UIActionSheetDelegate>
     [self showToolBar:NO];
 }
 
-- (NSMutableArray *)constructsDeck {
-    NSMutableArray *newDeck = [NSMutableArray arrayWithCapacity:52];
-    
-    for (NSInteger rank = 1; rank <= 13; rank++) {
-        // Spade
-        {
-            ProfileCard *playingCard = [[ProfileCard alloc] init];
-            playingCard.suit = PlayingCardSuitSpade;
-            playingCard.rank = rank;
-            [newDeck addObject:playingCard];
-        }
-        
-        // Heart
-        {
-            ProfileCard *playingCard = [[ProfileCard alloc] init];
-            playingCard.suit = PlayingCardSuitHeart;
-            playingCard.rank = rank;
-            [newDeck addObject:playingCard];
-        }
-        
-        // Club
-        {
-            ProfileCard *playingCard = [[ProfileCard alloc] init];
-            playingCard.suit = PlayingCardSuitClub;
-            playingCard.rank = rank;
-            [newDeck addObject:playingCard];
-        }
-        
-        // Diamond
-        {
-            ProfileCard *playingCard = [[ProfileCard alloc] init];
-            playingCard.suit = PlayingCardSuitDiamond;
-            playingCard.rank = rank;
-            [newDeck addObject:playingCard];
-        }
-    }
-    
-    return newDeck;
-}
 
 #pragma mark - UI Control methods
 - (void)showBlurBG
@@ -176,23 +133,12 @@ UIActionSheetDelegate>
                      }];
 
     
-//    [UIView animateWithDuration:0.4
-//                     animations:^{
-//                         if(show){
-//                             _toolBar.frame = CGRectMake(_toolBar.frame.origin.x, _toolBar.frame.origin.y + _toolBar.frame.size.height, _toolBar.frame.size.width, _toolBar.frame.size.height);
-//                         } else {
-//                             _toolBar.frame = CGRectMake(_toolBar.frame.origin.x, _toolBar.frame.origin.y - _toolBar.frame.size.height, _toolBar.frame.size.width, _toolBar.frame.size.height);
-//                         }
-//                     }
-//                     completion:^(BOOL finished) {
-//                         
-//                     }];
 }
 
 #pragma mark - UICollectionViewDataSource methods
 
 - (NSInteger)collectionView:(UICollectionView *)theCollectionView numberOfItemsInSection:(NSInteger)theSectionIndex {
-    return totalCellCount + 1; //self.deck.count;
+    return totalCellCount + 1;
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
@@ -347,10 +293,10 @@ UIActionSheetDelegate>
         if (fromIndexPath.row == totalCellCount) {
         
         } else {
-            ProfileCard *profileCard = [self.deck objectAtIndex:fromIndexPath.item];
-            
-            [self.deck removeObjectAtIndex:fromIndexPath.item];
-            [self.deck insertObject:profileCard atIndex:toIndexPath.item];
+//            ProfileCard *profileCard = [self.deck objectAtIndex:fromIndexPath.item];
+//            
+//            [self.deck removeObjectAtIndex:fromIndexPath.item];
+//            [self.deck insertObject:profileCard atIndex:toIndexPath.item];
 
         }
     }
@@ -498,17 +444,48 @@ UIActionSheetDelegate>
 // CollectionView delete batch and animation
 - (void)deleteSelectedCell
 {
-    [self.collectionView performBatchUpdates:^{
+    
+    NSArray *selectedItemsIndexPaths = [self.collectionView indexPathsForSelectedItems];
+    NSLog(@"selected Items = %@", selectedItemsIndexPaths);
+    
+    //NSMutableIndexSet *indexSet = [NSMutableIndexSet indexSet];
+    for (NSIndexPath *itemPath  in selectedItemsIndexPaths) {
         
-        NSArray *selectedItemsIndexPaths = [self.collectionView indexPathsForSelectedItems];
+        ProfileCardCell *profileCardCell = (ProfileCardCell *)[self.collectionView cellForItemAtIndexPath:itemPath];
+        NSDictionary *userInfo = profileCardCell.userInfo;
+        //[indexSet addIndex:itemPath.row];
+        int UserID = [userInfo[@"UserID"] intValue];
         
-        // Delete the items from the data source.
-        [self deleteItemsFromDataSourceAtIndexPaths:selectedItemsIndexPaths];
+        if([SQLManager deleteUser:UserID]){
+            [self.users removeObjectAtIndex:itemPath.row];
+            totalCellCount = (int)[self.users count];
+            [self.collectionView deleteItemsAtIndexPaths:@[itemPath]];
+            
+        } else {
+            NSLog(@"Can't delete Users db row..");
+#warning Error message 뿌려주기
+        }
         
-        // Now delete the items from the collection view.
-        [self.collectionView deleteItemsAtIndexPaths:selectedItemsIndexPaths];
         
-    } completion:nil];
+        
+    }
+    
+    //[self reloadData];
+
+    
+    
+//    [self.collectionView performBatchUpdates:^{
+//        
+//        //NSLog(@"before of self.users = %@", self.users);
+//        //[self.users removeObjectsAtIndexes:indexSet]; // self.images is my data source
+//        NSLog(@"result of self.users = %@", self.users);
+//        
+//        // Now delete the items from the collection view.
+//        [self.collectionView deleteItemsAtIndexPaths:selectedItemsIndexPaths];
+//        
+//    } completion:^(BOOL finished){
+//        
+//    }];
 }
 
 

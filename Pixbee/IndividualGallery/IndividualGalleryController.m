@@ -276,7 +276,7 @@ UserCellDelegate, GalleryViewCellDelegate>
         [idmPhotos addObject:photo];
         
         // Create and setup browser
-        IDMPhotoBrowser *browser = [[IDMPhotoBrowser alloc] initWithPhotoURLs:idmPhotos animatedFromView:self.selectedCell]; // using initWithPhotos:animatedFromView: method to use the zoom-in animation
+        IDMPhotoBrowser *browser = [[IDMPhotoBrowser alloc] initWithPhotoURLs:@[photo, photo ] animatedFromView:self.selectedCell]; // using initWithPhotos:animatedFromView: method to use the zoom-in animation
         browser.delegate = self;
         [browser setInitialPageIndex:indexPath.row];
         browser.displayActionButton = NO;

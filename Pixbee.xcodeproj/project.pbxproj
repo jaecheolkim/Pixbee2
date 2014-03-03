@@ -1925,7 +1925,7 @@
 				69B1B2F618587D9200774382 /* IntroControll */,
 				801B35D518561B9600EEB9F3 /* SMShadowdLayer */,
 				807E75C11851576100B1AD7E /* THObserversAndBinders */,
-				80D2A13E184A3385008D29B2 /* TestFlightSDK2-3 */,
+				80D2A13E184A3385008D29B2 /* TestFlightSDK3 */,
 				80D2A0C5184A1E57008D29B2 /* ASGallery */,
 				80D2A0E3184A1E58008D29B2 /* DACircularProgress */,
 				80D2A104184A1E58008D29B2 /* SWTableViewCell */,
@@ -2038,7 +2038,7 @@
 			path = UIExtension;
 			sourceTree = "<group>";
 		};
-		80D2A13E184A3385008D29B2 /* TestFlightSDK2-3 */ = {
+		80D2A13E184A3385008D29B2 /* TestFlightSDK3 */ = {
 			isa = PBXGroup;
 			children = (
 				80D2A13F184A3385008D29B2 /* libTestFlight.a */,
@@ -2048,6 +2048,7 @@
 				80D2A143184A3385008D29B2 /* TestFlight+ManualSessions.h */,
 				80D2A144184A3385008D29B2 /* TestFlight.h */,
 			);
+			name = TestFlightSDK3;
 			path = "TestFlightSDK2-3";
 			sourceTree = "<group>";
 		};
