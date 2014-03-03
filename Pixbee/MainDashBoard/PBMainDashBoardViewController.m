@@ -158,8 +158,8 @@ UIActionSheetDelegate, UITextFieldDelegate >
 
                 profileCardCell.nameTextField.enabled = YES;
                 profileCardCell.nameTextField.placeholder = profileCardCell.nameLabel.text;
-                profileCardCell.nameTextField.delegate = self;
-                [profileCardCell.nameTextField addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
+//                profileCardCell.nameTextField.delegate = self;
+//                [profileCardCell.nameTextField addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
                 
                 profileCardCell.checkImageView.hidden = NO;
                 
@@ -704,25 +704,6 @@ UIActionSheetDelegate, UITextFieldDelegate >
 }
 
 
-- (void)textFieldDidBeginEditing:(UITextField *)textField {
-    textField.backgroundColor = [UIColor blackColor];
-    //currentSelectedCell.nameLabel.hidden = YES;
-    NSLog(@"textFieldDidBeginEditing:");
-}
-- (void)textFieldDidEndEditing:(UITextField *)textField {
-    textField.backgroundColor = [UIColor clearColor];
-    NSLog(@"textFieldDidEndEditing:");
-}
-- (void)textFieldDidChange:(id)sender {
-    //currentSelectedCell.nameLabel.hidden = NO;
-    
-    NSLog(@"textFieldDidChange:");
-}
-- (BOOL)textFieldShouldReturn:(UITextField *)textField {
-    
-    NSLog(@"textFieldShouldReturn:");
-    return [textField resignFirstResponder];
-}
 
 
 @end
