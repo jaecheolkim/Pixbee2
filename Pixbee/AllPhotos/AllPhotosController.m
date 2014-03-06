@@ -14,7 +14,8 @@
 #import "PBFilterViewController.h"
 
 @interface AllPhotosController () <UICollectionViewDataSource, UICollectionViewDelegate>{
-        NSMutableArray *selectedPhotos;
+    NSMutableArray *selectedPhotos;
+    UIRefreshControl *refreshControl;
 }
 
 @property (strong, nonatomic) IBOutlet UICollectionView *collectionView;
@@ -38,11 +39,26 @@
 //    return self;
 //}
 
+- (UIStatusBarStyle)preferredStatusBarStyle {
+    return UIStatusBarStyleBlackTranslucent;
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
-    [self refreshNavigationBarColor:nil];
+    [self setNeedsStatusBarAppearanceUpdate];
+    
+    //self.navigationController.navigationBar.barTintColor = [UIColor greenColor];
+    //[[UINavigationBar appearance] setBarTintColor:[UIColor blackColor]];
+    
+//    if([UINavigationBar instancesRespondToSelector:@selector(barTintColor)]){ //iOS7
+//        self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
+//        self.navigationController.navigationBar.barTintColor = [UIColor redColor];
+//    }
+    
+    
+
     [self refreshBGImage:nil];
 
     
@@ -50,10 +66,16 @@
     self.collectionView.backgroundView = self.bgImageView;
 
     
+    refreshControl = [[UIRefreshControl alloc] init];
+    refreshControl.tintColor = [UIColor grayColor];
+    [refreshControl addTarget:self action:@selector(refershControlAction) forControlEvents:UIControlEventValueChanged];
+    [self.collectionView addSubview:refreshControl];
+    self.collectionView.alwaysBounceVertical = YES;
+    
     
     [self initialNotification];
     
-    self.title = @"ALL PHOTOS";
+    self.title = @"ALL PHOTOS1";
     
     self.doneButton.enabled = NO;
     NSLog(@"============================> Operation ID = %@", _operateIdentifier);
@@ -68,6 +90,13 @@
 
     selectedPhotos = [NSMutableArray array];
     [self reloadDB];
+}
+
+
+- (void)refershControlAction
+{
+    [self reloadDB];
+    
 }
 
 - (void)dealloc
@@ -121,6 +150,8 @@
     self.allPhotosView.countLabel.text = [NSString stringWithFormat:@"%d", allphotocount];
     self.collectionView.allowsMultipleSelection = YES;
     [self.collectionView reloadData];
+    
+    [refreshControl endRefreshing];
 }
 
 - (void)goBottom

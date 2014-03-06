@@ -55,7 +55,7 @@
 // 이미지 저장 키
 + (NSString*)getStoreKeyWithString:(NSString*)baseString andPrefix:(NSString*)prefix;
 
-+ (UIImage *)imageWithColor:(UIColor *)color frame:(CGRect)rect;
+
 
 
 // data dictionary file management

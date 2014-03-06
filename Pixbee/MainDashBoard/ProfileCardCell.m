@@ -19,8 +19,16 @@
 @end
 
 @implementation ProfileCardCell
+@synthesize delegate;
 
+- (void)prepareForReuse
+{
+    [super prepareForReuse];
+    
+    _nameTextField.delegate = self;
+    [_nameTextField addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
 
+}
 - (void)setUserInfo:(NSDictionary *)userInfo
 {
     _userInfo = userInfo;
@@ -40,8 +48,6 @@
     [_profileImageView setImage:[SQLManager getUserProfileImage:UserID]];
      _nameLabel.text = userName;
     
-    _nameTextField.delegate = self;
-    [_nameTextField addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
 }
 
 - (void)setUserColor:(int)userColor
@@ -68,6 +74,12 @@
 - (void)textFieldDidBeginEditing:(UITextField *)textField {
     textField.placeholder = self.nameLabel.text;
     self.nameLabel.text = nil;
+    
+    if([self.delegate respondsToSelector:@selector(nameDidBeginEditing:)])
+    {
+        [self.delegate nameDidBeginEditing:self];
+    }
+    
     NSLog(@"textFieldDidBeginEditing:");
 }
 - (void)textFieldDidEndEditing:(UITextField *)textField {
@@ -79,11 +91,19 @@
 
     textField.text = nil;
     textField.placeholder = nil;
+    
+    if([self.delegate respondsToSelector:@selector(nameDidEndEditing:)])
+    {
+        [self.delegate nameDidEndEditing:self];
+    }
     NSLog(@"textFieldDidEndEditing:");
 }
 - (void)textFieldDidChange:(id)sender {
     
-    
+    if([self.delegate respondsToSelector:@selector(nameDidChange:)])
+    {
+        [self.delegate nameDidChange:self];
+    }
     NSLog(@"textFieldDidChange:");
 }
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {

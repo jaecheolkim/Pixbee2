@@ -15,14 +15,16 @@
 #import "ProfileCard.h"
 #import "ProfileCardCell.h"
 
-
-
+#import "FBFriendController.h"
+#import "UIImageView+WebCache.h"
+#import "FXImageView.h"
 
 #define LX_LIMITED_MOVEMENT 0
 
 @interface PBMainDashBoardViewController()
 <LXReorderableCollectionViewDataSource, LXReorderableCollectionViewDelegateFlowLayout,
-UIActionSheetDelegate, UITextFieldDelegate >
+UIActionSheetDelegate, UITextFieldDelegate,
+ProfileCardCellDelegate, FBFriendControllerDelegate >
 {
     BOOL EDIT_MODE;
     int totalCellCount;
@@ -30,10 +32,9 @@ UIActionSheetDelegate, UITextFieldDelegate >
     NSString *operateIdentifier; // add new facetab -> all photos로 이동하는 구분자.
     
     NSIndexPath *currentIndexPath;
+    ProfileCardCell *currentSelectedCell;
     
     FaceMode facemode;
-    
-    ProfileCardCell *currentSelectedCell;
 }
 
 
@@ -47,6 +48,9 @@ UIActionSheetDelegate, UITextFieldDelegate >
 
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *leftBarButton;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *rightBarButton;
+
+@property (strong, nonatomic) FBFriendController *friendPopup;
+
 
 - (IBAction)leftBarButtonHandler:(id)sender;
 - (IBAction)rightBarButtonHandler:(id)sender;
@@ -71,7 +75,16 @@ UIActionSheetDelegate, UITextFieldDelegate >
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+//    NSArray *ver = [[UIDevice currentDevice].systemVersion componentsSeparatedByString:@"."];
+//    if ([[ver objectAtIndex:0] intValue] >= 7) {
+//        self.navigationController.navigationBar.barTintColor = [UIColor colorWithRed:89/255.0f green:174/255.0f blue:235/255.0f alpha:0.7f];
+//        self.navigationController.navigationBar.translucent = NO;
+//    }else{
+//        self.navigationController.navigationBar.tintColor = [UIColor colorWithRed:89/255.0f green:174/255.0f blue:235/255.0f alpha:0.7f];
+//    }
+    
     [self refreshNavigationBarColor:nil];
+    
     [self refreshBGImage:nil];
     self.collectionView.backgroundColor = [UIColor clearColor];
     self.collectionView.backgroundView = self.bgImageView;
@@ -149,24 +162,24 @@ UIActionSheetDelegate, UITextFieldDelegate >
             return cell;
             
         } else { // Profile facetab cell
+
+            ProfileCardCell *profileCardCell = [collectionView dequeueReusableCellWithReuseIdentifier:@"ProfileCardCell" forIndexPath:indexPath];
             
             NSDictionary *userInfo = [self.users  objectAtIndex:indexPath.item];
-            ProfileCardCell *profileCardCell = [collectionView dequeueReusableCellWithReuseIdentifier:@"ProfileCardCell" forIndexPath:indexPath];
             profileCardCell.userInfo = userInfo;
-
+            profileCardCell.indexPath = indexPath;
+            
             if(EDIT_MODE){
-
+                profileCardCell.delegate = self;
+                
                 profileCardCell.nameTextField.enabled = YES;
                 profileCardCell.nameTextField.placeholder = profileCardCell.nameLabel.text;
-//                profileCardCell.nameTextField.delegate = self;
-//                [profileCardCell.nameTextField addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
-                
                 profileCardCell.checkImageView.hidden = NO;
                 
             } else {
                 
                 profileCardCell.nameTextField.enabled = NO;
-
+                profileCardCell.nameTextField.placeholder = nil;
                 profileCardCell.checkImageView.hidden = YES;
             }
             
@@ -287,7 +300,7 @@ UIActionSheetDelegate, UITextFieldDelegate >
 }
 - (BOOL)collectionView:(UICollectionView *)collectionView canPerformAction:(SEL)action forItemAtIndexPath:(NSIndexPath *)indexPath withSender:(id)sender
 {
-    return YES;
+    return NO;
 }
 - (void)collectionView:(UICollectionView *)collectionView performAction:(SEL)action forItemAtIndexPath:(NSIndexPath *)indexPath withSender:(id)sender
 {
@@ -430,6 +443,9 @@ UIActionSheetDelegate, UITextFieldDelegate >
     NSLog(@"Add Face Tab");
     ActionSheetType = 100;
     
+    [self.view addSubview:[self getSnapShot]];
+    
+    
     UIActionSheet *popupQuery = [[UIActionSheet alloc] initWithTitle:nil
                                                             delegate:self
                                                    cancelButtonTitle:@"Cancel"
@@ -438,6 +454,8 @@ UIActionSheetDelegate, UITextFieldDelegate >
 	[popupQuery showInView:self.view];
 
 }
+
+
 
 #pragma mark - Logic Handler
 
@@ -619,23 +637,6 @@ UIActionSheetDelegate, UITextFieldDelegate >
 }
 
 
-// ProfileCardCell Delegate
-- (void)frientList:(ProfileCardCell *)cell appear:(BOOL)show
-{
-    currentSelectedCell = cell;
-    if(show) {
-        // show friend Picker
-        NSLog(@"show friend Picker ");
-    } else {
-        // hide friend Picker
-        NSLog(@"hide friend Picker ");
-    }
-}
-- (void)searchFriend:(ProfileCardCell *)cell name:(NSString *)name
-{
-    currentSelectedCell = cell;
-    NSLog(@"changed Name = %@", name);
-}
 
 
 
@@ -703,6 +704,162 @@ UIActionSheetDelegate, UITextFieldDelegate >
     }
 }
 
+
+- (void)nameDidBeginEditing:(ProfileCardCell *)cell
+{
+    currentSelectedCell = cell;
+    NSLog(@"==> nameDidBeginEditing: userInfo = %@", cell.userInfo);
+    [self frientList:cell appear:YES];
+}
+- (void)nameDidEndEditing:(ProfileCardCell *)cell
+{
+    currentSelectedCell = cell;
+    NSLog(@"==> nameDidEndEditing:");
+    //[self frientList:cell appear:NO];
+    [self cellEditDone];
+}
+- (void)nameDidChange:(ProfileCardCell *)cell
+{
+    currentSelectedCell = cell;
+    NSLog(@"==> nameDidChange:");
+    [self searchFriend:cell name:cell.nameTextField.text];
+}
+
+
+
+#pragma mark FBFriendControllerDelegate
+// ProfileCardCell Delegate
+- (void)frientList:(ProfileCardCell *)cell appear:(BOOL)show
+{
+    
+    if(show) {
+        // show friend Picker
+        [self popover:cell.profileImageView];
+        NSLog(@"show friend Picker ");
+    } else {
+        // hide friend Picker
+        [self.friendPopup disAppearPopup];
+        self.friendPopup = nil;
+        NSLog(@"hide friend Picker ");
+    }
+}
+- (void)searchFriend:(ProfileCardCell *)cell name:(NSString *)name
+{
+    currentSelectedCell = cell;
+    [self.friendPopup handleSearchForTerm:name];
+    NSLog(@"changed Name = %@", name);
+}
+
+-(void)popover:(id)sender
+{
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    FBFriendController *controller = (FBFriendController *)[storyboard instantiateViewControllerWithIdentifier:@"FBFriendController"];
+    
+    controller.delegate = self;
+    CGPoint convertedPoint = [self.view convertPoint:((UIImageView *)sender).center fromView:((UIImageView *)sender).superview];
+    int x = convertedPoint.x - 48;
+    int y = convertedPoint.y + 45;
+    
+    [controller appearPopup:CGPointMake(x, y) reverse:NO];
+    
+    self.friendPopup = controller;
+}
+
+
+- (void)selectedFBFriend:(NSDictionary *)friend {
+    NSDictionary *userInfo = currentSelectedCell.userInfo;
+    
+    int cellUserID = [[userInfo objectForKey:@"UserID"] intValue];
+    NSString *cellUserName = [userInfo objectForKey:@"UserName"];
+    NSString *cellfbID = [userInfo objectForKey:@"fbID"];
+    
+    NSString *fbUserName = [friend objectForKey:@"name"];
+    NSString *fbID = [friend objectForKey:@"id"];
+    
+    NSString *fbProfile;// = [[[friend objectForKey:@"picture"] objectForKey:@"data"] objectForKey:@"url"];
+    
+    id picture = [friend objectForKey:@"picture"];
+    if(!IsEmpty(picture)){
+        fbProfile = [[[friend objectForKey:@"picture"] objectForKey:@"data"] objectForKey:@"url"];
+    } else {
+        //    http://graph.facebook.com/[user id]/picture?type=large     -------------->    for larger image
+        //    http://graph.facebook.com/[user id]/picture?type=smaller   -------------->    for smaller image
+        //    http://graph.facebook.com/[user id]/picture?type=square     -------------->    for square image
+        
+        fbProfile = [NSString stringWithFormat:@"http://graph.facebook.com/%@/picture?type=large",friend[@"id"]];
+    }
+    
+    
+    //NSString *fbProfile = [[[friend objectForKey:@"picture"] objectForKey:@"data"] objectForKey:@"url"];
+    
+    
+    //if(GlobalValue.UserID != cellUserID && ![fbID isEqualToString:cellfbID])
+    //{  // 로그인 한 사용자는 페북 계정을 cell에서 바꿀 수 없음.
+    
+    
+    NSArray *result = [SQLManager updateUser:@{ @"UserID" : @(cellUserID), @"UserName" : fbUserName,
+                                                @"UserNick" : fbUserName,  @"UserProfile" : fbProfile,
+                                                @"fbID" : fbID, @"fbName" : fbUserName,
+                                                @"fbProfile" : fbProfile }];
+    
+    NSLog(@"result = %@", result);
+    
+    if(!IsEmpty(result)) {
+        
+        currentSelectedCell.userInfo = [result objectAtIndex:0];
+        currentSelectedCell.nameTextField.text = nil;
+        currentSelectedCell.nameTextField.placeholder = nil;
+        
+        [currentSelectedCell.profileImageView setImageWithURL:[NSURL URLWithString:fbProfile]
+                         placeholderImage:[UIImage imageNamed:@"placeholder.png"]];
+        
+        [SQLManager setUserProfileImage:currentSelectedCell.profileImageView.image UserID:cellUserID];
+        
+//        self.editCell.userName.text = fbUserName;
+//        self.editCell.inputName.text = @"";
+//        
+//        [self.editCell.userImage setImageWithURL:[NSURL URLWithString:fbProfile]
+//                                placeholderImage:[UIImage imageNamed:@"placeholder.png"]];
+//        
+//        [self.editCell doneButtonClickHandler:nil];
+    }
+    
+//    [self frientList:currentSelectedCell appear:NO];
+//    [currentSelectedCell.nameTextField resignFirstResponder];
+    //}
+    
+    [self cellEditDone];
+    
+    
+    
+    // DB에 저장하는 부분 추가
+    
+}
+
+- (void)cellEditDone
+{
+    NSDictionary *userInfo = currentSelectedCell.userInfo;
+    NSIndexPath *indexPath = currentSelectedCell.indexPath;
+   
+    int UserID = [userInfo[@"UserID"] intValue];
+    NSString *UserName = currentSelectedCell.nameLabel.text;
+    int color = currentSelectedCell.userColor;
+    
+    NSArray *result = [SQLManager updateUser:@{ @"UserID" : @(UserID), @"UserName" : UserName,
+                                                @"color" : @(color) }];
+
+    if(!IsEmpty(result)){
+        [self.users replaceObjectAtIndex:indexPath.row withObject:[result objectAtIndex:0]];
+    }
+    
+    
+    currentSelectedCell.nameTextField.placeholder = UserName;
+    
+    [self frientList:currentSelectedCell appear:NO];
+    [currentSelectedCell.nameTextField resignFirstResponder];
+    
+    
+}
 
 
 

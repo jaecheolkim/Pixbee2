@@ -604,12 +604,12 @@
 - (UIImage *)getUserProfileImage:(int)UserID
 {
 #warning 프로필 이미지 가져오기 추가 필요
-//    NSArray *userInfo = [SQLManager getUserInfo:UserID];
-//    if(!IsEmpty(userInfo)){
-//        NSString *UserProfile = userInfo[0][@"UserProfile"];
-//    } else {
-//        
-//    }
+    NSArray *userInfo = [SQLManager getUserInfo:UserID];
+    NSString *UserProfile;
+    if(!IsEmpty(userInfo)){
+        UserProfile = userInfo[0][@"UserProfile"];
+    }
+    
     NSString *imagePath = [NSString stringWithFormat:@"profileImage_%d.png",UserID];
     UIImage *profileImage = [[SDImageCache sharedImageCache] imageFromDiskCacheForKey:imagePath];
     if(IsEmpty(profileImage)) {

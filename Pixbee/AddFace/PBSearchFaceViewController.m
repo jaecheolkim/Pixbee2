@@ -13,6 +13,8 @@
 #import "FXBlurView.h"
 #import "UIImageView+UIImageView_FaceAwareFill.h"
 #import "UIImage+FX.h"
+#import "UIImage+Addon.h"
+
 @interface PBSearchFaceViewController () <PBAssetsLibraryDelegate, iCarouselDataSource, iCarouselDelegate>
 
 
@@ -217,7 +219,7 @@
 - (void)initProgressView
 {
     //Progress View 설정 ( 추후 마스크 이미지 만들어서 이미지 형태의 프로그래스도 가능함.
-    UIImage *lineImage = [self imageWithColor:[UIColor blackColor] size:_progressView.frame.size];
+    UIImage *lineImage = [UIImage imageWithColor:[UIColor blackColor] size:_progressView.frame.size];
     [_progressView setMaskingImage:lineImage];
     [_progressView setFrontColor:[UIColor whiteColor]];
     _progressView.horizontal = YES;
@@ -230,19 +232,19 @@
     [_progressView setProgress:progress];
 }
 
-- (UIImage *)imageWithColor:(UIColor *)color size:(CGSize)size {
-    CGRect rect = CGRectMake(0.0f, 0.0f, size.width, size.height);
-    UIGraphicsBeginImageContext(rect.size);
-    CGContextRef context = UIGraphicsGetCurrentContext();
-    
-    CGContextSetFillColorWithColor(context, [color CGColor]);
-    CGContextFillRect(context, rect);
-    
-    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    
-    return image;
-}
+//- (UIImage *)imageWithColor:(UIColor *)color size:(CGSize)size {
+//    CGRect rect = CGRectMake(0.0f, 0.0f, size.width, size.height);
+//    UIGraphicsBeginImageContext(rect.size);
+//    CGContextRef context = UIGraphicsGetCurrentContext();
+//    
+//    CGContextSetFillColorWithColor(context, [color CGColor]);
+//    CGContextFillRect(context, rect);
+//    
+//    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+//    UIGraphicsEndImageContext();
+//    
+//    return image;
+//}
 
 
 

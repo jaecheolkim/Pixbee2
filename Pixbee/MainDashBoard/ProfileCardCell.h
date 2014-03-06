@@ -8,15 +8,27 @@
 
 
 #import <UIKit/UIKit.h>
-
+@protocol ProfileCardCellDelegate;
 @interface ProfileCardCell : UICollectionViewCell
+@property (nonatomic,assign) id<ProfileCardCellDelegate> delegate;
 
-@property (weak, nonatomic) NSDictionary *userInfo;
+@property (strong, nonatomic) NSDictionary *userInfo;
+@property (strong, nonatomic) NSIndexPath *indexPath;
 @property (weak, nonatomic) IBOutlet UIImageView *profileImageView;
 @property (weak, nonatomic) IBOutlet UIImageView *checkImageView;
 @property (weak, nonatomic) IBOutlet UILabel *nameLabel;
 @property (weak, nonatomic) IBOutlet UITextField *nameTextField;
 @property (nonatomic) int userColor;
 
+
 @end
+
+@protocol ProfileCardCellDelegate <NSObject>
+
+- (void)nameDidBeginEditing:(ProfileCardCell *)cell;
+- (void)nameDidEndEditing:(ProfileCardCell *)cell;
+- (void)nameDidChange:(ProfileCardCell *)cell;
+
+@end
+
 

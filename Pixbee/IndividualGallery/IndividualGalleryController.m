@@ -21,12 +21,18 @@
 #import "DeleteActivity.h"
 #import "AlbumSelectionController.h"
 #import "AllPhotosController.h"
+#import "FXBlurView.h"
 
 @interface IndividualGalleryController ()
 <UICollectionViewDataSource, UICollectionViewDelegate,
 IDMPhotoBrowserDelegate, FBFriendControllerDelegate,
 UserCellDelegate, GalleryViewCellDelegate>
 {
+    BOOL EDIT_MODE;
+    int totalCellCount;
+    NSIndexPath *currentIndexPath;
+    GalleryViewCell *currentSelectedCell;
+    
     NSMutableArray *selectedPhotos;
     NSString *currentAction;
 }
@@ -38,12 +44,16 @@ UserCellDelegate, GalleryViewCellDelegate>
 @property (strong, nonatomic) NSDictionary *user;
 @property (strong, nonatomic) FBFriendController *friendPopup;
 @property (strong, nonatomic) IBOutlet UIButton *importView;
-@property (strong, nonatomic) IBOutlet UIButton *shareButton;
+//@property (strong, nonatomic) IBOutlet UIButton *shareButton;
 @property (strong, nonatomic) UIActivityViewController *activityController;
+//@property (weak, nonatomic) IBOutlet FXBlurView *toolbar;
+@property (weak, nonatomic) IBOutlet UIView *toolbar;
+@property (weak, nonatomic) IBOutlet UIButton *shareButton;
 
 - (IBAction)editButtonClickHandler:(id)sender;
 - (IBAction)albumButtonClickHandler:(id)sender;
-- (IBAction)shareButtonClickHandler:(id)sender;
+//- (IBAction)shareButtonClickHandler:(id)sender;
+- (IBAction)shareButtonHandler:(id)sender;
 
 @end
 
@@ -62,8 +72,20 @@ UserCellDelegate, GalleryViewCellDelegate>
 {
     [super viewDidLoad];
     
-
-    [self refreshNavigationBarColor:COLOR_BLUE];
+//    self.navigationController.navigationBar.tintColor = COLOR_RED;
+//    self.navigationController.navigationBar.alpha = 0.7;
+    
+    [self refreshNavigationBarColor:COLOR_RED];
+    
+//    NSArray *ver = [[UIDevice currentDevice].systemVersion componentsSeparatedByString:@"."];
+//    if ([[ver objectAtIndex:0] intValue] >= 7) {
+//        self.navigationController.navigationBar.barTintColor = [UIColor colorWithRed:100/255.0f green:174/255.0f blue:235/255.0f alpha:0.4f];
+//        self.navigationController.navigationBar.translucent = NO;
+//    }else{
+//        self.navigationController.navigationBar.tintColor = [UIColor colorWithRed:100/255.0f green:174/255.0f blue:235/255.0f alpha:0.4f];
+//    }
+    
+    
     [self refreshBGImage:nil];
 
     self.collectionView.backgroundColor = [UIColor clearColor];
@@ -136,7 +158,7 @@ UserCellDelegate, GalleryViewCellDelegate>
 -(void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    self.navigationController.navigationBarHidden = NO;
+    //self.navigationController.navigationBarHidden = NO;
 }
 
 - (void)didReceiveMemoryWarning
@@ -240,16 +262,21 @@ UserCellDelegate, GalleryViewCellDelegate>
     
     GalleryViewCell *cell = (GalleryViewCell *)[collectionView dequeueReusableCellWithReuseIdentifier:identifier forIndexPath:indexPath];
     cell.delegate = self;
-    NSDictionary *photo = [self.photos objectAtIndex:indexPath.row];
-    //[cell setIndexPath:indexPath];
-    [cell updateCell:photo];
     
-    if ([selectedPhotos containsObject:indexPath]) {
-        [cell showSelectIcon:YES];
+    NSDictionary *photo = [self.photos objectAtIndex:indexPath.row];
+    cell.photo = photo;
+    
+    if(EDIT_MODE){
+        cell.selectIcon.hidden = NO;
+        
+        if ([selectedPhotos containsObject:indexPath]) {
+            //[cell showSelectIcon:YES];
+           cell.selectIcon.image = [UIImage imageNamed:@"checked"];
+        }
+    } else {
+        cell.selectIcon.hidden = YES;
     }
 
-    cell.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"photo-frame-2.png"]];
-    cell.selectedBackgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"photo-frame-selected.png"]];
     
     return cell;
 }
@@ -257,47 +284,74 @@ UserCellDelegate, GalleryViewCellDelegate>
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (self.collectionView.allowsMultipleSelection) {
-        [selectedPhotos addObject:indexPath];
-        
-        // UI
-        GalleryViewCell *cell = (GalleryViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
-        [cell showSelectIcon:YES];
-        [cell setNeedsDisplay];
+    if(EDIT_MODE){
         
         [self refreshSelectedPhotCountOnNavTilte];
-    }
-    else {
-        self.selectedCell = (GalleryViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
-//        [self performSegueWithIdentifier:SEGUE_4_1_TO_5_1 sender:self];
         
+    } else {
+        self.selectedCell = (GalleryViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
+        
+        NSMutableArray *idmPhotos = [NSMutableArray arrayWithCapacity:[self.photos count]];
+        for (NSDictionary *photoinfo in self.photos) {
+            NSString *photo = [photoinfo objectForKey:@"AssetURL"];
+            [idmPhotos addObject:photo];
+        }
+ 
+        // Create and setup browser
+        IDMPhotoBrowser *browser = [[IDMPhotoBrowser alloc] initWithPhotoURLs:idmPhotos animatedFromView:self.selectedCell]; // using initWithPhotos:animatedFromView: method to use the zoom-in animation
+        browser.delegate = self;
+        [browser setInitialPageIndex:indexPath.row];
+        browser.displayActionButton = NO;
+        browser.displayArrowButton = NO;
+        //        browser.displayArrowButton = YES;
+        browser.displayCounterLabel = YES;
+        browser.scaleImage = self.selectedCell.photoImageView.image;
+
+        // Show
+        [self presentViewController:browser animated:YES completion:nil];
+    }
+    
+//    if (self.collectionView.allowsMultipleSelection) {
+//        [selectedPhotos addObject:indexPath];
+//        
+//        // UI
+//        GalleryViewCell *cell = (GalleryViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
+//        [cell showSelectIcon:YES];
+//        [cell setNeedsDisplay];
+//        
+//        [self refreshSelectedPhotCountOnNavTilte];
+//    }
+//    else {
+//        self.selectedCell = (GalleryViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
+////        [self performSegueWithIdentifier:SEGUE_4_1_TO_5_1 sender:self];
+//        
 //        NSMutableArray *idmPhotos = [NSMutableArray arrayWithCapacity:[self.photos count]];
 //        for (NSDictionary *photoinfo in self.photos) {
 //            NSString *photo = [photoinfo objectForKey:@"AssetURL"];
 //            [idmPhotos addObject:photo];
 //        }
-        
-        NSMutableArray *idmPhotos = [NSMutableArray arrayWithCapacity:1];
-        NSDictionary *photoinfo = [self.photos objectAtIndex:indexPath.row];
-        NSString *photo = [photoinfo objectForKey:@"AssetURL"];
-        [idmPhotos addObject:photo];
-        
-        // Create and setup browser
-        IDMPhotoBrowser *browser = [[IDMPhotoBrowser alloc] initWithPhotoURLs:@[photo, photo ] animatedFromView:self.selectedCell]; // using initWithPhotos:animatedFromView: method to use the zoom-in animation
-        browser.delegate = self;
-        [browser setInitialPageIndex:indexPath.row];
-        browser.displayActionButton = NO;
-        browser.displayArrowButton = NO;
-//        browser.displayArrowButton = YES;
-        browser.displayCounterLabel = YES;
-        browser.scaleImage = self.selectedCell.photoImageView.image;
-        
-//        [self.navigationController p presentedViewController:browser];
-        
-        // Show
-        [self presentViewController:browser animated:YES completion:nil];
-        [self collectionView:collectionView didDeselectItemAtIndexPath:indexPath];
-    }
+//        
+////        NSMutableArray *idmPhotos = [NSMutableArray arrayWithCapacity:1];
+////        NSDictionary *photoinfo = [self.photos objectAtIndex:indexPath.row];
+////        NSString *photo = [photoinfo objectForKey:@"AssetURL"];
+////        [idmPhotos addObject:photo];
+//        
+//        // Create and setup browser
+//        IDMPhotoBrowser *browser = [[IDMPhotoBrowser alloc] initWithPhotoURLs:idmPhotos animatedFromView:self.selectedCell]; // using initWithPhotos:animatedFromView: method to use the zoom-in animation
+//        browser.delegate = self;
+//        [browser setInitialPageIndex:indexPath.row];
+//        browser.displayActionButton = NO;
+//        browser.displayArrowButton = NO;
+////        browser.displayArrowButton = YES;
+//        browser.displayCounterLabel = YES;
+//        browser.scaleImage = self.selectedCell.photoImageView.image;
+//        
+////        [self.navigationController p presentedViewController:browser];
+//        
+//        // Show
+//        [self presentViewController:browser animated:YES completion:nil];
+//        [self collectionView:collectionView didDeselectItemAtIndexPath:indexPath];
+//    }
 }
 
 - (void)collectionView:(UICollectionView *)collectionView didDeselectItemAtIndexPath:(NSIndexPath *)indexPath
@@ -394,10 +448,17 @@ UserCellDelegate, GalleryViewCellDelegate>
     else {
         self.selectedCell = cell;//(GalleryViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
  
-        NSMutableArray *idmPhotos = [NSMutableArray arrayWithCapacity:1];
-        NSDictionary *photoinfo = [self.photos objectAtIndex:indexPath.row];
-        NSString *photo = [photoinfo objectForKey:@"AssetURL"];
-        [idmPhotos addObject:photo];
+        NSMutableArray *idmPhotos = [NSMutableArray arrayWithCapacity:[self.photos count]];
+        for (NSDictionary *photoinfo in self.photos) {
+            NSString *photo = [photoinfo objectForKey:@"AssetURL"];
+            [idmPhotos addObject:photo];
+        }
+
+        
+//        NSMutableArray *idmPhotos = [NSMutableArray arrayWithCapacity:1];
+//        NSDictionary *photoinfo = [self.photos objectAtIndex:indexPath.row];
+//        NSString *photo = [photoinfo objectForKey:@"AssetURL"];
+//        [idmPhotos addObject:photo];
         
         // Create and setup browser
         IDMPhotoBrowser *browser = [[IDMPhotoBrowser alloc] initWithPhotoURLs:idmPhotos animatedFromView:self.selectedCell]; // using initWithPhotos:animatedFromView: method to use the zoom-in animation
@@ -427,7 +488,7 @@ UserCellDelegate, GalleryViewCellDelegate>
     
     NSLog(@"longPressItem: %d", (int)indexPath.row);
     [selectedPhotos addObject:indexPath];
-    [self shareButtonClickHandler:nil];
+    [self shareButtonHandler:nil];
 }
 
 
@@ -573,40 +634,95 @@ UserCellDelegate, GalleryViewCellDelegate>
     self.friendPopup = controller;
 }
 
+#pragma mark - UI Control methods
+
+- (void)showToolBar:(BOOL)show
+{
+    CGRect rect = [UIScreen mainScreen].bounds;
+    CGRect frame = self.toolbar.frame;
+    
+    if(show){
+         frame = CGRectMake(frame.origin.x, rect.size.height - frame.size.height, frame.size.width, frame.size.height);
+        
+    } else {
+        
+        frame = CGRectMake(frame.origin.x, rect.size.height, frame.size.width, frame.size.height);
+    }
+    
+    [UIView animateWithDuration:0.2
+                          delay:0.1
+                        options: UIViewAnimationOptionCurveEaseIn
+                     animations:^{
+                         self.toolbar.frame = frame;
+                     }
+                     completion:^(BOOL finished){
+                         if(!show){
+
+                         }
+                     }];
+    
+    
+}
+
 #pragma mark -
 #pragma mark ButtonAction
+//Edit Button
 - (IBAction)editButtonClickHandler:(id)sender {
-    self.collectionView.allowsMultipleSelection = !self.collectionView.allowsMultipleSelection;
+    EDIT_MODE = !EDIT_MODE;
     
-    if (self.collectionView.allowsMultipleSelection) {
-        self.navigationItem.rightBarButtonItem.title = @"Close";
-        [UIView animateWithDuration:0.3
-                         animations:^{
-                             self.shareButton.alpha = 1.0;
-                         }
-                         completion:^(BOOL finished){
-                             
-                         }];
+    if(EDIT_MODE){
+        self.navigationItem.rightBarButtonItem.image = nil;
+        self.navigationItem.rightBarButtonItem.title = @"Cancel";
         
     }
     else {
-        self.navigationItem.rightBarButtonItem.title = @"Select";
-        
-        for (NSIndexPath *indexPath in selectedPhotos) {
-            GalleryViewCell *cell = (GalleryViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
-            [cell showSelectIcon:NO];
-            [cell setNeedsDisplay];
-        }
-        
         [selectedPhotos removeAllObjects];
-        [self refreshSelectedPhotCountOnNavTilte];
-     }
+        self.navigationItem.rightBarButtonItem.title = nil;
+        self.navigationItem.rightBarButtonItem.image = [UIImage imageNamed:@"edit"];
+    }
+    
+    [self showToolBar:EDIT_MODE];
+    [self.collectionView setAllowsMultipleSelection:EDIT_MODE];
+    [self.collectionView reloadData];
+    
+//    
+//    
+//    self.collectionView.allowsMultipleSelection = !self.collectionView.allowsMultipleSelection;
+//    
+//    
+//    if (self.collectionView.allowsMultipleSelection) {
+//        self.navigationItem.rightBarButtonItem.image = nil;
+//        self.navigationItem.rightBarButtonItem.title = @"Close";
+//        [UIView animateWithDuration:0.3
+//                         animations:^{
+//                             self.shareButton.alpha = 1.0;
+//                         }
+//                         completion:^(BOOL finished){
+//                             
+//                         }];
+//        
+//    }
+//    else {
+//        self.navigationItem.rightBarButtonItem.title = nil;
+//        self.navigationItem.rightBarButtonItem.image = [UIImage imageNamed:@"edit"];
+//        
+//        for (NSIndexPath *indexPath in selectedPhotos) {
+//            GalleryViewCell *cell = (GalleryViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
+//            [cell showSelectIcon:NO];
+//            [cell setNeedsDisplay];
+//        }
+//        
+//        [selectedPhotos removeAllObjects];
+//        [self refreshSelectedPhotCountOnNavTilte];
+//     }
+//    
+//    [self.collectionView reloadData];
 }
 
 - (IBAction)albumButtonClickHandler:(id)sender {
 }
 
-- (IBAction)shareButtonClickHandler:(id)sender {
+- (IBAction)shareButtonHandler:(id)sender {
     
     NSMutableArray *activityItems = [NSMutableArray arrayWithCapacity:[selectedPhotos count]];
     
@@ -1044,4 +1160,5 @@ UserCellDelegate, GalleryViewCellDelegate>
 }
 
 
+ 
 @end

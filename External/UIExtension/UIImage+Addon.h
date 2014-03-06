@@ -10,5 +10,6 @@
 
 @interface UIImage (Addon)
 + (UIImage*)maskImage:(UIImage *)image withMask:(UIImage *)maskImage;
++ (UIImage *)imageWithColor:(UIColor *)color size:(CGSize)size;
 - (UIImage*)fixRotation;
 @end

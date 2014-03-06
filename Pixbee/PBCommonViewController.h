@@ -15,7 +15,7 @@
 
 - (void)refreshBGImage:(UIImage*)image;
 - (void)refreshNavigationBarColor:(UIColor*)color;
-
+- (UIImageView *)getSnapShot;
 
 
 // UIKeyboard Protocol

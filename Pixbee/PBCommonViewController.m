@@ -9,7 +9,7 @@
 #import "PBCommonViewController.h"
 #import "SDImageCache.h"
 #import "UIImage+ImageEffects.h"
-
+#import "UIImage+Addon.h"
 @interface PBCommonViewController () //<UITextFieldDelegate>
 
 @end
@@ -30,15 +30,29 @@
 
 - (void)refreshNavigationBarColor:(UIColor*)color
 {
+    
+//    if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_6_1)
+//    {
+//        [[UINavigationBar appearance] setTintColor:color];
+//    }
+//    else
+//    {
+//        [[UINavigationBar appearance] setBarTintColor:color];
+//    }
+//    
+//    self.navigationController.navigationBar.translucent = YES;
+    
+    
     if(color != nil){
-
-        [[UINavigationBar appearance] setBarTintColor:color];
+        [[UINavigationBar appearance] setBackgroundImage:[UIImage imageWithColor:color size:CGSizeMake(1, 1)] forBarMetrics:UIBarMetricsDefault];
     } else {
         //Clear Navigationbar
         [[UINavigationBar appearance] setBackgroundImage:[UIImage new] forBarMetrics:UIBarMetricsDefault];
-        [[UINavigationBar appearance] setShadowImage:[UIImage new]];
-
     }
+    
+    [[UINavigationBar appearance] setShadowImage:[UIImage new]];
+ 
+    self.navigationController.navigationBar.translucent = YES;
 }
 
 - (void)refreshBGImage:(UIImage*)image
@@ -63,6 +77,30 @@
     _bgImageView.image = lastImage;
 
 }
+
+- (UIImageView *)getSnapShot
+{
+    UIView *snapShotView = [[UIScreen mainScreen] snapshotViewAfterScreenUpdates:NO];
+    
+    UIGraphicsBeginImageContextWithOptions(snapShotView.bounds.size, NO, 0.0);
+    // Render our snapshot into the image context
+    [snapShotView drawViewHierarchyInRect:snapShotView.bounds afterScreenUpdates:NO];
+    
+    // Grab the image from the context
+    UIImage *complexViewImage = UIGraphicsGetImageFromCurrentImageContext();
+    // Finish using the context
+    UIGraphicsEndImageContext();
+    
+    //complexViewImage = [complexViewImage applyLightEffect];
+    
+    UIImageView *imgView = [[UIImageView alloc] initWithFrame:snapShotView.bounds];
+    imgView.image = complexViewImage;
+    
+    return imgView;
+    
+    //return [[UIScreen mainScreen] snapshotViewAfterScreenUpdates:NO];
+}
+
 
 - (void)viewDidLoad
 {
@@ -202,5 +240,7 @@
 
 - (void)colorButtonHandler:(id)sender {
 }
+
+
 
 @end
