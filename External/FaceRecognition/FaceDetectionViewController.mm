@@ -123,7 +123,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 
 }
 @property (weak, nonatomic) IBOutlet UIView *topView;
-@property (weak, nonatomic) IBOutlet UILabel *timeLabel;
+//@property (weak, nonatomic) IBOutlet UILabel *timeLabel;
 @property (weak, nonatomic) IBOutlet UILabel *instructionsLabel;
 @property (weak, nonatomic) IBOutlet UILabel *nameLabel;
 @property (nonatomic) NSInteger frameNum;
@@ -201,7 +201,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     if(self.faceMode == FaceModeCollect){
         self.navigationController.navigationBarHidden = YES;
         [_CameraBottomView setHidden:YES];
-        _timeLabel.hidden = YES;
+        //_timeLabel.hidden = YES;
 
         
         [self setupGuide];
@@ -536,6 +536,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
         if([_segueid isEqualToString:SEGUE_3_1_TO_6_1]) {
             // Check face DB
         }
+        
         self.navigationController.navigationBarHidden = NO;
         [self.navigationController popViewControllerAnimated:YES];
         //[self dismissViewControllerAnimated:YES completion:nil];
@@ -599,6 +600,10 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
         
         NSMutableArray *array = [AssetLib.totalAssets lastObject];
         [array addObject:@{@"Asset":asset , @"GroupURL":GroupURL}];
+        
+        NSURL *assetURL = [asset valueForProperty:ALAssetPropertyAssetURL];
+        GlobalValue.lastAssetURL = assetURL.absoluteString;
+        
         
     };
     

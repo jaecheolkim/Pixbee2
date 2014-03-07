@@ -160,11 +160,13 @@
 /* Login to facebook method */
 - (IBAction)loginButtonTouchHandler:(id)sender
 {
+    [Flurry logEvent:@"Facebook_Login"];
+    
     _FBLoginButton.enabled = NO;
     
     [_indicator startAnimating];
 
-    NSArray *permissionsArray = @[ @"user_about_me", @"user_relationships", @"user_birthday", @"user_location"];
+    NSArray *permissionsArray = @[ @"user_about_me"];//, @"user_relationships", @"user_birthday", @"user_location"];
 
     [PFFacebookUtils logInWithPermissions:permissionsArray block:^(PFUser *user, NSError *error) {
 

@@ -46,6 +46,8 @@
 
 // 하나의 Asset에서 얼굴정보 찾아줌.
 - (NSArray*)getFaceData:(ALAsset*)photoAsset;
+
+
 @end
 
 @protocol PBAssetsLibraryDelegate <NSObject>

@@ -42,7 +42,7 @@
     if(!IsEmpty(_userInfo[@"color"])) {
         colorValue = [_userInfo[@"color"] intValue] ;
     }
-    
+
     [self setUserColor:colorValue];
 
     [_profileImageView setImage:[SQLManager getUserProfileImage:UserID]];

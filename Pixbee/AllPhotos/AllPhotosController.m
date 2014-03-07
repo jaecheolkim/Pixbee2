@@ -75,18 +75,18 @@
     
     [self initialNotification];
     
-    self.title = @"ALL PHOTOS1";
+    self.title = @"ALL PHOTO";
     
     self.doneButton.enabled = NO;
     NSLog(@"============================> Operation ID = %@", _operateIdentifier);
     
-    if(([_operateIdentifier isEqualToString:@"new facetab"] || [_operateIdentifier isEqualToString:@"add Photos"])
-       && !IsEmpty(_operateIdentifier))
-    {
-        self.doneButton.title = @"Done";
-    } else {
-        self.doneButton.title = @"Share";
-    }
+//    if(([_operateIdentifier isEqualToString:@"new facetab"] || [_operateIdentifier isEqualToString:@"add Photos"])
+//       && !IsEmpty(_operateIdentifier))
+//    {
+//        self.doneButton.title = @"Done";
+//    } else {
+//        self.doneButton.title = @"Share";
+//    }
 
     selectedPhotos = [NSMutableArray array];
     [self reloadDB];

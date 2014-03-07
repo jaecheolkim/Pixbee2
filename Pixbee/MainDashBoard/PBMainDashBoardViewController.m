@@ -35,6 +35,8 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
     ProfileCardCell *currentSelectedCell;
     
     FaceMode facemode;
+    
+    int currentColor;
 }
 
 
@@ -75,6 +77,8 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    [Flurry logEvent:@"MainDashboard_START"];
+    
 //    NSArray *ver = [[UIDevice currentDevice].systemVersion componentsSeparatedByString:@"."];
 //    if ([[ver objectAtIndex:0] intValue] >= 7) {
 //        self.navigationController.navigationBar.barTintColor = [UIColor colorWithRed:89/255.0f green:174/255.0f blue:235/255.0f alpha:0.7f];
@@ -83,14 +87,15 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
 //        self.navigationController.navigationBar.tintColor = [UIColor colorWithRed:89/255.0f green:174/255.0f blue:235/255.0f alpha:0.7f];
 //    }
     
-    [self refreshNavigationBarColor:nil];
-    
+    [self refreshNavigationBarColor:COLOR_BLACK];
     [self refreshBGImage:nil];
     self.collectionView.backgroundColor = [UIColor clearColor];
     self.collectionView.backgroundView = self.bgImageView;
 
     
     EDIT_MODE = NO;
+    
+    
  }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -99,6 +104,7 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
 
     [self reloadData];
     self.title = [NSString stringWithFormat:@"%d Faces", totalCellCount];
+    [self loadThumbImage];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -112,6 +118,27 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
 
 
 #pragma mark - UI Control methods
+
+- (void)loadThumbImage
+{
+    ALAssetsLibraryAssetForURLResultBlock resultBlock = ^(ALAsset *asset)
+    {
+        NSLog(@"This debug string was logged after this function was done");
+        UIImage *image = [UIImage imageWithCGImage:[asset thumbnail]];
+
+        [_galleryButton setImage:image forState:UIControlStateNormal];
+        //[[SDImageCache sharedImageCache] storeImage:image forKey:imagePath toDisk:NO];
+    };
+    
+    ALAssetsLibraryAccessFailureBlock failureBlock  = ^(NSError *error)
+    {
+        NSLog(@"Unresolved error: %@, %@", error, [error localizedDescription]);
+    };
+    
+    [AssetLib.assetsLibrary assetForURL:[NSURL URLWithString:GlobalValue.lastAssetURL]
+                            resultBlock:resultBlock
+                           failureBlock:failureBlock];
+}
 
 - (void)showToolBar:(BOOL)show
 {
@@ -254,7 +281,9 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
                 
             } else {
                 NSLog(@"go to detail view");
-                [self performSegueWithIdentifier:SEGUE_3_1_TO_4_1 sender:self];
+                
+                [self goIndividualViewController];
+                //[self performSegueWithIdentifier:SEGUE_3_1_TO_4_1 sender:self];
             }
             
             NSLog(@"didSelectItemAtIndexPath : %@", self.collectionView.indexPathsForSelectedItems);
@@ -415,16 +444,20 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
     
     [self showToolBar:EDIT_MODE];
     [self.collectionView setAllowsMultipleSelection:EDIT_MODE];
-    [self.collectionView reloadData];
+    
+    [self reloadData];
+    //[self.collectionView reloadData];
 }
 
 - (IBAction)galleryButtonHandler:(id)sender {
      NSLog(@"clicked galleryButtonHandler");
+    [Flurry logEvent:@"Gallery_START"];
     [self performSegueWithIdentifier:SEGUE_3_1_TO_4_3 sender:self];
 }
 
 - (IBAction)shutterButtonHandler:(id)sender {
     facemode = FaceModeRecognize;
+    [Flurry logEvent:@"Camera_START"];
     NSLog(@"clicked shutterButtonHandler");
 }
 
@@ -483,22 +516,33 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
     
     //NSMutableIndexSet *indexSet = [NSMutableIndexSet indexSet];
     for (NSIndexPath *itemPath  in selectedItemsIndexPaths) {
+        id cell = [self.collectionView cellForItemAtIndexPath:itemPath];
         
-        ProfileCardCell *profileCardCell = (ProfileCardCell *)[self.collectionView cellForItemAtIndexPath:itemPath];
-        NSDictionary *userInfo = profileCardCell.userInfo;
-        //[indexSet addIndex:itemPath.row];
-        int UserID = [userInfo[@"UserID"] intValue];
+        NSString *className = NSStringFromClass([cell class]);
         
-        if([SQLManager deleteUser:UserID]){
-            [self.users removeObjectAtIndex:itemPath.row];
-            totalCellCount = (int)[self.users count];
-            [self.collectionView deleteItemsAtIndexPaths:@[itemPath]];
+        if([className isEqualToString:@"ProfileCardCell"])
+        {
+            ProfileCardCell *profileCardCell = (ProfileCardCell *)cell;
+            NSDictionary *userInfo = profileCardCell.userInfo;
+
+            int UserID = [userInfo[@"UserID"] intValue];
             
-        } else {
-            NSLog(@"Can't delete Users db row..");
+            if([SQLManager deleteUser:UserID]){
+                //[self.users removeObjectAtIndex:itemPath.row];
+                //totalCellCount = (int)[self.users count];
+                
+                
+            } else {
+                NSLog(@"Can't delete Users db row..");
 #warning Error message 뿌려주기
+            }
         }
     }
+    
+    [self rightBarButtonHandler:nil];
+    
+    //[self reloadData];
+    
 }
 
 //- (void)doneUserCell:(UserCell *)cell {
@@ -534,10 +578,22 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
     if(ActionSheetType == 200){
         
-        NSLog(@"Button index = %d", (int)buttonIndex);
-        if(buttonIndex == 0) {
-            [self deleteSelectedCell];
+        switch (buttonIndex) {
+            case 0:
+                [self deleteSelectedCell];
+                break;
+            case 1:
+                [self rightBarButtonHandler:nil];
+            default:
+                break;
         }
+        
+        
+        
+        NSLog(@"Button index = %d", (int)buttonIndex);
+//        if(buttonIndex == 0) {
+//            [self deleteSelectedCell];
+//        }
         
     } else if(ActionSheetType == 100){
         switch (buttonIndex) {
@@ -558,6 +614,7 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
                 // Cancel
             case 2:
                 NSLog(@"Cancel Clicked");
+//                [self rightBarButtonHandler:nil];
                 break;
         }
     }
@@ -637,6 +694,17 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
 }
 
 
+- (void)goIndividualViewController
+{
+    
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    IndividualGalleryController *destViewController = [storyboard instantiateViewControllerWithIdentifier:@"IndividualGalleryViewController"];
+    NSDictionary *userInfo = [self.users  objectAtIndex:currentIndexPath.item];
+    int UserID = [userInfo[@"UserID"] intValue];
+    destViewController.UserID = UserID;
+    
+    [self.navigationController pushViewController:destViewController animated:YES];
+}
 
 
 
@@ -696,11 +764,12 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
 - (void)colorButtonHandler:(id)sender
 {
     UIButton *colorButton = (UIButton*)sender;
-    int color = (int)colorButton.tag;
-    NSLog(@"ColorBar Selected = %d", color );
+    currentColor = (int)colorButton.tag;
+    NSLog(@"ColorBar Selected = %d", currentColor );
     
     if(currentSelectedCell){
-        currentSelectedCell.nameLabel.backgroundColor = [SQLManager getUserColor:color];
+        currentSelectedCell.nameLabel.backgroundColor = [SQLManager getUserColor:currentColor];
+        [currentSelectedCell setUserColor:currentColor];
     }
 }
 
@@ -846,19 +915,18 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
     int color = currentSelectedCell.userColor;
     
     NSArray *result = [SQLManager updateUser:@{ @"UserID" : @(UserID), @"UserName" : UserName,
-                                                @"color" : @(color) }];
+                                                @"color" : @(currentColor) }];
 
     if(!IsEmpty(result)){
         [self.users replaceObjectAtIndex:indexPath.row withObject:[result objectAtIndex:0]];
     }
-    
-    
+
     currentSelectedCell.nameTextField.placeholder = UserName;
     
     [self frientList:currentSelectedCell appear:NO];
     [currentSelectedCell.nameTextField resignFirstResponder];
     
-    
+    [self rightBarButtonHandler:nil];
 }
 
 

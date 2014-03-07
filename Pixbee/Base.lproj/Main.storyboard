@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="5051" systemVersion="13C64" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="gUD-Yk-XTw">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="5051" systemVersion="13C64" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="vXZ-lx-hvc">
     <dependencies>
         <deployment defaultVersion="1536" identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
@@ -8,7 +8,7 @@
         <!--1.2 Log-in-->
         <scene sceneID="ufC-wZ-h7g">
             <objects>
-                <viewController id="vXZ-lx-hvc" userLabel="1.2 Log-in" customClass="PBViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="NavigationController" id="vXZ-lx-hvc" userLabel="1.2 Log-in" customClass="PBViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="8XU-BZ-yjx"/>
                         <viewControllerLayoutGuide type="bottom" id="pwp-jf-pXg"/>
@@ -515,7 +515,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="192" height="28"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="3B74A0BF-DFF4-4C93-9B61-2DB0307C0D08" translatesAutoresizingMaskIntoConstraints="NO" id="6aK-Ak-lFj">
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="921B70D4-DC38-48F3-BEF7-8A10D8830E25" translatesAutoresizingMaskIntoConstraints="NO" id="6aK-Ak-lFj">
                                                     <rect key="frame" x="0.0" y="0.0" width="28" height="29"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
@@ -608,7 +608,7 @@
         <!--4.1. Individual Gallery-->
         <scene sceneID="rJ6-cA-OYb">
             <objects>
-                <viewController id="cgv-md-euH" userLabel="4.1. Individual Gallery" customClass="IndividualGalleryController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="IndividualGalleryViewController" id="cgv-md-euH" userLabel="4.1. Individual Gallery" customClass="IndividualGalleryController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="evC-4F-eXK"/>
                         <viewControllerLayoutGuide type="bottom" id="51R-Fw-DVU"/>
@@ -864,26 +864,6 @@
             </objects>
             <point key="canvasLocation" x="1362" y="16"/>
         </scene>
-        <!--Common Navigation Controller-->
-        <scene sceneID="nyz-XG-GpP">
-            <objects>
-                <navigationController storyboardIdentifier="NavigationController" automaticallyAdjustsScrollViewInsets="NO" navigationBarHidden="YES" id="WQt-uJ-nhq" customClass="PBCommonNavigationController" sceneMemberID="viewController">
-                    <toolbarItems/>
-                    <nil key="simulatedStatusBarMetrics"/>
-                    <nil key="simulatedTopBarMetrics"/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" translucent="NO" id="HSZ-g0-HFa">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </navigationBar>
-                    <nil name="viewControllers"/>
-                    <connections>
-                        <segue destination="vXZ-lx-hvc" kind="relationship" relationship="rootViewController" id="7aq-p6-O7U"/>
-                    </connections>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="mMP-7o-Gfa" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-2675" y="32"/>
-        </scene>
         <!--6.1. Face Detection View Controller-->
         <scene sceneID="6I5-NA-DuC">
             <objects>
@@ -925,53 +905,26 @@
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="AYT-uL-AcR" userLabel="Button-flash">
-                                        <rect key="frame" x="220" y="3" width="40" height="40"/>
+                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cnW-80-ltw">
+                                        <rect key="frame" x="274" y="2" width="40" height="40"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <state key="normal" image="flash_camera_selcet.png">
+                                        <state key="normal" image="camera.png">
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                         <connections>
-                                            <action selector="toggleFlash:" destination="dri-x2-AEn" eventType="touchUpInside" id="f1Q-i2-iAr"/>
+                                            <action selector="switchCameras:" destination="dri-x2-AEn" eventType="touchUpInside" id="Gtf-pa-Rb0"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1gu-Cw-a2g" userLabel="Button-switch">
-                                        <rect key="frame" x="280" y="3" width="40" height="40"/>
+                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="k3Y-jm-u0u">
+                                        <rect key="frame" x="6" y="2" width="40" height="40"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                        <state key="normal" image="camera.png">
-                                            <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                        </state>
-                                        <connections>
-                                            <action selector="switchCameras:" destination="dri-x2-AEn" eventType="touchUpInside" id="CVs-GA-osl"/>
-                                        </connections>
-                                    </button>
-                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ARB-yI-jgk">
-                                        <rect key="frame" x="0.0" y="3" width="40" height="40"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <state key="normal" image="close.png">
-                                            <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                         <connections>
-                                            <action selector="closeCamera:" destination="dri-x2-AEn" eventType="touchUpInside" id="MBL-pG-fjg"/>
-                                            <segue destination="kfg-SS-jBG" kind="unwind" unwindAction="unwindToMainDashBoardViewController:" id="tGm-BF-mZ1"/>
+                                            <segue destination="kfg-SS-jBG" kind="unwind" unwindAction="unwindToMainDashBoardViewController:" id="Ma4-RJ-26Q"/>
                                         </connections>
                                     </button>
-                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6NS-XG-oez">
-                                        <rect key="frame" x="115" y="10" width="91" height="30"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <attributedString key="attributedText">
-                                            <fragment content="00:00:00">
-                                                <attributes>
-                                                    <color key="NSColor" cocoaTouchSystemColor="darkTextColor"/>
-                                                    <font key="NSFont" size="17" name="HelveticaNeue"/>
-                                                    <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="wordWrapping" baseWritingDirection="natural"/>
-                                                </attributes>
-                                            </fragment>
-                                        </attributedString>
-                                        <color key="highlightedColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                    </label>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                             </view>
@@ -1011,7 +964,7 @@
                                         </connections>
                                     </button>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="camera.png" translatesAutoresizingMaskIntoConstraints="NO" id="ZNs-qv-M9g">
-                                        <rect key="frame" x="150" y="24" width="22" height="22"/>
+                                        <rect key="frame" x="141" y="14" width="40" height="40"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     </imageView>
                                     <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UrB-l3-kBZ">
@@ -1050,11 +1003,9 @@
                         <outlet property="CameraBottomView" destination="oja-Kt-JRx" id="N6j-bT-e4x"/>
                         <outlet property="GalleryButton" destination="UrB-l3-kBZ" id="vw9-Py-QuR"/>
                         <outlet property="cameraImage" destination="U7Z-hV-Kd9" id="iRD-uY-hv4"/>
-                        <outlet property="closeButton" destination="ARB-yI-jgk" id="M2n-O6-UHa"/>
                         <outlet property="faceImageView" destination="Zkt-wk-y7C" id="KQw-nq-msI"/>
                         <outlet property="faceListScrollView" destination="uiZ-gw-wHx" id="Gwr-nN-X5E"/>
                         <outlet property="faceView" destination="txv-P5-Vrr" id="sJs-Zd-pUP"/>
-                        <outlet property="flashButton" destination="AYT-uL-AcR" id="RcD-mm-kJH"/>
                         <outlet property="hiveImageView" destination="kzk-8P-vOU" id="nea-YZ-qHH"/>
                         <outlet property="instructionsLabel" destination="dTV-e8-DDg" id="uqF-hq-lYD"/>
                         <outlet property="nameLabel" destination="6JN-n0-KnT" id="2Yy-J9-Iyn"/>
@@ -1062,8 +1013,7 @@
                         <outlet property="reconstImageView" destination="rDV-4F-UPS" id="7be-JJ-Hhv"/>
                         <outlet property="shutterImage" destination="ZNs-qv-M9g" id="b8f-Hu-gfH"/>
                         <outlet property="snapButton" destination="lik-r0-KMe" id="d8f-o6-WDR"/>
-                        <outlet property="switchButton" destination="1gu-Cw-a2g" id="Kzp-Rn-ft2"/>
-                        <outlet property="timeLabel" destination="6NS-XG-oez" id="YwD-z2-RnL"/>
+                        <outlet property="switchButton" destination="cnW-80-ltw" id="ClG-Wb-cL6"/>
                         <outlet property="topView" destination="93E-Dx-gjJ" id="qQ5-Nf-DiA"/>
                         <outlet property="videoImage" destination="0Ah-z5-nAa" id="cWW-9m-A7B"/>
                         <segue destination="ycL-kc-Lg3" kind="custom" identifier="Segue6_1to2_2" customClass="PBDisolveSegue" id="iEz-wD-DbU"/>
@@ -1944,7 +1894,7 @@ more Alex's Photo</string>
         </scene>
     </scenes>
     <resources>
-        <image name="3B74A0BF-DFF4-4C93-9B61-2DB0307C0D08" width="628" height="152">
+        <image name="921B70D4-DC38-48F3-BEF7-8A10D8830E25" width="628" height="152">
             <mutableData key="keyedArchiveRepresentation">
 YnBsaXN0MDDUAQIDBAUGPj9YJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoK4HCBMU
 GR4fIyQsLzI4O1UkbnVsbNUJCgsMDQ4PEBESVk5TU2l6ZVYkY2xhc3NcTlNJbWFnZUZsYWdzVk5TUmVw
@@ -8372,7 +8322,7 @@ Bd3JAAAAAAAABAEAAAAAAAAAQgAAAAAAAAAAAAAAAAAF3cs
         <image name="blue_button_select.png" width="287" height="46"/>
         <image name="bottombar.png" width="320" height="64"/>
         <image name="cambutton.png" width="46" height="53"/>
-        <image name="camera.png" width="80" height="80"/>
+        <image name="camera.png" width="40" height="40"/>
         <image name="camerabutton.png" width="70" height="70"/>
         <image name="cameraroll_icon.png" width="40" height="30"/>
         <image name="check.png" width="19" height="19"/>
@@ -8384,7 +8334,6 @@ Bd3JAAAAAAAABAEAAAAAAAAAQgAAAAAAAAAAAAAAAAAF3cs
         <image name="edit_select.png" width="20" height="20"/>
         <image name="export.png" width="19" height="26"/>
         <image name="export_select.png" width="19" height="26"/>
-        <image name="flash_camera_selcet.png" width="18" height="24"/>
         <image name="hive0.png" width="62" height="56"/>
         <image name="hive_toalbum.png" width="78" height="88"/>
         <image name="individualphoto.png" width="105" height="105"/>
@@ -8423,11 +8372,11 @@ Bd3JAAAAAAAABAEAAAAAAAAAQgAAAAAAAAAAAAAAAAAF3cs
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="tWG-45-OJb"/>
         <segue reference="t8Q-Mi-1Tt"/>
         <segue reference="fsZ-en-OWS"/>
+        <segue reference="tWG-45-OJb"/>
         <segue reference="M8M-y8-RXx"/>
-        <segue reference="VxU-3R-aYF"/>
         <segue reference="dit-gp-a6j"/>
+        <segue reference="VxU-3R-aYF"/>
     </inferredMetricsTieBreakers>
 </document>

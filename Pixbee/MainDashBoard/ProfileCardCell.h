@@ -18,7 +18,7 @@
 @property (weak, nonatomic) IBOutlet UIImageView *checkImageView;
 @property (weak, nonatomic) IBOutlet UILabel *nameLabel;
 @property (weak, nonatomic) IBOutlet UITextField *nameTextField;
-@property (nonatomic) int userColor;
+@property (assign, nonatomic) int userColor;
 
 
 @end

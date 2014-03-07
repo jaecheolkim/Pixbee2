@@ -75,7 +75,8 @@ UserCellDelegate, GalleryViewCellDelegate>
 //    self.navigationController.navigationBar.tintColor = COLOR_RED;
 //    self.navigationController.navigationBar.alpha = 0.7;
     
-    [self refreshNavigationBarColor:COLOR_RED];
+    
+    [self refreshNavigationBarColor:COLOR_BLUE];
     
 //    NSArray *ver = [[UIDevice currentDevice].systemVersion componentsSeparatedByString:@"."];
 //    if ([[ver objectAtIndex:0] intValue] >= 7) {

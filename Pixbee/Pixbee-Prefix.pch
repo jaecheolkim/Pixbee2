@@ -28,6 +28,8 @@
 
     #import "UIExtensions.h"
     #import "PBCommonViewController.h"
+
+    #import "Flurry.h"
 #endif
 
 #ifdef DEBUG
@@ -50,6 +52,8 @@
 #define COLOR_BLUE              [UIColor colorWithRed:96/255.0 green:154/255.0 blue:252/255.0 alpha:0.7]
 #define COLOR_DARKBLUE          [UIColor colorWithRed:73/255.0 green:107/255.0 blue:251/255.0 alpha:0.7]
 #define COLOR_PURPLE            [UIColor colorWithRed:51/255.0 green:53/255.0 blue:143/255.0 alpha:0.7]
+
+#define COLOR_BLACK            [UIColor colorWithRed:0.0/255.0 green:0.0/255.0 blue:0.0/255.0 alpha:0.7]
 
 #define NAVIGATION_TITLE_COLOR  [UIColor colorWithRed:255/255.0 green:255/255.0 blue:255/255.0 alpha:1.0]
 

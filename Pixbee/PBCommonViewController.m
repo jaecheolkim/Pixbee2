@@ -44,7 +44,8 @@
     
     
     if(color != nil){
-        [[UINavigationBar appearance] setBackgroundImage:[UIImage imageWithColor:color size:CGSizeMake(1, 1)] forBarMetrics:UIBarMetricsDefault];
+        UIImage *colorImage = [UIImage imageWithColor:color size:CGSizeMake(1, 1)];
+        [[UINavigationBar appearance] setBackgroundImage:colorImage forBarMetrics:UIBarMetricsDefault];
     } else {
         //Clear Navigationbar
         [[UINavigationBar appearance] setBackgroundImage:[UIImage new] forBarMetrics:UIBarMetricsDefault];

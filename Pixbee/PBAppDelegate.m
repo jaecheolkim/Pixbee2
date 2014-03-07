@@ -14,11 +14,14 @@
 
 #import <Parse/Parse.h>
 
+
 @implementation PBAppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
 
+    [Flurry startSession:@"88CQSKXDCHXHGMP376SM"];
+    [Flurry logEvent:@"APP_START" timed:YES];
     [TestFlight takeOff:@"0d73a652-a45f-4b76-9fec-026bd931c1f7"];
     
     [SQLManager initDataBase];
@@ -124,6 +127,8 @@
      See also applicationDidEnterBackground:.
      */
     [[PFFacebookUtils session] close];
+    
+    [Flurry endTimedEvent:@"APP_START" withParameters:nil];
 }
 
 
@@ -178,7 +183,7 @@
 
 - (void)goMainView{
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    UINavigationController *rootViewController = [storyboard instantiateViewControllerWithIdentifier:@"NavigationController"];
+    UIViewController *rootViewController = [storyboard instantiateViewControllerWithIdentifier:@"NavigationController"];
     self.window.rootViewController = rootViewController;
 }
 

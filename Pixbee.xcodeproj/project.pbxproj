@@ -93,8 +93,6 @@
 		7805A6D31866E7B800B234C1 /* allphoto@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7805A6B81866E7B800B234C1 /* allphoto@2x.png */; };
 		7805A6D41866E7B800B234C1 /* arrow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7805A6B91866E7B800B234C1 /* arrow@2x.png */; };
 		7805A6D51866E7B800B234C1 /* Backbutton@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7805A6BA1866E7B800B234C1 /* Backbutton@2x.png */; };
-		7805A6D61866E7B800B234C1 /* bottombar@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7805A6BB1866E7B800B234C1 /* bottombar@2x.png */; };
-		7805A6D71866E7B800B234C1 /* camera@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7805A6BC1866E7B800B234C1 /* camera@2x.png */; };
 		7805A6D81866E7B800B234C1 /* camerabutton@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7805A6BD1866E7B800B234C1 /* camerabutton@2x.png */; };
 		7805A6D91866E7B800B234C1 /* check@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7805A6BE1866E7B800B234C1 /* check@2x.png */; };
 		7805A6DA1866E7B800B234C1 /* copy@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7805A6BF1866E7B800B234C1 /* copy@2x.png */; };
@@ -203,6 +201,7 @@
 		78C950AA185D5FA60041E8DD /* SBPageFlowView.m in Sources */ = {isa = PBXBuildFile; fileRef = 78C950A9185D5FA60041E8DD /* SBPageFlowView.m */; };
 		800FBAF0189688910041017C /* NSTimer+Pause.m in Sources */ = {isa = PBXBuildFile; fileRef = 800FBAEF189688910041017C /* NSTimer+Pause.m */; };
 		8010C1FD187A8A7100EB7FF6 /* PBUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 8010C1FC187A8A7100EB7FF6 /* PBUtil.m */; };
+		80157E4518C99AF400663A9E /* libFlurry_4.3.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 80157E4418C99AF400663A9E /* libFlurry_4.3.2.a */; };
 		801B35DA18561B9600EEB9F3 /* SMShadowedLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 801B35D718561B9600EEB9F3 /* SMShadowedLayer.m */; };
 		801B35DB18561B9600EEB9F3 /* SMTransformLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 801B35D918561B9600EEB9F3 /* SMTransformLayer.m */; };
 		801B35DF18561BC400EEB9F3 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 801B35DE18561BC400EEB9F3 /* ViewController.m */; };
@@ -252,11 +251,10 @@
 		809BB30618BDF0C000CC79A8 /* back@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 809BB2D718BDF0C000CC79A8 /* back@2x.png */; };
 		809BB30718BDF0C000CC79A8 /* bg@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 809BB2D818BDF0C000CC79A8 /* bg@2x.png */; };
 		809BB30818BDF0C000CC79A8 /* blue@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 809BB2D918BDF0C000CC79A8 /* blue@2x.png */; };
-		809BB30918BDF0C000CC79A8 /* bottombar@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 809BB2DA18BDF0C000CC79A8 /* bottombar@2x.png */; };
 		809BB30A18BDF0C000CC79A8 /* Bt_inside@2x .png in Resources */ = {isa = PBXBuildFile; fileRef = 809BB2DB18BDF0C000CC79A8 /* Bt_inside@2x .png */; };
 		809BB30B18BDF0C000CC79A8 /* Bt_stroke@2x .png in Resources */ = {isa = PBXBuildFile; fileRef = 809BB2DC18BDF0C000CC79A8 /* Bt_stroke@2x .png */; };
 		809BB30C18BDF0C000CC79A8 /* cambutton@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 809BB2DD18BDF0C000CC79A8 /* cambutton@2x.png */; };
-		809BB30D18BDF0C000CC79A8 /* camera.png in Resources */ = {isa = PBXBuildFile; fileRef = 809BB2DE18BDF0C000CC79A8 /* camera.png */; };
+		809BB30D18BDF0C000CC79A8 /* camera@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 809BB2DE18BDF0C000CC79A8 /* camera@2x.png */; };
 		809BB30E18BDF0C000CC79A8 /* camera_turn@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 809BB2DF18BDF0C000CC79A8 /* camera_turn@2x.png */; };
 		809BB30F18BDF0C000CC79A8 /* check@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 809BB2E018BDF0C000CC79A8 /* check@2x.png */; };
 		809BB31018BDF0C000CC79A8 /* checkbox@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 809BB2E118BDF0C000CC79A8 /* checkbox@2x.png */; };
@@ -550,8 +548,6 @@
 		7805A6B81866E7B800B234C1 /* allphoto@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "allphoto@2x.png"; sourceTree = "<group>"; };
 		7805A6B91866E7B800B234C1 /* arrow@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "arrow@2x.png"; sourceTree = "<group>"; };
 		7805A6BA1866E7B800B234C1 /* Backbutton@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Backbutton@2x.png"; sourceTree = "<group>"; };
-		7805A6BB1866E7B800B234C1 /* bottombar@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bottombar@2x.png"; sourceTree = "<group>"; };
-		7805A6BC1866E7B800B234C1 /* camera@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "camera@2x.png"; sourceTree = "<group>"; };
 		7805A6BD1866E7B800B234C1 /* camerabutton@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "camerabutton@2x.png"; sourceTree = "<group>"; };
 		7805A6BE1866E7B800B234C1 /* check@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "check@2x.png"; sourceTree = "<group>"; };
 		7805A6BF1866E7B800B234C1 /* copy@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "copy@2x.png"; sourceTree = "<group>"; };
@@ -691,6 +687,8 @@
 		800FBAF1189688A50041017C /* ARCHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ARCHelper.h; sourceTree = "<group>"; };
 		8010C1FB187A8A7100EB7FF6 /* PBUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBUtil.h; sourceTree = "<group>"; };
 		8010C1FC187A8A7100EB7FF6 /* PBUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBUtil.m; sourceTree = "<group>"; };
+		80157E4318C99AF400663A9E /* Flurry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Flurry.h; sourceTree = "<group>"; };
+		80157E4418C99AF400663A9E /* libFlurry_4.3.2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libFlurry_4.3.2.a; sourceTree = "<group>"; };
 		801B35D618561B9600EEB9F3 /* SMShadowedLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMShadowedLayer.h; sourceTree = "<group>"; };
 		801B35D718561B9600EEB9F3 /* SMShadowedLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMShadowedLayer.m; sourceTree = "<group>"; };
 		801B35D818561B9600EEB9F3 /* SMTransformLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMTransformLayer.h; sourceTree = "<group>"; };
@@ -775,11 +773,10 @@
 		809BB2D718BDF0C000CC79A8 /* back@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "back@2x.png"; sourceTree = "<group>"; };
 		809BB2D818BDF0C000CC79A8 /* bg@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bg@2x.png"; sourceTree = "<group>"; };
 		809BB2D918BDF0C000CC79A8 /* blue@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "blue@2x.png"; sourceTree = "<group>"; };
-		809BB2DA18BDF0C000CC79A8 /* bottombar@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bottombar@2x.png"; sourceTree = "<group>"; };
 		809BB2DB18BDF0C000CC79A8 /* Bt_inside@2x .png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Bt_inside@2x .png"; sourceTree = "<group>"; };
 		809BB2DC18BDF0C000CC79A8 /* Bt_stroke@2x .png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Bt_stroke@2x .png"; sourceTree = "<group>"; };
 		809BB2DD18BDF0C000CC79A8 /* cambutton@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "cambutton@2x.png"; sourceTree = "<group>"; };
-		809BB2DE18BDF0C000CC79A8 /* camera.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = camera.png; sourceTree = "<group>"; };
+		809BB2DE18BDF0C000CC79A8 /* camera@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "camera@2x.png"; sourceTree = "<group>"; };
 		809BB2DF18BDF0C000CC79A8 /* camera_turn@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "camera_turn@2x.png"; sourceTree = "<group>"; };
 		809BB2E018BDF0C000CC79A8 /* check@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "check@2x.png"; sourceTree = "<group>"; };
 		809BB2E118BDF0C000CC79A8 /* checkbox@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "checkbox@2x.png"; sourceTree = "<group>"; };
@@ -973,6 +970,7 @@
 				80D2A16C184A72F7008D29B2 /* libTestFlight.a in Frameworks */,
 				80D2A176184A7328008D29B2 /* AVFoundation.framework in Frameworks */,
 				80D2A178184A7328008D29B2 /* AssetsLibrary.framework in Frameworks */,
+				80157E4518C99AF400663A9E /* libFlurry_4.3.2.a in Frameworks */,
 				80D2A177184A7328008D29B2 /* Accelerate.framework in Frameworks */,
 				80D2A149184A33A3008D29B2 /* libz.dylib in Frameworks */,
 				80D2A17A184A7328008D29B2 /* CoreMedia.framework in Frameworks */,
@@ -1455,8 +1453,6 @@
 				7805A6B81866E7B800B234C1 /* allphoto@2x.png */,
 				7805A6B91866E7B800B234C1 /* arrow@2x.png */,
 				7805A6BA1866E7B800B234C1 /* Backbutton@2x.png */,
-				7805A6BB1866E7B800B234C1 /* bottombar@2x.png */,
-				7805A6BC1866E7B800B234C1 /* camera@2x.png */,
 				7805A6BD1866E7B800B234C1 /* camerabutton@2x.png */,
 				7805A6BE1866E7B800B234C1 /* check@2x.png */,
 				7805A6BF1866E7B800B234C1 /* copy@2x.png */,
@@ -1663,6 +1659,15 @@
 			path = SBFlowView;
 			sourceTree = "<group>";
 		};
+		80157E4218C99AF400663A9E /* Flurry */ = {
+			isa = PBXGroup;
+			children = (
+				80157E4318C99AF400663A9E /* Flurry.h */,
+				80157E4418C99AF400663A9E /* libFlurry_4.3.2.a */,
+			);
+			path = Flurry;
+			sourceTree = "<group>";
+		};
 		801B35D518561B9600EEB9F3 /* SMShadowdLayer */ = {
 			isa = PBXGroup;
 			children = (
@@ -1829,11 +1834,10 @@
 				809BB2D718BDF0C000CC79A8 /* back@2x.png */,
 				809BB2D818BDF0C000CC79A8 /* bg@2x.png */,
 				809BB2D918BDF0C000CC79A8 /* blue@2x.png */,
-				809BB2DA18BDF0C000CC79A8 /* bottombar@2x.png */,
 				809BB2DB18BDF0C000CC79A8 /* Bt_inside@2x .png */,
 				809BB2DC18BDF0C000CC79A8 /* Bt_stroke@2x .png */,
 				809BB2DD18BDF0C000CC79A8 /* cambutton@2x.png */,
-				809BB2DE18BDF0C000CC79A8 /* camera.png */,
+				809BB2DE18BDF0C000CC79A8 /* camera@2x.png */,
 				809BB2DF18BDF0C000CC79A8 /* camera_turn@2x.png */,
 				809BB2E018BDF0C000CC79A8 /* check@2x.png */,
 				8082FF1318BF17200024CE08 /* checked@2x.png */,
@@ -1904,6 +1908,7 @@
 		80D2A0C4184A1E57008D29B2 /* External */ = {
 			isa = PBXGroup;
 			children = (
+				80157E4218C99AF400663A9E /* Flurry */,
 				807DD95818BB6B12003EBF30 /* TWRProgressView */,
 				807DD95418BB6616003EBF30 /* CircleShadowImageView */,
 				807DD94D18BB5B9A003EBF30 /* FXImageView */,
@@ -2343,7 +2348,6 @@
 				809BB32918BDF0C000CC79A8 /* red@2x.png in Resources */,
 				78C1EB42186B0A790072E7DB /* controller@2x.png in Resources */,
 				80E363A51880D60100A5DF57 /* stop_video@2x.png in Resources */,
-				7805A6D71866E7B800B234C1 /* camera@2x.png in Resources */,
 				7805A6E31866E7B800B234C1 /* move@2x.png in Resources */,
 				809BB31B18BDF0C000CC79A8 /* green@2x.png in Resources */,
 				80E36396187E45E000A5DF57 /* profile.png in Resources */,
@@ -2364,7 +2368,6 @@
 				809BB31618BDF0C000CC79A8 /* delete@2x.png in Resources */,
 				78A9A2D1186A5DDC00D6C20B /* FriendCell.xib in Resources */,
 				78C1EB3D186B0A790072E7DB /* cameraroll_icon@2x.png in Resources */,
-				7805A6D61866E7B800B234C1 /* bottombar@2x.png in Resources */,
 				809BB31218BDF0C000CC79A8 /* circle_2@2x.png in Resources */,
 				809BB32818BDF0C000CC79A8 /* purple@2x.png in Resources */,
 				78C1EB44186B0A790072E7DB /* export_select@2x.png in Resources */,
@@ -2373,7 +2376,6 @@
 				809BB30318BDF0C000CC79A8 /* addbutton@2x.png in Resources */,
 				78C1EB73186B0A790072E7DB /* take_photo@2x.png in Resources */,
 				80D2A11E184A1E58008D29B2 /* playButton.png in Resources */,
-				809BB30918BDF0C000CC79A8 /* bottombar@2x.png in Resources */,
 				809BB32618BDF0C000CC79A8 /* plusadd@2x.png in Resources */,
 				78C1EB46186B0A790072E7DB /* facebook_icon@2x.png in Resources */,
 				7805A6D41866E7B800B234C1 /* arrow@2x.png in Resources */,
@@ -2397,7 +2399,7 @@
 				7805A6E51866E7B800B234C1 /* pixbee@2x.png in Resources */,
 				69ED32F018484EBB00127196 /* Main.storyboard in Resources */,
 				78C1EB58186B0A790072E7DB /* keyboard@2x.png in Resources */,
-				809BB30D18BDF0C000CC79A8 /* camera.png in Resources */,
+				809BB30D18BDF0C000CC79A8 /* camera@2x.png in Resources */,
 				7805A6DC1866E7B800B234C1 /* export@2x.png in Resources */,
 				809BB30E18BDF0C000CC79A8 /* camera_turn@2x.png in Resources */,
 				78C1EB5F186B0A790072E7DB /* photo_profile_hive@2x.png in Resources */,
@@ -2732,6 +2734,7 @@
 					"$(SRCROOT)/External/TestFlightSDK2-3",
 					"$(PROJECT_DIR)/External/FaceRecognition",
 					/Users/skplanet/Pixbee2/External/FaceRecognition,
+					"$(PROJECT_DIR)/External/Flurry",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
@@ -2767,6 +2770,7 @@
 					"$(SRCROOT)/External/TestFlightSDK2-3",
 					"$(PROJECT_DIR)/External/FaceRecognition",
 					/Users/skplanet/Pixbee2/External/FaceRecognition,
+					"$(PROJECT_DIR)/External/Flurry",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
