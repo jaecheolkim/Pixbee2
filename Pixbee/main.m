@@ -10,9 +10,14 @@
 
 #import "PBAppDelegate.h"
 
+#import <PulseSDK/PulseSDK.h>
+
 int main(int argc, char * argv[])
 {
     @autoreleasepool {
+        
+        [PulseSDK monitor:@"mvHc2b5kNXtraC0V8dRYEuqSaukemU8L"];
+        
         return UIApplicationMain(argc, argv, nil, NSStringFromClass([PBAppDelegate class]));
     }
 }

@@ -19,10 +19,16 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-
+    [application registerForRemoteNotificationTypes:
+     UIRemoteNotificationTypeBadge |
+     UIRemoteNotificationTypeAlert |
+     UIRemoteNotificationTypeSound];
+    
+    
     [Flurry startSession:@"88CQSKXDCHXHGMP376SM"];
     [Flurry logEvent:@"APP_START" timed:YES];
-    [TestFlight takeOff:@"0d73a652-a45f-4b76-9fec-026bd931c1f7"];
+    
+    [TestFlight takeOff:@"c65316d7-3ac6-4cbf-be5d-97d643b00047"];
     
     [SQLManager initDataBase];
 
@@ -31,6 +37,8 @@
     [self setGalleryFilter];
     
     [self checkIntroShown];
+    
+    [self checkBundle];
 
     [self.window makeKeyAndVisible];
 
@@ -131,6 +139,19 @@
     [Flurry endTimedEvent:@"APP_START" withParameters:nil];
 }
 
+- (void)application:(UIApplication *)application
+didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)newDeviceToken {
+    // Store the deviceToken in the current installation and save it to Parse.
+    PFInstallation *currentInstallation = [PFInstallation currentInstallation];
+    [currentInstallation setDeviceTokenFromData:newDeviceToken];
+    [currentInstallation saveInBackground];
+}
+
+- (void)application:(UIApplication *)application
+didReceiveRemoteNotification:(NSDictionary *)userInfo {
+    [PFPush handlePush:userInfo];
+}
+
 
 - (void)initParse:(NSDictionary *)launchOptions
 {
@@ -180,6 +201,18 @@
         [self goMainView];
     }
 }
+
+- (void)checkBundle
+{
+    NSDictionary *infoDictionary = [[NSBundle mainBundle]infoDictionary];
+    
+    NSString *build = infoDictionary[(NSString*)kCFBundleVersionKey];
+    NSString *bundleName = infoDictionary[(NSString *)kCFBundleNameKey];
+    
+    NSLog(@" App build = %@ / bundleName = %@", build, bundleName);
+    
+    GlobalValue.appVersion = build;
+ }
 
 - (void)goMainView{
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];

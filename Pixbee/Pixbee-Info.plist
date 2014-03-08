@@ -9,7 +9,7 @@
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.JUNGOKLEE.matchme</string>
+	<string>com.Pixbee.camera</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -17,24 +17,22 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.7</string>
+	<string>0.8.1</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
-			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>fb206719339512526</string>
+				<string>fb244663102372990</string>
 			</array>
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>0.7</string>
+	<string>0.8.1</string>
 	<key>FacebookAppID</key>
-	<string>206719339512526</string>
+	<string>244663102372990</string>
 	<key>FacebookDisplayName</key>
 	<string>Pixbee</string>
 	<key>LSRequiresIPhoneOS</key>

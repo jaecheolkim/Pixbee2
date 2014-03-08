@@ -31,7 +31,7 @@ static inline id ObjectOrNull(id object)
 @property (nonatomic) int autoAlbumScanSetting;
 @property (nonatomic) int pushNotificationSetting;
 @property (nonatomic) int testMode;
-
+@property (nonatomic, strong) NSString* appVersion;
 + (GlobalValues*) sharedInstance;
 
 

@@ -15,6 +15,7 @@
 #define  KEY_AUTOALBUMSCANSETTING       @"autoAlbumScanSetting"
 #define  KEY_PUSHNOTIFICATIONSETTING    @"pushNotificationSetting"
 #define  KEY_TESTMODESETTING            @"testModeSetting"
+#define  KEY_APPVERSION                 @"appVersion"
 @interface GlobalValues ()
 @end
 
@@ -76,6 +77,21 @@
 {
     
     return [self readObjectFromDefault:KEY_LASTASSETURL];
+}
+
+
+//@property (nonatomic, strong) NSString* appVersion;
+
+- (void)setAppVersion:(NSString *)appVersion
+{
+    [self writeObjectToDefault:appVersion withKey:KEY_APPVERSION];
+}
+
+
+- (NSString *)appVersion
+{
+    
+    return [self readObjectFromDefault:KEY_APPVERSION];
 }
 
 

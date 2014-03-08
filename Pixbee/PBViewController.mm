@@ -23,6 +23,7 @@
 @property (strong, nonatomic) IBOutlet UIImageView *PixbeeLogo;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *indicator;
 @property (weak, nonatomic) IBOutlet UIButton *FBLoginButton;
+@property (weak, nonatomic) IBOutlet UILabel *titleLabel;
 
 @end
 
@@ -40,8 +41,8 @@
     [super viewDidLoad];
     
     //_indicator.hidden = YES;
-    _FBLoginButton.hidden = YES;
-    
+    _FBLoginButton.alpha = 0.0;
+    _FBLoginButton.enabled = NO;
     if(IsEmpty(GlobalValue.userName)) isFirstVisit = YES;
     else isFirstVisit = NO;
     
@@ -59,6 +60,7 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
+    
 
 //    [FBHELPER loadFBLoginView:self.viewFBLoginViewArea];
 //    FBHELPER.delegate = self;
@@ -79,10 +81,13 @@
                           duration:1.5
                            options:UIViewAnimationOptionTransitionCrossDissolve
                         animations:^{
-                            _PixbeeLogo.image = [UIImage imageNamed:@"Login_Page"];
+                            _PixbeeLogo.image = [UIImage imageNamed:@"logo_2"];
+                            _titleLabel.alpha = 0.0;
+                            _FBLoginButton.alpha = 1.0;
                         }
                         completion:^(BOOL finished) {
-                            _FBLoginButton.hidden = NO;
+                            //_FBLoginButton.hidden = NO;
+                             _FBLoginButton.enabled = YES;
                         }];
         
         
@@ -166,7 +171,7 @@
     
     [_indicator startAnimating];
 
-    NSArray *permissionsArray = @[ @"user_about_me"];//, @"user_relationships", @"user_birthday", @"user_location"];
+    NSArray *permissionsArray = @[ @"user_about_me" ];//, @"user_relationships", @"user_birthday", @"user_location"];
 
     [PFFacebookUtils logInWithPermissions:permissionsArray block:^(PFUser *user, NSError *error) {
 
@@ -177,8 +182,17 @@
                 [alert show];
             } else {
                 NSLog(@"Uh oh. An error occurred: %@", error);
-                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Log In Error" message:[error description] delegate:nil cancelButtonTitle:nil otherButtonTitles:@"Dismiss", nil];
+//                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Log In Error" message:[error description] delegate:nil cancelButtonTitle:nil otherButtonTitles:@"Dismiss", nil];
+//                [alert show];
+                
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Log In Error" message:@"Check Setting > Facebook > Pixbee on/off or check Facebook login information" delegate:nil cancelButtonTitle:nil otherButtonTitles:@"Dismiss", nil];
                 [alert show];
+                [PFUser logOut];
+                
+                _FBLoginButton.enabled = YES;
+                
+                [_indicator stopAnimating];
+   
             }
         } else {
             NSDictionary *profile = user[@"profile"];

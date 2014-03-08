@@ -42,7 +42,7 @@
     versionLabel.textAlignment = NSTextAlignmentCenter;
     versionLabel.font = [UIFont fontWithName:@"HelveticaNeue-light" size:9];
     versionLabel.textColor = [UIColor colorWithRed:208.0/255.0 green:208.0/255.0 blue:205.0/255.0 alpha:1.0];
-    versionLabel.text = @"Version 1.0";
+    versionLabel.text = [NSString stringWithFormat:@"Version %@", GlobalValue.appVersion ];//@"Version 1.0";
     [self.view addSubview:versionLabel];
 
     [self.tableView setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"background"]]];

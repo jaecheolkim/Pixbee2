@@ -12,8 +12,8 @@
 
 #define FBHELPER [FBHelper sharedInstance]
 
-#define FB_APP_ID           @"206719339512526"
-#define FB_APP_SECRET       @"7c2013eebeb4bb08a3e6ad0218d79616"
+#define FB_APP_ID           @"244663102372990"
+#define FB_APP_SECRET       @"b5061c376a8a2ee7251cb459c042f7ec"
 
 @protocol FBHelperDelegate;
 
