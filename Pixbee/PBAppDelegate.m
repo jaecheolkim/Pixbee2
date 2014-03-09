@@ -8,7 +8,7 @@
 
 #import "PBAppDelegate.h"
 #import "FBHelper.h"
-#import "TestFlight.h"
+//#import "TestFlight.h"
 #import "PBViewController.h"
 #import "IntroViewController.h"
 
@@ -28,7 +28,7 @@
     [Flurry startSession:@"88CQSKXDCHXHGMP376SM"];
     [Flurry logEvent:@"APP_START" timed:YES];
     
-    [TestFlight takeOff:@"c65316d7-3ac6-4cbf-be5d-97d643b00047"];
+    //[TestFlight takeOff:@"c65316d7-3ac6-4cbf-be5d-97d643b00047"];
     
     [SQLManager initDataBase];
 
@@ -114,7 +114,10 @@
 // ****************************************************************************
 // App switching methods to support Facebook Single Sign-On.
 // ****************************************************************************
-- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
+- (BOOL)application:(UIApplication *)application
+            openURL:(NSURL *)url
+  sourceApplication:(NSString *)sourceApplication
+         annotation:(id)annotation {
     return [FBAppCall handleOpenURL:url
                   sourceApplication:sourceApplication
                         withSession:[PFFacebookUtils session]];
