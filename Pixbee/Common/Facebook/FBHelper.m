@@ -55,7 +55,230 @@
     return sharedInstance;
 }
 
-#pragma mark - FBHelper Methods
+
+#pragma mark - FBHelper Facebook API Methods
+
+- (void)openFBSession
+{
+    // Whenever a person opens the app, check for a cached session
+    if (FBSession.activeSession.state == FBSessionStateCreatedTokenLoaded) {
+        NSLog(@"Found a cached session");
+        // If there's one, just open the session silently, without showing the user the login UI
+        [FBSession openActiveSessionWithReadPermissions:@[@"basic_info"]
+                                           allowLoginUI:NO
+                                      completionHandler:^(FBSession *session, FBSessionState state, NSError *error) {
+                                          // Handler for session state changes
+                                          // This method will be called EACH time the session state changes,
+                                          // also for intermediate states and NOT just when the session open
+                                          [FBHELPER FBSessionStateChanged:session state:state error:error];
+                                      }];
+        
+        // If there's no cached session, we will show a login button
+    }
+}
+- (void)doFBLogin
+{
+    // Open a session showing the user the login UI
+    // You must ALWAYS ask for basic_info permissions when opening a session
+    [FBSession openActiveSessionWithReadPermissions:@[@"basic_info"]
+                                       allowLoginUI:YES
+                                  completionHandler:
+     ^(FBSession *session, FBSessionState state, NSError *error) {
+         
+         // Retrieve the app delegate
+         //AppDelegate* appDelegate = [UIApplication sharedApplication].delegate;
+         // Call the app delegate's sessionStateChanged:state:error method to handle session state changes
+         [FBHELPER FBSessionStateChanged:session state:state error:error];
+     }];
+    
+}
+
+- (void)doFBLogout
+{
+    // Close the session and remove the access token from the cache
+    // The session state handler (in the app delegate) will be called automatically
+    [FBSession.activeSession closeAndClearTokenInformation];
+    
+}
+
+- (void)FBSessionStateChanged:(FBSession *)session state:(FBSessionState) state error:(NSError *)error
+{
+    // If the session was opened successfully
+    if (!error && state == FBSessionStateOpen){
+        NSLog(@"Session opened");
+        // Show the user the logged-in UI
+        [self FBUserLoggedIn];
+        return;
+    }
+    if (state == FBSessionStateClosed || state == FBSessionStateClosedLoginFailed){
+        // If the session is closed
+        NSLog(@"Session closed");
+        // Show the user the logged-out UI
+        [self FBUserLoggedOut];
+    }
+    
+    // Handle errors
+    if (error){
+        NSLog(@"Error");
+        NSString *alertText;
+        NSString *alertTitle;
+        // If the error requires people using an app to make an action outside of the app in order to recover
+        if ([FBErrorUtility shouldNotifyUserForError:error] == YES){
+            alertTitle = @"Something went wrong";
+            alertText = [FBErrorUtility userMessageForError:error];
+            [self showMessage:alertText withTitle:alertTitle];
+        } else {
+            
+            // If the user cancelled login, do nothing
+            if ([FBErrorUtility errorCategoryForError:error] == FBErrorCategoryUserCancelled) {
+                NSLog(@"User cancelled login");
+                
+                // Handle session closures that happen outside of the app
+            } else if ([FBErrorUtility errorCategoryForError:error] == FBErrorCategoryAuthenticationReopenSession){
+                alertTitle = @"Session Error";
+                alertText = @"Your current session is no longer valid. Please log in again.";
+                [self showMessage:alertText withTitle:alertTitle];
+                
+                // For simplicity, here we just show a generic message for all other errors
+                // You can learn how to handle other errors using our guide: https://developers.facebook.com/docs/ios/errors
+            } else {
+                //Get more error information from the error
+                NSDictionary *errorInformation = [[[error.userInfo objectForKey:@"com.facebook.sdk:ParsedJSONResponseKey"] objectForKey:@"body"] objectForKey:@"error"];
+                
+                // Show the user an error message
+                alertTitle = @"Something went wrong";
+                alertText = [NSString stringWithFormat:@"Please retry. \n\n If the problem persists contact us and mention this error code: %@", [errorInformation objectForKey:@"message"]];
+                [self showMessage:alertText withTitle:alertTitle];
+            }
+        }
+        // Clear this token
+        [self doFBLogout];
+        //[FBSession.activeSession closeAndClearTokenInformation];
+        
+        // Show the user the logged-out UI
+        [self FBUserLoggedOut];
+    }
+    
+}
+
+
+
+- (void)FBUserLoggedIn
+{
+    [self showMessage:@"You're now logged in" withTitle:@""];
+    
+    if ([[self delegate] respondsToSelector:@selector(FBLogedInUser)]) {
+        [[self delegate] FBLogedInUser];
+    }
+    
+    
+}
+
+
+- (void)FBUserLoggedOut
+{
+    [self showMessage:@"You're now logged out" withTitle:@"Welcome!"];
+    
+    if ([[self delegate] respondsToSelector:@selector(FBLoggedOutUser)]) {
+        [[self delegate] FBLoggedOutUser];
+    }
+}
+
+
+- (void)saveUserInfo:(void (^)(NSDictionary *userProfile))success
+             failure:(void (^)(NSError *error))failure;
+{
+    // Send request to Facebook
+    FBRequest *request = [FBRequest requestForMe];
+    [request startWithCompletionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
+        // handle response
+        if (!error) {
+            // Parse the data received
+            NSDictionary *userData = (NSDictionary *)result;
+            
+            NSString *facebookID = userData[@"id"];
+            
+            NSURL *pictureURL = [NSURL URLWithString:[NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?type=large&return_ssl_resources=1", facebookID]];
+            
+            
+            NSMutableDictionary *userProfile = [NSMutableDictionary dictionaryWithCapacity:7];
+            
+            if (facebookID) {
+                userProfile[@"facebookId"] = facebookID;
+            }
+            
+            if (userData[@"name"]) {
+                userProfile[@"name"] = userData[@"name"];
+            }
+            
+            if (userData[@"location"][@"name"]) {
+                userProfile[@"location"] = userData[@"location"][@"name"];
+            }
+            
+            if (userData[@"gender"]) {
+                userProfile[@"gender"] = userData[@"gender"];
+            }
+            
+            if (userData[@"birthday"]) {
+                userProfile[@"birthday"] = userData[@"birthday"];
+            }
+            
+            if (userData[@"relationship_status"]) {
+                userProfile[@"relationship"] = userData[@"relationship_status"];
+            }
+            
+            if ([pictureURL absoluteString]) {
+                userProfile[@"pictureURL"] = [pictureURL absoluteString];
+            }
+            
+//            [[PFUser currentUser] setObject:userProfile forKey:@"profile"];
+//            [[PFUser currentUser] saveInBackground];
+//            
+//            
+//            if(IsEmpty(GlobalValue.userName)) {
+//                int UserID = [SQLManager newUserWithPFUser:userProfile];
+//                
+//                GlobalValue.userName = userProfile[@"name"]; // user.name;
+//                GlobalValue.UserID = UserID;
+//                NSLog(@"Default user name = %@ / id = %d", GlobalValue.userName, UserID);
+//                
+//            }
+            
+            success(userProfile);
+            
+            
+        } else {
+            failure(error);
+        }
+        
+        
+//        else if ([[[[error userInfo] objectForKey:@"error"] objectForKey:@"type"]
+//                    isEqualToString: @"OAuthException"]) { // Since the request failed, we can check if it was due to an invalid session
+//            NSLog(@"The facebook session was invalidated");
+//            
+//        } else {
+//            NSLog(@"Some other error: %@", error);
+//        }
+    }];
+    
+}
+
+
+
+// Show an alert message
+- (void)showMessage:(NSString *)text withTitle:(NSString *)title
+{
+//    [[[UIAlertView alloc] initWithTitle:title
+//                                message:text
+//                               delegate:self
+//                      cancelButtonTitle:@"OK!"
+//                      otherButtonTitles:nil] show];
+}
+
+
+
+#pragma mark - FBHelper FBLoginView Methods
+
 - (void)loadFBLoginView:(UIView *)_view {
     
     // Create Login View so that the app will be granted "status_update" permission.
@@ -150,75 +373,6 @@
     }
 }
 
-
-- (void)saveUserInfoToServer
-{
-    // Send request to Facebook
-    FBRequest *request = [FBRequest requestForMe];
-    [request startWithCompletionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
-        // handle response
-        if (!error) {
-            // Parse the data received
-            NSDictionary *userData = (NSDictionary *)result;
-            
-            NSString *facebookID = userData[@"id"];
-            
-            NSURL *pictureURL = [NSURL URLWithString:[NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?type=large&return_ssl_resources=1", facebookID]];
-            
-            
-            NSMutableDictionary *userProfile = [NSMutableDictionary dictionaryWithCapacity:7];
-            
-            if (facebookID) {
-                userProfile[@"facebookId"] = facebookID;
-            }
-            
-            if (userData[@"name"]) {
-                userProfile[@"name"] = userData[@"name"];
-            }
-            
-            if (userData[@"location"][@"name"]) {
-                userProfile[@"location"] = userData[@"location"][@"name"];
-            }
-            
-            if (userData[@"gender"]) {
-                userProfile[@"gender"] = userData[@"gender"];
-            }
-            
-            if (userData[@"birthday"]) {
-                userProfile[@"birthday"] = userData[@"birthday"];
-            }
-            
-            if (userData[@"relationship_status"]) {
-                userProfile[@"relationship"] = userData[@"relationship_status"];
-            }
-            
-            if ([pictureURL absoluteString]) {
-                userProfile[@"pictureURL"] = [pictureURL absoluteString];
-            }
-            
-            [[PFUser currentUser] setObject:userProfile forKey:@"profile"];
-            [[PFUser currentUser] saveInBackground];
-            
-            
-            if(IsEmpty(GlobalValue.userName)) {
-                int UserID = [SQLManager newUserWithPFUser:userProfile];
-                
-                GlobalValue.userName = userProfile[@"name"]; // user.name;
-                GlobalValue.UserID = UserID;
-                NSLog(@"Default user name = %@ / id = %d", GlobalValue.userName, UserID);
-
-            }
-            
-        } else if ([[[[error userInfo] objectForKey:@"error"] objectForKey:@"type"]
-                    isEqualToString: @"OAuthException"]) { // Since the request failed, we can check if it was due to an invalid session
-            NSLog(@"The facebook session was invalidated");
-
-        } else {
-            NSLog(@"Some other error: %@", error);
-        }
-    }];
-
-}
 
 
 

@@ -24,9 +24,19 @@
 
 + (FBHelper *)sharedInstance;
 
+- (void)openFBSession;
+- (void)doFBLogin;
+- (void)doFBLogout;
+- (void)FBSessionStateChanged:(FBSession *)session state:(FBSessionState) state error:(NSError *)error;
+- (void)FBUserLoggedIn;
+- (void)FBUserLoggedOut;
+- (void)saveUserInfo:(void (^)(NSDictionary *userProfile))success
+             failure:(void (^)(NSError *error))failure;
+
+
 - (void)loadFBLoginView:(UIView *)_view ;
 
-- (void)saveUserInfoToServer;
+
 
 - (void)saveFriendList;
 - (BOOL)loadFriendList;

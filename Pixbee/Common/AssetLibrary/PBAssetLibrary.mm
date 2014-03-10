@@ -479,6 +479,29 @@
 }
  
 
+- (void)checkNewPhoto
+{
+    //Check new photos and go main dashboard
+    [AssetLib syncAlbumToDB:^(NSArray *result) {
+        //NSLog(@"Result = %@", result);
+        if(result.count > 0  && result != nil){
+            NSArray *lastDistance = [result objectAtIndex:result.count-1];
+            ALAsset *lastAsset = [[lastDistance objectAtIndex:lastDistance.count-1] objectForKey:@"Asset"];
+            NSURL *assetURL = [lastAsset valueForProperty:ALAssetPropertyAssetURL];
+            
+            NSLog(@"Last Asset URL = %@", assetURL.absoluteString);
+            
+            if(![GlobalValue.lastAssetURL isEqualToString:assetURL.absoluteString]) {
+                //New Asset found
+                
+                NSLog(@" ============== new asset found!");
+            }
+            NSLog(@"Locations : %@", [AssetLib locationArray]);
+            //[AssetLib checkGeocode];
+            GlobalValue.lastAssetURL = assetURL.absoluteString;
+        }
+    }];
+}
 
 - (void)checkFacesFor:(int)UserID usingEnumerationBlock:(void (^)(NSDictionary *processInfo))enumerationBlock completion:(void (^)(BOOL finished))completion {
     NSLog(@"Start...");

@@ -207,6 +207,7 @@
 		801B35DF18561BC400EEB9F3 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 801B35DE18561BC400EEB9F3 /* ViewController.m */; };
 		802B6D3D18A220FA0031CD82 /* UIImage+ImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = 802B6D3C18A220FA0031CD82 /* UIImage+ImageEffects.m */; };
 		8031155618C0451300CAEC9A /* placeholder@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8031155518C0451300CAEC9A /* placeholder@2x.png */; };
+		803E573E18CDC95C00BE14EA /* photo_bottombar.png in Resources */ = {isa = PBXBuildFile; fileRef = 803E573D18CDC95C00BE14EA /* photo_bottombar.png */; };
 		805CA40118AC99D400764FE1 /* UIImage+Blurring.m in Sources */ = {isa = PBXBuildFile; fileRef = 805CA3EE18AC99D400764FE1 /* UIImage+Blurring.m */; };
 		805CA40218AC99D400764FE1 /* UIImage+Enhancing.m in Sources */ = {isa = PBXBuildFile; fileRef = 805CA3F018AC99D400764FE1 /* UIImage+Enhancing.m */; };
 		805CA40318AC99D400764FE1 /* UIImage+Filtering.m in Sources */ = {isa = PBXBuildFile; fileRef = 805CA3F218AC99D400764FE1 /* UIImage+Filtering.m */; };
@@ -697,6 +698,7 @@
 		802B6D3B18A220FA0031CD82 /* UIImage+ImageEffects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+ImageEffects.h"; sourceTree = "<group>"; };
 		802B6D3C18A220FA0031CD82 /* UIImage+ImageEffects.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+ImageEffects.m"; sourceTree = "<group>"; };
 		8031155518C0451300CAEC9A /* placeholder@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "placeholder@2x.png"; sourceTree = "<group>"; };
+		803E573D18CDC95C00BE14EA /* photo_bottombar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = photo_bottombar.png; sourceTree = "<group>"; };
 		805CA3ED18AC99D400764FE1 /* UIImage+Blurring.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Blurring.h"; sourceTree = "<group>"; };
 		805CA3EE18AC99D400764FE1 /* UIImage+Blurring.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Blurring.m"; sourceTree = "<group>"; };
 		805CA3EF18AC99D400764FE1 /* UIImage+Enhancing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Enhancing.h"; sourceTree = "<group>"; };
@@ -1369,6 +1371,7 @@
 			children = (
 				809BB2D218BDF0C000CC79A8 /* newImages */,
 				809BB2CE18BDE4B200CC79A8 /* shutterButton.png */,
+				803E573D18CDC95C00BE14EA /* photo_bottombar.png */,
 				809BB2D018BDE4BC00CC79A8 /* AlbumButton.png */,
 				80E2D82D18BDBEAD000924AE /* defaultBG@2x.png */,
 				807DD93F18BB1803003EBF30 /* 2_2_0_1_adding faces.png */,
@@ -2286,6 +2289,7 @@
 				809BB30718BDF0C000CC79A8 /* bg@2x.png in Resources */,
 				80D2A11F184A1E58008D29B2 /* playButton@2x.png in Resources */,
 				78C1EB45186B0A790072E7DB /* face_blackbox@2x.png in Resources */,
+				803E573E18CDC95C00BE14EA /* photo_bottombar.png in Resources */,
 				80E3639D18805A2B00A5DF57 /* image3@2x.jpg in Resources */,
 				78C1EB35186B0A790072E7DB /* allphoto_select@2x.png in Resources */,
 				809BB32B18BDF0C000CC79A8 /* share@2x.png in Resources */,

@@ -32,6 +32,8 @@
     
     [SQLManager initDataBase];
 
+    [FBHELPER openFBSession];
+    
     [self initParse:launchOptions];
     
     [self setGalleryFilter];
@@ -118,9 +120,21 @@
             openURL:(NSURL *)url
   sourceApplication:(NSString *)sourceApplication
          annotation:(id)annotation {
-    return [FBAppCall handleOpenURL:url
-                  sourceApplication:sourceApplication
-                        withSession:[PFFacebookUtils session]];
+//    return [FBAppCall handleOpenURL:url
+//                  sourceApplication:sourceApplication
+//                        withSession:[PFFacebookUtils session]];
+    
+    // Note this handler block should be the exact same as the handler passed to any open calls.
+    [FBSession.activeSession setStateChangeHandler:
+     ^(FBSession *session, FBSessionState state, NSError *error) {
+         
+         // Retrieve the app delegate
+         //AppDelegate* appDelegate = [UIApplication sharedApplication].delegate;
+         // Call the app delegate's sessionStateChanged:state:error method to handle session state changes
+         [FBHELPER FBSessionStateChanged:session state:state error:error];
+     }];
+    return [FBAppCall handleOpenURL:url sourceApplication:sourceApplication];
+
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
@@ -128,7 +142,9 @@
      Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
      */
     
-    [FBAppCall handleDidBecomeActiveWithSession:[PFFacebookUtils session]];
+    //[FBAppCall handleDidBecomeActiveWithSession:[PFFacebookUtils session]];
+    
+    [FBAppCall handleDidBecomeActive];
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application {
@@ -137,7 +153,7 @@
      Save data if appropriate.
      See also applicationDidEnterBackground:.
      */
-    [[PFFacebookUtils session] close];
+    //[[PFFacebookUtils session] close];
     
     [Flurry endTimedEvent:@"APP_START" withParameters:nil];
 }
@@ -169,7 +185,7 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     // ****************************************************************************
     // Your Facebook application id is configured in Info.plist.
     // ****************************************************************************
-    [PFFacebookUtils initializeFacebook];
+    //[PFFacebookUtils initializeFacebook];
     
     
     [PFAnalytics trackAppOpenedWithLaunchOptions:launchOptions];
@@ -178,6 +194,47 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
 //    testObject[@"foo"] = @"bar0";
 //    [testObject saveInBackground];
  
+}
+
+- (void)createParseUser:(NSDictionary*)userProfile
+{
+    PFUser *user = [PFUser user];
+    user.username = userProfile[@"name"];
+    user.password = @"";
+    user.email = @"";
+    
+    
+    // other fields can be set just like with PFObject
+    user[@"phone"] = @"";
+    
+    [user signUpInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+        if (!error) {
+            
+            NSLog(@"[FBLogedInUser] :: PFUser success signUpInBackground");
+            // Hooray! Let them use the app now.
+            
+            [PFUser logInWithUsernameInBackground:@"myname" password:@"mypass"
+                                            block:^(PFUser *user, NSError *error) {
+                                                if (user) {
+                                                    // Do stuff after successful login.
+                                                    NSLog(@"[FBLogedInUser] :: userProfile = %@ ", userProfile);
+                                                    //Make a new Parse User
+                                                    [[PFUser currentUser] setObject:userProfile forKey:@"profile"];
+                                                    [[PFUser currentUser] saveInBackground];
+                                                    
+                                                } else {
+                                                    // The login failed. Check error to see why.
+                                                }
+                                            }];
+            
+            
+            
+        } else {
+            NSString *errorString = [error userInfo][@"error"];
+            // Show the errorString somewhere and let the user try again.
+        }
+    }];
+
 }
 
 - (void)setGalleryFilter

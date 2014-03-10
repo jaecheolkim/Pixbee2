@@ -30,6 +30,8 @@
 #import "UIImage+ImageEffects.h"
 #import "SDImageCache.h"
 
+#import "FXBlurView.h"
+
 static void *IsAdjustingFocusingContext = &IsAdjustingFocusingContext;
 
 #define CAPTURE_FPS 30
@@ -120,6 +122,8 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     
     double currentAngle;
     BOOL isFeedingSafe;
+    
+    BOOL isStart;
 
 }
 @property (weak, nonatomic) IBOutlet UIView *topView;
@@ -140,6 +144,8 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 @property (weak, nonatomic) IBOutlet UIImageView *cameraImage;
 @property (weak, nonatomic) IBOutlet UIImageView *videoImage;
 @property (weak, nonatomic) IBOutlet UIButton *GalleryButton;
+@property (weak, nonatomic) IBOutlet FXBlurView *DimmedView;
+
 @property (nonatomic, retain) CALayer *adjustingFocusLayer;
 
 @property (weak, nonatomic) RMDownloadIndicator *mixedIndicator;
@@ -149,6 +155,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 - (IBAction)switchCameras:(id)sender;
 - (IBAction)closeCamera:(id)sender;
 - (IBAction)snapStillImage:(id)sender;
+- (IBAction)startButtonHandler:(id)sender;
 
 
 @end
@@ -159,6 +166,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    isStart = NO;
     
     _topView.backgroundColor = [UIColor clearColor];
     
@@ -205,6 +213,9 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 
         
         [self setupGuide];
+        
+        _nameLabel.text = _UserName;
+        
         self.numPicsTaken = 0;
         
         [_hiveImageView setHidden:YES];
@@ -242,6 +253,9 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
         [_nameLabel setTextAlignment:NSTextAlignmentCenter];
         
     } else {
+        
+        _DimmedView.hidden = YES;
+        
         //[_closeButton setHidden:YES];
         [_hiveImageView setHidden:YES];
         [_instructionsLabel setHidden:YES];
@@ -571,6 +585,16 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
              }];
         }
     }];
+}
+
+- (IBAction)startButtonHandler:(id)sender {
+   
+    [UIView animateWithDuration:0.5
+                     animations:^{
+                         _DimmedView.alpha = 0.0;
+                     } completion:^(BOOL finished) {
+                         isStart = YES;
+                     }];
 }
 
 - (void)savePhoto:(NSURL *)assetURL users:(NSArray*)users
@@ -1173,6 +1197,9 @@ bail:
     
     
     if(self.faceMode == FaceModeCollect) { // 얼굴 등록일 경우.
+        
+        if(!isStart) return;
+        
         CIFaceFeature *feature = nil;
         
         if ([features count]) {

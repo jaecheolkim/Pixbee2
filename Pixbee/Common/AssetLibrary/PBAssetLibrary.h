@@ -41,6 +41,9 @@
 // 앨범사진 로컬 앨범DB로 동기화
 - (void)syncAlbumToDB:(void (^)(NSArray *results))result;
 
+// 새로운 사진이 있는지 체크
+- (void)checkNewPhoto;
+
 // 앨범 Asset 전부 뒤져서 얼굴 정보 찾아줌..
 - (void)checkFacesFor:(int)UserID usingEnumerationBlock:(void (^)(NSDictionary *processInfo))enumerationBlock completion:(void (^)(BOOL finished))completion;
 
