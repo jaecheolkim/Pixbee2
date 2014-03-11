@@ -272,7 +272,7 @@ UserCellDelegate, GalleryViewCellDelegate>
         
         if ([selectedPhotos containsObject:indexPath]) {
             //[cell showSelectIcon:YES];
-           cell.selectIcon.image = [UIImage imageNamed:@"checked"];
+           cell.selectIcon.image = [UIImage imageNamed:@"check"];
         }
     } else {
         cell.selectIcon.hidden = YES;

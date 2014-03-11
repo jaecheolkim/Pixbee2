@@ -125,14 +125,14 @@
 //                        withSession:[PFFacebookUtils session]];
     
     // Note this handler block should be the exact same as the handler passed to any open calls.
-    [FBSession.activeSession setStateChangeHandler:
-     ^(FBSession *session, FBSessionState state, NSError *error) {
-         
-         // Retrieve the app delegate
-         //AppDelegate* appDelegate = [UIApplication sharedApplication].delegate;
-         // Call the app delegate's sessionStateChanged:state:error method to handle session state changes
-         [FBHELPER FBSessionStateChanged:session state:state error:error];
-     }];
+//    [FBSession.activeSession setStateChangeHandler:
+//     ^(FBSession *session, FBSessionState state, NSError *error) {
+//         
+//         // Retrieve the app delegate
+//         //AppDelegate* appDelegate = [UIApplication sharedApplication].delegate;
+//         // Call the app delegate's sessionStateChanged:state:error method to handle session state changes
+//         [FBHELPER FBSessionStateChanged:session state:state error:error];
+//     }];
     return [FBAppCall handleOpenURL:url sourceApplication:sourceApplication];
 
 }

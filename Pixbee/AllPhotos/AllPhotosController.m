@@ -159,7 +159,11 @@
     NSInteger section = [self numberOfSectionsInCollectionView:_collectionView] - 1;
     NSInteger item = [self collectionView:_collectionView numberOfItemsInSection:section] - 1;
     NSIndexPath *lastIndexPath = [NSIndexPath indexPathForItem:item inSection:section];
-    [_collectionView scrollToItemAtIndexPath:lastIndexPath atScrollPosition:UICollectionViewScrollPositionBottom animated:NO];
+    
+    if(!IsEmpty(self.photos)){
+        [_collectionView scrollToItemAtIndexPath:lastIndexPath atScrollPosition:UICollectionViewScrollPositionBottom animated:NO];
+
+    }
 
 }
 
@@ -167,21 +171,26 @@
 #pragma mark PSTCollectionViewDataSource stuff
 
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
-    
-    if ([[self.photos objectAtIndex:0] isKindOfClass:[NSArray class]]) {
-        return [self.photos count];
+    if(!IsEmpty(self.photos)){
+        if ([[self.photos objectAtIndex:0] isKindOfClass:[NSArray class]]) {
+            return [self.photos count];
+        }
     }
+
     
     return 1;
 }
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
-    
-    if ([[self.photos objectAtIndex:0] isKindOfClass:[NSArray class]]) {
-        return [[self.photos objectAtIndex:section] count];
-    }
-    
-    return [self.photos count];
+   if(!IsEmpty(self.photos)){
+       if ([[self.photos objectAtIndex:0] isKindOfClass:[NSArray class]]) {
+           return [[self.photos objectAtIndex:section] count];
+       }
+       
+       return [self.photos count];
+   }
+
+    return 0;
 }
 
 

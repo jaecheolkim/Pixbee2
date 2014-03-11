@@ -33,6 +33,7 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
     
     NSIndexPath *currentIndexPath;
     ProfileCardCell *currentSelectedCell;
+    NSMutableArray *selectedPhotos;
     
     FaceMode facemode;
     
@@ -65,13 +66,28 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
 
 @implementation PBMainDashBoardViewController
 
+- (void)refreshDeleteButton
+{
+    if(EDIT_MODE){
+        if([selectedPhotos count] > 0) {
+            _deleteButton.enabled = YES;
+        } else {
+            _deleteButton.enabled = NO;
+        }
+    }
+}
 
 - (void)reloadData
 {
+    [selectedPhotos removeAllObjects];
+    
     self.users = (NSMutableArray*)[SQLManager getAllUsers];
-    NSLog(@"self.usersPhotos = %@", self.users);
+    //NSLog(@"self.usersPhotos = %@", self.users);
     totalCellCount = (int)[self.users count];
     [self.collectionView reloadData];
+    
+    [self refreshDeleteButton];
+
 }
 
 - (void)viewDidLoad {
@@ -94,6 +110,8 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
 
     
     EDIT_MODE = NO;
+    
+    selectedPhotos = [NSMutableArray array];
     
     
  }
@@ -202,6 +220,10 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
                 profileCardCell.nameTextField.enabled = YES;
                 profileCardCell.nameTextField.placeholder = profileCardCell.nameLabel.text;
                 profileCardCell.checkImageView.hidden = NO;
+                if ([selectedPhotos containsObject:indexPath]) {
+                    //[cell showSelectIcon:YES];
+                    profileCardCell.checkImageView.image = [UIImage imageNamed:@"check"];
+                }
                 
             } else {
                 
@@ -266,18 +288,10 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
 //            ProfileCardCell *profileCardCell = (ProfileCardCell *)[collectionView cellForItemAtIndexPath:indexPath];
             
             
-            if(EDIT_MODE){
-//                if(profileCardCell.selected)
-//                {
-//                    [self.collectionView deselectItemAtIndexPath:indexPath animated:YES];
-//                    
-//                    [(UICollectionViewCell *)profileCardCell setSelected:NO];
-//                    //profileCardCell.checkImageView.hidden = YES;
-//                }
-//                else {
-//                    [(UICollectionViewCell *)profileCardCell setSelected:YES];
-//                    //profileCardCell.checkImageView.hidden = NO;
-//                }
+            if(EDIT_MODE)
+            {
+                
+                [selectedPhotos addObject:indexPath];
                 
             } else {
                 NSLog(@"go to detail view");
@@ -286,7 +300,10 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
                 //[self performSegueWithIdentifier:SEGUE_3_1_TO_4_1 sender:self];
             }
             
+            [self refreshDeleteButton];
+            
             NSLog(@"didSelectItemAtIndexPath : %@", self.collectionView.indexPathsForSelectedItems);
+            NSLog(@"selectedPhotos : %@", selectedPhotos);
         }
     }
 
@@ -299,13 +316,17 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
         } else {
             NSLog(@"didDeselectItemAtIndexPath : %@", self.collectionView.indexPathsForSelectedItems);
             
-            if(EDIT_MODE){
+            if(EDIT_MODE)
+            {
+                [selectedPhotos removeObject:indexPath];
                 
                 //ProfileCardCell *profileCardCell = (ProfileCardCell *)[collectionView cellForItemAtIndexPath:indexPath];
                 
                 //[(UICollectionViewCell *)profileCardCell setSelected:NO];
                 //profileCardCell.checkImageView.hidden = YES;
             }
+            
+            [self refreshDeleteButton];
 
         }
     }
@@ -402,7 +423,11 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
 
 - (void)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout didEndDraggingItemAtIndexPath:(NSIndexPath *)indexPath {
     NSLog(@"did end drag");
+    
     [self updateProfileDBSeq];
+    
+    [self reloadData];
+    
 }
 
 
@@ -426,6 +451,9 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
         
     }
     else {
+        
+        [selectedPhotos removeAllObjects];
+        
         self.rightBarButton.title = nil;
         self.rightBarButton.image = [UIImage imageNamed:@"edit"];
         
@@ -443,6 +471,9 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
     }
     
     [self showToolBar:EDIT_MODE];
+    
+    [self refreshDeleteButton];
+    
     [self.collectionView setAllowsMultipleSelection:EDIT_MODE];
     
     [self reloadData];
@@ -739,6 +770,7 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
 }
 -(void)keyboardWillHide:(NSNotification*)notification
 {
+    
     //int keyboardHeight = 0.0;
     NSDictionary *info = notification.userInfo;
     float duration = [[info valueForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
@@ -783,6 +815,8 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
 - (void)nameDidEndEditing:(ProfileCardCell *)cell
 {
     currentSelectedCell = cell;
+    //[cell.nameTextField endEditing:YES];
+    
     NSLog(@"==> nameDidEndEditing:");
     //[self frientList:cell appear:NO];
     [self cellEditDone];
@@ -793,6 +827,7 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
     NSLog(@"==> nameDidChange:");
     [self searchFriend:cell name:cell.nameTextField.text];
 }
+
 
 
 
@@ -914,6 +949,9 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
     NSString *UserName = currentSelectedCell.nameLabel.text;
     int color = currentSelectedCell.userColor;
     
+    //[currentSelectedCell.nameTextField endEditing:YES];//  resignFirstResponder];
+    
+    
     NSArray *result = [SQLManager updateUser:@{ @"UserID" : @(UserID), @"UserName" : UserName,
                                                 @"color" : @(currentColor) }];
 
@@ -924,7 +962,7 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
     currentSelectedCell.nameTextField.placeholder = UserName;
     
     [self frientList:currentSelectedCell appear:NO];
-    [currentSelectedCell.nameTextField resignFirstResponder];
+    
     
     [self rightBarButtonHandler:nil];
 }

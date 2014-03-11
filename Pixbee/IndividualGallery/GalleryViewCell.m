@@ -63,8 +63,8 @@
     [super setSelected:selected];
     self.checked = selected;
     
-    if(self.selected) self.selectIcon.image = [UIImage imageNamed:@"checked"];
-    else self.selectIcon.image = [UIImage imageNamed:@"checkbox"];
+    if(self.selected) self.selectIcon.image = [UIImage imageNamed:@"check"];
+    else self.selectIcon.image = nil;
     
 }
 

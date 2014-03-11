@@ -44,6 +44,8 @@
 // 새로운 사진이 있는지 체크
 - (void)checkNewPhoto;
 
+- (void)checkFace:(int)UserID;
+
 // 앨범 Asset 전부 뒤져서 얼굴 정보 찾아줌..
 - (void)checkFacesFor:(int)UserID usingEnumerationBlock:(void (^)(NSDictionary *processInfo))enumerationBlock completion:(void (^)(BOOL finished))completion;
 

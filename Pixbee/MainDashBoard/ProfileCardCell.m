@@ -66,14 +66,15 @@
 {
     [super setSelected:selected];
     
-    if(self.selected) _checkImageView.image = [UIImage imageNamed:@"checked"];
-    else _checkImageView.image = [UIImage imageNamed:@"checkbox"];
+    if(self.selected) _checkImageView.image = [UIImage imageNamed:@"check"];
+    else _checkImageView.image = nil;//[UIImage imageNamed:@"checkbox"];
 }
 
 
 - (void)textFieldDidBeginEditing:(UITextField *)textField {
     textField.placeholder = self.nameLabel.text;
     self.nameLabel.text = nil;
+    
     
     if([self.delegate respondsToSelector:@selector(nameDidBeginEditing:)])
     {

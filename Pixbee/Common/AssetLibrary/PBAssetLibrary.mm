@@ -503,6 +503,33 @@
     }];
 }
 
+- (void)checkFace:(int)UserID
+{
+    AssetLib.faceProcessStop = NO;
+    
+    [AssetLib checkFacesFor:UserID
+      usingEnumerationBlock:^(NSDictionary *processInfo) {
+          dispatch_async(dispatch_get_main_queue(), ^{
+              [[NSNotificationCenter defaultCenter] postNotificationName:@"AssetCheckFacesEnumerationEvent"
+                                                                  object:self
+                                                                userInfo:processInfo];
+          });
+          
+      }
+     
+                 completion:^(BOOL finished){
+                     dispatch_async(dispatch_get_main_queue(), ^{
+                         
+                         [[NSNotificationCenter defaultCenter] postNotificationName:@"AssetCheckFacesFinishedEvent"
+                                                                             object:self
+                                                                           userInfo:nil];
+                         
+                     });
+                     
+                 }
+     ];
+}
+
 - (void)checkFacesFor:(int)UserID usingEnumerationBlock:(void (^)(NSDictionary *processInfo))enumerationBlock completion:(void (^)(BOOL finished))completion {
     NSLog(@"Start...");
     

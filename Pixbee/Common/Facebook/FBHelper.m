@@ -124,24 +124,36 @@
         NSString *alertTitle;
         // If the error requires people using an app to make an action outside of the app in order to recover
         if ([FBErrorUtility shouldNotifyUserForError:error] == YES){
-            alertTitle = @"Something went wrong";
+            alertTitle = @"Facebook error";
             alertText = [FBErrorUtility userMessageForError:error];
             [self showMessage:alertText withTitle:alertTitle];
         } else {
             
-            // If the user cancelled login, do nothing
+
+            // If the user should perform an action outside of you app to recover,
+            // the SDK will provide a message for the user, you just need to surface it.
+            // This conveniently handles cases like Facebook password change or unverified Facebook accounts.
+
             if ([FBErrorUtility errorCategoryForError:error] == FBErrorCategoryUserCancelled) {
                 NSLog(@"User cancelled login");
                 
-                // Handle session closures that happen outside of the app
-            } else if ([FBErrorUtility errorCategoryForError:error] == FBErrorCategoryAuthenticationReopenSession){
+                
+            }
+            
+            // This code will handle session closures since that happen outside of the app.
+            // You can take a look at our error handling guide to know more about it
+            // https://developers.facebook.com/docs/ios/errors
+            
+            else if ([FBErrorUtility errorCategoryForError:error] == FBErrorCategoryAuthenticationReopenSession){
                 alertTitle = @"Session Error";
-                alertText = @"Your current session is no longer valid. Please log in again.";
+                alertText = @"Your current session is no longer valid. Please log in again.(iPhone Setting > Facebook)";
                 [self showMessage:alertText withTitle:alertTitle];
                 
                 // For simplicity, here we just show a generic message for all other errors
                 // You can learn how to handle other errors using our guide: https://developers.facebook.com/docs/ios/errors
-            } else {
+            }
+            
+            else {
                 //Get more error information from the error
                 NSDictionary *errorInformation = [[[error.userInfo objectForKey:@"com.facebook.sdk:ParsedJSONResponseKey"] objectForKey:@"body"] objectForKey:@"error"];
                 
@@ -152,8 +164,8 @@
             }
         }
         // Clear this token
-        [self doFBLogout];
-        //[FBSession.activeSession closeAndClearTokenInformation];
+
+        [FBSession.activeSession closeAndClearTokenInformation];
         
         // Show the user the logged-out UI
         [self FBUserLoggedOut];
@@ -268,11 +280,11 @@
 // Show an alert message
 - (void)showMessage:(NSString *)text withTitle:(NSString *)title
 {
-//    [[[UIAlertView alloc] initWithTitle:title
-//                                message:text
-//                               delegate:self
-//                      cancelButtonTitle:@"OK!"
-//                      otherButtonTitles:nil] show];
+    [[[UIAlertView alloc] initWithTitle:title
+                                message:text
+                               delegate:self
+                      cancelButtonTitle:@"OK!"
+                      otherButtonTitles:nil] show];
 }
 
 
