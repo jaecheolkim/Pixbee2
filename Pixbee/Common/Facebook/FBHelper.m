@@ -177,7 +177,7 @@
 
 - (void)FBUserLoggedIn
 {
-    [self showMessage:@"You're now logged in" withTitle:@""];
+    //[self showMessage:@"You're now logged in" withTitle:@""];
     
     if ([[self delegate] respondsToSelector:@selector(FBLogedInUser)]) {
         [[self delegate] FBLogedInUser];
@@ -189,7 +189,7 @@
 
 - (void)FBUserLoggedOut
 {
-    [self showMessage:@"You're now logged out" withTitle:@"Welcome!"];
+    //[self showMessage:@"You're now logged out" withTitle:@"Welcome!"];
     
     if ([[self delegate] respondsToSelector:@selector(FBLoggedOutUser)]) {
         [[self delegate] FBLoggedOutUser];

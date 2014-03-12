@@ -30,6 +30,8 @@
     #import "PBCommonViewController.h"
 
     #import "Flurry.h"
+
+    #import "APNavigationController.h"
 #endif
 
 #ifdef DEBUG

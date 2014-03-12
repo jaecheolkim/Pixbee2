@@ -208,6 +208,8 @@
 		8031155618C0451300CAEC9A /* placeholder@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8031155518C0451300CAEC9A /* placeholder@2x.png */; };
 		803E573E18CDC95C00BE14EA /* photo_bottombar.png in Resources */ = {isa = PBXBuildFile; fileRef = 803E573D18CDC95C00BE14EA /* photo_bottombar.png */; };
 		803E574218CEB56B00BE14EA /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 803E574118CEB56B00BE14EA /* FacebookSDK.framework */; };
+		803E574418CF2E2800BE14EA /* focus@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 803E574318CF2E2800BE14EA /* focus@2x.png */; };
+		803E576018CF7A6F00BE14EA /* APNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 803E575F18CF7A6F00BE14EA /* APNavigationController.m */; };
 		805CA40118AC99D400764FE1 /* UIImage+Blurring.m in Sources */ = {isa = PBXBuildFile; fileRef = 805CA3EE18AC99D400764FE1 /* UIImage+Blurring.m */; };
 		805CA40218AC99D400764FE1 /* UIImage+Enhancing.m in Sources */ = {isa = PBXBuildFile; fileRef = 805CA3F018AC99D400764FE1 /* UIImage+Enhancing.m */; };
 		805CA40318AC99D400764FE1 /* UIImage+Filtering.m in Sources */ = {isa = PBXBuildFile; fileRef = 805CA3F218AC99D400764FE1 /* UIImage+Filtering.m */; };
@@ -698,6 +700,9 @@
 		8031155518C0451300CAEC9A /* placeholder@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "placeholder@2x.png"; sourceTree = "<group>"; };
 		803E573D18CDC95C00BE14EA /* photo_bottombar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = photo_bottombar.png; sourceTree = "<group>"; };
 		803E574118CEB56B00BE14EA /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FacebookSDK.framework; path = ../../../Documents/FacebookSDK/FacebookSDK.framework; sourceTree = "<group>"; };
+		803E574318CF2E2800BE14EA /* focus@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "focus@2x.png"; sourceTree = "<group>"; };
+		803E575E18CF7A6F00BE14EA /* APNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APNavigationController.h; sourceTree = "<group>"; };
+		803E575F18CF7A6F00BE14EA /* APNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = APNavigationController.m; sourceTree = "<group>"; };
 		805CA3ED18AC99D400764FE1 /* UIImage+Blurring.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Blurring.h"; sourceTree = "<group>"; };
 		805CA3EE18AC99D400764FE1 /* UIImage+Blurring.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Blurring.m"; sourceTree = "<group>"; };
 		805CA3EF18AC99D400764FE1 /* UIImage+Enhancing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Enhancing.h"; sourceTree = "<group>"; };
@@ -1679,6 +1684,15 @@
 			path = SMShadowdLayer;
 			sourceTree = "<group>";
 		};
+		803E574718CF791D00BE14EA /* DropDownToolBar */ = {
+			isa = PBXGroup;
+			children = (
+				803E575E18CF7A6F00BE14EA /* APNavigationController.h */,
+				803E575F18CF7A6F00BE14EA /* APNavigationController.m */,
+			);
+			path = DropDownToolBar;
+			sourceTree = "<group>";
+		};
 		805CA3EC18AC99D400764FE1 /* NYXImagesKit_Categories */ = {
 			isa = PBXGroup;
 			children = (
@@ -1824,6 +1838,7 @@
 		809BB2D218BDF0C000CC79A8 /* newImages */ = {
 			isa = PBXGroup;
 			children = (
+				803E574318CF2E2800BE14EA /* focus@2x.png */,
 				8031155518C0451300CAEC9A /* placeholder@2x.png */,
 				809BB2D318BDF0C000CC79A8 /* add@2x.png */,
 				809BB2D418BDF0C000CC79A8 /* addbutton@2x.png */,
@@ -1906,6 +1921,7 @@
 		80D2A0C4184A1E57008D29B2 /* External */ = {
 			isa = PBXGroup;
 			children = (
+				803E574718CF791D00BE14EA /* DropDownToolBar */,
 				80157E4218C99AF400663A9E /* Flurry */,
 				807DD95818BB6B12003EBF30 /* TWRProgressView */,
 				807DD95418BB6616003EBF30 /* CircleShadowImageView */,
@@ -2270,6 +2286,7 @@
 				80E3639F18805A2B00A5DF57 /* image2@2x.jpg in Resources */,
 				78C1EB3B186B0A790072E7DB /* camera_rotate@2x.png in Resources */,
 				7805A6DA1866E7B800B234C1 /* copy@2x.png in Resources */,
+				803E574418CF2E2800BE14EA /* focus@2x.png in Resources */,
 				80D6C0A5189CC5B800BD6C74 /* refresh@2x.png in Resources */,
 				809BB30618BDF0C000CC79A8 /* back@2x.png in Resources */,
 				80D5B624186F340D000CD8D7 /* filter4@2x.png in Resources */,
@@ -2523,6 +2540,7 @@
 				7805A64418658BA000B234C1 /* IDMTapDetectingView.m in Sources */,
 				78685D5D1848FA29002D2BAA /* AddingFaceToAlbumController.mm in Sources */,
 				7805A66C18659ECC00B234C1 /* AFXMLRequestOperation.m in Sources */,
+				803E576018CF7A6F00BE14EA /* APNavigationController.m in Sources */,
 				80D2A188184B7B54008D29B2 /* PBSQLiteManager.mm in Sources */,
 				69C39FCC18606B39001EDDFA /* SDImageCache.m in Sources */,
 				80E2D82B18BDB5DD000924AE /* ProfileCard.m in Sources */,

@@ -216,20 +216,23 @@ UserCellDelegate, GalleryViewCellDelegate>
 #pragma mark PSTCollectionViewDataSource stuff
 
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
-    
-    if (([self.photos count] > 0) && [[self.photos objectAtIndex:0] isKindOfClass:[NSArray class]]) {
-        return [self.photos count];
-    }
+   if(!IsEmpty(self.photos)){
+       if ([[self.photos objectAtIndex:0] isKindOfClass:[NSArray class]]) {
+           return [self.photos count];
+       }
+   }
     
     return 1;
 }
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
-    
-    if (([self.photos count] > 0) && [[self.photos objectAtIndex:0] isKindOfClass:[NSArray class]]) {
-        return [[self.photos objectAtIndex:section] count];
+    if(!IsEmpty(self.photos)){
+        if ([[self.photos objectAtIndex:0] isKindOfClass:[NSArray class]]) {
+            return [[self.photos objectAtIndex:section] count];
+        }
+        
     }
-    
+
     return [self.photos count];
 }
 
@@ -277,6 +280,7 @@ UserCellDelegate, GalleryViewCellDelegate>
     } else {
         cell.selectIcon.hidden = YES;
     }
+
 
     
     return cell;
@@ -363,9 +367,9 @@ UserCellDelegate, GalleryViewCellDelegate>
     }
     
     // UI
-    GalleryViewCell *cell = (GalleryViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
-    [cell showSelectIcon:NO];
-    [cell setNeedsDisplay];
+//    GalleryViewCell *cell = (GalleryViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
+//    [cell showSelectIcon:NO];
+//    [cell setNeedsDisplay];
 }
 
 

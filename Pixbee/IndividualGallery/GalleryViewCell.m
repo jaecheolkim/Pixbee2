@@ -115,7 +115,7 @@
 
 - (void)updateCell:(NSDictionary *)photo {
     
-    [self showSelectIcon:NO];
+    //[self showSelectIcon:NO];
     
     NSString *imagePath = [photo objectForKey:@"AssetURL"];
     

@@ -197,7 +197,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     selectedUsers = [NSMutableArray array];
     unSelectedUSers = [NSMutableArray array];
     
-    guideImage = [UIImage imageNamed:@"hive_line"];
+    guideImage = [UIImage imageNamed:@"focus"];//[UIImage imageNamed:@"hive_line"];
     
     _instructionsLabel.hidden = YES;
     _nameLabel.hidden = YES;

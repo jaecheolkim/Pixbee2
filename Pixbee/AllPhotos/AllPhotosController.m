@@ -13,19 +13,45 @@
 #import "PBAssetLibrary.h"
 #import "PBFilterViewController.h"
 
-@interface AllPhotosController () <UICollectionViewDataSource, UICollectionViewDelegate>{
-    NSMutableArray *selectedPhotos;
-    UIRefreshControl *refreshControl;
-}
+#import "CopyActivity.h"
+#import "MoveActivity.h"
+#import "NewAlbumActivity.h"
+#import "DeleteActivity.h"
 
+
+
+@interface AllPhotosController ()
+<UICollectionViewDataSource, UICollectionViewDelegate>
+{
+    BOOL EDIT_MODE;
+    int totalCellCount;
+
+    NSMutableArray *selectedPhotos;
+    
+    UIRefreshControl *refreshControl;
+    
+    NSString *currentAction;
+}
+@property (nonatomic, retain) APNavigationController *navController;
 @property (strong, nonatomic) IBOutlet UICollectionView *collectionView;
+@property (strong, nonatomic) UIActivityViewController *activityController;
 @property (strong, nonatomic) IBOutlet ALLPhotosView *allPhotosView;
 @property (strong, nonatomic) IBOutlet UIButton *editButton;
-@property (strong, nonatomic) IBOutlet UIButton *shotButton;
 @property (strong, nonatomic) TotalGalleryViewCell *selectedCell;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *doneButton;
 
+
+@property (strong, nonatomic) IBOutlet UIButton *shareButton;
+
+@property (weak, nonatomic) IBOutlet UIView *toolbar;
+
+@property (strong, nonatomic) UIBarButtonItem *buttonNew;
+@property (strong, nonatomic) UIBarButtonItem *buttonAdd;
+
 - (IBAction)DoneClickedHandler:(id)sender;
+
+- (IBAction)shareButtonHandler:(id)sender;
+
 @end
 
 @implementation AllPhotosController
@@ -39,15 +65,27 @@
 //    return self;
 //}
 
-- (UIStatusBarStyle)preferredStatusBarStyle {
-    return UIStatusBarStyleBlackTranslucent;
-}
+//- (UIStatusBarStyle)preferredStatusBarStyle {
+//    return UIStatusBarStyleBlackTranslucent;
+//}
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
-    [self setNeedsStatusBarAppearanceUpdate];
+    self.navController = (APNavigationController*)self.navigationController;
+    self.navController.activeNavigationBarTitle = @"FaceTab";
+    self.navController.activeBarButtonTitle = @"Hide";
+
+    _buttonNew = [[UIBarButtonItem alloc] initWithTitle:@"New" style:UIBarButtonItemStylePlain target:self action:@selector(newFaceTab)];
+    
+    _buttonAdd = [[UIBarButtonItem alloc] initWithTitle:@"Add" style:UIBarButtonItemStylePlain target:self action:@selector(addFaceTab)];
+    
+    self.navController.toolbar.items = ({
+        @[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil],_buttonAdd, _buttonNew];
+    });
+    
+//    [self setNeedsStatusBarAppearanceUpdate];
     
     //self.navigationController.navigationBar.barTintColor = [UIColor greenColor];
     //[[UINavigationBar appearance] setBarTintColor:[UIColor blackColor]];
@@ -77,7 +115,9 @@
     
     self.title = @"ALL PHOTO";
     
-    self.doneButton.enabled = NO;
+    _shareButton.enabled = NO;
+    
+    //self.doneButton.enabled = NO;
     NSLog(@"============================> Operation ID = %@", _operateIdentifier);
     
 //    if(([_operateIdentifier isEqualToString:@"new facetab"] || [_operateIdentifier isEqualToString:@"add Photos"])
@@ -89,6 +129,7 @@
 //    }
 
     selectedPhotos = [NSMutableArray array];
+    
     [self reloadDB];
 }
 
@@ -148,7 +189,7 @@
     }
     
     self.allPhotosView.countLabel.text = [NSString stringWithFormat:@"%d", allphotocount];
-    self.collectionView.allowsMultipleSelection = YES;
+    //self.collectionView.allowsMultipleSelection = YES;
     [self.collectionView reloadData];
     
     [refreshControl endRefreshing];
@@ -484,11 +525,19 @@
     NSArray *distancePhotos = [self.photos objectAtIndex:indexPath.section];
     NSDictionary *photo = [distancePhotos objectAtIndex:indexPath.row];
     
-    [cell updateCell:photo];
+    cell.photo = photo;
+    //[cell updateCell:photo];
     
-    if ([selectedPhotos containsObject:indexPath]) {
-        [cell showSelectIcon:YES];
+    if(EDIT_MODE){
+        cell.selectIcon.hidden = NO;
+        if ([selectedPhotos containsObject:indexPath]) {
+            //[cell showSelectIcon:YES];
+            cell.selectIcon.image = [UIImage imageNamed:@"check"];
+        }
+    } else {
+        cell.selectIcon.hidden = YES;
     }
+
     
     cell.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"photo-frame-2.png"]];
     cell.selectedBackgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"photo-frame-selected.png"]];
@@ -502,25 +551,29 @@
         [selectedPhotos addObject:indexPath];
         
         // UI
-        TotalGalleryViewCell *cell = (TotalGalleryViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
-        [cell showSelectIcon:YES];
-        [cell setNeedsDisplay];
+//        TotalGalleryViewCell *cell = (TotalGalleryViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
+//        [cell showSelectIcon:YES];
+//        [cell setNeedsDisplay];
         
-        int selectcount = (int)[selectedPhotos count];
-        if(selectedPhotos.count) self.doneButton.enabled = YES;
-        [UIView animateWithDuration:0.3
-                         animations:^{
-                             if (selectcount > 0) {
-                                 self.navigationItem.title = [NSString stringWithFormat:@"%d Photo Selected", selectcount];
-                             }
-                             else {
-                                 self.navigationItem.title = @"Album";
-                             }
-                         }
-                         completion:^(BOOL finished){
-                             
-                         }];
+//        int selectcount = (int)[selectedPhotos count];
+//        if(selectedPhotos.count) self.doneButton.enabled = YES;
+//        [UIView animateWithDuration:0.3
+//                         animations:^{
+//                             if (selectcount > 0) {
+//                                 self.navigationItem.title = [NSString stringWithFormat:@"%d Photo Selected", selectcount];
+//                             }
+//                             else {
+//                                 self.navigationItem.title = @"Album";
+//                             }
+//                         }
+//                         completion:^(BOOL finished){
+//                             
+//                         }];
+        
+        [self refreshSelectedPhotCountOnNavTilte];
     }
+
+    
 //    else {
 //        self.selectedCell = (GalleryViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
 //        //        [self performSegueWithIdentifier:SEGUE_4_1_TO_5_1 sender:self];
@@ -559,28 +612,59 @@
     if (self.collectionView.allowsMultipleSelection) {
         [selectedPhotos removeObject:indexPath];
         
-        unsigned long selectcount = [selectedPhotos count];
-        if(!selectcount) self.doneButton.enabled = NO;
-        [UIView animateWithDuration:0.3
-                         animations:^{
-                             if (selectcount > 0) {
-                                 self.navigationItem.title = [NSString stringWithFormat:@"%lu Photo Selected", selectcount];
-                             }
-                             else {
-                                 self.navigationItem.title = @"All Photos";
-                             }
-                         }
-                         completion:^(BOOL finished){
-                             
-                         }];
+//        unsigned long selectcount = [selectedPhotos count];
+//        if(!selectcount) self.doneButton.enabled = NO;
+//        [UIView animateWithDuration:0.3
+//                         animations:^{
+//                             if (selectcount > 0) {
+//                                 self.navigationItem.title = [NSString stringWithFormat:@"%lu Photo Selected", selectcount];
+//                             }
+//                             else {
+//                                 self.navigationItem.title = @"All Photos";
+//                             }
+//                         }
+//                         completion:^(BOOL finished){
+//                             
+//                         }];
+        
+        [self refreshSelectedPhotCountOnNavTilte];
+        
     }
     
     // UI
-    TotalGalleryViewCell *cell = (TotalGalleryViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
-    [cell showSelectIcon:NO];
-    [cell setNeedsDisplay];
+//    TotalGalleryViewCell *cell = (TotalGalleryViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
+//    [cell showSelectIcon:NO];
+//    [cell setNeedsDisplay];
 }
 
+
+- (void)refreshSelectedPhotCountOnNavTilte
+{
+    _shareButton.enabled = NO;
+    int selectcount = 0;
+    if(!IsEmpty(selectedPhotos)) {
+        selectcount = (int)[selectedPhotos count];
+    }
+    if(selectcount) {
+        _shareButton.enabled = YES;
+    }
+    
+    //unsigned long selectcount = [selectedPhotos count];
+    //if(!selectcount) self.doneButton.enabled = NO;
+    [UIView animateWithDuration:0.3
+                     animations:^{
+                         if (selectcount > 0) {
+                             self.navigationItem.title = [NSString stringWithFormat:@"%d Photo Selected", selectcount];
+                         }
+                         else {
+                             self.navigationItem.title = @"All Photos";
+                         }
+                     }
+                     completion:^(BOOL finished){
+                         
+                     }];
+
+}
 
 //- (IBAction)DoneClickedHandler:(id)sender {
 //    // DB작업 후 화면 전환.
@@ -657,7 +741,146 @@
 //    }
 //}
 
-- (IBAction)DoneClickedHandler:(id)sender {
+#pragma mark - UI Control methods
+- (IBAction)shareButtonHandler:(id)sender
+{
+    NSMutableArray *activityItems = selectedPhotos;//[NSMutableArray arrayWithCapacity:[selectedPhotos count]];
+//
+//    for (NSIndexPath *indexPath in selectedPhotos) {
+//        
+//        NSArray *distancePhotos = [self.photos objectAtIndex:indexPath.section];
+//        NSDictionary *photo = [distancePhotos objectAtIndex:indexPath.row];
+//        
+//        //NSDictionary *photo = [self.photos objectAtIndex:indexPath.row];
+//        NSLog(@"Selected Photo = %@", photo);
+//        
+//        ALAsset *asset = [photo objectForKey:@"Asset"];
+//        //ALAsset *asset = photo[@"Asset"];
+//        
+//        NSURL *assetURL = [asset valueForProperty:ALAssetPropertyAssetURL];
+//        NSString *imagePath = assetURL.absoluteString;
+//        
+//        //NSString *imagePath = [photo objectForKey:@"AssetURL"];
+//        [activityItems addObject:[[SDImageCache sharedImageCache] imageFromMemoryCacheForKey:imagePath]];
+//    }
+    
+    //NSLog(@"selectedPhoto = %@", selectedPhotos);
+    //NSLog(@"userInfo = %@", self.user);
+    
+    //CopyActivity *copyActivity = [[CopyActivity alloc] init];
+    MoveActivity *moveActivity = [[MoveActivity alloc] init];
+    NewAlbumActivity *newalbumActivity = [[NewAlbumActivity alloc] init];
+    //DeleteActivity *deleteActivity = [[DeleteActivity alloc] init];
+    
+    NSArray *activitys = @[moveActivity, newalbumActivity];//, deleteActivity];
+    
+    self.activityController = [[UIActivityViewController alloc] initWithActivityItems:activityItems applicationActivities:activitys];
+    [self.activityController setExcludedActivityTypes:@[UIActivityTypePostToTwitter,
+                                                        UIActivityTypePostToWeibo,
+                                                        UIActivityTypePrint,
+                                                        UIActivityTypeCopyToPasteboard,
+                                                        UIActivityTypeAssignToContact,
+                                                        UIActivityTypeSaveToCameraRoll,
+                                                        UIActivityTypeAddToReadingList,
+                                                        UIActivityTypePostToFlickr,
+                                                        UIActivityTypePostToVimeo,
+                                                        UIActivityTypePostToTencentWeibo,
+                                                        UIActivityTypeAirDrop]];
+    
+    
+    [self presentViewController:self.activityController
+                       animated:YES
+                     completion:^
+     {
+         
+     }];
+    
+    [self.activityController setCompletionHandler:^(NSString *act, BOOL done) {
+        currentAction = act;
+//        if ( [act isEqualToString:@"com.pixbee.copySharing"] ) {
+//            [self performSegueWithIdentifier:SEGUE_4_1_TO_3_2 sender:self];
+//        }
+        if ( [act isEqualToString:@"com.pixbee.moveSharing"] ) {
+            [self showFaceTabBar];
+            //[self performSegueWithIdentifier:SEGUE_4_1_TO_3_2 sender:self];
+        }
+        else if ( [act isEqualToString:@"com.pixbee.newAlbumSharing"] ) {
+            [self makeNewFaceTab];
+            
+        }
+//        else if ( [act isEqualToString:@"com.pixbee.deleteSharing"] ) {
+//            [self deletePhotos];
+//        }
+        
+        self.activityController = nil;
+
+    }];
+}
+
+- (void)showFaceTabBar
+{
+    NSLog(@"showFaceTabBar");
+}
+
+- (void)makeNewFaceTab
+{
+    NSArray *result = [SQLManager newUser];
+    NSDictionary *user = [result objectAtIndex:0];
+    //NSString *UserName = [user objectForKey:@"UserName"];
+    int UserID = [[user objectForKey:@"UserID"] intValue];
+    int photoCount = 0;
+    
+    for(NSIndexPath *indexPath in selectedPhotos)
+    {
+        photoCount++;
+        //NSDictionary *photo = [self.photos objectAtIndex:indexPath.row];
+        NSArray *photoGroups = [self.photos objectAtIndex:indexPath.section];
+        NSDictionary *photo = [photoGroups objectAtIndex:indexPath.row];
+        
+        ALAsset *asset = photo[@"Asset"];
+        NSLog(@"photo data = %@", photo);
+        
+        NSArray *faces = [AssetLib getFaceData:asset];
+        if(faces.count == 1 && !IsEmpty(faces)){
+            NSDictionary *face = faces[0];
+            NSData *faceData = face[@"image"];
+            
+            UIImage *faceImage = face[@"faceImage"];
+            if(faceImage != nil)
+                [SQLManager setUserProfileImage:faceImage UserID:UserID];
+            
+            [SQLManager setTrainModelForUserID:UserID withFaceData:faceData];
+        }
+        else {
+            CGImageRef cgImage = [asset aspectRatioThumbnail];
+            UIImage *faceImage = [UIImage imageWithCGImage:cgImage];
+            if(faceImage != nil)
+                [SQLManager setUserProfileImage:faceImage UserID:UserID];
+        }
+        
+        
+        [SQLManager saveNewUserPhotoToDB:asset users:@[@(UserID)]];
+    }
+    
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
+- (void)addPhotosToFaceTab:(int)UserID
+{
+    for(NSIndexPath *indexPath in selectedPhotos)
+    {
+        NSArray *photoGroups = [self.photos objectAtIndex:indexPath.section];
+        NSDictionary *photo = [photoGroups objectAtIndex:indexPath.row];
+        ALAsset *asset = photo[@"Asset"];
+        NSLog(@"photo data = %@", photo);
+        [SQLManager saveNewUserPhotoToDB:asset users:@[@(UserID)]];
+    }
+    
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
+- (void)doAction
+{
     // DB작업 후 화면 전환.
     if([_operateIdentifier isEqualToString:@"new facetab"] && !IsEmpty(_operateIdentifier)  )
     {
@@ -689,7 +912,7 @@
                 //NSDictionary *photo = [self.photos objectAtIndex:indexPath.row];
                 NSArray *photoGroups = [self.photos objectAtIndex:indexPath.section];
                 NSDictionary *photo = [photoGroups objectAtIndex:indexPath.row];
-
+                
                 ALAsset *asset = photo[@"Asset"];
                 NSLog(@"photo data = %@", photo);
                 
@@ -731,23 +954,23 @@
             ALAsset *asset = photo[@"Asset"];
             NSLog(@"photo data = %@", photo);
             
-//            NSArray *faces = [AssetLib getFaceData:asset];
-//            if(faces.count == 1 && !IsEmpty(faces)){
-//                NSDictionary *face = faces[0];
-//                NSData *faceData = face[@"image"];
-//                
-//                UIImage *faceImage = face[@"faceImage"];
-//                if(faceImage != nil)
-//                    [SQLManager setUserProfileImage:faceImage UserID:UserID];
-//                
-//                [SQLManager setTrainModelForUserID:UserID withFaceData:faceData];
-//            }
-//            else {
-//                CGImageRef cgImage = [asset aspectRatioThumbnail];
-//                UIImage *faceImage = [UIImage imageWithCGImage:cgImage];
-//                if(faceImage != nil)
-//                    [SQLManager setUserProfileImage:faceImage UserID:UserID];
-//            }
+            //            NSArray *faces = [AssetLib getFaceData:asset];
+            //            if(faces.count == 1 && !IsEmpty(faces)){
+            //                NSDictionary *face = faces[0];
+            //                NSData *faceData = face[@"image"];
+            //
+            //                UIImage *faceImage = face[@"faceImage"];
+            //                if(faceImage != nil)
+            //                    [SQLManager setUserProfileImage:faceImage UserID:UserID];
+            //
+            //                [SQLManager setTrainModelForUserID:UserID withFaceData:faceData];
+            //            }
+            //            else {
+            //                CGImageRef cgImage = [asset aspectRatioThumbnail];
+            //                UIImage *faceImage = [UIImage imageWithCGImage:cgImage];
+            //                if(faceImage != nil)
+            //                    [SQLManager setUserProfileImage:faceImage UserID:UserID];
+            //            }
             
             [SQLManager saveNewUserPhotoToDB:asset users:@[@(UserID)]];
         }
@@ -760,6 +983,76 @@
         // 필터 화면으로 이동
         [self performSegueWithIdentifier:SEGUE_GO_FILTER sender:self];
     }
+}
+
+- (void)showToolBar:(BOOL)show
+{
+    CGRect rect = [UIScreen mainScreen].bounds;
+    CGRect frame = self.toolbar.frame;
+    
+    if(show){
+        frame = CGRectMake(frame.origin.x, rect.size.height - frame.size.height, frame.size.width, frame.size.height);
+        
+    } else {
+        
+        frame = CGRectMake(frame.origin.x, rect.size.height, frame.size.width, frame.size.height);
+    }
+    
+    [UIView animateWithDuration:0.2
+                          delay:0.1
+                        options: UIViewAnimationOptionCurveEaseIn
+                     animations:^{
+                         self.toolbar.frame = frame;
+                     }
+                     completion:^(BOOL finished){
+                         if(!show){
+                             
+                         }
+                     }];
+    
+    
+}
+
+- (IBAction)DoneClickedHandler:(id)sender {
+    
+    [self toggleEdit];
+
+//    [self.navController toggleToolbar:sender];
+
+}
+
+- (void)toggleEdit
+{
+    EDIT_MODE = !EDIT_MODE;
+    
+    if(EDIT_MODE){
+        self.navigationItem.rightBarButtonItem.image = nil;
+        self.navigationItem.rightBarButtonItem.title = @"Cancel";
+        
+    }
+    else {
+        [selectedPhotos removeAllObjects];
+        self.navigationItem.rightBarButtonItem.title = nil;
+        self.navigationItem.rightBarButtonItem.image = [UIImage imageNamed:@"edit"];
+    }
+    
+    [self showToolBar:EDIT_MODE];
+    [self.collectionView setAllowsMultipleSelection:EDIT_MODE];
+    [self.collectionView reloadData];
+
+
+}
+
+- (void)addFaceTab
+{
+    [self toggleEdit];
+    [self.navController toggleToolbar:_doneButton];
+}
+
+- (void)newFaceTab
+{
+    [self toggleEdit];
+    [self.navController toggleToolbar:_doneButton];
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender

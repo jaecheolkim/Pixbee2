@@ -13,6 +13,7 @@
 
 @property (strong, nonatomic) IBOutlet UIImageView *photoImageView;
 @property (strong, nonatomic) IBOutlet UIImageView *selectIcon;
+@property (strong, nonatomic) NSDictionary *photo;
 
 - (void)updateCell:(NSDictionary *)photo;
 - (void)showSelectIcon:(BOOL)show;

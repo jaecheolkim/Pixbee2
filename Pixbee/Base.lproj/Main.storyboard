@@ -531,7 +531,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="192" height="28"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="44E8BF91-30A9-4146-AFB7-5DF322CC206A" translatesAutoresizingMaskIntoConstraints="NO" id="6aK-Ak-lFj">
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="549B88CD-0C38-49C6-9AEC-0386E47B722D" translatesAutoresizingMaskIntoConstraints="NO" id="6aK-Ak-lFj">
                                                     <rect key="frame" x="0.0" y="0.0" width="28" height="29"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
@@ -801,6 +801,24 @@
                                     <outlet property="delegate" destination="eM8-Ev-WUw" id="mHE-r7-I7n"/>
                                 </connections>
                             </collectionView>
+                            <view alpha="0.69999998807907104" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fFj-ev-h8l">
+                                <rect key="frame" x="0.0" y="568" width="320" height="45"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mfQ-tq-A4f">
+                                        <rect key="frame" x="140" y="3" width="40" height="40"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <state key="normal" image="share.png">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="shareButtonHandler:" destination="eM8-Ev-WUw" eventType="touchUpInside" id="qDQ-p7-2O9"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <color key="backgroundColor" cocoaTouchSystemColor="darkTextColor"/>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
@@ -815,13 +833,15 @@
                         <barButtonItem key="rightBarButtonItem" image="edit.png" style="done" id="zFy-oG-3T3">
                             <color key="tintColor" red="0.96862745100000003" green="0.96862745100000003" blue="0.96862745100000003" alpha="1" colorSpace="calibratedRGB"/>
                             <connections>
-                                <action selector="DoneClickedHandler:" destination="eM8-Ev-WUw" id="6nU-Yj-xmW"/>
+                                <action selector="DoneClickedHandler:" destination="eM8-Ev-WUw" id="wxU-XI-DR1"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
                     <connections>
                         <outlet property="collectionView" destination="z3q-NC-tbc" id="5q0-di-hMP"/>
                         <outlet property="doneButton" destination="zFy-oG-3T3" id="dVc-6E-AV4"/>
+                        <outlet property="shareButton" destination="mfQ-tq-A4f" id="Cip-iR-fYl"/>
+                        <outlet property="toolbar" destination="fFj-ev-h8l" id="x0A-QW-Qfm"/>
                         <segue destination="5Gf-iD-N8l" kind="push" identifier="FilterSegue" id="UDv-3T-119"/>
                     </connections>
                 </viewController>
@@ -1750,7 +1770,7 @@ more Alex's Photo</string>
         <!--Navigation Controller-->
         <scene sceneID="pT4-7E-tZg">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="gUD-Yk-XTw" sceneMemberID="viewController">
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="gUD-Yk-XTw" customClass="APNavigationController" sceneMemberID="viewController">
                     <navigationItem key="navigationItem" id="8aK-ad-1bC"/>
                     <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="lightContent"/>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" barStyle="black" prompted="NO"/>
@@ -1790,7 +1810,7 @@ more Alex's Photo</string>
                                 </collectionViewFlowLayout>
                                 <cells>
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="ProfileCardCell" id="Uo2-LQ-tyD" customClass="ProfileCardCell">
-                                        <rect key="frame" x="10" y="74" width="90" height="90"/>
+                                        <rect key="frame" x="10" y="10" width="90" height="90"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                             <rect key="frame" x="0.0" y="0.0" width="90" height="90"/>
@@ -1834,7 +1854,7 @@ more Alex's Photo</string>
                                         </connections>
                                     </collectionViewCell>
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" tag="3000" contentMode="center" reuseIdentifier="AddCell" id="TI1-dC-v2t">
-                                        <rect key="frame" x="115" y="74" width="90" height="90"/>
+                                        <rect key="frame" x="115" y="10" width="90" height="90"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                             <rect key="frame" x="0.0" y="0.0" width="90" height="90"/>
@@ -1915,8 +1935,6 @@ more Alex's Photo</string>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
-                    <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="lightContent"/>
-                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" barStyle="black" prompted="NO"/>
                     <connections>
                         <outlet property="collectionView" destination="T0M-ln-WeC" id="dlo-KY-cPx"/>
                         <outlet property="deleteButton" destination="zsZ-yN-sgD" id="qqR-aQ-VMB"/>
@@ -1936,7 +1954,7 @@ more Alex's Photo</string>
         </scene>
     </scenes>
     <resources>
-        <image name="44E8BF91-30A9-4146-AFB7-5DF322CC206A" width="628" height="152">
+        <image name="549B88CD-0C38-49C6-9AEC-0386E47B722D" width="628" height="152">
             <mutableData key="keyedArchiveRepresentation">
 YnBsaXN0MDDUAQIDBAUGPj9YJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoK4HCBMU
 GR4fIyQsLzI4O1UkbnVsbNUJCgsMDQ4PEBESVk5TU2l6ZVYkY2xhc3NcTlNJbWFnZUZsYWdzVk5TUmVw

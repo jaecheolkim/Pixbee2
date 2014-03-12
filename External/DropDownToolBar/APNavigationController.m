@@ -32,6 +32,8 @@
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
     self.toolbar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 44)];
+    self.toolbar.tintColor = [UIColor whiteColor];
+    self.toolbar.barTintColor = [UIColor redColor];
     self.toolbar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     [self.navigationBar insertSubview:self.toolbar atIndex:0];
     self.originalNavigationBarTitle = self.navigationBar.topItem.title;

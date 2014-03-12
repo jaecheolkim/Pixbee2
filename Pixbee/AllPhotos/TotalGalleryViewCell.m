@@ -22,26 +22,35 @@
 - (void)setSelected:(BOOL)selected {
     [super setSelected:selected];
     
+    if(self.selected) self.selectIcon.image = [UIImage imageNamed:@"check"];
+    else self.selectIcon.image = nil;
+}
+
+- (void)setPhoto:(NSDictionary *)photo
+{
+    ALAsset *asset= [photo objectForKey:@"Asset"];
+    
+    self.photoImageView.image = [UIImage imageWithCGImage:[asset thumbnail]];
 }
 
 - (void)showSelectIcon:(BOOL)show {
-    if (show) {
-        self.selectIcon.hidden = NO;
-    }
-    else {
-        self.selectIcon.hidden = YES;
-    }
+//    if (show) {
+//        self.selectIcon.hidden = NO;
+//    }
+//    else {
+//        self.selectIcon.hidden = YES;
+//    }
 }
 
 - (void)updateCell:(NSDictionary *)photo {
     
-    [self showSelectIcon:NO];
+    //[self showSelectIcon:NO];
     
     ALAsset *asset= [photo objectForKey:@"Asset"];
     
     self.photoImageView.image = [UIImage imageWithCGImage:[asset thumbnail]];
-    if (asset)
-    {
+//    if (asset)
+//    {
 //        self.photoImageView.image = [[SDImageCache sharedImageCache] imageFromMemoryCacheForKey:imagePath];
 //        
 //        if (self.photoImageView.image == nil) {
@@ -65,7 +74,7 @@
 //                                resultBlock:resultBlock
 //                               failureBlock:failureBlock];
 //        }
-    }
+//    }
 }
 
 @end
