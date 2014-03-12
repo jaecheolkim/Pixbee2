@@ -18,6 +18,7 @@
 #import "NewAlbumActivity.h"
 #import "DeleteActivity.h"
 
+#define CLAMP(x, low, high)  (((x) > (high)) ? (high) : (((x) < (low)) ? (low) : (x)))
 
 
 @interface AllPhotosController ()
@@ -28,9 +29,17 @@
 
     NSMutableArray *selectedPhotos;
     
+    NSMutableArray *selectedStackImages;
+    
+    NSMutableArray *scrollViewCellFrames;
+    
     UIRefreshControl *refreshControl;
     
     NSString *currentAction;
+    
+    CGPoint lastTouchPoint;
+    
+    int currentUserID;
 }
 @property (nonatomic, retain) APNavigationController *navController;
 @property (strong, nonatomic) IBOutlet UICollectionView *collectionView;
@@ -40,6 +49,8 @@
 @property (strong, nonatomic) TotalGalleryViewCell *selectedCell;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *doneButton;
 
+@property (weak, nonatomic) IBOutlet UIView *faceTabListBar;
+@property (weak, nonatomic) IBOutlet UIScrollView *faceTabScrollView;
 
 @property (strong, nonatomic) IBOutlet UIButton *shareButton;
 
@@ -48,9 +59,14 @@
 @property (strong, nonatomic) UIBarButtonItem *buttonNew;
 @property (strong, nonatomic) UIBarButtonItem *buttonAdd;
 
+
+@property (weak, nonatomic) IBOutlet UIButton *stackImages;
+
 - (IBAction)DoneClickedHandler:(id)sender;
 
 - (IBAction)shareButtonHandler:(id)sender;
+
+- (IBAction)closeFaceTabButtonHandler:(id)sender;
 
 @end
 
@@ -129,8 +145,18 @@
 //    }
 
     selectedPhotos = [NSMutableArray array];
+    selectedStackImages = [NSMutableArray array];
+    
+    scrollViewCellFrames = [NSMutableArray array];
     
     [self reloadDB];
+    
+    [self initFaceTabList];
+    
+    [self initStackImages];
+    
+    currentUserID = -1;
+    
 }
 
 
@@ -801,7 +827,7 @@
 //            [self performSegueWithIdentifier:SEGUE_4_1_TO_3_2 sender:self];
 //        }
         if ( [act isEqualToString:@"com.pixbee.moveSharing"] ) {
-            [self showFaceTabBar];
+            [self showFaceTabBar:YES];
             //[self performSegueWithIdentifier:SEGUE_4_1_TO_3_2 sender:self];
         }
         else if ( [act isEqualToString:@"com.pixbee.newAlbumSharing"] ) {
@@ -817,10 +843,364 @@
     }];
 }
 
-- (void)showFaceTabBar
-{
-    NSLog(@"showFaceTabBar");
+- (IBAction)closeFaceTabButtonHandler:(id)sender {
+    [self showStackImages:NO];
+    [self showFaceTabBar:NO];
+
 }
+
+
+
+- (void)initFaceTabList
+{
+    NSArray *users = [SQLManager getAllUsers];
+    int faceCount = 0;
+    
+    int margin = 8;
+    int size = 88;
+    int y = 4;//29;
+    
+    for(NSDictionary *userInfo in users) {
+        
+        int UserID = [userInfo[@"UserID"] intValue];
+        UIImage *profileImage = [SQLManager getUserProfileImage:UserID];
+        
+        CGRect buttonFrame = CGRectMake(margin + faceCount * (margin + size), y, size, size);
+        CGSize contentSize = CGSizeMake(margin + faceCount * (margin + size) + size, _faceTabScrollView.frame.size.height);
+
+        [scrollViewCellFrames addObject:NSStringFromCGRect(buttonFrame)];
+        
+        UIButton_FaceIcon* button = [UIButton_FaceIcon buttonWithType:UIButtonTypeCustom];
+
+        
+//        [button addTarget:self action:@selector(imageTouch:withEvent:) forControlEvents:UIControlEventTouchDown];
+//        [button addTarget:self action:@selector(imageMoved:withEvent:) forControlEvents:UIControlEventTouchDragInside];
+//        [button addTarget:self action:@selector(imageEnd:withEvent:) forControlEvents:UIControlEventTouchUpInside];
+        
+        [button setProfileImage:profileImage];
+        //button.frame = CGRectMake(10+faceCount*60, 9.0f, 50.0f, 50.0f);
+        //button.frame = CGRectMake(margin + faceCount * (margin + size), y, size, size);
+        button.frame = buttonFrame;
+        //CGRectMake(margin + faceCount * (margin + size), y, size, size);
+        button.UserID = UserID;
+        button.index = faceCount;
+        button.originRect = button.frame;
+        
+        [_faceTabScrollView addSubview:button];
+        
+        //[_faceTabListBar setContentSize:CGSizeMake(10 + faceCount*60 + 50, 67.0)];
+        //[_faceTabListBar setContentSize:CGSizeMake(margin + faceCount * (margin + size) + size, size)];
+        [_faceTabScrollView setContentSize:contentSize];
+        
+        
+        
+        faceCount++;
+    }
+    
+//    UIImage *profileImage = [SQLManager getUserProfileImage:UserID];
+//    
+//    UIButton_FaceIcon* button = [UIButton_FaceIcon buttonWithType:UIButtonTypeCustom];
+////    [button addTarget:self action:@selector(imageTouch:withEvent:) forControlEvents:UIControlEventTouchDown];
+////    [button addTarget:self action:@selector(imageMoved:withEvent:) forControlEvents:UIControlEventTouchDragInside];
+////    [button addTarget:self action:@selector(imageEnd:withEvent:) forControlEvents:UIControlEventTouchUpInside];
+//    
+//    [button setProfileImage:profileImage];
+//    button.frame = CGRectMake(10+faceCount*60, 9.0f, 50.0f, 50.0f);
+//    button.UserID = UserID;
+//    button.index = faceCount;
+//    button.originRect = button.frame;
+//    
+//    [_faceListScrollView addSubview:button];
+//    
+//    [selectedUsers addObject:@(UserID)];
+//    
+//    NSLog(@"ADD || selectedUsers = %@", selectedUsers);
+//    NSLog(@"facecount = %d / frame = %@",faceCount, NSStringFromCGRect(button.frame));
+//    
+//    [_faceListScrollView setContentSize:CGSizeMake(10 + faceCount*60 + 50, 67.0)];
+
+}
+
+- (void)initStackImages
+{
+    _stackImages.hidden = YES;
+    
+    [_stackImages addTarget:self action:@selector(imageTouch:withEvent:) forControlEvents:UIControlEventTouchDown];
+    [_stackImages addTarget:self action:@selector(imageMoved:withEvent:) forControlEvents:UIControlEventTouchDragInside];
+    [_stackImages addTarget:self action:@selector(imageEnd:withEvent:) forControlEvents:UIControlEventTouchUpInside];
+
+    
+}
+
+- (void)gatteringStackImages
+{
+ 
+    NSLog(@"self.faceTabListBar frame = %@", NSStringFromCGRect(self.faceTabListBar.frame));
+    _stackImages.frame = CGRectMake(0, 0, 320, 568);
+    for(NSIndexPath *indexPath in selectedPhotos)
+    {
+ 
+        NSArray *distancePhotos = [self.photos objectAtIndex:indexPath.section];
+        NSDictionary *photo = [distancePhotos objectAtIndex:indexPath.row];
+        ALAsset *asset = photo[@"Asset"];
+        UIImage *thumbImage = [UIImage imageWithCGImage:[asset thumbnail]];
+        
+        UIImageView *imgView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 75,75)];
+        imgView.image = thumbImage;
+        imgView.alpha = 0.9;
+        
+        UICollectionViewCell *cell = [self.collectionView cellForItemAtIndexPath:indexPath];
+        //[cell addSubview:imgView];
+
+        CGPoint convertedPoint = [self.view convertPoint:cell.center fromView:cell.superview];
+        imgView.center = convertedPoint;
+        
+#warning 이상하게 self.view 에 이미지들 붙이면 facetablistbar 가 사라짐... 아래 구문이 되어야 모이는 애니메이션이 되는데...
+        //[self.view addSubview:imgView];
+        //[self.view insertSubview:imgView aboveSubview:self.faceTabListBar];
+        
+        
+        [selectedStackImages addObject:imgView];
+    }
+ }
+
+- (void)attatchStackImages
+{
+    for(UIImageView *imgView in selectedStackImages)
+    {
+        imgView.frame = CGRectMake(110, 234, 100, 100);
+    }
+}
+
+- (void)alignStackImages
+{
+//    double angle = -0.3;
+//    int color = arc4random_uniform(10);
+//    for(UIImageView *imgView in selectedStackImages)
+//    {
+//        imgView.frame = CGRectMake(0, 0, 100, 100);
+//        [_stackImages addSubview:imgView];
+//        
+//#warning 여기서 각도 틀어줘야 함.
+//        angle =  ((double)arc4random() / 0x100000000);
+//        imgView.transform = CGAffineTransformMakeRotation(angle);//-1.142);
+//        
+//        //angle = angle * 1.2;
+//        
+//    }
+    
+    
+    NSInteger imageCount = [selectedStackImages count];
+    double angle = -0.3;
+    
+    for(int i = 0; i < imageCount; i++) {
+        UIImageView *imgView = [selectedStackImages objectAtIndex:i];
+        imgView.frame = CGRectMake(0, 0, 100, 100);
+        [_stackImages addSubview:imgView];
+        
+        angle =  ((double)arc4random() / 0x100000000);
+        if(i % 2) angle = angle * -1 ;
+        if(i == (imageCount -1)) angle = 0;
+        
+        imgView.transform = CGAffineTransformMakeRotation(angle);
+    }
+    
+}
+
+- (void)showStackImages:(BOOL)show
+{
+    float duration = 0.3;
+    float delay = 0.1;
+    
+    if(!show){
+        duration = 0.1;
+        delay = 0.0;
+    }
+    else {
+        [self gatteringStackImages];
+    }
+    
+    [UIView animateWithDuration:duration
+                          delay:delay
+                        options: UIViewAnimationOptionCurveEaseIn
+                     animations:^{
+                         if(show) {
+                             _stackImages.frame = CGRectMake(110, 234, 100, 100);  // 다시 보일때 중앙위치에 처음 사이즈로 복귀.
+                             _stackImages.hidden = NO;
+                             [self attatchStackImages];
+                         } else {
+                             _stackImages.hidden = YES;
+                         }
+                     }
+                     completion:^(BOOL finished){
+                         if(show){
+                             [self alignStackImages];
+                             
+                         } else {
+                             for(UIView *view in _stackImages.subviews){
+                                 [view removeFromSuperview];
+                             }
+                         }
+                     }];
+}
+
+
+- (void) imageTouch:(id) sender withEvent:(UIEvent *) event
+{
+    //if(_faceListScrollView.dragging || _faceListScrollView.decelerating) return;
+    
+    CGPoint point = [[[event allTouches] anyObject] locationInView:self.view];
+    
+    lastTouchPoint = point;
+    
+    _stackImages.center = point;
+    
+//    UIButton_FaceIcon *button0 = (UIButton_FaceIcon*)sender;
+//    [self.view addSubview:button0];
+//    button0.originRect = button0.frame;
+//    button0.center = point;
+//    
+//    [UIView animateWithDuration:0.2 animations:^{
+//        button0.frame = CGRectMake(button0.frame.origin.x, button0.frame.origin.y - 50, 100, 100);
+//        [button0 setImage:nil forState:UIControlStateNormal];
+//        [button0 setBackgroundImage:button0.profileImage forState:UIControlStateNormal];
+//    }];
+//    
+//    int index = button0.index;
+//    
+//    // Face Icon 재정렬
+//    for(UIView *view in _faceListScrollView.subviews){
+//        if([view isKindOfClass:[UIButton class]]){
+//            UIButton_FaceIcon *button = (UIButton_FaceIcon*)view;
+//            if(button.index > index){
+//                button.index = button.index - 1;
+//                [UIView animateWithDuration:0.2 animations:^{
+//                    button.frame = CGRectMake(10+button.index*60, 9.0f, 50.0f, 50.0f);
+//                    button.originRect = button.frame;
+//                }];
+//            }
+//        }
+//    }
+    
+}
+
+- (void) imageMoved:(id)sender withEvent:(UIEvent *) event
+{
+    //if(_faceListScrollView.dragging || _faceListScrollView.decelerating) return;
+    
+    CGPoint point = [[[event allTouches] anyObject] locationInView:self.view];
+    
+    UIControl *control = sender;
+    control.center = point;
+
+    if(CGRectContainsPoint (_faceTabListBar.frame, point))
+    {
+        NSLog(@"Button.point = %@", NSStringFromCGPoint(point));
+        
+        CGSize contentSize = [_faceTabScrollView contentSize];
+        CGPoint contentOffset = [_faceTabScrollView contentOffset];
+        CGFloat frameWidth = [_faceTabScrollView frame].size.width;
+        
+        CGFloat deltaX = ((point.x - lastTouchPoint.x) / [_stackImages bounds].size.width) * [_faceTabScrollView contentSize].width;
+        CGPoint newContentOffset = CGPointMake(CLAMP(contentOffset.x + deltaX, 0, contentSize.width - frameWidth), contentOffset.y);
+        
+        [_faceTabScrollView setContentOffset:newContentOffset animated:NO];
+        
+        lastTouchPoint = point;
+        
+        
+        //NSInteger cellCount = 0;
+#warning 왜 subViewCount가 1개 더 붙는지 모르겠다...
+        
+        NSInteger subViewCount = [_faceTabScrollView.subviews count] - 1;
+        
+        for(NSInteger i = 0; i < subViewCount; i++){
+        //for(UIView *cell in _faceTabScrollView.subviews){
+            UIButton_FaceIcon *cell = (UIButton_FaceIcon *)[_faceTabScrollView.subviews objectAtIndex:i];
+            NSString *cellRect = [scrollViewCellFrames objectAtIndex:i];
+            cell.frame = CGRectFromString(cellRect);
+            //cellCount++;
+        }
+        
+        int currentPosition = round((point.x +  newContentOffset.x )/ 96.0);
+       
+        
+        
+        
+        UIButton_FaceIcon *cell = (UIButton_FaceIcon *)[_faceTabScrollView.subviews objectAtIndex:currentPosition];
+        CGPoint cellCenter = cell.center;
+        CGRect cellFrame = cell.frame;
+        cell.frame = CGRectMake(cellFrame.origin.x, cellFrame.origin.y, cellFrame.size.width * 1.18, cellFrame.size.height * 1.18);
+        cell.center = cellCenter;
+        
+        currentUserID = cell.UserID;
+         NSLog(@"newContentOffset = %@ / currentPosition = %d / userID = %d", NSStringFromCGPoint(newContentOffset), currentPosition, currentUserID);
+    }
+
+}
+
+- (void) imageEnd:(id) sender withEvent:(UIEvent *) event
+{
+    lastTouchPoint = CGPointZero;
+    CGPoint point = [[[event allTouches] anyObject] locationInView:self.view];
+    if(CGRectContainsPoint (_faceTabListBar.frame, point))
+    {
+
+        [self showStackImages:NO];
+        [self showFaceTabBar:NO];
+        
+        
+        if(currentUserID > 0) [self addPhotosToFaceTab:currentUserID];
+        
+        currentUserID = -1;
+        
+    }
+
+    
+    //if(_faceListScrollView.dragging || _faceListScrollView.decelerating) return;
+    
+    
+    
+//    UIButton_FaceIcon *button0 = (UIButton_FaceIcon*)sender;
+//    
+//    
+//    if(!CGRectContainsPoint (_faceListScrollView.frame, point)){
+//        NSLog(@"---------------Drag End Outside");
+//        
+//        [button0 removeFromSuperview];
+//        
+//        int userid = button0.UserID;
+//        
+//        [self exceptUSerFromTrainDB:userid];
+//        
+//        NSLog(@"REMOVE || selectedUsers = %@", selectedUsers);
+//        
+//        
+//    } else {
+//        NSLog(@"---------------Drag End Inside");
+//        
+//        int index = button0.index;
+//        
+//        for(UIView *view in _faceListScrollView.subviews){
+//            if([view isKindOfClass:[UIButton class]]){
+//                UIButton_FaceIcon *button = (UIButton_FaceIcon*)view;
+//                if(button.index >= index){
+//                    button.index = button.index + 1;
+//                    [UIView animateWithDuration:0.2 animations:^{
+//                        button.frame = CGRectMake(10+button.index*60, 9.0f, 50.0f, 50.0f);
+//                        button.originRect = button.frame;
+//                    }];
+//                }
+//            }
+//        }
+//        
+//        button0.frame = CGRectMake(10+index*60, 9.0f, 50.0f, 50.0f);
+//        [button0 setImage:button0.profileImage forState:UIControlStateNormal];
+//        [button0 setBackgroundImage:nil forState:UIControlStateNormal];
+//        [_faceListScrollView addSubview:button0];
+//    }
+}
+
 
 - (void)makeNewFaceTab
 {
@@ -987,6 +1367,8 @@
 
 - (void)showToolBar:(BOOL)show
 {
+
+    
     CGRect rect = [UIScreen mainScreen].bounds;
     CGRect frame = self.toolbar.frame;
     
@@ -1013,6 +1395,54 @@
     
 }
 
+- (void)showFaceTabBar:(BOOL)show
+{
+    CGRect rect = [UIScreen mainScreen].bounds;
+    CGRect frame = self.faceTabListBar.frame;
+    
+    if(show){
+        frame = CGRectMake(frame.origin.x, rect.size.height - frame.size.height, frame.size.width, frame.size.height);
+        
+    } else {
+        
+        frame = CGRectMake(frame.origin.x, rect.size.height, frame.size.width, frame.size.height);
+    }
+    
+    if(show){
+        if(EDIT_MODE) [self showToolBar:NO];
+    }
+    
+    
+    [UIView animateWithDuration:0.2
+                          delay:0.1
+                        options: UIViewAnimationOptionCurveEaseIn
+                     animations:^{
+                         self.faceTabListBar.frame = frame;
+                     }
+                     completion:^(BOOL finished){
+                         if(!show){
+                             if(EDIT_MODE) {
+                                 
+                                 [selectedPhotos removeAllObjects];
+                                 [selectedStackImages removeAllObjects];
+                                 
+                                 [self refreshSelectedPhotCountOnNavTilte];
+                                 [_collectionView reloadData];
+                                 
+                                 [self showToolBar:YES];
+                                 
+                              }
+                         }
+                         else {
+                             if(EDIT_MODE){
+                                 [self showStackImages:YES];
+
+                             }
+                         }
+                     }];
+
+}
+
 - (IBAction)DoneClickedHandler:(id)sender {
     
     [self toggleEdit];
@@ -1031,6 +1461,11 @@
         
     }
     else {
+        [self showStackImages:NO];
+        [self showFaceTabBar:NO];
+
+        [selectedStackImages removeAllObjects];
+        
         [selectedPhotos removeAllObjects];
         self.navigationItem.rightBarButtonItem.title = nil;
         self.navigationItem.rightBarButtonItem.image = [UIImage imageNamed:@"edit"];
@@ -1040,6 +1475,8 @@
     [self.collectionView setAllowsMultipleSelection:EDIT_MODE];
     [self.collectionView reloadData];
 
+    
+    [self refreshSelectedPhotCountOnNavTilte];
 
 }
 
@@ -1073,6 +1510,9 @@
         
     }
 }
+
+
+
 
 
 

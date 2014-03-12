@@ -22,9 +22,9 @@
 
 - (void)setProfileImage:(UIImage *)profileImage
 {
-    UIImage *image = [UIImage maskImage:profileImage
-                               withMask:[UIImage imageNamed:@"photo_profile_hive@2x.png"]];
-    _profileImage = image;
+//    UIImage *image = [UIImage maskImage:profileImage
+//                               withMask:[UIImage imageNamed:@"photo_profile_hive@2x.png"]];
+    _profileImage = profileImage;
     [self setImage:_profileImage forState:UIControlStateNormal];
 }
 /*
