@@ -27,6 +27,16 @@
     _profileImage = profileImage;
     [self setImage:_profileImage forState:UIControlStateNormal];
 }
+
+- (void)setPenTagonProfileImage:(UIImage *)penTagonProfileImage
+{
+    UIImage *image = [UIImage maskImage:penTagonProfileImage
+                               withMask:[UIImage imageNamed:@"photo_profile_hive@2x.png"]];
+    _penTagonProfileImage = image;
+    
+    [self setImage:_penTagonProfileImage forState:UIControlStateNormal];
+
+}
 /*
 // Only override drawRect: if you perform custom drawing.
 // An empty implementation adversely affects performance during animation.

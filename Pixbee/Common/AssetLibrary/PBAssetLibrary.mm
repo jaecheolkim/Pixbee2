@@ -822,6 +822,25 @@
 }
 
 
+- (void)loadThumbImage:(void (^)(UIImage *thumbImage))completion
+{
+    ALAssetsLibraryAssetForURLResultBlock resultBlock = ^(ALAsset *asset)
+    {
+        NSLog(@"This debug string was logged after this function was done");
+        UIImage *image = [UIImage imageWithCGImage:[asset thumbnail]];
+        
+        completion(image);
+    };
+    
+    ALAssetsLibraryAccessFailureBlock failureBlock  = ^(NSError *error)
+    {
+        NSLog(@"Unresolved error: %@, %@", error, [error localizedDescription]);
+    };
+    
+    [AssetLib.assetsLibrary assetForURL:[NSURL URLWithString:GlobalValue.lastAssetURL]
+                            resultBlock:resultBlock
+                           failureBlock:failureBlock];
+}
 
 
 

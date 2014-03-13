@@ -531,7 +531,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="192" height="28"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="66BCC64C-1511-4B0D-85F9-5BEEDD666C95" translatesAutoresizingMaskIntoConstraints="NO" id="6aK-Ak-lFj">
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="758118A9-7B34-4DE3-82AC-0AF64A9DA7B3" translatesAutoresizingMaskIntoConstraints="NO" id="6aK-Ak-lFj">
                                                     <rect key="frame" x="0.0" y="0.0" width="28" height="29"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
@@ -980,65 +980,38 @@
                                 <rect key="frame" x="0.0" y="44" width="72" height="72"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             </imageView>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="hive0.png" translatesAutoresizingMaskIntoConstraints="NO" id="kzk-8P-vOU">
-                                <rect key="frame" x="129" y="460" width="62" height="56"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            </imageView>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" bounces="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uiZ-gw-wHx">
                                 <rect key="frame" x="0.0" y="437" width="320" height="67"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             </scrollView>
-                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oja-Kt-JRx" customClass="BasicBottomView">
-                                <rect key="frame" x="0.0" y="498" width="320" height="70"/>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UrB-l3-kBZ" userLabel="Button_Album">
+                                <rect key="frame" x="17" y="496" width="40" height="40"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <subviews>
-                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="photo_bottombar.png" translatesAutoresizingMaskIntoConstraints="NO" id="cMV-q7-80A">
-                                        <rect key="frame" x="0.0" y="6" width="320" height="64"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    </imageView>
-                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lik-r0-KMe">
-                                        <rect key="frame" x="127" y="0.0" width="68" height="68"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                                        <state key="normal" image="camerabutton.png">
-                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                        </state>
-                                        <connections>
-                                            <action selector="snapStillImage:" destination="dri-x2-AEn" eventType="touchUpInside" id="e79-QT-JHe"/>
-                                        </connections>
-                                    </button>
-                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="camera.png" translatesAutoresizingMaskIntoConstraints="NO" id="ZNs-qv-M9g">
-                                        <rect key="frame" x="141" y="14" width="40" height="40"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    </imageView>
-                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UrB-l3-kBZ">
-                                        <rect key="frame" x="14" y="23" width="40" height="30"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <state key="normal" image="cameraroll_icon.png">
-                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                        </state>
-                                        <connections>
-                                            <action selector="goGallery:" destination="dri-x2-AEn" eventType="touchUpInside" id="yrv-kz-GXS"/>
-                                        </connections>
-                                    </button>
-                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="take_photo.png" translatesAutoresizingMaskIntoConstraints="NO" id="U7Z-hV-Kd9">
-                                        <rect key="frame" x="248" y="20" width="20" height="13"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    </imageView>
-                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="take_video.png" translatesAutoresizingMaskIntoConstraints="NO" id="0Ah-z5-nAa">
-                                        <rect key="frame" x="290" y="20" width="19" height="12"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    </imageView>
-                                </subviews>
-                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                            </view>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6JN-n0-KnT">
+                                <state key="normal" image="album.png">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="goAlbum:" destination="dri-x2-AEn" eventType="touchUpInside" id="tKy-9E-Au6"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6JN-n0-KnT" userLabel="Label_userName">
                                 <rect key="frame" x="0.0" y="540" width="320" height="23"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <view alpha="0.84999999999999998" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3il-Og-8vc" customClass="FXBlurView">
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lik-r0-KMe" userLabel="Button_Shutter">
+                                <rect key="frame" x="124" y="474" width="72" height="80"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                <state key="normal" image="cambutton.png">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="snapStillImage:" destination="dri-x2-AEn" eventType="touchUpInside" id="e79-QT-JHe"/>
+                                </connections>
+                            </button>
+                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3il-Og-8vc" customClass="FXBlurView">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <subviews>
@@ -1055,7 +1028,7 @@
                                         </connections>
                                     </button>
                                 </subviews>
-                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <color key="tintColor" red="0.96862745100000003" green="0.96862745100000003" blue="0.96862745100000003" alpha="1" colorSpace="calibratedRGB"/>
                             </view>
                             <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="93E-Dx-gjJ" userLabel="View-topcontrol">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
@@ -1090,25 +1063,21 @@
                     <navigationItem key="navigationItem" id="jcs-G2-lSZ"/>
                     <nil key="simulatedTopBarMetrics"/>
                     <connections>
-                        <outlet property="CameraBottomView" destination="oja-Kt-JRx" id="N6j-bT-e4x"/>
                         <outlet property="DimmedView" destination="3il-Og-8vc" id="Pyv-eM-XBr"/>
                         <outlet property="GalleryButton" destination="UrB-l3-kBZ" id="vw9-Py-QuR"/>
-                        <outlet property="cameraImage" destination="U7Z-hV-Kd9" id="iRD-uY-hv4"/>
                         <outlet property="faceImageView" destination="Zkt-wk-y7C" id="KQw-nq-msI"/>
                         <outlet property="faceListScrollView" destination="uiZ-gw-wHx" id="Gwr-nN-X5E"/>
                         <outlet property="faceView" destination="txv-P5-Vrr" id="sJs-Zd-pUP"/>
-                        <outlet property="hiveImageView" destination="kzk-8P-vOU" id="nea-YZ-qHH"/>
                         <outlet property="instructionsLabel" destination="dTV-e8-DDg" id="uqF-hq-lYD"/>
                         <outlet property="nameLabel" destination="6JN-n0-KnT" id="2Yy-J9-Iyn"/>
                         <outlet property="previewView" destination="sHS-iY-wPc" id="JvH-r4-GCa"/>
                         <outlet property="reconstImageView" destination="rDV-4F-UPS" id="7be-JJ-Hhv"/>
-                        <outlet property="shutterImage" destination="ZNs-qv-M9g" id="b8f-Hu-gfH"/>
                         <outlet property="snapButton" destination="lik-r0-KMe" id="d8f-o6-WDR"/>
                         <outlet property="switchButton" destination="cnW-80-ltw" id="ClG-Wb-cL6"/>
                         <outlet property="topView" destination="93E-Dx-gjJ" id="qQ5-Nf-DiA"/>
-                        <outlet property="videoImage" destination="0Ah-z5-nAa" id="cWW-9m-A7B"/>
                         <segue destination="ycL-kc-Lg3" kind="custom" identifier="Segue6_1to2_2" customClass="PBDisolveSegue" id="iEz-wD-DbU"/>
                         <segue destination="gUD-Yk-XTw" kind="custom" identifier="Segue6_1to3_1" customClass="SCT3DFlip" id="t8Q-Mi-1Tt"/>
+                        <segue destination="eM8-Ev-WUw" kind="custom" identifier="Segue6_1to4_3" id="Zls-qO-0s8"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="3pO-Qz-iU4" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -1805,8 +1774,6 @@ more Alex's Photo</string>
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="gUD-Yk-XTw" customClass="APNavigationController" sceneMemberID="viewController">
                     <navigationItem key="navigationItem" id="8aK-ad-1bC"/>
-                    <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="lightContent"/>
-                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" barStyle="black" prompted="NO"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" barStyle="black" id="19M-db-91a">
                         <rect key="frame" x="0.0" y="0.0" width="0.0" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -1976,7 +1943,7 @@ more Alex's Photo</string>
                         <outlet property="rightBarButton" destination="JTN-UC-K0i" id="Wcf-h4-d4s"/>
                         <outlet property="shutterButton" destination="Rpj-Gk-IrI" id="Jeu-bU-seS"/>
                         <outlet property="toolBar" destination="EkB-z0-ncF" id="7Uh-hv-pYi"/>
-                        <segue destination="eM8-Ev-WUw" kind="push" identifier="Segue3_1to4_3" id="M8M-y8-RXx"/>
+                        <segue destination="eM8-Ev-WUw" kind="push" identifier="Segue3_1to4_3" customClass="PBDisolveSegue" id="M8M-y8-RXx"/>
                         <segue destination="cgv-md-euH" kind="push" identifier="Segue3_1to4_1" id="tWG-45-OJb"/>
                         <segue destination="ehe-Nr-PU9" kind="modal" identifier="Segue3_1toSetting" id="uK4-Se-chF"/>
                     </connections>
@@ -1987,7 +1954,7 @@ more Alex's Photo</string>
         </scene>
     </scenes>
     <resources>
-        <image name="66BCC64C-1511-4B0D-85F9-5BEEDD666C95" width="628" height="152">
+        <image name="758118A9-7B34-4DE3-82AC-0AF64A9DA7B3" width="628" height="152">
             <mutableData key="keyedArchiveRepresentation">
 YnBsaXN0MDDUAQIDBAUGPj9YJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoK4HCBMU
 GR4fIyQsLzI4O1UkbnVsbNUJCgsMDQ4PEBESVk5TU2l6ZVYkY2xhc3NcTlNJbWFnZUZsYWdzVk5TUmVw
@@ -8408,6 +8375,7 @@ Bd3JAAAAAAAABAEAAAAAAAAAQgAAAAAAAAAAAAAAAAAF3cs
         <image name="addbutton.png" width="86" height="43"/>
         <image name="addfacetab.png" width="30" height="30"/>
         <image name="addfacetab_select.png" width="30" height="30"/>
+        <image name="album.png" width="35" height="35"/>
         <image name="allphoto.png" width="39" height="33"/>
         <image name="allphoto_select.png" width="39" height="33"/>
         <image name="arrow.png" width="8" height="13"/>
@@ -8418,7 +8386,6 @@ Bd3JAAAAAAAABAEAAAAAAAAAQgAAAAAAAAAAAAAAAAAF3cs
         <image name="cambutton.png" width="72" height="82"/>
         <image name="camera.png" width="40" height="40"/>
         <image name="camerabutton.png" width="70" height="70"/>
-        <image name="cameraroll_icon.png" width="40" height="30"/>
         <image name="check.png" width="75" height="75"/>
         <image name="close.png" width="40" height="40"/>
         <image name="comment.png" width="320" height="92"/>
@@ -8427,7 +8394,6 @@ Bd3JAAAAAAAABAEAAAAAAAAAQgAAAAAAAAAAAAAAAAAF3cs
         <image name="edit_select.png" width="20" height="20"/>
         <image name="export.png" width="19" height="26"/>
         <image name="export_select.png" width="19" height="26"/>
-        <image name="hive0.png" width="62" height="56"/>
         <image name="hive_toalbum.png" width="78" height="88"/>
         <image name="individualphoto.png" width="105" height="105"/>
         <image name="left_toalbum.png" width="16" height="22"/>
@@ -8437,7 +8403,6 @@ Bd3JAAAAAAAABAEAAAAAAAAAQgAAAAAAAAAAAAAAAAAF3cs
         <image name="mainbar.png" width="320" height="80"/>
         <image name="midbar.png" width="320" height="61"/>
         <image name="namebar_toalbum.png" width="320" height="35"/>
-        <image name="photo_bottombar.png" width="480" height="99"/>
         <image name="photo_toalbum.png" width="320" height="320"/>
         <image name="placeholder.png" width="88" height="88"/>
         <image name="plus.png" width="22" height="22"/>
@@ -8457,8 +8422,6 @@ Bd3JAAAAAAAABAEAAAAAAAAAQgAAAAAAAAAAAAAAAAAF3cs
         <image name="social_message_act.png" width="42" height="42"/>
         <image name="social_twitter.png" width="42" height="42"/>
         <image name="social_twitter_act.png" width="42" height="42"/>
-        <image name="take_photo.png" width="20" height="13"/>
-        <image name="take_video.png" width="19" height="12"/>
         <image name="trash.png" width="16" height="20"/>
         <image name="uncheck.png" width="19" height="19"/>
         <image name="xicon.png" width="19" height="19"/>
@@ -8469,11 +8432,11 @@ Bd3JAAAAAAAABAEAAAAAAAAAQgAAAAAAAAAAAAAAAAAF3cs
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="t8Q-Mi-1Tt"/>
+        <segue reference="Zls-qO-0s8"/>
         <segue reference="xtB-tB-7KH"/>
+        <segue reference="t8Q-Mi-1Tt"/>
         <segue reference="tWG-45-OJb"/>
-        <segue reference="M8M-y8-RXx"/>
-        <segue reference="dit-gp-a6j"/>
         <segue reference="VxU-3R-aYF"/>
+        <segue reference="dit-gp-a6j"/>
     </inferredMetricsTieBreakers>
 </document>

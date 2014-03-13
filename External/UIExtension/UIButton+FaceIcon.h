@@ -13,4 +13,5 @@
 @property (nonatomic) int index;
 @property (nonatomic) CGRect originRect;
 @property (nonatomic, strong) UIImage *profileImage;
+@property (nonatomic, strong) UIImage *penTagonProfileImage;
 @end

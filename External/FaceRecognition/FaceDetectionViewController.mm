@@ -66,6 +66,15 @@ NSString *AngleDesc[10] = {
     @"중앙을 보시고 웃으세요."
 };
 
+CGRect DetectFaceTabs[6] = {
+    CGRectMake(195, 476, 65, 76),
+    CGRectMake(59, 476, 65, 76),
+    CGRectMake(162, 419, 65, 76),
+    CGRectMake(94, 419, 65, 76),
+    CGRectMake(227, 419, 65, 76),
+    CGRectMake(29, 419, 65, 76)
+};
+
 
 @interface FaceDetectionViewController ()
 <UIGestureRecognizerDelegate,
@@ -113,6 +122,8 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     NSMutableArray *selectedUsers;
     NSMutableArray *unSelectedUSers;
     
+    NSMutableArray *selectedUserButtons;
+    
     cv::Mat old_prepreprocessedFace;
     double old_time;
     
@@ -156,6 +167,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 - (IBAction)closeCamera:(id)sender;
 - (IBAction)snapStillImage:(id)sender;
 - (IBAction)startButtonHandler:(id)sender;
+- (IBAction)goAlbum:(id)sender;
 
 
 @end
@@ -196,6 +208,8 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     processing = @{}.mutableCopy;
     selectedUsers = [NSMutableArray array];
     unSelectedUSers = [NSMutableArray array];
+    selectedUserButtons = [NSMutableArray array];
+    
     
     guideImage = [UIImage imageNamed:@"focus"];//[UIImage imageNamed:@"hive_line"];
     
@@ -208,7 +222,9 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     
     if(self.faceMode == FaceModeCollect){
         self.navigationController.navigationBarHidden = YES;
-        [_CameraBottomView setHidden:YES];
+        [_snapButton setHidden:YES];
+        [_GalleryButton setHidden:YES];
+        
         //_timeLabel.hidden = YES;
 
         
@@ -253,7 +269,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
         [_nameLabel setTextAlignment:NSTextAlignmentCenter];
         
     } else {
-        
+        [_GalleryButton setHidden:YES];
         _DimmedView.hidden = YES;
         
         //[_closeButton setHidden:YES];
@@ -280,6 +296,9 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     
     UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapScreen:)];
     [self.view addGestureRecognizer:tapGestureRecognizer];
+    
+    
+    [self refreshAlbumIcon];
 }
 
 
@@ -319,6 +338,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     [self teardownAVCapture];
     [selectedUsers removeAllObjects];
     [unSelectedUSers removeAllObjects];
+    [selectedUserButtons removeAllObjects];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:MotionOrientationChangedNotification object:nil];
 }
 
@@ -557,10 +577,6 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     }
 }
 
-- (IBAction)goGallery:(id)sender {
-     self.navigationController.navigationBarHidden = NO;
-    [self performSegueWithIdentifier:SEGUE_6_1_TO_4_4 sender:self];
-}
 
 - (IBAction)snapStillImage:(id)sender
 {
@@ -597,6 +613,12 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
                      }];
 }
 
+- (IBAction)goAlbum:(id)sender {
+    self.navigationController.navigationBarHidden = NO;
+    [self performSegueWithIdentifier:@"Segue6_1to4_3" sender:self];
+
+}
+
 - (void)savePhoto:(NSURL *)assetURL users:(NSArray*)users
 {
     ALAssetsLibraryAssetForURLResultBlock resultBlock = ^(ALAsset *asset)
@@ -628,7 +650,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
         NSURL *assetURL = [asset valueForProperty:ALAssetPropertyAssetURL];
         GlobalValue.lastAssetURL = assetURL.absoluteString;
         
-        
+        [self refreshAlbumIcon];
     };
     
     ALAssetsLibraryAccessFailureBlock failureBlock  = ^(NSError *error)
@@ -642,6 +664,14 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 
 }
 
+- (void)refreshAlbumIcon
+{
+    [AssetLib loadThumbImage:^(UIImage *thumbImage)
+     {
+         [_GalleryButton setImage:thumbImage forState:UIControlStateNormal];
+     }];
+}
+
 - (void)switchCameraVideo:(id)sender {
 }
 
@@ -651,11 +681,6 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     [self performSegueWithIdentifier:SEGUE_6_1_TO_2_2 sender:self];
 }
 
-- (void)goAlbum
-{
-    self.navigationController.navigationBarHidden = NO;
-    [self performSegueWithIdentifier:@"Segue6_1to3_1" sender:self];
-}
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
@@ -679,53 +704,49 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 
 }
 
-- (void)addNewFaceIcon:(int)UserID
+- (void)addNewFaceButton:(int)UserID
 {
-    [_faceListScrollView setHidden:NO];
-    
-    int faceCount = (int)_faceListScrollView.subviews.count;
-    
-    // 동일 사용자 중복
-    for(UIView *view in _faceListScrollView.subviews){
-        if([view isKindOfClass:[UIButton class]]){
-            UIButton_FaceIcon *button = (UIButton_FaceIcon*)view;
-            if(button.UserID == UserID) return;
-        }
-    }
-    
-    UIImage *profileImage = [SQLManager getUserProfileImage:UserID];
 
+    int faceCount = (int)[selectedUsers count];
+    
+    //5개 까지만 허용
+    if(faceCount > 5) return;
+    
+    // 동일 사용자 중복 체크
+    if ([selectedUsers containsObject:@(UserID)]) return;
+
+    UIImage *profileImage = [SQLManager getUserProfileImage:UserID];
+    
     UIButton_FaceIcon* button = [UIButton_FaceIcon buttonWithType:UIButtonTypeCustom];
     [button addTarget:self action:@selector(imageTouch:withEvent:) forControlEvents:UIControlEventTouchDown];
     [button addTarget:self action:@selector(imageMoved:withEvent:) forControlEvents:UIControlEventTouchDragInside];
     [button addTarget:self action:@selector(imageEnd:withEvent:) forControlEvents:UIControlEventTouchUpInside];
+
+    [button setPenTagonProfileImage:profileImage];
     
-    [button setProfileImage:profileImage];
-    button.frame = CGRectMake(10+faceCount*60, 9.0f, 50.0f, 50.0f);
+    button.frame = DetectFaceTabs[faceCount];
+    
     button.UserID = UserID;
     button.index = faceCount;
     button.originRect = button.frame;
     
-    [_faceListScrollView addSubview:button];
+    [self.view addSubview:button];
 
     [selectedUsers addObject:@(UserID)];
+    [selectedUserButtons addObject:button];
     
     NSLog(@"ADD || selectedUsers = %@", selectedUsers);
     NSLog(@"facecount = %d / frame = %@",faceCount, NSStringFromCGRect(button.frame));
     
-    [_faceListScrollView setContentSize:CGSizeMake(10 + faceCount*60 + 50, 67.0)];
-//    [_faceListScrollView setContentOffset:button.frame.origin animated:YES];
-    
+    //[_faceListScrollView setContentSize:CGSizeMake(10 + faceCount*60 + 50, 67.0)];
 }
 
-//
 - (void) imageTouch:(id) sender withEvent:(UIEvent *) event
 {
-    if(_faceListScrollView.dragging || _faceListScrollView.decelerating) return;
-    
+
     CGPoint point = [[[event allTouches] anyObject] locationInView:self.view];
     UIButton_FaceIcon *button0 = (UIButton_FaceIcon*)sender;
-    [self.view addSubview:button0];
+ 
     button0.originRect = button0.frame;
     button0.center = point;
     
@@ -734,28 +755,10 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
         [button0 setImage:nil forState:UIControlStateNormal];
         [button0 setBackgroundImage:button0.profileImage forState:UIControlStateNormal];
     }];
-
-    int index = button0.index;
-    
-    // Face Icon 재정렬
-    for(UIView *view in _faceListScrollView.subviews){
-        if([view isKindOfClass:[UIButton class]]){
-            UIButton_FaceIcon *button = (UIButton_FaceIcon*)view;
-            if(button.index > index){
-                button.index = button.index - 1;
-                [UIView animateWithDuration:0.2 animations:^{
-                    button.frame = CGRectMake(10+button.index*60, 9.0f, 50.0f, 50.0f);
-                    button.originRect = button.frame;
-                }];
-            }
-        }
-    }
-    
 }
 
 - (void) imageMoved:(id)sender withEvent:(UIEvent *) event
 {
-    if(_faceListScrollView.dragging || _faceListScrollView.decelerating) return;
     
     CGPoint point = [[[event allTouches] anyObject] locationInView:self.view];
     UIControl *control = sender;
@@ -764,49 +767,178 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 
 - (void) imageEnd:(id) sender withEvent:(UIEvent *) event
 {
-    if(_faceListScrollView.dragging || _faceListScrollView.decelerating) return;
+ 
     
     CGPoint point = [[[event allTouches] anyObject] locationInView:self.view];
     
     UIButton_FaceIcon *button0 = (UIButton_FaceIcon*)sender;
-
-
-    if(!CGRectContainsPoint (_faceListScrollView.frame, point)){
+    
+    int index = button0.index;
+    
+    if(!CGRectContainsPoint (DetectFaceTabs[index], point)){
         NSLog(@"---------------Drag End Outside");
-        
-        [button0 removeFromSuperview];
         
         int userid = button0.UserID;
         
         [self exceptUSerFromTrainDB:userid];
+        [selectedUserButtons removeObject:button0];
         
+        [button0 removeFromSuperview];
         NSLog(@"REMOVE || selectedUsers = %@", selectedUsers);
         
-    
-    } else {
-        NSLog(@"---------------Drag End Inside");
-        
-        int index = button0.index;
-
-        for(UIView *view in _faceListScrollView.subviews){
-            if([view isKindOfClass:[UIButton class]]){
-                UIButton_FaceIcon *button = (UIButton_FaceIcon*)view;
-                if(button.index >= index){
-                    button.index = button.index + 1;
-                    [UIView animateWithDuration:0.2 animations:^{
-                        button.frame = CGRectMake(10+button.index*60, 9.0f, 50.0f, 50.0f);
-                        button.originRect = button.frame;
-                    }];
-                }
+        if(!IsEmpty(selectedUserButtons)){
+            NSInteger userButtonCount = [selectedUserButtons count];
+            for(NSInteger i = 0; i < userButtonCount; i++){
+                UIButton_FaceIcon *button1 = [selectedUserButtons objectAtIndex:i];
+                button1.frame = DetectFaceTabs[i];
             }
         }
         
-        button0.frame = CGRectMake(10+index*60, 9.0f, 50.0f, 50.0f);
-        [button0 setImage:button0.profileImage forState:UIControlStateNormal];
-        [button0 setBackgroundImage:nil forState:UIControlStateNormal];
-        [_faceListScrollView addSubview:button0];
+        
+        
+    } else {
+        NSLog(@"---------------Drag End Inside ==> TouchUpInside");
+        UIImage *profileImage = [SQLManager getUserProfileImage:button0.UserID];
+        button0.frame = DetectFaceTabs[index];
+        [button0 setPenTagonProfileImage:profileImage];
+        //[button0 setImage:profileImage forState:UIControlStateNormal];
+        //[button0 setBackgroundImage:nil forState:UIControlStateNormal];
+        //[self.view addSubview:button0];
+
+        
     }
 }
+
+
+//- (void)addNewFaceIcon:(int)UserID
+//{
+//    [_faceListScrollView setHidden:NO];
+//    
+//    int faceCount = (int)_faceListScrollView.subviews.count;
+//    
+//    // 동일 사용자 중복
+//    for(UIView *view in _faceListScrollView.subviews){
+//        if([view isKindOfClass:[UIButton class]]){
+//            UIButton_FaceIcon *button = (UIButton_FaceIcon*)view;
+//            if(button.UserID == UserID) return;
+//        }
+//    }
+//    
+//    UIImage *profileImage = [SQLManager getUserProfileImage:UserID];
+//
+//    UIButton_FaceIcon* button = [UIButton_FaceIcon buttonWithType:UIButtonTypeCustom];
+//    [button addTarget:self action:@selector(imageTouch:withEvent:) forControlEvents:UIControlEventTouchDown];
+//    [button addTarget:self action:@selector(imageMoved:withEvent:) forControlEvents:UIControlEventTouchDragInside];
+//    [button addTarget:self action:@selector(imageEnd:withEvent:) forControlEvents:UIControlEventTouchUpInside];
+//    
+//    //[button setProfileImage:profileImage];
+//    [button setPenTagonProfileImage:profileImage];
+//
+//    button.frame = CGRectMake(10+faceCount*60, 9.0f, 50.0f, 50.0f);
+//    button.UserID = UserID;
+//    button.index = faceCount;
+//    button.originRect = button.frame;
+//    
+//    [_faceListScrollView addSubview:button];
+//
+//    [selectedUsers addObject:@(UserID)];
+//    
+//    NSLog(@"ADD || selectedUsers = %@", selectedUsers);
+//    NSLog(@"facecount = %d / frame = %@",faceCount, NSStringFromCGRect(button.frame));
+//    
+//    [_faceListScrollView setContentSize:CGSizeMake(10 + faceCount*60 + 50, 67.0)];
+////    [_faceListScrollView setContentOffset:button.frame.origin animated:YES];
+//    
+//}
+
+//
+//- (void) imageTouch:(id) sender withEvent:(UIEvent *) event
+//{
+//    if(_faceListScrollView.dragging || _faceListScrollView.decelerating) return;
+//    
+//    CGPoint point = [[[event allTouches] anyObject] locationInView:self.view];
+//    UIButton_FaceIcon *button0 = (UIButton_FaceIcon*)sender;
+//    [self.view addSubview:button0];
+//    button0.originRect = button0.frame;
+//    button0.center = point;
+//    
+//    [UIView animateWithDuration:0.2 animations:^{
+//        button0.frame = CGRectMake(button0.frame.origin.x, button0.frame.origin.y - 50, 100, 100);
+//        [button0 setImage:nil forState:UIControlStateNormal];
+//        [button0 setBackgroundImage:button0.profileImage forState:UIControlStateNormal];
+//    }];
+//
+//    int index = button0.index;
+//    
+//    // Face Icon 재정렬
+//    for(UIView *view in _faceListScrollView.subviews){
+//        if([view isKindOfClass:[UIButton class]]){
+//            UIButton_FaceIcon *button = (UIButton_FaceIcon*)view;
+//            if(button.index > index){
+//                button.index = button.index - 1;
+//                [UIView animateWithDuration:0.2 animations:^{
+//                    button.frame = CGRectMake(10+button.index*60, 9.0f, 50.0f, 50.0f);
+//                    button.originRect = button.frame;
+//                }];
+//            }
+//        }
+//    }
+//    
+//}
+//
+//- (void) imageMoved:(id)sender withEvent:(UIEvent *) event
+//{
+//    if(_faceListScrollView.dragging || _faceListScrollView.decelerating) return;
+//    
+//    CGPoint point = [[[event allTouches] anyObject] locationInView:self.view];
+//    UIControl *control = sender;
+//    control.center = point;
+//}
+//
+//- (void) imageEnd:(id) sender withEvent:(UIEvent *) event
+//{
+//    if(_faceListScrollView.dragging || _faceListScrollView.decelerating) return;
+//    
+//    CGPoint point = [[[event allTouches] anyObject] locationInView:self.view];
+//    
+//    UIButton_FaceIcon *button0 = (UIButton_FaceIcon*)sender;
+//
+//    if(!CGRectContainsPoint (_faceListScrollView.frame, point)){
+//        NSLog(@"---------------Drag End Outside");
+//        
+//        [button0 removeFromSuperview];
+//        
+//        int userid = button0.UserID;
+//        
+//        [self exceptUSerFromTrainDB:userid];
+//        
+//        NSLog(@"REMOVE || selectedUsers = %@", selectedUsers);
+//        
+//    
+//    } else {
+//        NSLog(@"---------------Drag End Inside");
+//        
+//        int index = button0.index;
+//
+//        for(UIView *view in _faceListScrollView.subviews){
+//            if([view isKindOfClass:[UIButton class]]){
+//                UIButton_FaceIcon *button = (UIButton_FaceIcon*)view;
+//                if(button.index >= index){
+//                    button.index = button.index + 1;
+//                    [UIView animateWithDuration:0.2 animations:^{
+//                        button.frame = CGRectMake(10+button.index*60, 9.0f, 50.0f, 50.0f);
+//                        button.originRect = button.frame;
+//                    }];
+//                }
+//            }
+//        }
+//        
+//        button0.frame = CGRectMake(10+index*60, 9.0f, 50.0f, 50.0f);
+//        [button0 setImage:button0.profileImage forState:UIControlStateNormal];
+//        [button0 setBackgroundImage:nil forState:UIControlStateNormal];
+//        [_faceListScrollView addSubview:button0];
+//    }
+//}
 
 - (void)exceptUSerFromTrainDB:(int)userid
 {
@@ -1930,7 +2062,8 @@ bail:
         
         dispatch_async(dispatch_get_main_queue(), ^{
             if(isFindFace)
-                [self addNewFaceIcon:UserID];
+                //[self addNewFaceIcon:UserID];
+                [self addNewFaceButton:UserID];
             
         });
     }

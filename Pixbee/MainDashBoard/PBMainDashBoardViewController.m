@@ -124,7 +124,13 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
 
     [self reloadData];
     self.title = [NSString stringWithFormat:@"%d Faces", totalCellCount];
-    [self loadThumbImage];
+    
+    [AssetLib loadThumbImage:^(UIImage *thumbImage)
+    {
+        [_galleryButton setImage:thumbImage forState:UIControlStateNormal];
+    }];
+    
+
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -139,26 +145,26 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
 
 #pragma mark - UI Control methods
 
-- (void)loadThumbImage
-{
-    ALAssetsLibraryAssetForURLResultBlock resultBlock = ^(ALAsset *asset)
-    {
-        NSLog(@"This debug string was logged after this function was done");
-        UIImage *image = [UIImage imageWithCGImage:[asset thumbnail]];
-
-        [_galleryButton setImage:image forState:UIControlStateNormal];
-        //[[SDImageCache sharedImageCache] storeImage:image forKey:imagePath toDisk:NO];
-    };
-    
-    ALAssetsLibraryAccessFailureBlock failureBlock  = ^(NSError *error)
-    {
-        NSLog(@"Unresolved error: %@, %@", error, [error localizedDescription]);
-    };
-    
-    [AssetLib.assetsLibrary assetForURL:[NSURL URLWithString:GlobalValue.lastAssetURL]
-                            resultBlock:resultBlock
-                           failureBlock:failureBlock];
-}
+//- (void)loadThumbImage
+//{
+//    ALAssetsLibraryAssetForURLResultBlock resultBlock = ^(ALAsset *asset)
+//    {
+//        NSLog(@"This debug string was logged after this function was done");
+//        UIImage *image = [UIImage imageWithCGImage:[asset thumbnail]];
+//
+//        [_galleryButton setImage:image forState:UIControlStateNormal];
+//        //[[SDImageCache sharedImageCache] storeImage:image forKey:imagePath toDisk:NO];
+//    };
+//    
+//    ALAssetsLibraryAccessFailureBlock failureBlock  = ^(NSError *error)
+//    {
+//        NSLog(@"Unresolved error: %@, %@", error, [error localizedDescription]);
+//    };
+//    
+//    [AssetLib.assetsLibrary assetForURL:[NSURL URLWithString:GlobalValue.lastAssetURL]
+//                            resultBlock:resultBlock
+//                           failureBlock:failureBlock];
+//}
 
 - (void)showToolBar:(BOOL)show
 {
