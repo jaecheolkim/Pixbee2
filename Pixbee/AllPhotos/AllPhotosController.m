@@ -264,6 +264,7 @@
 - (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath
 {
     UICollectionReusableView *reusableview = nil;
+
     
     if (kind == UICollectionElementKindSectionHeader) {
         GalleryHeaderView *headerView = [collectionView dequeueReusableSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:@"GalleryHeaderView" forIndexPath:indexPath];
@@ -538,7 +539,7 @@
         
         reusableview = footerview;
     }
-    
+
     return reusableview;
 }
 

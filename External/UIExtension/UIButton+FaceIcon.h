@@ -12,6 +12,10 @@
 @property (nonatomic) int UserID;
 @property (nonatomic) int index;
 @property (nonatomic) CGRect originRect;
+@property (nonatomic) BOOL choice;
 @property (nonatomic, strong) UIImage *profileImage;
 @property (nonatomic, strong) UIImage *penTagonProfileImage;
+
+//- (void)setPenTagonProfileImage:(UIImage *)penTagonProfileImage selected:(BOOL)selected;
+
 @end

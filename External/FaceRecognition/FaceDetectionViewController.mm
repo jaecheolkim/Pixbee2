@@ -721,8 +721,9 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     [button addTarget:self action:@selector(imageTouch:withEvent:) forControlEvents:UIControlEventTouchDown];
     [button addTarget:self action:@selector(imageMoved:withEvent:) forControlEvents:UIControlEventTouchDragInside];
     [button addTarget:self action:@selector(imageEnd:withEvent:) forControlEvents:UIControlEventTouchUpInside];
-
+    button.choice = NO;
     [button setPenTagonProfileImage:profileImage];
+    
     
     button.frame = DetectFaceTabs[faceCount];
     
@@ -800,7 +801,11 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
         NSLog(@"---------------Drag End Inside ==> TouchUpInside");
         UIImage *profileImage = [SQLManager getUserProfileImage:button0.UserID];
         button0.frame = DetectFaceTabs[index];
+        
+        button0.choice = !button0.choice;
+        
         [button0 setPenTagonProfileImage:profileImage];
+        
         //[button0 setImage:profileImage forState:UIControlStateNormal];
         //[button0 setBackgroundImage:nil forState:UIControlStateNormal];
         //[self.view addSubview:button0];

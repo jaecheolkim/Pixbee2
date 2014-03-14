@@ -74,7 +74,7 @@
     }
     
     
-    lastImage = [lastImage applyLightEffect];
+    lastImage = [lastImage applyExtraLightEffect];
     _bgImageView.image = lastImage;
 
 }
