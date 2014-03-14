@@ -276,7 +276,9 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
 
 - (void)goMainView{
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    UIViewController *rootViewController = [storyboard instantiateViewControllerWithIdentifier:@"NavigationController"];
+    //UIViewController *rootViewController = [storyboard instantiateViewControllerWithIdentifier:@"NavigationController"];
+    UIViewController *rootViewController = [storyboard instantiateViewControllerWithIdentifier:@"rootController"];
+    
     self.window.rootViewController = rootViewController;
 }
 

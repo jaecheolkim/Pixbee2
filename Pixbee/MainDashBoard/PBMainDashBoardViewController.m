@@ -443,9 +443,11 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
 
 //Settung Button
 - (IBAction)leftBarButtonHandler:(id)sender {
-    [self performSegueWithIdentifier:@"Segue3_1toSetting" sender:self];
+//    [self performSegueWithIdentifier:@"Segue3_1toSetting" sender:self];
+//    
+//    NSLog(@"clicked leftBarButtonHandler");
     
-    NSLog(@"clicked leftBarButtonHandler");
+    [self.sideMenuViewController presentMenuViewController];
 }
 
 //Edit Button

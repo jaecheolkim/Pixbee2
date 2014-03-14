@@ -41,7 +41,7 @@
     
     int currentUserID;
 }
-@property (nonatomic, retain) APNavigationController *navController;
+//@property (nonatomic, retain) APNavigationController *navController;
 @property (strong, nonatomic) IBOutlet UICollectionView *collectionView;
 @property (strong, nonatomic) UIActivityViewController *activityController;
 @property (strong, nonatomic) IBOutlet ALLPhotosView *allPhotosView;
@@ -68,6 +68,9 @@
 
 - (IBAction)closeFaceTabButtonHandler:(id)sender;
 
+- (IBAction)shwMenu:(id)sender;
+
+
 @end
 
 @implementation AllPhotosController
@@ -89,17 +92,17 @@
 {
     [super viewDidLoad];
     
-    self.navController = (APNavigationController*)self.navigationController;
-    self.navController.activeNavigationBarTitle = @"FaceTab";
-    self.navController.activeBarButtonTitle = @"Hide";
+//    self.navController = (APNavigationController*)self.navigationController;
+//    self.navController.activeNavigationBarTitle = @"FaceTab";
+//    self.navController.activeBarButtonTitle = @"Hide";
 
-    _buttonNew = [[UIBarButtonItem alloc] initWithTitle:@"New" style:UIBarButtonItemStylePlain target:self action:@selector(newFaceTab)];
-    
-    _buttonAdd = [[UIBarButtonItem alloc] initWithTitle:@"Add" style:UIBarButtonItemStylePlain target:self action:@selector(addFaceTab)];
-    
-    self.navController.toolbar.items = ({
-        @[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil],_buttonAdd, _buttonNew];
-    });
+//    _buttonNew = [[UIBarButtonItem alloc] initWithTitle:@"New" style:UIBarButtonItemStylePlain target:self action:@selector(newFaceTab)];
+//    
+//    _buttonAdd = [[UIBarButtonItem alloc] initWithTitle:@"Add" style:UIBarButtonItemStylePlain target:self action:@selector(addFaceTab)];
+//    
+//    self.navController.toolbar.items = ({
+//        @[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil],_buttonAdd, _buttonNew];
+//    });
     
 //    [self setNeedsStatusBarAppearanceUpdate];
     
@@ -129,7 +132,7 @@
     
     [self initialNotification];
     
-    self.title = @"ALL PHOTO";
+    //self.title = @"Un FaceTab"; //@"ALL PHOTO";
     
     _shareButton.enabled = NO;
     
@@ -684,7 +687,7 @@
                              self.navigationItem.title = [NSString stringWithFormat:@"%d Photo Selected", selectcount];
                          }
                          else {
-                             self.navigationItem.title = @"All Photos";
+                             self.navigationItem.title = @"Un FaceTab"; //@"All Photos";
                          }
                      }
                      completion:^(BOOL finished){
@@ -848,6 +851,10 @@
     [self showStackImages:NO];
     [self showFaceTabBar:NO];
 
+}
+
+- (IBAction)shwMenu:(id)sender {
+    [self.sideMenuViewController presentMenuViewController];
 }
 
 
@@ -1481,17 +1488,17 @@
 
 }
 
-- (void)addFaceTab
-{
-    [self toggleEdit];
-    [self.navController toggleToolbar:_doneButton];
-}
-
-- (void)newFaceTab
-{
-    [self toggleEdit];
-    [self.navController toggleToolbar:_doneButton];
-}
+//- (void)addFaceTab
+//{
+//    [self toggleEdit];
+//    [self.navController toggleToolbar:_doneButton];
+//}
+//
+//- (void)newFaceTab
+//{
+//    [self toggleEdit];
+//    [self.navController toggleToolbar:_doneButton];
+//}
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {

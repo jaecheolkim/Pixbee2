@@ -175,9 +175,34 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 @implementation FaceDetectionViewController
 
 
+
+
+
+// Add this Method
+- (BOOL)prefersStatusBarHidden {
+    return YES;
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    NSLog(@"SegueFrom = %@", _segueid);
+    
+    if(_segueid == nil){
+        //viewDidload
+        if ([self respondsToSelector:@selector(setNeedsStatusBarAppearanceUpdate)]) {
+            // iOS 7
+            [self prefersStatusBarHidden];
+            [self performSelector:@selector(setNeedsStatusBarAppearanceUpdate)];
+        } else {
+            // iOS 6
+            [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
+        }
+
+    }
+    
+    
     isStart = NO;
     
     _topView.backgroundColor = [UIColor clearColor];
@@ -305,9 +330,12 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 
 
 
-- (BOOL)prefersStatusBarHidden {
-    return YES;
-}
+
+//
+//- (UIViewController *)childViewControllerForStatusBarHidden {
+//    return nil;
+//}
+
 
 
 - (void)viewWillAppear:(BOOL)animated
@@ -327,7 +355,9 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 {
     [super viewDidAppear:animated];
     isReadyToScanFace = YES;
+    
 }
+
 
 
 
@@ -558,24 +588,35 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     isFeedingSafe = YES;
 }
 
+
 - (IBAction)closeCamera:(id)sender
 {
-    //[self teardownAVCapture];
+    [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationNone];
+    self.navigationController.navigationBarHidden = NO;
     
-    if(self.faceMode == FaceModeCollect && [_segueid isEqualToString:SEGUE_FACEANALYZE])
-    {
-        [self goNext];
-        
-    } else {
-        if([_segueid isEqualToString:SEGUE_3_1_TO_6_1]) {
-            // Check face DB
-        }
-        
-        self.navigationController.navigationBarHidden = NO;
-        [self.navigationController popViewControllerAnimated:YES];
-        //[self dismissViewControllerAnimated:YES completion:nil];
-    }
+    [self.sideMenuViewController presentMenuViewController];
+    
 }
+
+
+//- (IBAction)closeCamera:(id)sender
+//{
+//    //[self teardownAVCapture];
+//    
+//    if(self.faceMode == FaceModeCollect && [_segueid isEqualToString:SEGUE_FACEANALYZE])
+//    {
+//        [self goNext];
+//        
+//    } else {
+//        if([_segueid isEqualToString:SEGUE_3_1_TO_6_1]) {
+//            // Check face DB
+//        }
+//        
+//        self.navigationController.navigationBarHidden = NO;
+//        [self.navigationController popViewControllerAnimated:YES];
+//        //[self dismissViewControllerAnimated:YES completion:nil];
+//    }
+//}
 
 
 - (IBAction)snapStillImage:(id)sender

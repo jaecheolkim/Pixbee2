@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface PBCommonNavigationController : UINavigationController
+@interface PBNavigationController : UINavigationController
 
 @end

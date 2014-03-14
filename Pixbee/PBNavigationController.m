@@ -6,13 +6,13 @@
 //  Copyright (c) 2014 Pixbee. All rights reserved.
 //
 
-#import "PBCommonNavigationController.h"
+#import "PBNavigationController.h"
 
-@interface PBCommonNavigationController ()
+@interface PBNavigationController ()
 
 @end
 
-@implementation PBCommonNavigationController
+@implementation PBNavigationController
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -40,6 +40,7 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+
 
 /*
 #pragma mark - Navigation
