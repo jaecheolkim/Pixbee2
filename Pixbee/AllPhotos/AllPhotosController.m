@@ -59,6 +59,7 @@
 @property (strong, nonatomic) UIBarButtonItem *buttonNew;
 @property (strong, nonatomic) UIBarButtonItem *buttonAdd;
 
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *menuButton;
 
 @property (weak, nonatomic) IBOutlet UIButton *stackImages;
 
@@ -1499,6 +1500,7 @@
         [[NSNotificationCenter defaultCenter] postNotificationName:@"RootViewControllerEventHandler"
                                                             object:self
                                                           userInfo:@{@"panGestureEnabled":@"NO"}];
+        _menuButton.enabled = NO;
         
     }
     else {
@@ -1506,6 +1508,7 @@
         [[NSNotificationCenter defaultCenter] postNotificationName:@"RootViewControllerEventHandler"
                                                             object:self
                                                           userInfo:@{@"panGestureEnabled":@"YES"}];
+        _menuButton.enabled = YES;
         
         [self showStackImages:NO];
         [self showFaceTabBar:NO];

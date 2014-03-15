@@ -148,7 +148,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="192" height="28"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="321F7F23-BA28-486C-8B12-6F678CFA408E" translatesAutoresizingMaskIntoConstraints="NO" id="6aK-Ak-lFj">
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="31E6F7C4-922C-43BF-993A-CC4EC40EA497" translatesAutoresizingMaskIntoConstraints="NO" id="6aK-Ak-lFj">
                                                     <rect key="frame" x="0.0" y="0.0" width="28" height="29"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
@@ -485,6 +485,7 @@
                         <outlet property="doneButton" destination="zFy-oG-3T3" id="dVc-6E-AV4"/>
                         <outlet property="faceTabListBar" destination="IWO-CM-EbJ" id="4Fm-u8-Alg"/>
                         <outlet property="faceTabScrollView" destination="toO-HT-dwQ" id="adB-TX-OoG"/>
+                        <outlet property="menuButton" destination="l1y-X7-Xex" id="hxN-75-zaf"/>
                         <outlet property="shareButton" destination="mfQ-tq-A4f" id="Cip-iR-fYl"/>
                         <outlet property="stackImages" destination="fUA-03-oaN" id="pYB-GI-4Eg"/>
                         <outlet property="toolbar" destination="fFj-ev-h8l" id="x0A-QW-Qfm"/>
@@ -1383,7 +1384,7 @@
         </scene>
     </scenes>
     <resources>
-        <image name="321F7F23-BA28-486C-8B12-6F678CFA408E" width="628" height="152">
+        <image name="31E6F7C4-922C-43BF-993A-CC4EC40EA497" width="628" height="152">
             <mutableData key="keyedArchiveRepresentation">
 YnBsaXN0MDDUAQIDBAUGPj9YJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoK4HCBMU
 GR4fIyQsLzI4O1UkbnVsbNUJCgsMDQ4PEBESVk5TU2l6ZVYkY2xhc3NcTlNJbWFnZUZsYWdzVk5TUmVw

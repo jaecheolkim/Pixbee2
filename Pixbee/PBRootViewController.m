@@ -28,7 +28,7 @@
     
     self.panGestureEnabled = YES;
     self.backgroundImage = [UIImage imageNamed:@"MenuBackground"];
-    self.panFromEdge = NO; //왼쪽 가장자리에서만 스와이핑시 메뉴 열리게
+    self.panFromEdge = YES; //왼쪽 가장자리에서만 스와이핑시 메뉴 열리게
     self.scaleContentView = YES; // 메뉴 열릴때 오른쪽 뷰 사이즈 변경하게
     self.animationDuration = 0.2;
     

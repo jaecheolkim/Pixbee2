@@ -462,6 +462,7 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
         [[NSNotificationCenter defaultCenter] postNotificationName:@"RootViewControllerEventHandler"
                                                             object:self
                                                           userInfo:@{@"panGestureEnabled":@"NO"}];
+        _leftBarButton.enabled = NO;
         
     }
     else {
@@ -469,6 +470,8 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
         [[NSNotificationCenter defaultCenter] postNotificationName:@"RootViewControllerEventHandler"
                                                             object:self
                                                           userInfo:@{@"panGestureEnabled":@"YES"}];
+        
+        _leftBarButton.enabled = YES;
         
         
         [selectedPhotos removeAllObjects];
