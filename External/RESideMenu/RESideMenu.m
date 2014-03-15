@@ -28,6 +28,9 @@
 #import "RECommonFunctions.h"
 
 @interface RESideMenu ()
+{
+    UIPanGestureRecognizer *panGestureRecognizer;
+}
 
 @property (strong, readwrite, nonatomic) UIImageView *backgroundImageView;
 @property (assign, readwrite, nonatomic) BOOL visible;
@@ -126,11 +129,11 @@
     
     [self addMenuViewControllerMotionEffects];
     
-    if (self.panGestureEnabled) {
-        UIPanGestureRecognizer *panGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGestureRecognized:)];
-        panGestureRecognizer.delegate = self;
-        [self.view addGestureRecognizer:panGestureRecognizer];
-    }
+//    if (self.panGestureEnabled) {
+//        UIPanGestureRecognizer *panGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGestureRecognized:)];
+//        panGestureRecognizer.delegate = self;
+//        [self.view addGestureRecognizer:panGestureRecognizer];
+//    }
     
     if (self.contentViewShadowEnabled) {
         CALayer *layer = self.contentViewController.view.layer;
@@ -164,6 +167,19 @@
 }
 
 #pragma mark -
+
+- (void)setPanGestureEnabled:(BOOL)panGestureEnabled
+{
+    if(panGestureEnabled) {
+        panGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGestureRecognized:)];
+        panGestureRecognizer.delegate = self;
+        [self.view addGestureRecognizer:panGestureRecognizer];
+    } else {
+        [self.view removeGestureRecognizer:panGestureRecognizer];
+        panGestureRecognizer.delegate = nil;
+        panGestureRecognizer = nil;
+    }
+}
 
 - (void)presentMenuViewController
 {
@@ -334,12 +350,14 @@
 
 - (void)panGestureRecognized:(UIPanGestureRecognizer *)recognizer
 {
-    if ([self.delegate conformsToProtocol:@protocol(RESideMenuDelegate)] && [self.delegate respondsToSelector:@selector(sideMenu:didRecognizePanGesture:)])
-        [self.delegate sideMenu:self didRecognizePanGesture:recognizer];
-    
     if (!self.panGestureEnabled) {
         return;
     }
+    
+    if ([self.delegate conformsToProtocol:@protocol(RESideMenuDelegate)] && [self.delegate respondsToSelector:@selector(sideMenu:didRecognizePanGesture:)])
+        [self.delegate sideMenu:self didRecognizePanGesture:recognizer];
+    
+
     
     CGPoint point = [recognizer translationInView:self.view];
     

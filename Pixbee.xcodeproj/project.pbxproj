@@ -229,6 +229,7 @@
 		8065CCB8189BC9BB00E37716 /* PBSettingTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8065CCB7189BC9BB00E37716 /* PBSettingTableViewController.m */; };
 		8065CCC3189C00E500E37716 /* RFRateMe.m in Sources */ = {isa = PBXBuildFile; fileRef = 8065CCC0189C00E500E37716 /* RFRateMe.m */; };
 		8065CCC4189C00E500E37716 /* UIAlertView+NSCookbook.m in Sources */ = {isa = PBXBuildFile; fileRef = 8065CCC2189C00E500E37716 /* UIAlertView+NSCookbook.m */; };
+		80757D7518D4491E00B90EC0 /* PBNavigationBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 80757D7418D4491E00B90EC0 /* PBNavigationBar.m */; };
 		807DD91E18B9093A003EBF30 /* Default_Intro.png in Resources */ = {isa = PBXBuildFile; fileRef = 807DD91C18B9093A003EBF30 /* Default_Intro.png */; };
 		807DD91F18B9093A003EBF30 /* Login_Page.png in Resources */ = {isa = PBXBuildFile; fileRef = 807DD91D18B9093A003EBF30 /* Login_Page.png */; };
 		807DD92818BAFDB8003EBF30 /* RMDownloadIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 807DD92718BAFDB8003EBF30 /* RMDownloadIndicator.m */; };
@@ -751,6 +752,8 @@
 		8065CCC0189C00E500E37716 /* RFRateMe.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RFRateMe.m; sourceTree = "<group>"; };
 		8065CCC1189C00E500E37716 /* UIAlertView+NSCookbook.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIAlertView+NSCookbook.h"; sourceTree = "<group>"; };
 		8065CCC2189C00E500E37716 /* UIAlertView+NSCookbook.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIAlertView+NSCookbook.m"; sourceTree = "<group>"; };
+		80757D7318D4491E00B90EC0 /* PBNavigationBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBNavigationBar.h; sourceTree = "<group>"; };
+		80757D7418D4491E00B90EC0 /* PBNavigationBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBNavigationBar.m; sourceTree = "<group>"; };
 		807DD91C18B9093A003EBF30 /* Default_Intro.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default_Intro.png; sourceTree = "<group>"; };
 		807DD91D18B9093A003EBF30 /* Login_Page.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Login_Page.png; sourceTree = "<group>"; };
 		807DD92618BAFDB8003EBF30 /* RMDownloadIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMDownloadIndicator.h; sourceTree = "<group>"; };
@@ -1250,16 +1253,18 @@
 				69ED32F218484EBB00127196 /* PBViewController.mm */,
 				80E2D82F18BDD7E3000924AE /* PBNavigationController.h */,
 				80E2D83018BDD7E3000924AE /* PBNavigationController.m */,
+				80757D7318D4491E00B90EC0 /* PBNavigationBar.h */,
+				80757D7418D4491E00B90EC0 /* PBNavigationBar.m */,
 				80F17AE71898E0E100EBD0C8 /* PBCommonViewController.h */,
 				80F17AE81898E0E100EBD0C8 /* PBCommonViewController.m */,
-				80A8AB4618D2F86000D82EE5 /* DEMOFirstViewController.h */,
-				80A8AB4718D2F86000D82EE5 /* DEMOFirstViewController.m */,
 				80A8AB4818D2F86000D82EE5 /* PBMenuViewController.h */,
 				80A8AB4918D2F86000D82EE5 /* PBMenuViewController.m */,
 				80A8AB4A18D2F86000D82EE5 /* PBRootViewController.h */,
 				80A8AB4B18D2F86000D82EE5 /* PBRootViewController.m */,
 				80A8AB4C18D2F86000D82EE5 /* DEMOSecondViewController.h */,
 				80A8AB4D18D2F86000D82EE5 /* DEMOSecondViewController.m */,
+				80A8AB4618D2F86000D82EE5 /* DEMOFirstViewController.h */,
+				80A8AB4718D2F86000D82EE5 /* DEMOFirstViewController.m */,
 				69ED32F418484EBB00127196 /* Images.xcassets */,
 				69ED32E318484EBB00127196 /* Supporting Files */,
 				78685D591848F617002D2BAA /* PBDefine.h */,
@@ -2496,6 +2501,7 @@
 				69ED32ED18484EBB00127196 /* PBAppDelegate.m in Sources */,
 				7805A63F18658BA000B234C1 /* IDMCaptionView.m in Sources */,
 				80D2A119184A1E58008D29B2 /* ALAssetAdapter.m in Sources */,
+				80757D7518D4491E00B90EC0 /* PBNavigationBar.m in Sources */,
 				805CA40A18AC99D400764FE1 /* UIView+Screenshot.m in Sources */,
 				80A8AB4F18D2F86000D82EE5 /* PBMenuViewController.m in Sources */,
 				69C39FE318606CBD001EDDFA /* NSData+GIF.m in Sources */,

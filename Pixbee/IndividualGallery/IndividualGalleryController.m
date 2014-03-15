@@ -76,7 +76,7 @@ UserCellDelegate, GalleryViewCellDelegate>
 //    self.navigationController.navigationBar.alpha = 0.7;
     
     
-    [self refreshNavigationBarColor:nil];
+    //[self refreshNavigationBarColor:nil];
     
 //    NSArray *ver = [[UIDevice currentDevice].systemVersion componentsSeparatedByString:@"."];
 //    if ([[ver objectAtIndex:0] intValue] >= 7) {
@@ -676,11 +676,19 @@ UserCellDelegate, GalleryViewCellDelegate>
     EDIT_MODE = !EDIT_MODE;
     
     if(EDIT_MODE){
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"RootViewControllerEventHandler"
+                                                            object:self
+                                                          userInfo:@{@"panGestureEnabled":@"NO"}];
+        
         self.navigationItem.rightBarButtonItem.image = nil;
         self.navigationItem.rightBarButtonItem.title = @"Cancel";
         
     }
     else {
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"RootViewControllerEventHandler"
+                                                            object:self
+                                                          userInfo:@{@"panGestureEnabled":@"YES"}];
+        
         [selectedPhotos removeAllObjects];
         self.navigationItem.rightBarButtonItem.title = nil;
         self.navigationItem.rightBarButtonItem.image = [UIImage imageNamed:@"edit"];

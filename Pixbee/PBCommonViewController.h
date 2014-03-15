@@ -14,7 +14,7 @@
 @property (weak, nonatomic) UITextField *inputTextField;
 
 - (void)refreshBGImage:(UIImage*)image;
-- (void)refreshNavigationBarColor:(UIColor*)color;
+//- (void)refreshNavigationBarColor:(UIColor*)color;
 - (UIImageView *)getSnapShot;
 
 

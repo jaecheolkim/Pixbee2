@@ -1112,43 +1112,72 @@
         CGFloat deltaX = ((point.x - lastTouchPoint.x) / [_stackImages bounds].size.width) * [_faceTabScrollView contentSize].width;
         CGPoint newContentOffset = CGPointMake(CLAMP(contentOffset.x + deltaX, 0, contentSize.width - frameWidth), contentOffset.y);
         
-        [_faceTabScrollView setContentOffset:newContentOffset animated:NO];
+        NSLog(@"deltaX = %f / newContentOffset = %@", deltaX, NSStringFromCGPoint(newContentOffset));
         
         lastTouchPoint = point;
         
         
-        //NSInteger cellCount = 0;
+        if(TRUE) //newContentOffset.x >= 0 &&  newContentOffset.x < contentSize.width)
+        {
+            NSInteger subViewCount = [_faceTabScrollView.subviews count] - 1;
+            if(subViewCount > 3) {
+                [_faceTabScrollView setContentOffset:newContentOffset animated:NO];
+            }
+            
+            
+            
+//            lastTouchPoint = point;
+            
+            
+            //NSInteger cellCount = 0;
 #warning 왜 subViewCount가 1개 더 붙는지 모르겠다...
-        
-        NSInteger subViewCount = [_faceTabScrollView.subviews count] - 1;
-        
-        for(NSInteger i = 0; i < subViewCount; i++){
-        //for(UIView *cell in _faceTabScrollView.subviews){
-            UIButton_FaceIcon *cell = (UIButton_FaceIcon *)[_faceTabScrollView.subviews objectAtIndex:i];
-            NSString *cellRect = [scrollViewCellFrames objectAtIndex:i];
-            cell.frame = CGRectFromString(cellRect);
-            //cellCount++;
+            
+            //NSInteger subViewCount = [_faceTabScrollView.subviews count] - 1;
+            
+            for(NSInteger i = 0; i < subViewCount; i++){
+                //for(UIView *cell in _faceTabScrollView.subviews){
+                UIButton_FaceIcon *cell = (UIButton_FaceIcon *)[_faceTabScrollView.subviews objectAtIndex:i];
+                NSString *cellRect = [scrollViewCellFrames objectAtIndex:i];
+                cell.frame = CGRectFromString(cellRect);
+                //cellCount++;
+            }
+            
+            int currentPosition = round((point.x +  newContentOffset.x )/ 96.0);
+            NSLog(@"CurrentPosition = %d", currentPosition);
+            
+            if(currentPosition > 0 && currentPosition < subViewCount)
+            {
+                id cellObject = [_faceTabScrollView.subviews objectAtIndex:currentPosition];
+                
+                if([NSStringFromClass([cellObject class]) isEqualToString:@"UIButton_FaceIcon"])
+                {
+                    UIButton_FaceIcon *cell = (UIButton_FaceIcon *)cellObject;
+                    CGPoint cellCenter = cell.center;
+                    CGRect cellFrame = cell.frame;
+                    cell.frame = CGRectMake(cellFrame.origin.x, cellFrame.origin.y, cellFrame.size.width * 1.18, cellFrame.size.height * 1.18);
+                    cell.center = cellCenter;
+                    
+                    currentUserID = cell.UserID;
+                } else {
+                    return;
+                }
+                
+                NSLog(@"newContentOffset = %@ / currentPosition = %d / userID = %d", NSStringFromCGPoint(newContentOffset), currentPosition, currentUserID);
+            }
+            
+
+            
         }
+ 
         
-        int currentPosition = round((point.x +  newContentOffset.x )/ 96.0);
-       
-        
-        
-        
-        UIButton_FaceIcon *cell = (UIButton_FaceIcon *)[_faceTabScrollView.subviews objectAtIndex:currentPosition];
-        CGPoint cellCenter = cell.center;
-        CGRect cellFrame = cell.frame;
-        cell.frame = CGRectMake(cellFrame.origin.x, cellFrame.origin.y, cellFrame.size.width * 1.18, cellFrame.size.height * 1.18);
-        cell.center = cellCenter;
-        
-        currentUserID = cell.UserID;
-         NSLog(@"newContentOffset = %@ / currentPosition = %d / userID = %d", NSStringFromCGPoint(newContentOffset), currentPosition, currentUserID);
     }
 
 }
 
 - (void) imageEnd:(id) sender withEvent:(UIEvent *) event
 {
+    //if(_faceTabScrollView.dragging || _faceTabScrollView.decelerating) return;
+    
     lastTouchPoint = CGPointZero;
     CGPoint point = [[[event allTouches] anyObject] locationInView:self.view];
     if(CGRectContainsPoint (_faceTabListBar.frame, point))
@@ -1165,7 +1194,7 @@
     }
 
     
-    //if(_faceListScrollView.dragging || _faceListScrollView.decelerating) return;
+   
     
     
     
@@ -1467,8 +1496,17 @@
         self.navigationItem.rightBarButtonItem.image = nil;
         self.navigationItem.rightBarButtonItem.title = @"Cancel";
         
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"RootViewControllerEventHandler"
+                                                            object:self
+                                                          userInfo:@{@"panGestureEnabled":@"NO"}];
+        
     }
     else {
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"RootViewControllerEventHandler"
+                                                            object:self
+                                                          userInfo:@{@"panGestureEnabled":@"YES"}];
+        
         [self showStackImages:NO];
         [self showFaceTabBar:NO];
 

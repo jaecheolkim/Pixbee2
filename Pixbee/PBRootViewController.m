@@ -9,6 +9,9 @@
 
 #import "PBRootViewController.h"
 #import "PBMenuViewController.h"
+#import "PBNavigationBar.h"
+
+#import "FaceDetectionViewController.h"
 
 @interface PBRootViewController ()
 
@@ -16,14 +19,24 @@
 
 @implementation PBRootViewController
 
+
 - (void)awakeFromNib
 {
     self.contentViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"contentController"];
     self.menuViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"menuController"];
-    self.backgroundImage = [UIImage imageNamed:@"MenuBackground"];
     self.delegate = (PBMenuViewController *)self.menuViewController;
     
+    self.panGestureEnabled = YES;
+    self.backgroundImage = [UIImage imageNamed:@"MenuBackground"];
+    self.panFromEdge = NO; //왼쪽 가장자리에서만 스와이핑시 메뉴 열리게
+    self.scaleContentView = YES; // 메뉴 열릴때 오른쪽 뷰 사이즈 변경하게
+    self.animationDuration = 0.2;
+    
     [AssetLib checkNewPhoto];
+    
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(RootViewControllerEventHandler:)
+												 name:@"RootViewControllerEventHandler" object:nil];
     
 }
 
@@ -68,5 +81,81 @@
 }
 
 
+- (void)viewDidLayoutSubviews
+{
+    [super viewDidLayoutSubviews];
+    
+    PBMenuViewController *menuController = (PBMenuViewController *)self.menuViewController;
+    if(!menuController.willViewed)
+    {
+    
+        UINavigationController *navigationController = (UINavigationController *)self.contentViewController;
+        
+        NSString *navBarClassName = NSStringFromClass([navigationController.navigationBar class]);
+        
+        NSArray *viewControllers = navigationController.viewControllers;
+        UIViewController *viewContorller = viewControllers[0];
+        
+        NSString *viewControllerName =  NSStringFromClass([viewContorller class]);
+        NSLog(@"ViewController Class = %@",viewControllerName);
+        NSLog(@"NavigationBar Class = %@", NSStringFromClass([navigationController.navigationBar class]));
+        
+        if([navBarClassName isEqualToString:@"PBNavigationBar"]){
+            
+            PBNavigationBar *navigationBar = (PBNavigationBar *)navigationController.navigationBar;
+
+            UIColor *color = [UIColor colorWithRed:0.0f green:0.0f blue:90.0f/255.0f alpha:1];
+            
+            if([viewControllerName isEqualToString:@"PBMainDashBoardViewController"]) {
+                color = nil;//[UIColor colorWithRed:255.0f/255.0f green:255.0f/255.0f blue:255.0f/255.0f alpha:0.7];
+            }
+            if([viewControllerName isEqualToString:@"AllPhotosController"]) {
+                color = [UIColor colorWithRed:90.0f/255.0f green:0.0f blue:90.0f/255.0f alpha:1];
+            }
+            if([viewControllerName isEqualToString:@"FaceDetectionViewController"]) {
+                color = [UIColor colorWithRed:0.0f green:90.0f/255.0f blue:90.0f/255.0f alpha:1];
+                
+                FaceDetectionViewController *cameraContorller = (FaceDetectionViewController *)viewControllers[0];
+                cameraContorller.segueid = @"FromMenu";
+                
+            }
+            if([viewControllerName isEqualToString:@"PBSettingTableViewController"]) {
+                color = [UIColor colorWithRed:90.0f/255.0f green:0.0f blue:0.0f alpha:1];
+            }
+            
+            [navigationBar setBarTintColor:color];
+
+            
+
+            if([viewControllerName isEqualToString:@"PBMainDashBoardViewController"]) {
+                [navigationBar setBackgroundImage:[UIImage new] forBarMetrics:UIBarMetricsDefault];
+                navigationBar.shadowImage = [UIImage new];
+                navigationBar.translucent = YES;
+            } else {
+                navigationBar.translucent = YES;
+            }
+
+
+
+        }
+    }
+}
+
+
+
+- (void)RootViewControllerEventHandler:(NSNotification *)notification
+{
+    if([[[notification userInfo] objectForKey:@"panGestureEnabled"] isEqualToString:@"NO"]) {
+        
+        self.panGestureEnabled = NO;
+        
+	}
+    
+    if([[[notification userInfo] objectForKey:@"panGestureEnabled"] isEqualToString:@"YES"]) {
+        
+        self.panGestureEnabled = YES;
+        
+	}
+}
 
 @end

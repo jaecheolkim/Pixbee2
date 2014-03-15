@@ -16,6 +16,10 @@
     UISwitch *AlbumScanSwitch;
     UISwitch *PushNotiSwitch;
 }
+
+
+- (IBAction)showMenu:(id)sender;
+
 @end
 
 @implementation PBSettingTableViewController
@@ -534,4 +538,7 @@
 }
 */
 
+- (IBAction)showMenu:(id)sender {
+    [self.sideMenuViewController presentMenuViewController];
+}
 @end

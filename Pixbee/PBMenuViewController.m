@@ -114,15 +114,15 @@
     return cell;
 }
 
-- (BOOL)prefersStatusBarHidden
-{
-    return NO;
-}
-
-- (UIStatusBarStyle)preferredStatusBarStyle
-{
-    return UIStatusBarStyleLightContent;
-}
+//- (BOOL)prefersStatusBarHidden
+//{
+//    return NO;
+//}
+//
+//- (UIStatusBarStyle)preferredStatusBarStyle
+//{
+//    return UIStatusBarStyleLightContent;
+//}
 
 #pragma mark -
 #pragma mark RESideMenu Delegate

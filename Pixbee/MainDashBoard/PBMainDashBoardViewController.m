@@ -105,7 +105,7 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
 //        self.navigationController.navigationBar.tintColor = [UIColor colorWithRed:89/255.0f green:174/255.0f blue:235/255.0f alpha:0.7f];
 //    }
     
-    [self refreshNavigationBarColor:COLOR_BLACK];
+    //[self refreshNavigationBarColor:COLOR_BLACK];
     [self refreshBGImage:nil];
     self.collectionView.backgroundColor = [UIColor clearColor];
     self.collectionView.backgroundView = self.bgImageView;
@@ -459,8 +459,17 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
         self.rightBarButton.image = nil;
         self.rightBarButton.title = @"Cancel";
         
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"RootViewControllerEventHandler"
+                                                            object:self
+                                                          userInfo:@{@"panGestureEnabled":@"NO"}];
+        
     }
     else {
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"RootViewControllerEventHandler"
+                                                            object:self
+                                                          userInfo:@{@"panGestureEnabled":@"YES"}];
+        
         
         [selectedPhotos removeAllObjects];
         

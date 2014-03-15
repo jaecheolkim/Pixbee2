@@ -28,33 +28,33 @@
     return self;
 }
 
-- (void)refreshNavigationBarColor:(UIColor*)color
-{
-    
-//    if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_6_1)
-//    {
-//        [[UINavigationBar appearance] setTintColor:color];
-//    }
-//    else
-//    {
-//        [[UINavigationBar appearance] setBarTintColor:color];
+//- (void)refreshNavigationBarColor:(UIColor*)color
+//{
+//    
+////    if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_6_1)
+////    {
+////        [[UINavigationBar appearance] setTintColor:color];
+////    }
+////    else
+////    {
+////        [[UINavigationBar appearance] setBarTintColor:color];
+////    }
+////    
+////    self.navigationController.navigationBar.translucent = YES;
+//    
+//    
+//    if(color != nil){
+//        UIImage *colorImage = [UIImage imageWithColor:color size:CGSizeMake(1, 1)];
+//        [[UINavigationBar appearance] setBackgroundImage:colorImage forBarMetrics:UIBarMetricsDefault];
+//    } else {
+//        //Clear Navigationbar
+//        [[UINavigationBar appearance] setBackgroundImage:[UIImage new] forBarMetrics:UIBarMetricsDefault];
 //    }
 //    
+//    [[UINavigationBar appearance] setShadowImage:[UIImage new]];
+// 
 //    self.navigationController.navigationBar.translucent = YES;
-    
-    
-    if(color != nil){
-        UIImage *colorImage = [UIImage imageWithColor:color size:CGSizeMake(1, 1)];
-        [[UINavigationBar appearance] setBackgroundImage:colorImage forBarMetrics:UIBarMetricsDefault];
-    } else {
-        //Clear Navigationbar
-        [[UINavigationBar appearance] setBackgroundImage:[UIImage new] forBarMetrics:UIBarMetricsDefault];
-    }
-    
-    [[UINavigationBar appearance] setShadowImage:[UIImage new]];
- 
-    self.navigationController.navigationBar.translucent = YES;
-}
+//}
 
 - (void)refreshBGImage:(UIImage*)image
 {

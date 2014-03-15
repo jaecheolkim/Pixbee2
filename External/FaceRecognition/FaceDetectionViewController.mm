@@ -215,17 +215,17 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     isReadyToScanFace = NO;
     //[FaceLib initDetector:CIDetectorAccuracyLow Tacking:YES];
     
-    NSDictionary *detectorOptions = @{ CIDetectorAccuracy : CIDetectorAccuracyLow, CIDetectorTracking : @(YES) };
-	faceDetector = [CIDetector detectorOfType:CIDetectorTypeFace context:nil options:detectorOptions];
-
-    if(self.faceMode == FaceModeRecognize) {
-        NSArray *trainModel = [SQLManager getTrainModels];
-        NSLog(@"trainModel = %@", trainModel);
-        
-        if(!IsEmpty(trainModel)){
-            isFaceRecRedy = [FaceLib initRecognizer:LBPHFaceRecognizer models:trainModel];
-        }
-    }
+//    NSDictionary *detectorOptions = @{ CIDetectorAccuracy : CIDetectorAccuracyLow, CIDetectorTracking : @(YES) };
+//	faceDetector = [CIDetector detectorOfType:CIDetectorTypeFace context:nil options:detectorOptions];
+//
+//    if(self.faceMode == FaceModeRecognize) {
+//        NSArray *trainModel = [SQLManager getTrainModels];
+//        NSLog(@"trainModel = %@", trainModel);
+//        
+//        if(!IsEmpty(trainModel)){
+//            isFaceRecRedy = [FaceLib initRecognizer:LBPHFaceRecognizer models:trainModel];
+//        }
+//    }
     
     
 
@@ -347,13 +347,30 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(OrientationEventHandler:)
 												 name:MotionOrientationChangedNotification object:nil];
 
-	[self setupAVCapture];
+	
+    [self setupAVCapture];
+    
     
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
+    
+    
+    
+    NSDictionary *detectorOptions = @{ CIDetectorAccuracy : CIDetectorAccuracyLow, CIDetectorTracking : @(YES) };
+	faceDetector = [CIDetector detectorOfType:CIDetectorTypeFace context:nil options:detectorOptions];
+    
+    if(self.faceMode == FaceModeRecognize) {
+        NSArray *trainModel = [SQLManager getTrainModels];
+        NSLog(@"trainModel = %@", trainModel);
+        
+        if(!IsEmpty(trainModel)){
+            isFaceRecRedy = [FaceLib initRecognizer:LBPHFaceRecognizer models:trainModel];
+        }
+    }
+    
     isReadyToScanFace = YES;
     
 }
@@ -591,10 +608,24 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 
 - (IBAction)closeCamera:(id)sender
 {
-    [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationNone];
-    self.navigationController.navigationBarHidden = NO;
+//    [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationNone];
+//    self.navigationController.navigationBarHidden = NO;
     
-    [self.sideMenuViewController presentMenuViewController];
+    if([_segueid isEqualToString:@"FromMenu"]){
+        [self.sideMenuViewController presentMenuViewController];
+    } else {
+        
+        self.modalTransitionStyle =  UIModalTransitionStyleFlipHorizontal;
+        
+        [self dismissViewControllerAnimated:YES completion:^{
+
+        }];
+
+    }
+    
+    
+    
+    
     
 }
 

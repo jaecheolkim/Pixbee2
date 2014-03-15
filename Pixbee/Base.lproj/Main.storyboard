@@ -148,7 +148,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="192" height="28"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="39E00786-B638-4992-B65B-86C4D2C22DB3" translatesAutoresizingMaskIntoConstraints="NO" id="6aK-Ak-lFj">
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="321F7F23-BA28-486C-8B12-6F678CFA408E" translatesAutoresizingMaskIntoConstraints="NO" id="6aK-Ak-lFj">
                                                     <rect key="frame" x="0.0" y="0.0" width="28" height="29"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
@@ -207,9 +207,10 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="SETTING" id="59a-Tp-Z2g">
-                        <barButtonItem key="leftBarButtonItem" image="xicon.png" style="plain" id="1dw-QN-CD9">
+                        <barButtonItem key="leftBarButtonItem" title="Menu" style="plain" id="1dw-QN-CD9">
+                            <color key="tintColor" red="0.96862745100000003" green="0.96862745100000003" blue="0.96862745100000003" alpha="1" colorSpace="calibratedRGB"/>
                             <connections>
-                                <segue destination="aAf-P5-Dlf" kind="unwind" unwindAction="unwindToMainDashBoardViewController:" id="w4W-Xt-m0y"/>
+                                <action selector="showMenu:" destination="WD5-FF-PPY" id="JCx-l6-4fc"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -219,7 +220,6 @@
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="paw-DX-oxG" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <exit id="aAf-P5-Dlf" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="-775" y="-1527"/>
         </scene>
@@ -663,7 +663,7 @@
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                         <connections>
-                                            <segue destination="kfg-SS-jBG" kind="unwind" unwindAction="unwindToMainDashBoardViewController:" id="Ma4-RJ-26Q"/>
+                                            <action selector="closeCamera:" destination="dri-x2-AEn" eventType="touchUpInside" id="55g-DH-EJI"/>
                                         </connections>
                                     </button>
                                 </subviews>
@@ -693,7 +693,6 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="3pO-Qz-iU4" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <exit id="kfg-SS-jBG" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="-1564" y="-866"/>
         </scene>
@@ -1169,7 +1168,7 @@
             <objects>
                 <navigationController storyboardIdentifier="contentController" automaticallyAdjustsScrollViewInsets="NO" id="gUD-Yk-XTw" sceneMemberID="viewController">
                     <navigationItem key="navigationItem" id="8aK-ad-1bC"/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" barStyle="black" id="19M-db-91a">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" barStyle="black" id="19M-db-91a" customClass="PBNavigationBar">
                         <rect key="frame" x="0.0" y="0.0" width="0.0" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -1292,8 +1291,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <action selector="shutterButtonHandler:" destination="nnQ-Yu-vun" eventType="touchUpInside" id="ZIu-6H-Ijl"/>
-                                    <segue destination="dri-x2-AEn" kind="custom" identifier="Segue3_1to6_1" customClass="PBDisolveSegue" id="xtB-tB-7KH"/>
+                                    <segue destination="dri-x2-AEn" kind="modal" identifier="Segue3_1to6_1" customClass="PBDisolveSegue" modalTransitionStyle="flipHorizontal" id="xtB-tB-7KH"/>
                                 </connections>
                             </button>
                             <view alpha="0.69999999999999996" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="EkB-z0-ncF">
@@ -1385,7 +1383,7 @@
         </scene>
     </scenes>
     <resources>
-        <image name="39E00786-B638-4992-B65B-86C4D2C22DB3" width="628" height="152">
+        <image name="321F7F23-BA28-486C-8B12-6F678CFA408E" width="628" height="152">
             <mutableData key="keyedArchiveRepresentation">
 YnBsaXN0MDDUAQIDBAUGPj9YJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoK4HCBMU
 GR4fIyQsLzI4O1UkbnVsbNUJCgsMDQ4PEBESVk5TU2l6ZVYkY2xhc3NcTlNJbWFnZUZsYWdzVk5TUmVw

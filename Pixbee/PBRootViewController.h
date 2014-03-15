@@ -9,6 +9,6 @@
 #import <UIKit/UIKit.h>
 #import "RESideMenu.h"
 
-@interface PBRootViewController : RESideMenu 
+@interface PBRootViewController : RESideMenu
 
 @end
