@@ -313,7 +313,8 @@ UserCellDelegate, GalleryViewCellDelegate>
         browser.scaleImage = self.selectedCell.photoImageView.image;
 
         // Show
-        [self presentViewController:browser animated:YES completion:nil];
+        [self.navigationController pushViewController:browser animated:YES];
+        //[self presentViewController:browser animated:YES completion:nil];
     }
     
 //    if (self.collectionView.allowsMultipleSelection) {
@@ -466,7 +467,7 @@ UserCellDelegate, GalleryViewCellDelegate>
 //        [idmPhotos addObject:photo];
         
         // Create and setup browser
-        IDMPhotoBrowser *browser = [[IDMPhotoBrowser alloc] initWithPhotoURLs:idmPhotos animatedFromView:self.selectedCell]; // using initWithPhotos:animatedFromView: method to use the zoom-in animation
+        IDMPhotoBrowser *browser = [[IDMPhotoBrowser alloc] initWithPhotoURLs:idmPhotos];// animatedFromView:self.selectedCell]; // using initWithPhotos:animatedFromView: method to use the zoom-in animation
         browser.delegate = self;
         [browser setInitialPageIndex:indexPath.row];
         browser.displayActionButton = NO;
@@ -478,7 +479,11 @@ UserCellDelegate, GalleryViewCellDelegate>
         //        [self.navigationController p presentedViewController:browser];
         
         // Show
-        [self presentViewController:browser animated:YES completion:nil];
+        //[self presentViewController:browser animated:YES completion:nil];
+        
+        [self.navigationController pushViewController:browser animated:YES];
+        
+        
         [self collectionView:self.collectionView didDeselectItemAtIndexPath:indexPath];
     }
 

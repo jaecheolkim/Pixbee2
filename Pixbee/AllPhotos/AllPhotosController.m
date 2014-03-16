@@ -40,6 +40,8 @@
     CGPoint lastTouchPoint;
     
     int currentUserID;
+    
+    int currentPosition, previousPosiotion;
 }
 //@property (nonatomic, retain) APNavigationController *navController;
 @property (strong, nonatomic) IBOutlet UICollectionView *collectionView;
@@ -160,7 +162,8 @@
     [self initStackImages];
     
     currentUserID = -1;
-    
+    currentPosition = -1;
+    previousPosiotion = -2;
 }
 
 
@@ -997,10 +1000,12 @@
 //        //angle = angle * 1.2;
 //        
 //    }
-    
-    
+
+
     NSInteger imageCount = [selectedStackImages count];
     double angle = -0.3;
+    
+    NSMutableArray *angleArray = [NSMutableArray array];
     
     for(int i = 0; i < imageCount; i++) {
         UIImageView *imgView = [selectedStackImages objectAtIndex:i];
@@ -1011,8 +1016,26 @@
         if(i % 2) angle = angle * -1 ;
         if(i == (imageCount -1)) angle = 0;
         
-        imgView.transform = CGAffineTransformMakeRotation(angle);
+        [angleArray addObject:@(angle)];
     }
+
+    
+    [UIView animateWithDuration:0.25
+                          delay:0.1
+                        options:UIViewAnimationOptionCurveEaseInOut
+                     animations:^{
+                         for(int i = 0; i < imageCount; i++) {
+                             UIImageView *imgView = [selectedStackImages objectAtIndex:i];
+                             double viewAngle = [[angleArray objectAtIndex:i] doubleValue];
+                             imgView.transform = CGAffineTransformMakeRotation(viewAngle);
+                             
+                         }
+                     }
+                     completion:^(BOOL finished){
+                         
+                     }];
+    
+
     
 }
 
@@ -1135,30 +1158,45 @@
             
             //NSInteger subViewCount = [_faceTabScrollView.subviews count] - 1;
             
-            for(NSInteger i = 0; i < subViewCount; i++){
-                //for(UIView *cell in _faceTabScrollView.subviews){
-                UIButton_FaceIcon *cell = (UIButton_FaceIcon *)[_faceTabScrollView.subviews objectAtIndex:i];
-                NSString *cellRect = [scrollViewCellFrames objectAtIndex:i];
-                cell.frame = CGRectFromString(cellRect);
-                //cellCount++;
-            }
+
             
-            int currentPosition = round((point.x +  newContentOffset.x )/ 96.0);
+            currentPosition = round((point.x +  newContentOffset.x )/ 96.0);
             NSLog(@"CurrentPosition = %d", currentPosition);
             
-            if(currentPosition > 0 && currentPosition < subViewCount)
+            if(currentPosition >= 0 && currentPosition < subViewCount && currentPosition != previousPosiotion )
             {
                 id cellObject = [_faceTabScrollView.subviews objectAtIndex:currentPosition];
                 
                 if([NSStringFromClass([cellObject class]) isEqualToString:@"UIButton_FaceIcon"])
                 {
-                    UIButton_FaceIcon *cell = (UIButton_FaceIcon *)cellObject;
-                    CGPoint cellCenter = cell.center;
-                    CGRect cellFrame = cell.frame;
-                    cell.frame = CGRectMake(cellFrame.origin.x, cellFrame.origin.y, cellFrame.size.width * 1.18, cellFrame.size.height * 1.18);
-                    cell.center = cellCenter;
+                  
+                    for(NSInteger i = 0; i < subViewCount; i++){
+                        //for(UIView *cell in _faceTabScrollView.subviews){
+                        UIButton_FaceIcon *cell = (UIButton_FaceIcon *)[_faceTabScrollView.subviews objectAtIndex:i];
+                        NSString *cellRect = [scrollViewCellFrames objectAtIndex:i];
+                        cell.frame = CGRectFromString(cellRect);
+                        //cellCount++;
+                    }
                     
-                    currentUserID = cell.UserID;
+                    UIButton_FaceIcon *cell = (UIButton_FaceIcon *)cellObject;
+                    
+                    //if(currentPosition != previousPosiotion) {
+                        [UIView animateWithDuration:0.2 animations:^{
+                            CGPoint cellCenter = cell.center;
+                            CGRect cellFrame = cell.frame;
+                            cell.frame = CGRectMake(cellFrame.origin.x - 10, cellFrame.origin.y - 10, cellFrame.size.width * 1.3, cellFrame.size.height * 1.3);
+                            cell.center = cellCenter;
+                            
+                        } completion:^(BOOL finished) {
+                            currentUserID = cell.UserID;
+                            
+                        }];
+                    //}
+
+                    
+                    previousPosiotion =  currentPosition;
+                    
+                    
                 } else {
                     return;
                 }

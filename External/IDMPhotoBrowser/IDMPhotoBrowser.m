@@ -173,7 +173,7 @@
         // if remove this: rotation works, but screw presentation/animation
         if(kUSE_CURRENT_CONTEXT_PRESENTATION_STYLE) _applicationRootViewController.modalPresentationStyle = UIModalPresentationCurrentContext;
         
-        self.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+        //self.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
         
         // Listen for IDMPhoto notifications
         [[NSNotificationCenter defaultCenter] addObserver:self
@@ -276,36 +276,36 @@
     
     // Gesture Ended
     if ([(UIPanGestureRecognizer*)sender state] == UIGestureRecognizerStateEnded) {
-        if(scrollView.center.y > viewHalfHeight+40 || scrollView.center.y < viewHalfHeight-40) // Automatic Dismiss View
-        {
-            if (_senderViewForAnimation && _currentPageIndex == _initalPageIndex) {
-                [self performCloseAnimationWithScrollView:scrollView];
-                return;
-            }
-            
-            CGFloat finalX = firstX, finalY;
-            
-            CGFloat windowsHeigt = [_applicationWindow frame].size.height;
-            
-            if(scrollView.center.y > viewHalfHeight+30) // swipe down
-                finalY = windowsHeigt*2;
-            else // swipe up
-                finalY = -viewHalfHeight;
-            
-            CGFloat animationDuration = 0.35;
-            
-            [UIView beginAnimations:nil context:NULL];
-            [UIView setAnimationDuration:animationDuration];
-            [UIView setAnimationCurve:UIViewAnimationCurveEaseIn];
-            [UIView setAnimationDelegate:self];
-            [scrollView setCenter:CGPointMake(finalX, finalY)];
-            self.view.backgroundColor = [UIColor colorWithWhite:(_useWhiteBackgroundColor ? 1 : 0) alpha:0];
-            //self.view.backgroundColor = [UIColor colorWithPatternImage:[self getImageFromView:backgroundImageView]];
-            [UIView commitAnimations];
-            
-            [self performSelector:@selector(doneButtonPressed:) withObject:self afterDelay:animationDuration];
-        }
-        else // Continue Showing View
+//        if(scrollView.center.y > viewHalfHeight+40 || scrollView.center.y < viewHalfHeight-40) // Automatic Dismiss View
+//        {
+//            if (_senderViewForAnimation && _currentPageIndex == _initalPageIndex) {
+//                [self performCloseAnimationWithScrollView:scrollView];
+//                return;
+//            }
+//            
+//            CGFloat finalX = firstX, finalY;
+//            
+//            CGFloat windowsHeigt = [_applicationWindow frame].size.height;
+//            
+//            if(scrollView.center.y > viewHalfHeight+30) // swipe down
+//                finalY = windowsHeigt*2;
+//            else // swipe up
+//                finalY = -viewHalfHeight;
+//            
+//            CGFloat animationDuration = 0.35;
+//            
+//            [UIView beginAnimations:nil context:NULL];
+//            [UIView setAnimationDuration:animationDuration];
+//            [UIView setAnimationCurve:UIViewAnimationCurveEaseIn];
+//            [UIView setAnimationDelegate:self];
+//            [scrollView setCenter:CGPointMake(finalX, finalY)];
+//            self.view.backgroundColor = [UIColor colorWithWhite:(_useWhiteBackgroundColor ? 1 : 0) alpha:0];
+//            //self.view.backgroundColor = [UIColor colorWithPatternImage:[self getImageFromView:backgroundImageView]];
+//            [UIView commitAnimations];
+//            
+//            [self performSelector:@selector(doneButtonPressed:) withObject:self afterDelay:animationDuration];
+//        }
+//        else // Continue Showing View
         {
             self.view.backgroundColor = [UIColor colorWithWhite:(_useWhiteBackgroundColor ? 1 : 0) alpha:1];
             //self.view.backgroundColor = [UIColor colorWithPatternImage:[self getImageFromView:backgroundImageView]];
@@ -497,7 +497,7 @@
 
 - (void)viewDidLoad {
     // Transition animation
-    [self performPresentAnimation];
+    //[self performPresentAnimation];
     
     /*if(!_senderViewForAnimation) // Default presentation (withoung animation) {
         if(SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7")) // ios 7 or greater
@@ -601,9 +601,9 @@
                                                                   action:@selector(actionButtonPressed:)];
     
     // Gesture
-    _panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGestureRecognized:)];
-    [_panGesture setMinimumNumberOfTouches:1];
-    [_panGesture setMaximumNumberOfTouches:1];
+//    _panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGestureRecognized:)];
+//    [_panGesture setMinimumNumberOfTouches:1];
+//    [_panGesture setMaximumNumberOfTouches:1];
     
     // Update
     //[self reloadData];
@@ -791,7 +791,7 @@
     [self tilePages];
     _performingLayout = NO;
     
-    [self.view addGestureRecognizer:_panGesture];
+//    [self.view addGestureRecognizer:_panGesture];
 }
 
 #pragma mark - Interface Orientation
@@ -1156,8 +1156,10 @@
 - (void)updateToolbar {
     // Counter
 	if ([self numberOfPhotos] > 1) {
-		_counterLabel.text = [NSString stringWithFormat:@"%i %@ %i", _currentPageIndex+1, NSLocalizedString(@"of", nil), [self numberOfPhotos]];
+        self.title = [NSString stringWithFormat:@"%i %@ %i", _currentPageIndex+1, NSLocalizedString(@"of", nil), [self numberOfPhotos]];;
+		//_counterLabel.text = [NSString stringWithFormat:@"%i %@ %i", _currentPageIndex+1, NSLocalizedString(@"of", nil), [self numberOfPhotos]];
 	} else {
+        self.title = nil;
 		_counterLabel.text = nil;
 	}
     
@@ -1249,6 +1251,8 @@
 
 - (BOOL)areControlsHidden { return (_toolbar.alpha == 0); }
 - (void)hideControls      { if(_autoHide) [self setControlsHidden:YES animated:YES permanent:NO]; }
+
+
 - (void)toggleControls    { [self setControlsHidden:![self areControlsHidden] animated:YES permanent:NO]; }
 
 

@@ -67,7 +67,7 @@
     if (FBSession.activeSession.state == FBSessionStateOpen
         || FBSession.activeSession.state == FBSessionStateOpenTokenExtended) {
         
-        [self checkNexProcess];
+        //[self checkNexProcess];
         
     } else {
         

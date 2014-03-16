@@ -364,7 +364,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     
     if(self.faceMode == FaceModeRecognize) {
         NSArray *trainModel = [SQLManager getTrainModels];
-        NSLog(@"trainModel = %@", trainModel);
+        //NSLog(@"trainModel = %@", trainModel);
         
         if(!IsEmpty(trainModel)){
             isFaceRecRedy = [FaceLib initRecognizer:LBPHFaceRecognizer models:trainModel];
@@ -395,6 +395,10 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+
+
+
+
 
 
 - (void)OrientationEventHandler:(NSNotification *)notification
@@ -615,7 +619,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
         [self.sideMenuViewController presentMenuViewController];
     } else {
         
-        self.modalTransitionStyle =  UIModalTransitionStyleFlipHorizontal;
+        self.modalTransitionStyle =   UIModalTransitionStyleFlipHorizontal;
         
         [self dismissViewControllerAnimated:YES completion:^{
 

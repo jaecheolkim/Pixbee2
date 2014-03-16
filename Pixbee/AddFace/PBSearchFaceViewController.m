@@ -667,11 +667,27 @@
 
 #pragma mark ButtonHandler
 - (IBAction)skipButtonHandler:(id)sender {
+    
+//    [[NSNotificationCenter defaultCenter] postNotificationName:@"MeunViewControllerEventHandler"
+//                                                        object:self
+//                                                      userInfo:@{@"moveTo":@"MainDashBoard"}];
+    
     [self performSegueWithIdentifier:@"Segue2_2to3_1" sender:self];
+    
+//    UINavigationController * navigationController = self.navigationController;
+//    [navigationController popToRootViewControllerAnimated:NO];
+    //[navigationController pushViewController:someOtherViewController animated:YES];
 }
 
 - (IBAction)addButtonHandler:(id)sender {
     [self performSegueWithIdentifier:@"Segue2_2to3_1" sender:self];
+    
+//    [[NSNotificationCenter defaultCenter] postNotificationName:@"MeunViewControllerEventHandler"
+//                                                        object:self
+//                                                      userInfo:@{@"moveTo":@"MainDashBoard"}];
+    
+//    UINavigationController * navigationController = self.navigationController;
+//    [navigationController popToRootViewControllerAnimated:NO];
 }
 
 #pragma mark - Navigation

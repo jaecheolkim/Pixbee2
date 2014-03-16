@@ -16,7 +16,12 @@
 @end
 
 @implementation PBMenuViewController
+- (void)awakeFromNib
+{
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(MeunViewControllerEventHandler:)
+												 name:@"MeunViewControllerEventHandler" object:nil];
 
+}
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -36,6 +41,8 @@
         tableView;
     });
     [self.view addSubview:self.tableView];
+    
+
 }
 
 #pragma mark -
@@ -50,11 +57,11 @@
     switch (indexPath.row) {
         case 0:
             
-            navigationController.viewControllers = @[[self.storyboard instantiateViewControllerWithIdentifier:@"firstController"]];
+            navigationController.viewControllers = @[[self.storyboard instantiateViewControllerWithIdentifier:@"MainDashBoard"]];
             [self.sideMenuViewController hideMenuViewController];
             break;
         case 1:
-            navigationController.viewControllers = @[[self.storyboard instantiateViewControllerWithIdentifier:@"secondController"]];
+            navigationController.viewControllers = @[[self.storyboard instantiateViewControllerWithIdentifier:@"AllPhotos"]];
             [self.sideMenuViewController hideMenuViewController];
             break;
             
@@ -66,7 +73,7 @@
             navigationController.viewControllers = @[[self.storyboard instantiateViewControllerWithIdentifier:@"setting"]];
             [self.sideMenuViewController hideMenuViewController];
             break;
-            
+
         default:
             
             break;
@@ -88,7 +95,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)sectionIndex
 {
-    return 5;
+    return 4;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -106,8 +113,8 @@
         cell.selectedBackgroundView = [[UIView alloc] init];
     }
     
-    NSArray *titles = @[@"Home", @"UnFaceTab", @"Camera", @"Settings", @"Log Out"];
-    NSArray *images = @[@"IconHome", @"IconCalendar", @"IconProfile", @"IconSettings", @"IconEmpty"];
+    NSArray *titles = @[@"FaceTab", @"UnFaceTab", @"Camera", @"Setting"];
+    NSArray *images = @[@"IconHome", @"IconCalendar", @"IconProfile", @"IconSettings"];
     cell.textLabel.text = titles[indexPath.row];
     cell.imageView.image = [UIImage imageNamed:images[indexPath.row]];
     
@@ -131,12 +138,26 @@
 {
     NSLog(@"willShowMenuViewController");
     self.willViewed = YES;
+    
+    UINavigationController *navigationController = (UINavigationController *)sideMenu.contentViewController;
+    
+    //NSArray *viewControllers = navigationController.viewControllers;
+    //NSString *viewControllerName =  NSStringFromClass([viewControllers[0] class]);
+    
+    //[UIView animateWithDuration:0.2 animations:^{
+        [navigationController setNavigationBarHidden:YES animated:YES];
+    //}];
 }
 
 - (void)sideMenu:(RESideMenu *)sideMenu didShowMenuViewController:(UIViewController *)menuViewController
 {
     NSLog(@"didShowMenuViewController");
     self.willViewed = YES;
+    
+
+    
+    
+    
 }
 
 - (void)sideMenu:(RESideMenu *)sideMenu willHideMenuViewController:(UIViewController *)menuViewController
@@ -145,31 +166,37 @@
     
     NSLog(@"willHideMenuViewController");
     
-    UINavigationController *navigationController = (UINavigationController *)self.sideMenuViewController.contentViewController;
-    //UINavigationBar *navigationBar = navigationController.navigationBar;
+//    UINavigationController *navigationController = (UINavigationController *)self.sideMenuViewController.contentViewController;
+ 
+    UINavigationController *navigationController = (UINavigationController *)sideMenu.contentViewController;
     
     NSArray *viewControllers = navigationController.viewControllers;
     NSString *viewControllerName =  NSStringFromClass([viewControllers[0] class]);
     NSLog(@"Contents ViewController Class = %@",viewControllerName);
     
-    
-    if([viewControllerName isEqualToString:@"PBMainDashBoardViewController"]) {
-        [navigationController setNavigationBarHidden:NO];
+    //[UIView animateWithDuration:0.2 animations:^{
+        if([viewControllerName isEqualToString:@"PBMainDashBoardViewController"]) {
+            [navigationController setNavigationBarHidden:NO  animated:YES];
+            
+        }
+        if([viewControllerName isEqualToString:@"AllPhotosController"]) {
+            [navigationController setNavigationBarHidden:NO  animated:YES];
+            
+            
+        }
+        if([viewControllerName isEqualToString:@"FaceDetectionViewController"]){
+            [navigationController setNavigationBarHidden:YES  animated:YES];
+        }
+        
+        if([viewControllerName isEqualToString:@"PBSettingTableViewController"]){
+            [navigationController setNavigationBarHidden:NO  animated:YES];
+        }
+        
+        if([viewControllerName isEqualToString:@"PBMenuViewController"]){
+            [navigationController setNavigationBarHidden:YES  animated:YES];
+        }
 
-    }
-    if([viewControllerName isEqualToString:@"AllPhotosController"]) {
-        [navigationController setNavigationBarHidden:NO];
-
-
-    }
-    if([viewControllerName isEqualToString:@"FaceDetectionViewController"]){
-        [navigationController setNavigationBarHidden:YES];
-    }
-    
-    if([viewControllerName isEqualToString:@"PBSettingTableViewController"]){
-        [navigationController setNavigationBarHidden:NO];
-    }
-
+    //}];
 
 }
 
@@ -182,5 +209,23 @@
 
     //[self.navigationController setNavigationBarHidden:YES];
 }
+
+
+- (void)MeunViewControllerEventHandler:(NSNotification *)notification
+{
+    if([[[notification userInfo] objectForKey:@"moveTo"] isEqualToString:@"MainDashBoard"]) {
+        
+        UINavigationController *navigationController = (UINavigationController *)self.sideMenuViewController.contentViewController;
+        
+        [navigationController popToRootViewControllerAnimated:NO];
+        
+//        navigationController.viewControllers = @[[self.storyboard instantiateViewControllerWithIdentifier:@"MainDashBoard"]];
+//        [self.sideMenuViewController hideMenuViewController];
+        
+	}
+    
+
+}
+
 
 @end
