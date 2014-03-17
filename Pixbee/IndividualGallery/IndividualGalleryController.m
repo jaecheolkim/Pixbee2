@@ -68,6 +68,15 @@ UserCellDelegate, GalleryViewCellDelegate>
 //    return self;
 //}
 
+- (void)viewWillLayoutSubviews
+{
+    [super viewWillLayoutSubviews];
+    NSLog(@"UserColor = %d", _UserColor);
+    UIColor *color = [SQLManager getUserColor:_UserColor];
+    [self.navigationController.navigationBar setBarTintColor:color];
+    self.navigationController.navigationBar.translucent = YES;
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];

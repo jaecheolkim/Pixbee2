@@ -118,6 +118,12 @@
 //    }
     
     
+    NSLog(@"segueIdentifier = %@", _segueIdentifier);
+    if([_segueIdentifier isEqualToString:@"Segue3_1to4_3"]){
+        //From MainDashBoard newFaceTab
+        
+        [_menuButton setImage:[UIImage imageNamed:@"back"]];
+    }
 
     [self refreshBGImage:nil];
 
@@ -858,7 +864,14 @@
 }
 
 - (IBAction)shwMenu:(id)sender {
-    [self.sideMenuViewController presentMenuViewController];
+    if([_segueIdentifier isEqualToString:@"Segue3_1to4_3"]){
+        
+        [self.navigationController popToRootViewControllerAnimated:YES];
+        
+    } else {
+        [self.sideMenuViewController presentMenuViewController];
+    }
+    
 }
 
 

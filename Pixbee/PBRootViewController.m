@@ -13,6 +13,8 @@
 
 #import "FaceDetectionViewController.h"
 
+
+
 @interface PBRootViewController ()
 
 @end
@@ -27,10 +29,11 @@
     self.delegate = (PBMenuViewController *)self.menuViewController;
     
     self.panGestureEnabled = YES;
-    self.backgroundImage = [UIImage imageNamed:@"MenuBackground"];
+    self.backgroundImage =  [UIImage imageNamed:@"bg"]; //[UIImage imageNamed:@"MenuBackground"];
     self.panFromEdge = YES; //왼쪽 가장자리에서만 스와이핑시 메뉴 열리게
     self.scaleContentView = YES; // 메뉴 열릴때 오른쪽 뷰 사이즈 변경하게
     self.animationDuration = 0.2;
+
     
     [AssetLib checkNewPhoto];
     
@@ -42,10 +45,10 @@
 
 - (BOOL)prefersStatusBarHidden
 {
-    PBMenuViewController *menuController = (PBMenuViewController *)self.menuViewController;
+#warning :: 사이드 메뉴바로 이동할 때 statusBar 숨기고 싶을 때는 아래의 주석 해제.
+//    PBMenuViewController *menuController = (PBMenuViewController *)self.menuViewController;
+//    if(menuController.willViewed) return YES;
     
-    if(menuController.willViewed) return YES;
-        
     UINavigationController *navigationController = (UINavigationController *)self.contentViewController;
     NSArray *viewControllers = navigationController.viewControllers;
     NSString *viewControllerName =  NSStringFromClass([viewControllers[0] class]);
@@ -81,9 +84,9 @@
 }
 
 
-- (void)viewDidLayoutSubviews
+- (void)viewWillLayoutSubviews
 {
-    [super viewDidLayoutSubviews];
+    [super viewWillLayoutSubviews];
     
     PBMenuViewController *menuController = (PBMenuViewController *)self.menuViewController;
     if(!menuController.willViewed)
@@ -107,33 +110,37 @@
             UIColor *color = [UIColor colorWithRed:0.0f green:0.0f blue:90.0f/255.0f alpha:1];
             
             if([viewControllerName isEqualToString:@"PBMainDashBoardViewController"]) {
-                color = nil;//[UIColor colorWithRed:255.0f/255.0f green:255.0f/255.0f blue:255.0f/255.0f alpha:0.7];
+                color = nil;
+                //color = [UIColor colorWithRed:255.0f/255.0f green:255.0f/255.0f blue:255.0f/255.0f alpha:0.7];
             }
             if([viewControllerName isEqualToString:@"AllPhotosController"]) {
-                color = [UIColor colorWithRed:90.0f/255.0f green:0.0f blue:90.0f/255.0f alpha:1];
+                color = nil;
+                // color = [UIColor colorWithRed:90.0f/255.0f green:0.0f blue:90.0f/255.0f alpha:1];
             }
             if([viewControllerName isEqualToString:@"FaceDetectionViewController"]) {
-                color = [UIColor colorWithRed:0.0f green:90.0f/255.0f blue:90.0f/255.0f alpha:1];
+                color = nil;
+                // color = [UIColor colorWithRed:0.0f green:90.0f/255.0f blue:90.0f/255.0f alpha:1];
                 
                 FaceDetectionViewController *cameraContorller = (FaceDetectionViewController *)viewControllers[0];
                 cameraContorller.segueid = @"FromMenu";
                 
             }
             if([viewControllerName isEqualToString:@"PBSettingTableViewController"]) {
-                color = [UIColor colorWithRed:90.0f/255.0f green:0.0f blue:0.0f alpha:1];
+                color = nil;
+                // color = [UIColor colorWithRed:90.0f/255.0f green:0.0f blue:0.0f alpha:1];
             }
             
             [navigationBar setBarTintColor:color];
 
             
-
-            if([viewControllerName isEqualToString:@"PBMainDashBoardViewController"]) {
-                [navigationBar setBackgroundImage:[UIImage new] forBarMetrics:UIBarMetricsDefault];
-                navigationBar.shadowImage = [UIImage new];
-                navigationBar.translucent = YES;
-            } else {
-                navigationBar.translucent = YES;
-            }
+#warning :: 만약에 메인데쉬보드만 투명 네비 가지고 싶을 때 아래 주석 해제.
+//            if([viewControllerName isEqualToString:@"PBMainDashBoardViewController"]) {
+//                [navigationBar setBackgroundImage:[UIImage new] forBarMetrics:UIBarMetricsDefault];
+//                navigationBar.shadowImage = [UIImage new];
+//                navigationBar.translucent = YES;
+//            } else {
+//                navigationBar.translucent = YES;
+//            }
 
 
 
@@ -156,6 +163,6 @@
         self.panGestureEnabled = YES;
         
 	}
-}
+ }
 
 @end

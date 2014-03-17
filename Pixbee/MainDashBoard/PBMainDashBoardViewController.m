@@ -92,6 +92,12 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
 
 }
 
+- (void)viewWillLayoutSubviews
+{
+    [super viewWillLayoutSubviews];
+    [self.navigationController.navigationBar setBarTintColor:nil];
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     
@@ -655,6 +661,10 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
                 NSLog(@"Camera Clicked");
                 facemode = FaceModeCollect;
                 [self performSegueWithIdentifier:SEGUE_3_1_TO_6_1 sender:self];
+                
+//                [[NSNotificationCenter defaultCenter] postNotificationName:@"MeunViewControllerEventHandler"
+//                                                                    object:self
+//                                                                  userInfo:@{@"moveTo" : @"Camera", @"param" :@(facemode) }];
                 //PopCamera
                 break;
                 // From Photo Album
@@ -754,7 +764,9 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
     IndividualGalleryController *destViewController = [storyboard instantiateViewControllerWithIdentifier:@"IndividualGalleryViewController"];
     NSDictionary *userInfo = [self.users  objectAtIndex:currentIndexPath.item];
     int UserID = [userInfo[@"UserID"] intValue];
+    int UserColor = [userInfo[@"color"] intValue];
     destViewController.UserID = UserID;
+    destViewController.UserColor = UserColor;
     
     [self.navigationController pushViewController:destViewController animated:YES];
 }

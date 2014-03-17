@@ -13,5 +13,5 @@
 
 @property (strong, nonatomic) NSDictionary *usersPhotos;
 @property (nonatomic, assign) int UserID;
-
+@property (nonatomic, assign) int UserColor;
 @end

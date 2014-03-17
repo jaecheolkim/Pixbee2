@@ -27,7 +27,7 @@
 #import "UIViewController+RESideMenu.h"
 #import "RECommonFunctions.h"
 
-@interface RESideMenu ()
+@interface RESideMenu () 
 {
     UIPanGestureRecognizer *panGestureRecognizer;
 }
@@ -79,7 +79,7 @@
 
     _bouncesHorizontally = YES;
     
-    _contentViewShadowEnabled = NO;
+    _contentViewShadowEnabled = YES;
     _contentViewShadowColor = [UIColor blackColor];
     _contentViewShadowOffset = CGSizeZero;
     _contentViewShadowOpacity = 0.4f;

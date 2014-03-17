@@ -15,7 +15,7 @@
 #import "opencv2/highgui/ios.h"
 #import "PBFaceLib.h"
 #import "MotionOrientation.h"
-#import "UIButton+Bootstrap.h"
+//#import "UIButton+Bootstrap.h"
 #import "BasicBottomView.h"
 #import "MBSwitch.h"
 
@@ -31,6 +31,9 @@
 #import "SDImageCache.h"
 
 #import "FXBlurView.h"
+
+
+
 
 static void *IsAdjustingFocusingContext = &IsAdjustingFocusingContext;
 
@@ -143,7 +146,10 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 @property (weak, nonatomic) IBOutlet UILabel *nameLabel;
 @property (nonatomic) NSInteger frameNum;
 @property (nonatomic) NSInteger numPicsTaken;
+
+@property (weak, nonatomic) IBOutlet FXBlurView *BlurView;
 @property (weak, nonatomic) IBOutlet UIButton *closeButton;
+
 @property (weak, nonatomic) IBOutlet UIButton *flashButton;
 @property (weak, nonatomic) IBOutlet UIButton *switchButton;
 @property (weak, nonatomic) IBOutlet UIImageView *hiveImageView;
@@ -187,7 +193,16 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 {
     [super viewDidLoad];
     
+    self.BlurView.tintColor  = RGBA_COLOR(255, 255, 255, 0.3);
+    self.BlurView.dynamic = YES;
+    self.BlurView.alpha = 0.9;
+
     NSLog(@"SegueFrom = %@", _segueid);
+    if([_segueid isEqualToString:@"Segue3_1to6_1"]){
+        [_closeButton setImage:[UIImage imageNamed:@"close"] forState:UIControlStateNormal];
+
+
+    }
     
     if(_segueid == nil){
         //viewDidload
@@ -199,13 +214,15 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
             // iOS 6
             [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
         }
-
+        
+        
+        
     }
     
     
     isStart = NO;
     
-    _topView.backgroundColor = [UIColor clearColor];
+//    _topView.backgroundColor = [UIColor clearColor];
     
     old_time = 0;
     old_prepreprocessedFace = cv::Mat();
@@ -226,6 +243,20 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 //            isFaceRecRedy = [FaceLib initRecognizer:LBPHFaceRecognizer models:trainModel];
 //        }
 //    }
+    
+    NSDictionary *detectorOptions = @{ CIDetectorAccuracy : CIDetectorAccuracyLow, CIDetectorTracking : @(YES) };
+	faceDetector = [CIDetector detectorOfType:CIDetectorTypeFace context:nil options:detectorOptions];
+    
+    if(self.faceMode == FaceModeRecognize) {
+        NSArray *trainModel = [SQLManager getTrainModels];
+        //NSLog(@"trainModel = %@", trainModel);
+        
+        if(!IsEmpty(trainModel)){
+            isFaceRecRedy = [FaceLib initRecognizer:LBPHFaceRecognizer models:trainModel];
+        }
+    }
+    
+    isReadyToScanFace = YES;
     
     
 
@@ -323,10 +354,10 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     [self.view addGestureRecognizer:tapGestureRecognizer];
     
     
+    
+    
     [self refreshAlbumIcon];
 }
-
-
 
 
 
@@ -348,8 +379,8 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 												 name:MotionOrientationChangedNotification object:nil];
 
 	
-    [self setupAVCapture];
     
+    [self setupAVCapture];
     
 }
 
@@ -359,19 +390,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     
     
     
-    NSDictionary *detectorOptions = @{ CIDetectorAccuracy : CIDetectorAccuracyLow, CIDetectorTracking : @(YES) };
-	faceDetector = [CIDetector detectorOfType:CIDetectorTypeFace context:nil options:detectorOptions];
-    
-    if(self.faceMode == FaceModeRecognize) {
-        NSArray *trainModel = [SQLManager getTrainModels];
-        //NSLog(@"trainModel = %@", trainModel);
-        
-        if(!IsEmpty(trainModel)){
-            isFaceRecRedy = [FaceLib initRecognizer:LBPHFaceRecognizer models:trainModel];
-        }
-    }
-    
-    isReadyToScanFace = YES;
+
     
 }
 
