@@ -375,6 +375,9 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     //[self.navigationController.navigationBar setBackgroundColor:[UIColor redColor]];
     self.navigationController.navigationBarHidden = YES;
     
+    
+    NSLog(@"- (void)viewWillAppear:(BOOL)animated ");
+    
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(OrientationEventHandler:)
 												 name:MotionOrientationChangedNotification object:nil];
 
@@ -400,6 +403,10 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 - (void)viewWillDisappear:(BOOL)animated
 {
 	[super viewWillDisappear:animated];
+    
+     NSLog(@"- (void)viewWillDisappear:(BOOL)animated ");
+    
+    
     isReadyToScanFace = NO;
     [self teardownAVCapture];
     [selectedUsers removeAllObjects];

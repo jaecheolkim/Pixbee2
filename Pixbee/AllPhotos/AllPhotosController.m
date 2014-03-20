@@ -95,6 +95,12 @@
 {
     [super viewDidLoad];
     
+    
+    UIImageView *titleView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"menu_unfacetab_selected"]];
+    titleView.contentMode = UIViewContentModeScaleAspectFit;
+    self.navigationItem.titleView = titleView;
+    
+    
 //    self.navController = (APNavigationController*)self.navigationController;
 //    self.navController.activeNavigationBarTitle = @"FaceTab";
 //    self.navController.activeBarButtonTitle = @"Hide";

@@ -494,8 +494,22 @@
 }*/
 
 #pragma mark - View Lifecycle
-
+- (void) popVC{
+    [self.navigationController popViewControllerAnimated:YES];
+}
 - (void)viewDidLoad {
+    
+//    [[UINavigationBar appearance] setBackIndicatorImage:[UIImage imageNamed:@"back.png"]];
+//    [[UINavigationBar appearance] setBackIndicatorTransitionMaskImage:[UIImage imageNamed:@"back.png"]];
+
+    UIBarButtonItem *backButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"back.png"] style:UIBarButtonItemStylePlain target:self action:@selector(popVC)];
+    
+//    UIButton *backButton = [[UIButton alloc] initWithFrame: CGRectMake(0, 0, 44.0f, 30.0f)];
+//    [backButton setImage:[UIImage imageNamed:@"back.png"]  forState:UIControlStateNormal];
+//    [backButton addTarget:self action:@selector(popVC) forControlEvents:UIControlEventTouchUpInside];
+    self.navigationItem.leftBarButtonItem =  backButton; //[[UIBarButtonItem alloc] initWithCustomView:backButton];
+    self.navigationController.navigationBar.tintColor=[UIColor whiteColor];
+    
     // Transition animation
     //[self performPresentAnimation];
     
@@ -1156,7 +1170,7 @@
 - (void)updateToolbar {
     // Counter
 	if ([self numberOfPhotos] > 1) {
-        self.title = [NSString stringWithFormat:@"%i %@ %i", _currentPageIndex+1, NSLocalizedString(@"of", nil), [self numberOfPhotos]];;
+        self.title = [NSString stringWithFormat:@"%i / %i", _currentPageIndex+1,  [self numberOfPhotos]];;
 		//_counterLabel.text = [NSString stringWithFormat:@"%i %@ %i", _currentPageIndex+1, NSLocalizedString(@"of", nil), [self numberOfPhotos]];
 	} else {
         self.title = nil;

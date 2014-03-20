@@ -28,7 +28,7 @@
 
 @protocol RESideMenuDelegate;
 
-@interface RESideMenu : UIViewController <UIGestureRecognizerDelegate>
+@interface RESideMenu : UIViewController <UIGestureRecognizerDelegate, UINavigationControllerDelegate>
 
 @property (assign, readwrite, nonatomic) NSTimeInterval animationDuration;
 @property (strong, readwrite, nonatomic) UIImage *backgroundImage;

@@ -95,11 +95,21 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
 - (void)viewWillLayoutSubviews
 {
     [super viewWillLayoutSubviews];
+    
+    UINavigationBar *navigationBar = self.navigationController.navigationBar;
+    [navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
+    navigationBar.shadowImage = nil;
+    navigationBar.translucent = YES;
+    
     [self.navigationController.navigationBar setBarTintColor:nil];
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    UIImageView *titleView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"menu_facetab_selected"]];
+    titleView.contentMode = UIViewContentModeScaleAspectFit;
+    self.navigationItem.titleView = titleView;
     
     [Flurry logEvent:@"MainDashboard_START"];
     
@@ -129,7 +139,7 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
     [super viewWillAppear:animated];
 
     [self reloadData];
-    self.title = [NSString stringWithFormat:@"%d Faces", totalCellCount];
+    //self.title = [NSString stringWithFormat:@"%d Faces", totalCellCount];
     
     [AssetLib loadThumbImage:^(UIImage *thumbImage)
     {

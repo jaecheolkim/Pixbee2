@@ -26,16 +26,24 @@
 #import "RESideMenu.h"
 #import "UIViewController+RESideMenu.h"
 #import "RECommonFunctions.h"
+#import "Animator.h"
+
 
 @interface RESideMenu () 
 {
     UIPanGestureRecognizer *panGestureRecognizer;
+    UINavigationController *navigationController;
 }
 
 @property (strong, readwrite, nonatomic) UIImageView *backgroundImageView;
-@property (assign, readwrite, nonatomic) BOOL visible;
+@property (assign, readwrite, nonatomic) BOOL visibleLeftMenu;
+@property (assign, readwrite, nonatomic) BOOL visibleRightMode;
 @property (assign, readwrite, nonatomic) CGPoint originalPoint;
 @property (strong, readwrite, nonatomic) UIButton *contentButton;
+
+@property (strong, nonatomic) Animator* animator;
+@property (strong, nonatomic) UIPercentDrivenInteractiveTransition* interactionController;
+
 
 @end
 
@@ -84,6 +92,8 @@
     _contentViewShadowOffset = CGSizeZero;
     _contentViewShadowOpacity = 0.4f;
     _contentViewShadowRadius = 8.0f;
+    
+
 }
 
 - (id)initWithContentViewController:(UIViewController *)contentViewController menuViewController:(UIViewController *)menuViewController
@@ -92,6 +102,8 @@
     if (self) {
         _contentViewController = contentViewController;
         _menuViewController = menuViewController;
+        
+
     }
     return self;
 }
@@ -144,6 +156,10 @@
         layer.shadowOpacity = self.contentViewShadowOpacity;
         layer.shadowRadius = self.contentViewShadowRadius;
     }
+    
+    navigationController = (UINavigationController *)self.contentViewController;
+    navigationController.delegate = self;
+    self.animator = [Animator new];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -220,11 +236,11 @@
     } completion:^(BOOL finished) {
         [self addContentViewControllerMotionEffects];
         
-        if (!self.visible && [self.delegate conformsToProtocol:@protocol(RESideMenuDelegate)] && [self.delegate respondsToSelector:@selector(sideMenu:didShowMenuViewController:)]) {
+        if (!self.visibleLeftMenu && [self.delegate conformsToProtocol:@protocol(RESideMenuDelegate)] && [self.delegate respondsToSelector:@selector(sideMenu:didShowMenuViewController:)]) {
             [self.delegate sideMenu:self didShowMenuViewController:self.menuViewController];
         }
         
-        self.visible = YES;
+        self.visibleLeftMenu = YES;
     }];
     
     [self updateStatusBar];
@@ -257,11 +273,11 @@
     } completion:^(BOOL finished) {
         [[UIApplication sharedApplication] endIgnoringInteractionEvents];
         
-        if (!self.visible && [self.delegate conformsToProtocol:@protocol(RESideMenuDelegate)] && [self.delegate respondsToSelector:@selector(sideMenu:didHideMenuViewController:)]) {
+        if (!self.visibleLeftMenu && [self.delegate conformsToProtocol:@protocol(RESideMenuDelegate)] && [self.delegate respondsToSelector:@selector(sideMenu:didHideMenuViewController:)]) {
             [self.delegate sideMenu:self didHideMenuViewController:self.menuViewController];
         }
     }];
-    self.visible = NO;
+    self.visibleLeftMenu = NO;
     [self updateStatusBar];
 }
 
@@ -323,6 +339,29 @@
     }
 }
 
+
+
+- (id<UIViewControllerAnimatedTransitioning>)navigationController:(UINavigationController *)navigationController animationControllerForOperation:(UINavigationControllerOperation)operation fromViewController:(UIViewController *)fromVC toViewController:(UIViewController *)toVC
+{
+    self.animator.operation = operation;
+    
+    if (operation == UINavigationControllerOperationPop) {
+        
+        return self.animator;
+    } else if(operation == UINavigationControllerOperationPush) {
+        return self.animator;
+    } else {
+        return nil;
+    }
+    
+}
+
+- (id<UIViewControllerInteractiveTransitioning>)navigationController:(UINavigationController *)navigationController interactionControllerForAnimationController:(id<UIViewControllerAnimatedTransitioning>)animationController
+{
+    return self.interactionController;
+}
+
+
 #pragma mark -
 #pragma mark Gesture recognizer
 
@@ -330,17 +369,17 @@
 {
     IF_IOS7_OR_GREATER(
        if (self.interactivePopGestureRecognizerEnabled && [self.contentViewController isKindOfClass:[UINavigationController class]]) {
-           UINavigationController *navigationController = (UINavigationController *)self.contentViewController;
+           //UINavigationController *navigationController = (UINavigationController *)self.contentViewController;
            if (navigationController.viewControllers.count > 1 && navigationController.interactivePopGestureRecognizer.enabled) {
                return NO;
            }
        }
     );
   
-    if (self.panFromEdge && [gestureRecognizer isKindOfClass:[UIPanGestureRecognizer class]] && !self.visible) {
+    if (self.panFromEdge && [gestureRecognizer isKindOfClass:[UIPanGestureRecognizer class]] && !self.visibleLeftMenu) {
         CGPoint point = [touch locationInView:gestureRecognizer.view];
 #warning 원래는 30이었는데 100으로 바꿨음.
-        if (point.x < 100) { //30
+        if (point.x < 320) { //30
             return YES;
         } else {
             return NO;
@@ -349,7 +388,7 @@
     return YES;
 }
 
-- (void)panGestureRecognized:(UIPanGestureRecognizer *)recognizer
+- (void)LeftMenuHandling:(UIPanGestureRecognizer *)recognizer
 {
     if (!self.panGestureEnabled) {
         return;
@@ -358,13 +397,13 @@
     if ([self.delegate conformsToProtocol:@protocol(RESideMenuDelegate)] && [self.delegate respondsToSelector:@selector(sideMenu:didRecognizePanGesture:)])
         [self.delegate sideMenu:self didRecognizePanGesture:recognizer];
     
-
+    
     
     CGPoint point = [recognizer translationInView:self.view];
     
     if (recognizer.state == UIGestureRecognizerStateBegan) {
         
-        if (!self.visible && [self.delegate conformsToProtocol:@protocol(RESideMenuDelegate)] && [self.delegate respondsToSelector:@selector(sideMenu:willShowMenuViewController:)]) {
+        if (!self.visibleLeftMenu && [self.delegate conformsToProtocol:@protocol(RESideMenuDelegate)] && [self.delegate respondsToSelector:@selector(sideMenu:willShowMenuViewController:)]) {
             [self.delegate sideMenu:self willShowMenuViewController:self.menuViewController];
         }
         
@@ -381,12 +420,12 @@
     }
     
     if (recognizer.state == UIGestureRecognizerStateBegan || recognizer.state == UIGestureRecognizerStateChanged) {
-        CGFloat delta = self.visible ? (point.x + self.originalPoint.x) / self.originalPoint.x : point.x / self.view.frame.size.width;
+        CGFloat delta = self.visibleLeftMenu ? (point.x + self.originalPoint.x) / self.originalPoint.x : point.x / self.view.frame.size.width;
         
         CGFloat contentViewScale = self.scaleContentView ? 1 - ((1 - self.contentViewScaleValue) * delta) : 1;
         CGFloat backgroundViewScale = 1.7f - (0.7f * delta);
         CGFloat menuViewScale = 1.5f - (0.5f * delta);
-
+        
         if (!_bouncesHorizontally) {
             contentViewScale = MAX(contentViewScale, self.contentViewScaleValue);
             backgroundViewScale = MAX(backgroundViewScale, 1.0);
@@ -406,12 +445,12 @@
         }
         
         if (contentViewScale > 1) {
-            if (!self.visible) {
+            if (!self.visibleLeftMenu) {
                 self.contentViewController.view.transform = CGAffineTransformIdentity;
             }
             self.contentViewController.view.frame = self.view.bounds;
         } else {
-            if (!_bouncesHorizontally && self.visible) {
+            if (!_bouncesHorizontally && self.visibleLeftMenu) {
                 point.x = MIN(0.0, point.x);
                 [recognizer setTranslation:point inView:self.view];
             }
@@ -423,12 +462,91 @@
     }
     
     if (recognizer.state == UIGestureRecognizerStateEnded) {
+        NSLog(@"[recognizer velocityInView:self.view].x = %d", (int)[recognizer velocityInView:self.view].x);
         if ([recognizer velocityInView:self.view].x > 0) {
             [self showMenuViewController];
         } else {
             [self hideMenuViewController];
         }
     }
+}
+
+
+- (void)RightContentHandling:(UIPanGestureRecognizer *)recognizer
+{
+    UIView* view = navigationController.view;
+    if (recognizer.state == UIGestureRecognizerStateBegan) {
+        
+        CGPoint location = [recognizer locationInView:view];
+        int viewControllerCount = (int)navigationController.viewControllers.count;
+        if (location.x <  CGRectGetMidX(view.bounds) ){// && viewControllerCount > 1) { // left half
+            self.interactionController = [UIPercentDrivenInteractiveTransition new];
+            [navigationController popViewControllerAnimated:YES];
+        }
+        
+        else if(location.x >  CGRectGetMidX(view.bounds) ){// && viewControllerCount == 1) { //right half
+            self.interactionController = [UIPercentDrivenInteractiveTransition new];
+            UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+            UIViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"setting"];
+            [navigationController pushViewController:vc animated:YES ];
+        }
+        
+    } else if (recognizer.state == UIGestureRecognizerStateChanged) {
+        CGPoint translation = [recognizer translationInView:view];
+        CGFloat d = fabs(translation.x / CGRectGetWidth(view.bounds));
+        [self.interactionController updateInteractiveTransition:d];
+    } else if (recognizer.state == UIGestureRecognizerStateEnded) {
+        NSLog(@"animator.operation = %d / x = %d", (int)(self.animator.operation), (int)[recognizer velocityInView:view].x);
+        if(self.animator.operation == UINavigationControllerOperationPush){
+            if ([recognizer velocityInView:view].x <= 0) {
+                [self.interactionController finishInteractiveTransition];
+
+            } else {
+                [self.interactionController cancelInteractiveTransition];
+            }
+        } else if(self.animator.operation == UINavigationControllerOperationPop){
+            if ([recognizer velocityInView:view].x > 0) {
+                [self.interactionController finishInteractiveTransition];
+
+            } else {
+                [self.interactionController cancelInteractiveTransition];
+            }
+        }
+        _visibleRightMode = NO;
+        self.interactionController = nil;
+    }
+    
+    return;
+}
+- (void)panGestureRecognized:(UIPanGestureRecognizer *)recognizer
+{
+//    CGPoint velocity = [recognizer velocityInView:self.view];
+//    
+//    if(velocity.x > 0)
+//    {
+//        NSLog(@"gesture went right");
+//        if(_visibleRightMode) {
+//            NSLog(@"<<<<<-------------------------------go Back to LeftMenuContent !!");
+//           // [self RightContentHandling:recognizer];
+//        } else {
+//            NSLog(@"------------------------------->>>>>Open Left Menu !!");
+//            //[self LeftMenuHandling:recognizer];
+//        }
+//    }
+//    else
+//    {
+//        NSLog(@"gesture went left");
+//        if(self.visibleLeftMenu) {
+//            NSLog(@"<<<<<-------------------------------Close LeftMenu !!");
+//            //[self LeftMenuHandling:recognizer];
+//        } else {
+//            NSLog(@"------------------------------->>>>>Open Right ViewController !!");
+//            //[self RightContentHandling:recognizer];
+//        }
+//    }
+    
+    
+    [self LeftMenuHandling:recognizer];
 }
 
 #pragma mark -
@@ -455,7 +573,7 @@
     contentViewController.view.transform = transform;
     contentViewController.view.frame = frame;
     
-    if(self.visible) {
+    if(self.visibleLeftMenu) {
         [self addContentViewControllerMotionEffects];
     }
 }
@@ -501,7 +619,7 @@
 
 - (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
 {
-    if (self.visible) {
+    if (self.visibleLeftMenu) {
         self.contentViewController.view.transform = CGAffineTransformIdentity;
         self.contentViewController.view.frame = self.view.bounds;
         self.contentViewController.view.transform = CGAffineTransformMakeScale(self.contentViewScaleValue, self.contentViewScaleValue);
@@ -525,7 +643,7 @@
 {
     UIStatusBarStyle statusBarStyle = UIStatusBarStyleDefault;
     IF_IOS7_OR_GREATER(
-       statusBarStyle = self.visible ? self.menuViewController.preferredStatusBarStyle : self.contentViewController.preferredStatusBarStyle;
+       statusBarStyle = self.visibleLeftMenu ? self.menuViewController.preferredStatusBarStyle : self.contentViewController.preferredStatusBarStyle;
        if (self.contentViewController.view.frame.origin.y > 10) {
            statusBarStyle = self.menuViewController.preferredStatusBarStyle;
        } else {
@@ -539,7 +657,7 @@
 {
     BOOL statusBarHidden = NO;
     IF_IOS7_OR_GREATER(
-        statusBarHidden = self.visible ? self.menuViewController.prefersStatusBarHidden : self.contentViewController.prefersStatusBarHidden;
+        statusBarHidden = self.visibleLeftMenu ? self.menuViewController.prefersStatusBarHidden : self.contentViewController.prefersStatusBarHidden;
         if (self.contentViewController.view.frame.origin.y > 10) {
             statusBarHidden = self.menuViewController.prefersStatusBarHidden;
         } else {
@@ -553,7 +671,7 @@
 {
     UIStatusBarAnimation statusBarAnimation = UIStatusBarAnimationNone;
     IF_IOS7_OR_GREATER(
-        statusBarAnimation = self.visible ? self.menuViewController.preferredStatusBarUpdateAnimation : self.contentViewController.preferredStatusBarUpdateAnimation;
+        statusBarAnimation = self.visibleLeftMenu ? self.menuViewController.preferredStatusBarUpdateAnimation : self.contentViewController.preferredStatusBarUpdateAnimation;
         if (self.contentViewController.view.frame.origin.y > 10) {
             statusBarAnimation = self.menuViewController.preferredStatusBarUpdateAnimation;
         } else {

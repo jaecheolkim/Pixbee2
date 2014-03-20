@@ -59,27 +59,38 @@ UserCellDelegate, GalleryViewCellDelegate>
 
 @implementation IndividualGalleryController
 
-//- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-//{
-//    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-//    if (self) {
-//        // Custom initialization
-//    }
-//    return self;
-//}
+- (UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
 
 - (void)viewWillLayoutSubviews
 {
     [super viewWillLayoutSubviews];
     NSLog(@"UserColor = %d", _UserColor);
     UIColor *color = [SQLManager getUserColor:_UserColor];
-    [self.navigationController.navigationBar setBarTintColor:color];
-    self.navigationController.navigationBar.translucent = YES;
+    UINavigationBar *navigationBar = self.navigationController.navigationBar;
+  
+    UIImage *colorImage = [UIImage imageWithColor:color size:CGSizeMake(1, 1)];
+    [navigationBar setBackgroundImage:colorImage forBarMetrics:UIBarMetricsDefault];
+    navigationBar.shadowImage = [UIImage new];
+    navigationBar.translucent = YES;
+    
+//    [self.navigationController.navigationBar setBarTintColor:color];
+    NSString *navBarClassName = NSStringFromClass([self.navigationController.navigationBar class]);
+    NSLog(@"navibar class = %@", navBarClassName);
+    //self.navigationController.navigationBar.translucent = YES;
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+//    NSLog(@"UserColor = %d", _UserColor);
+//    UIColor *color = [SQLManager getUserColor:_UserColor];
+//    [self.navigationController.navigationBar setBarTintColor:color];
+//    NSString *navBarClassName = NSStringFromClass([self.navigationController.navigationBar class]);
+//    NSLog(@"navibar class = %@", navBarClassName);
     
 //    self.navigationController.navigationBar.tintColor = COLOR_RED;
 //    self.navigationController.navigationBar.alpha = 0.7;

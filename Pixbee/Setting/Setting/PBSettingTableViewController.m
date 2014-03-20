@@ -36,6 +36,20 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    UIImage *colorImage = [UIImage imageWithColor:[UIColor clearColor] size:CGSizeMake(30, 30)];
+    UIBarButtonItem *backButton = [[UIBarButtonItem alloc] initWithImage:colorImage style:UIBarButtonItemStylePlain target:self action:nil];
+    
+    //    UIButton *backButton = [[UIButton alloc] initWithFrame: CGRectMake(0, 0, 44.0f, 30.0f)];
+    //    [backButton setImage:[UIImage imageNamed:@"back.png"]  forState:UIControlStateNormal];
+    //    [backButton addTarget:self action:@selector(popVC) forControlEvents:UIControlEventTouchUpInside];
+    self.navigationItem.rightBarButtonItem =  backButton; //[[UIBarButtonItem alloc] initWithCustomView:backButton];
+    self.navigationController.navigationBar.tintColor=[UIColor whiteColor];
+    
+    
+    UIImageView *titleView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"menu_setting_selected"]];
+    titleView.contentMode = UIViewContentModeScaleAspectFit;
+    self.navigationItem.titleView = titleView;
+    
     
     UIImageView *logo = [[UIImageView alloc] initWithFrame:CGRectMake(126, 440, 68, 22)];
     logo.image = [UIImage imageNamed:@"setting_logo"];

@@ -27,6 +27,7 @@
 @property (weak, nonatomic) IBOutlet UIButton *skipButton;
 @property (weak, nonatomic) IBOutlet UIButton *addButton;
 
+@property (weak, nonatomic) IBOutlet UILabel *guideBanner;
 
 // iCarousel for faceCarousel
 @property (weak, nonatomic) NSMutableArray *assets;
@@ -80,7 +81,7 @@
     
     self.assets = [NSMutableArray array];
     
-
+    self.guideBanner.hidden = YES;
     self.addButton.hidden = YES;
     
     // 제일 마지막에 저장된 사진의 Blur Image를 백그라운드 깔아 준다.
@@ -102,7 +103,7 @@
 
     
     // Do any additional setup after loading the view.
-    
+    [self resetFontShape:_guideBanner];
     [self resetFontShape:_descriptionLabel];
     [self resetFontShape:_faceCountLabel];
     
@@ -275,6 +276,7 @@
                          animations:^{
                              _searchingImageView.frame = CGRectMake(135, 56, 50, 50);
                              _faceCarousel.alpha = 1.0;
+                             self.guideBanner.hidden = NO;
                          }
                          completion:^(BOOL finished){
                              self.skipButton.hidden = YES;
@@ -346,6 +348,7 @@
                          _faceCarousel.alpha = 1.0;
                          //_faceCountLabel.alpha = 1.0;
                          
+                         _descriptionLabel.text = @"Photo Found";
                      }
                      completion:^(BOOL finished) {
                          self.skipButton.hidden = YES;
