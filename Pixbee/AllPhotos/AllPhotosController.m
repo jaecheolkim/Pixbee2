@@ -42,6 +42,10 @@
     int currentUserID;
     
     int currentPosition, previousPosiotion;
+    
+    UIButton *backBtn;
+    UIButton *editBtn;
+    
 }
 //@property (nonatomic, retain) APNavigationController *navController;
 @property (strong, nonatomic) IBOutlet UICollectionView *collectionView;
@@ -65,13 +69,13 @@
 
 @property (weak, nonatomic) IBOutlet UIButton *stackImages;
 
-- (IBAction)DoneClickedHandler:(id)sender;
+- (IBAction)rightBarButtonHandler:(id)sender;
 
 - (IBAction)shareButtonHandler:(id)sender;
 
 - (IBAction)closeFaceTabButtonHandler:(id)sender;
 
-- (IBAction)shwMenu:(id)sender;
+- (IBAction)leftBarButtonHandler:(id)sender;
 
 
 @end
@@ -96,7 +100,7 @@
     [super viewDidLoad];
     
     
-    UIImageView *titleView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"menu_unfacetab_selected"]];
+    UIImageView *titleView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"title_unfacetab"]];
     titleView.contentMode = UIViewContentModeScaleAspectFit;
     self.navigationItem.titleView = titleView;
     
@@ -124,11 +128,36 @@
 //    }
     
     
+//    backBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+//    UIImage *backBtnImage = [UIImage imageNamed:@"menu"];
+//    [backBtn setBackgroundImage:backBtnImage forState:UIControlStateNormal];
+//    [backBtn addTarget:self action:@selector(leftBarButtonHandler:) forControlEvents:UIControlEventTouchUpInside];
+//    backBtn.frame = CGRectMake(0, 0, 40, 40);
+//    UIView *backButtonView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
+//    backButtonView.bounds = CGRectOffset(backButtonView.bounds, 14, 0);
+//    [backButtonView addSubview:backBtn];
+//    UIBarButtonItem *backButton = [[UIBarButtonItem alloc] initWithCustomView:backButtonView];
+//    self.navigationItem.leftBarButtonItem = backButton;
+//    
+//    
+//    editBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+//    backBtnImage = [UIImage imageNamed:@"edit"];
+//    [editBtn setBackgroundImage:backBtnImage forState:UIControlStateNormal];
+//    [editBtn addTarget:self action:@selector(rightBarButtonHandler:) forControlEvents:UIControlEventTouchUpInside];
+//    editBtn.frame = CGRectMake(0, 0, 40, 40);
+//    backButtonView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
+//    backButtonView.bounds = CGRectOffset(backButtonView.bounds, -14, 0);
+//    [backButtonView addSubview:editBtn];
+//    backButton = [[UIBarButtonItem alloc] initWithCustomView:backButtonView];
+//    self.navigationItem.rightBarButtonItem = backButton;
+    
+    
     NSLog(@"segueIdentifier = %@", _segueIdentifier);
     if([_segueIdentifier isEqualToString:@"Segue3_1to4_3"]){
         //From MainDashBoard newFaceTab
         
-        [_menuButton setImage:[UIImage imageNamed:@"back"]];
+        //[_menuButton setImage:[UIImage imageNamed:@"back"]];
+        [backBtn setBackgroundImage:[UIImage imageNamed:@"back"] forState:UIControlStateNormal];
     }
 
     [self refreshBGImage:nil];
@@ -869,7 +898,7 @@
 
 }
 
-- (IBAction)shwMenu:(id)sender {
+- (IBAction)leftBarButtonHandler:(id)sender {
     if([_segueIdentifier isEqualToString:@"Segue3_1to4_3"]){
         
         [self.navigationController popToRootViewControllerAnimated:YES];
@@ -1538,7 +1567,7 @@
 
 }
 
-- (IBAction)DoneClickedHandler:(id)sender {
+- (IBAction)rightBarButtonHandler:(id)sender {
     
     [self toggleEdit];
 
@@ -1557,7 +1586,7 @@
         [[NSNotificationCenter defaultCenter] postNotificationName:@"RootViewControllerEventHandler"
                                                             object:self
                                                           userInfo:@{@"panGestureEnabled":@"NO"}];
-        _menuButton.enabled = NO;
+        backBtn.enabled = NO;
         
     }
     else {
@@ -1565,7 +1594,7 @@
         [[NSNotificationCenter defaultCenter] postNotificationName:@"RootViewControllerEventHandler"
                                                             object:self
                                                           userInfo:@{@"panGestureEnabled":@"YES"}];
-        _menuButton.enabled = YES;
+        backBtn.enabled = YES;
         
         [self showStackImages:NO];
         [self showFaceTabBar:NO];

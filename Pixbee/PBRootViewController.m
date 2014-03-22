@@ -12,11 +12,15 @@
 #import "PBNavigationBar.h"
 
 #import "FaceDetectionViewController.h"
-
+#import "SDImageCache.h"
+#import "UIImage+ImageEffects.h"
+#import "UIImage+Addon.h"
 
 
 @interface PBRootViewController ()
-
+{
+    UIImageView *bgImageView;
+}
 @end
 
 @implementation PBRootViewController
@@ -24,25 +28,61 @@
 
 - (void)awakeFromNib
 {
+    UIButton *backBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    UIImage *backBtnImage = [UIImage imageNamed:@"menu"];
+    [backBtn setBackgroundImage:backBtnImage forState:UIControlStateNormal];
+    [backBtn addTarget:self action:@selector(leftBarButtonHandler:) forControlEvents:UIControlEventTouchUpInside];
+    backBtn.frame = CGRectMake(0, 0, 40, 40);
+    UIView *backButtonView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
+    backButtonView.bounds = CGRectOffset(backButtonView.bounds, 14, 0);
+    [backButtonView addSubview:backBtn];
+    UIBarButtonItem *backButton = [[UIBarButtonItem alloc] initWithCustomView:backButtonView];
+    self.navigationItem.leftBarButtonItem = backButton;
+
+    
     self.contentViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"contentController"];
     self.menuViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"menuController"];
     self.delegate = (PBMenuViewController *)self.menuViewController;
     
     self.panGestureEnabled = YES;
-    self.backgroundImage =  [UIImage imageNamed:@"bg"]; //[UIImage imageNamed:@"MenuBackground"];
+    //self.backgroundImage =  [[SDImageCache sharedImageCache] imageFromDiskCacheForKey:@"LastImage"];//[UIImage imageNamed:@"bg"]; //[UIImage imageNamed:@"MenuBackground"];
     self.panFromEdge = YES; //왼쪽 가장자리에서만 스와이핑시 메뉴 열리게
     self.scaleContentView = YES; // 메뉴 열릴때 오른쪽 뷰 사이즈 변경하게
     self.animationDuration = 0.2;
     self.parallaxEnabled = YES;
 
+//    UIImage *lastImage = [[SDImageCache sharedImageCache] imageFromDiskCacheForKey:@"LastImage"];
+//    lastImage = [lastImage applyExtraLightEffect];
+//    self.backgroundImage = lastImage;
     
-    [AssetLib checkNewPhoto];
-    
+    [self refreshBGImage:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(RootViewControllerEventHandler:)
 												 name:@"RootViewControllerEventHandler" object:nil];
     
 }
+
+- (void)refreshBGImage:(UIImage*)image
+{
+
+    UIImage *lastImage;
+    
+    if(image != nil) {
+        lastImage = image;
+    } else {
+        lastImage = [[SDImageCache sharedImageCache] imageFromDiskCacheForKey:@"LastImage"];
+        if(IsEmpty(lastImage)) {
+            lastImage = [UIImage imageNamed:@"bg.png"];
+        }
+    }
+    
+    
+    lastImage = [lastImage applyExtraLightEffect];
+   self.backgroundImage = lastImage;
+    
+}
+
+
 
 - (BOOL)prefersStatusBarHidden
 {
@@ -53,7 +93,7 @@
     UINavigationController *navigationController = (UINavigationController *)self.contentViewController;
     NSArray *viewControllers = navigationController.viewControllers;
     NSString *viewControllerName =  NSStringFromClass([viewControllers[0] class]);
-    NSLog(@"Contents ViewController Class = %@",viewControllerName);
+    //NSLog(@"Contents ViewController Class = %@",viewControllerName);
     // NSStringFromClass([navigationController viewControllers]));
     
     if([viewControllerName isEqualToString:@"PBMainDashBoardViewController"]) return NO;
@@ -72,7 +112,7 @@
     UINavigationController *navigationController = (UINavigationController *)self.contentViewController;
     NSArray *viewControllers = navigationController.viewControllers;
     NSString *viewControllerName =  NSStringFromClass([viewControllers[0] class]);
-    NSLog(@"Contents ViewController Class = %@",viewControllerName);
+    //NSLog(@"Contents ViewController Class = %@",viewControllerName);
     // NSStringFromClass([navigationController viewControllers]));
     
     if([viewControllerName isEqualToString:@"PBMainDashBoardViewController"]) return UIStatusBarStyleLightContent;
@@ -101,8 +141,8 @@
         UIViewController *viewContorller = viewControllers[0];
         
         NSString *viewControllerName =  NSStringFromClass([viewContorller class]);
-        NSLog(@"ViewController Class = %@",viewControllerName);
-        NSLog(@"NavigationBar Class = %@", NSStringFromClass([navigationController.navigationBar class]));
+//        NSLog(@"ViewController Class = %@",viewControllerName);
+//        NSLog(@"NavigationBar Class = %@", NSStringFromClass([navigationController.navigationBar class]));
         
         if([navBarClassName isEqualToString:@"PBNavigationBar"]){
             
@@ -164,6 +204,16 @@
         self.panGestureEnabled = YES;
         
 	}
+    
+    if([[[notification userInfo] objectForKey:@"refreshBGImage"] isEqualToString:@"YES"]) {
+        
+        [self refreshBGImage:nil];
+        
+	}
+    
+
+    
+    
  }
 
 @end

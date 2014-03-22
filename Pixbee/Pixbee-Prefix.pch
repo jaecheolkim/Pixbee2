@@ -33,18 +33,36 @@
 
    // #import "APNavigationController.h"
 
+
+
 #endif
 
+//    #import "ExtendNSLogFunctionality.h"
+//#ifdef DEBUG
+//#   define NSLog(...) NSLog(__VA_ARGS__)
+//#else
+//#   define NSLog(...)
+//#endif
+
 #ifdef DEBUG
-#   define NSLog(...) NSLog(__VA_ARGS__)
+#define NSLog( s, ... ) NSLog( @"\n===========================================================================\nObject : <%p %@:(%d)>\nMethod : %s\nLog    : %@\n===========================================================================\n\n", self, [[NSString stringWithUTF8String:__FILE__] lastPathComponent], __LINE__, __PRETTY_FUNCTION__, [NSString stringWithFormat:(s), ##__VA_ARGS__] )
 #else
-#   define NSLog(...)
+#define NSLog( s, ... )
 #endif
+
 
 #define RGB_COLOR(r, g, b)      [UIColor colorWithRed:r/255.0 green:g/255.0 blue:b/255.0 alpha:1]
 #define RGBA_COLOR(r, g, b, a)  [UIColor colorWithRed:r/255.0 green:g/255.0 blue:b/255.0 alpha:a]
 
 //For Colorbar
+#define COLOR_A                 [UIColor colorWithRed:255/255.0 green:177/255.0 blue:9/255.0 alpha:0.7]
+#define COLOR_B                 [UIColor colorWithRed:255/255.0 green:148/255.0 blue:49/255.0 alpha:0.7]
+#define COLOR_C                 [UIColor colorWithRed:248/255.0 green:106/255.0 blue:39/255.0 alpha:0.7]
+#define COLOR_D                 [UIColor colorWithRed:243/255.0 green:65/255.0 blue:52/255.0 alpha:0.7]
+#define COLOR_E                 [UIColor colorWithRed:205/255.0 green:70/255.0 blue:85/255.0 alpha:0.7]
+
+
+
 #define COLOR_PINK              [UIColor colorWithRed:220/255.0 green:52/255.0 blue:150/255.0 alpha:0.7]
 #define COLOR_RED               [UIColor colorWithRed:219/255.0 green:22/255.0 blue:49/255.0 alpha:0.7]
 #define COLOR_AMERICANROSE      [UIColor colorWithRed:221/255.0 green:64/255.0 blue:53/255.0 alpha:0.7]

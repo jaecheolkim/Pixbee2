@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <AssetsLibrary/AssetsLibrary.h>
+#import "ALAssetsLibrary+CustomPhotoAlbum.h"
 #define AssetLib [PBAssetsLibrary sharedInstance]
 
 @protocol PBAssetsLibraryDelegate;
@@ -38,9 +39,12 @@
 - (void)checkGeocode;
 
 #pragma mark Album function
+
+- (void)checkPixbeeAlbum;
+
 // 앨범사진 로컬 앨범DB로 동기화
 - (void)syncAlbumToDB:(void (^)(NSArray *results))result;
-
+- (void)syncPixbeeAlbum:(void (^)(float percent))enumerationBlock completion:(void (^)(BOOL finished))completion;
 // 새로운 사진이 있는지 체크
 - (void)checkNewPhoto;
 

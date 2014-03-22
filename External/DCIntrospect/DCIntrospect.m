@@ -661,8 +661,8 @@ id UITextInputTraits_valueForKey(id self, SEL _cmd, NSString *key)
 	
 	if (outputString.length == 0)
 		NSLog(@"DCIntrospect: No changes made to %@.", self.currentView.class);
-	else
-		printf("\n\n%s\n", [outputString UTF8String]);
+//	else
+//		printf("\n\n%s\n", [outputString UTF8String]);
 }
 
 - (void)setName:(NSString *)name forObject:(id)object accessedWithSelf:(BOOL)accessedWithSelf

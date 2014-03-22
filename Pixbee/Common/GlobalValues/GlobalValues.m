@@ -16,6 +16,9 @@
 #define  KEY_PUSHNOTIFICATIONSETTING    @"pushNotificationSetting"
 #define  KEY_TESTMODESETTING            @"testModeSetting"
 #define  KEY_APPVERSION                 @"appVersion"
+#define  KEY_CURRENT_TOTAL_PROCESS      @"keyCurrnetTotalProcess"
+#define  KEY_LAST_TOTAL_ASSET           @"keyLastTotalAsset"
+
 @interface GlobalValues ()
 @end
 
@@ -78,6 +81,27 @@
     
     return [self readObjectFromDefault:KEY_LASTASSETURL];
 }
+
+- (void)setCurrentTotalAssetProcess:(int)currentTotalAssetProcess
+{
+    [self writeObjectToDefault:[NSString stringWithFormat:@"%d",currentTotalAssetProcess] withKey:KEY_CURRENT_TOTAL_PROCESS];
+}
+
+- (int)currentTotalAssetProcess
+{
+    return [[self readObjectFromDefault:KEY_CURRENT_TOTAL_PROCESS] intValue];
+}
+
+- (void)setLastTotalAssetCount:(int)lastTotalAssetCount
+{
+    [self writeObjectToDefault:[NSString stringWithFormat:@"%d",lastTotalAssetCount] withKey:KEY_LAST_TOTAL_ASSET];
+}
+
+- (int)lastTotalAssetCount
+{
+    return [[self readObjectFromDefault:KEY_LAST_TOTAL_ASSET] intValue];
+}
+
 
 
 //@property (nonatomic, strong) NSString* appVersion;

@@ -32,7 +32,7 @@
 
 #import "FXBlurView.h"
 
-
+#import "ALAssetsLibrary+CustomPhotoAlbum.h"
 
 
 static void *IsAdjustingFocusingContext = &IsAdjustingFocusingContext;
@@ -147,7 +147,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 @property (nonatomic) NSInteger frameNum;
 @property (nonatomic) NSInteger numPicsTaken;
 
-@property (weak, nonatomic) IBOutlet FXBlurView *BlurView;
+@property (weak, nonatomic) IBOutlet UIView *BlurView;
 @property (weak, nonatomic) IBOutlet UIButton *closeButton;
 
 @property (weak, nonatomic) IBOutlet UIButton *flashButton;
@@ -161,7 +161,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 @property (weak, nonatomic) IBOutlet UIImageView *cameraImage;
 @property (weak, nonatomic) IBOutlet UIImageView *videoImage;
 @property (weak, nonatomic) IBOutlet UIButton *GalleryButton;
-@property (weak, nonatomic) IBOutlet FXBlurView *DimmedView;
+@property (weak, nonatomic) IBOutlet UIView *DimmedView;
 
 @property (nonatomic, retain) CALayer *adjustingFocusLayer;
 
@@ -193,15 +193,13 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 {
     [super viewDidLoad];
     
-    self.BlurView.tintColor  = RGBA_COLOR(255, 255, 255, 0.3);
-    self.BlurView.dynamic = YES;
-    self.BlurView.alpha = 0.9;
+    //self.BlurView.tintColor  = RGBA_COLOR(255, 255, 255, 0.3);
+    //self.BlurView.dynamic = YES;
+    //self.BlurView.alpha = 0.9;
 
     NSLog(@"SegueFrom = %@", _segueid);
     if([_segueid isEqualToString:@"Segue3_1to6_1"]){
         [_closeButton setImage:[UIImage imageNamed:@"close"] forState:UIControlStateNormal];
-
-
     }
     
     if(_segueid == nil){
@@ -277,6 +275,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     [_faceListScrollView setHidden:YES];
     
     if(self.faceMode == FaceModeCollect){
+        
         self.navigationController.navigationBarHidden = YES;
         [_snapButton setHidden:YES];
         [_GalleryButton setHidden:YES];
@@ -323,6 +322,15 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
         [_nameLabel setNumberOfLines:2];
         [_nameLabel setBackgroundColor:[UIColor clearColor]];
         [_nameLabel setTextAlignment:NSTextAlignmentCenter];
+        
+        
+        layer.hidden = YES;
+        _switchButton.hidden = YES;
+        _nameLabel.hidden = YES;
+        _instructionsLabel.hidden = YES;
+        _mixedIndicator.hidden = YES;
+        
+        
         
     } else {
         [_GalleryButton setHidden:YES];
@@ -689,18 +697,86 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
         if (imageDataSampleBuffer)
         {
             imageData = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageDataSampleBuffer];
-
-            [[[ALAssetsLibrary alloc] init] writeImageDataToSavedPhotosAlbum:imageData metadata:nil completionBlock:^(NSURL *assetURL, NSError *error2)
-             {
-                 if (error2) {
-                     NSLog(@"ERROR: the image failed to be written");
-                 }
-                 else {
-                     NSLog(@"PHOTO SAVED - assetURL: %@", assetURL);
-                     
-                     [self savePhoto:assetURL users:selectedUsers];
-                 }
-             }];
+            
+            ALAssetsLibrary *assLib = [[ALAssetsLibrary alloc] init];
+            
+            [assLib saveImageData:imageData
+                         metadata:nil
+                          toAlbum:@"Pixbee"
+              withCompletionBlock:^(NSURL *assetURL, NSError *error) {
+                  if (error) {
+                      //if ([ALAssetsLibrary respondsToSelector:@selector(authorizationStatus)]) {
+                      if ([ALAssetsLibrary authorizationStatus] != ALAuthorizationStatusAuthorized) {
+                          
+                          NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+                          BOOL showCameraRollGuide = [userDefaults boolForKey:@"SHOWCAMERAROLLGUIDE"];
+                          
+                          if (!showCameraRollGuide) {
+                              UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"To save Photos to Camera Roll", @"To save Photos to Camera Roll")
+                                                                              message:NSLocalizedString(@"Go to iPhone Settings > Privacy > Photo,\nand turn ON Pixbee.", @"Go to iPhone Settings > Privacy > Photo,\nand turn ON Pudding Camera.")
+                                                                             delegate:nil
+                                                                    cancelButtonTitle:NSLocalizedString(@"Done", @"Done")
+                                                                    otherButtonTitles:nil];
+                              [alert show];
+                              
+                              [userDefaults setBool:YES forKey:@"SHOWCAMERAROLLGUIDE"];
+                              [userDefaults synchronize];
+                          }
+                      }
+                      // }
+                  }
+                  
+                  else {
+                      UIImage *image = [UIImage imageWithData:imageData];
+                      image = [image fixRotation];
+                      [[SDImageCache sharedImageCache] storeImage:image forKey:@"LastImage" toDisk:YES];
+                      
+                      NSLog(@"PHOTO SAVED - assetURL: %@", assetURL);
+                      
+                      [self savePhoto:assetURL users:selectedUsers];
+                      
+                      [[NSNotificationCenter defaultCenter] postNotificationName:@"RootViewControllerEventHandler"
+                                                                          object:self
+                                                                        userInfo:@{@"refreshBGImage":@"YES"}];
+                  }
+            }];
+            
+            
+            
+//            [[[ALAssetsLibrary alloc] init] writeImageDataToSavedPhotosAlbum:imageData metadata:nil completionBlock:^(NSURL *assetURL, NSError *error2)
+//             {
+////                 if (error2) {
+////                     NSLog(@"ERROR: the image failed to be written");
+////                 }
+//                 
+//                 if (error2) {
+//                     //if ([ALAssetsLibrary respondsToSelector:@selector(authorizationStatus)]) {
+//                         if ([ALAssetsLibrary authorizationStatus] != ALAuthorizationStatusAuthorized) {
+//                             
+//                             NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+//                             BOOL showCameraRollGuide = [userDefaults boolForKey:@"SHOWCAMERAROLLGUIDE"];
+//                             
+//                             if (!showCameraRollGuide) {
+//                                 UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"To save Photos to Camera Roll", @"To save Photos to Camera Roll")
+//                                                                                 message:NSLocalizedString(@"Go to iPhone Settings > Privacy > Photo,\nand turn ON Pixbee.", @"Go to iPhone Settings > Privacy > Photo,\nand turn ON Pudding Camera.")
+//                                                                                delegate:nil
+//                                                                       cancelButtonTitle:NSLocalizedString(@"Done", @"Done")
+//                                                                       otherButtonTitles:nil];
+//                                 [alert show];
+//                                 
+//                                 [userDefaults setBool:YES forKey:@"SHOWCAMERAROLLGUIDE"];
+//                                 [userDefaults synchronize];
+//                             }
+//                         }
+//                    // }
+//                 }
+//                 
+//                 else {
+//                     NSLog(@"PHOTO SAVED - assetURL: %@", assetURL);
+//                     
+//                     [self savePhoto:assetURL users:selectedUsers];
+//                 }
+//             }];
         }
     }];
 }
@@ -710,6 +786,13 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     [UIView animateWithDuration:0.5
                      animations:^{
                          _DimmedView.alpha = 0.0;
+                         
+                         layer.hidden = NO;
+                         _switchButton.hidden = NO;
+                         //_nameLabel.hidden = NO;
+                         _instructionsLabel.hidden = NO;
+                         _mixedIndicator.hidden = NO;
+                         
                      } completion:^(BOOL finished) {
                          isStart = YES;
                      }];
@@ -1468,27 +1551,30 @@ bail:
         
     }
     else { // 얼굴 인식일 경우.
-        
-        if(IsEmpty(features)){
-            [recognisedFaces removeAllObjects];
-            [processing removeAllObjects];
-        }
-        
-        dispatch_async(dispatch_get_main_queue(), ^(void) {
-            [self drawFaceBoxesForFeatures:features forVideoBox:clap orientation:curDeviceOrientation];
-        });
-        
-        if ([features count]) {
-            //NSLog(@"feature tracking id: %d", ((CIFaceFeature *)features[0]).trackingID);
+        if(isFaceRecRedy){
+            if(IsEmpty(features)){
+                [recognisedFaces removeAllObjects];
+                [processing removeAllObjects];
+            }
             
-            for (CIFaceFeature *feature in features) {
-                if(ciImage){
-                    [self identifyFace:feature inImage:ciImage];
+            dispatch_async(dispatch_get_main_queue(), ^(void) {
+                [self drawFaceBoxesForFeatures:features forVideoBox:clap orientation:curDeviceOrientation];
+            });
+            
+            if ([features count]) {
+                //NSLog(@"feature tracking id: %d", ((CIFaceFeature *)features[0]).trackingID);
+                
+                for (CIFaceFeature *feature in features) {
+                    if(ciImage){
+                        [self identifyFace:feature inImage:ciImage];
+                    }
                 }
             }
         }
-
-        
+#warning 얼굴인식 데이터가 없을 때 안내 메시지? 뿌려주기.
+        else {
+            
+        }
     }
     
 }

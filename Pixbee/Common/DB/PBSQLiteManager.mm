@@ -807,22 +807,29 @@ for (id param in params ) {
     return success;
 }
 
-- (UIColor*)getUserColor:(int)colorID
+- (UIColor*)getUserColor:(int)colorID alpha:(float)alpha
 {
     UIColor *color;
-    
     switch (colorID) {
-        case 0: color = COLOR_PINK; break;
-        case 1: color = COLOR_RED; break;
-        case 2: color = COLOR_AMERICANROSE; break;
-        case 3: color = COLOR_ORANGE; break;
-        case 4: color = COLOR_YELLOW; break;
-        case 5: color = COLOR_GREEN; break;
-        case 6: color = COLOR_TURQUOISE; break;
-        case 7: color = COLOR_BLUE; break;
-        case 8: color = COLOR_DARKBLUE; break;
-        case 9: color = COLOR_PURPLE; break;
-        default: color = COLOR_PINK; break;
+        case 0: color = [UIColor colorWithRed:0/255.0 green:0/255.0 blue:0/255.0 alpha:alpha]; break;
+        case 1: color = [UIColor colorWithRed:255/255.0 green:177/255.0 blue:9/255.0 alpha:alpha]; break;
+        case 2: color = [UIColor colorWithRed:255/255.0 green:148/255.0 blue:49/255.0 alpha:alpha]; break;
+        case 3: color = [UIColor colorWithRed:248/255.0 green:106/255.0 blue:39/255.0 alpha:alpha]; break;
+        case 4: color = [UIColor colorWithRed:243/255.0 green:65/255.0 blue:52/255.0 alpha:alpha]; break;
+        case 5: color = [UIColor colorWithRed:205/255.0 green:70/255.0 blue:85/255.0 alpha:alpha]; break;
+        default: color = [UIColor colorWithRed:255/255.0 green:177/255.0 blue:9/255.0 alpha:alpha]; break;
+            
+//        case 0: color = COLOR_PINK; break;
+//        case 1: color = COLOR_RED; break;
+//        case 2: color = COLOR_AMERICANROSE; break;
+//        case 3: color = COLOR_ORANGE; break;
+//        case 4: color = COLOR_YELLOW; break;
+//        case 5: color = COLOR_GREEN; break;
+//        case 6: color = COLOR_TURQUOISE; break;
+//        case 7: color = COLOR_BLUE; break;
+//        case 8: color = COLOR_DARKBLUE; break;
+//        case 9: color = COLOR_PURPLE; break;
+//        default: color = COLOR_PINK; break;
     }
     
     return color;

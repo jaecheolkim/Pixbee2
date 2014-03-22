@@ -128,67 +128,8 @@
     
     [self initNotification];
     
-//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(AssetCheckFacesEnumerationEventHandler:)
-//												 name:@"AssetCheckFacesEnumerationEvent" object:nil];
-//
-//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(AssetCheckFacesFinishedEventHandler:)
-//												 name:@"AssetCheckFacesFinishedEvent" object:nil];
-    
     [AssetLib checkFace:self.UserID];
-    
-//    //모든 Asset뒤져서 얼굴 검출하고 DB에 저장.
-//    AssetLib.delegate = self;
-//    AssetLib.faceProcessStop = NO;
-//    
-//    [AssetLib checkFacesFor:self.UserID
-//      usingEnumerationBlock:^(NSDictionary *processInfo) {
-//          dispatch_async(dispatch_get_main_queue(), ^{
-//              NSLog(@"Processing : %@", processInfo);
-//              
-//              int totalV = [[processInfo objectForKey:@"totalV"] intValue];
-//              int currentV = [[processInfo objectForKey:@"currentV"] intValue];
-//              int matchV = [[processInfo objectForKey:@"matchV"] intValue];
-//
-//              NSLog(@"currentV = %d / totalV = %d / matchV = %d", currentV, totalV, matchV);
-//              
-//              [self.progressView setProgress:((float)currentV/(float)totalV)];// animated:YES];
-//              [self.faceCountLabel setText:[NSString stringWithFormat:@"%d", matchV]];
-//              
-//              id faceImage = [processInfo objectForKey:@"faceImage"];
-//              if(!IsEmpty(faceImage) && [faceImage isKindOfClass:[UIImage class]])
-//              {
-//                  [self chageFace:faceImage];
-//              }
-//          });
-//          
-//      }
-//      completion:^(BOOL finished){
-//          dispatch_async(dispatch_get_main_queue(), ^{
-//              
-//              self.assets = AssetLib.faceAssets;
-//              
-//              [self.faceCarousel reloadData];
-//              
-//              
-//              [UIView animateWithDuration:0.4
-//                               animations:^{
-//                                   _searchingImageView.alpha = 0.0;
-//                                   _progressView.alpha = 0.0;
-//                                   
-//                                   _faceCarousel.alpha = 1.0;
-//                                   //_faceCountLabel.alpha = 1.0;
-//                                   
-//                               }
-//                               completion:^(BOOL finished) {
-//                                   self.skipButton.hidden = YES;
-//                                   self.addButton.hidden = NO;
-//                               }];
-//
-//          });
-//          
-//      }
-//     ];
-    
+
 }
 
 
@@ -198,11 +139,7 @@
     [super viewDidUnload];
     
     [self deleteNotification];
-    
-//    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"AssetCheckFacesEnumerationEvent" object:nil];
-//    
-//    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"AssetCheckFacesFinishedEvent" object:nil];
-    
+
     //free up memory by releasing subviews
     self.faceCarousel = nil;
 }

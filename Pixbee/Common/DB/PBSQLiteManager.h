@@ -70,7 +70,7 @@ enum errorCodes {
 // 해당 User의 인식용 얼굴 데이터 모두 삭제.
 - (BOOL)deleteAllFacesForUserID:(int)UserID;
 // User의 칼라 정보 가져오기
-- (UIColor*)getUserColor:(int)colorID;
+- (UIColor*)getUserColor:(int)colorID alpha:(float)alpha;
 
 #pragma mark FaceData Table
 // 해당 User의 인식용 얼굴 데이터 개수 조사.

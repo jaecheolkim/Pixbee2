@@ -8,7 +8,7 @@
 
 #import "IndividualGalleryController.h"
 #import "GalleryViewCell.h"
-#import "GalleryHeaderView.h"
+//#import "GalleryHeaderView.h"
 #import "UserCell.h"
 #import "OpenPhotoSegue.h"
 #import "OpenPhotoUnwindSegue.h"
@@ -35,6 +35,8 @@ UserCellDelegate, GalleryViewCellDelegate>
     
     NSMutableArray *selectedPhotos;
     NSString *currentAction;
+    
+    NSString *UserName;
 }
 
 @property (strong, nonatomic) IBOutlet UICollectionView *collectionView;
@@ -68,7 +70,7 @@ UserCellDelegate, GalleryViewCellDelegate>
 {
     [super viewWillLayoutSubviews];
     NSLog(@"UserColor = %d", _UserColor);
-    UIColor *color = [SQLManager getUserColor:_UserColor];
+    UIColor *color = [SQLManager getUserColor:_UserColor alpha:0.5];
     UINavigationBar *navigationBar = self.navigationController.navigationBar;
   
     UIImage *colorImage = [UIImage imageWithColor:color size:CGSizeMake(1, 1)];
@@ -85,6 +87,16 @@ UserCellDelegate, GalleryViewCellDelegate>
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    //[self.view setBackgroundColor:[UIColor clearColor]];
+    [self.view setBackgroundColor:[UIColor colorWithRed:255/255.0 green:255/255.0 blue:255/255.0 alpha:0.1]];
+    
+    _UserID = [_userInfo[@"UserID"] intValue];
+    _UserColor = [_userInfo[@"color"] intValue];
+    UserName = _userInfo[@"UserName"];
+    
+    
+    //    destViewController.UserID = UserID;
+    //    destViewController.UserColor = UserColor;
     
 //    NSLog(@"UserColor = %d", _UserColor);
 //    UIColor *color = [SQLManager getUserColor:_UserColor];
@@ -107,7 +119,7 @@ UserCellDelegate, GalleryViewCellDelegate>
 //    }
     
     
-    [self refreshBGImage:nil];
+   // [self refreshBGImage:nil];
 
     self.collectionView.backgroundColor = [UIColor clearColor];
     self.collectionView.backgroundView = self.bgImageView;
@@ -115,7 +127,7 @@ UserCellDelegate, GalleryViewCellDelegate>
     _shareButton.enabled = NO;
     
     self.userProfileView.delegate = self;
-    self.title = @"ALBUM";
+    
 }
 
 - (void)refreshInfo
@@ -136,8 +148,8 @@ UserCellDelegate, GalleryViewCellDelegate>
     [self.userProfileView updateCell:self.user count:[self.photos count]];
     
     
-    UICollectionViewFlowLayout *collectionViewLayout = (UICollectionViewFlowLayout*)self.collectionView.collectionViewLayout;
-    collectionViewLayout.sectionInset = UIEdgeInsetsMake(0, 0, 3, 0);
+//    UICollectionViewFlowLayout *collectionViewLayout = (UICollectionViewFlowLayout*)self.collectionView.collectionViewLayout;
+//    collectionViewLayout.sectionInset = UIEdgeInsetsMake(0, 0, 3, 0);
     
     [self.collectionView reloadData];
     [self.userProfileView.borderView removeFromSuperview];
@@ -149,6 +161,8 @@ UserCellDelegate, GalleryViewCellDelegate>
     NSLog(@"title - %@", self.importView.titleLabel.text);
     NSString *buttonTitle = [NSString stringWithFormat:@"Please import\nmore %@'s Photo", [self.user objectForKey:@"UserName"]];
     self.importView.titleLabel.text = buttonTitle;
+
+    self.title = [NSString stringWithFormat:@"%@ (%d)", UserName, (int)[self.photos count]];
  
 }
 

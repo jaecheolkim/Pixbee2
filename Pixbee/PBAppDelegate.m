@@ -43,6 +43,15 @@
     [self checkBundle];
 
     [self.window makeKeyAndVisible];
+    
+    
+    [AssetLib checkNewPhoto];
+    
+    [AssetLib syncPixbeeAlbum:^(float percent) {
+        
+    } completion:^(BOOL finished) {
+        
+    }];
 
     return YES;
 }

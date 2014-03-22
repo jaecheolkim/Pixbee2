@@ -33,6 +33,8 @@
 {
     UIPanGestureRecognizer *panGestureRecognizer;
     UINavigationController *navigationController;
+    
+    UIView *BlackOverlayView;
 }
 
 @property (strong, readwrite, nonatomic) UIImageView *backgroundImageView;
@@ -87,13 +89,19 @@
 
     _bouncesHorizontally = YES;
     
-    _contentViewShadowEnabled = YES;
-    _contentViewShadowColor = [UIColor blackColor];
-    _contentViewShadowOffset = CGSizeZero;
-    _contentViewShadowOpacity = 0.4f;
-    _contentViewShadowRadius = 8.0f;
+//    _contentViewShadowEnabled = NO;
+//    _contentViewShadowColor = [UIColor blackColor];
+//    _contentViewShadowOffset = CGSizeZero;
+//    _contentViewShadowOpacity = 0.4f;
+//    _contentViewShadowRadius = 8.0f;
     
 
+    _contentViewShadowEnabled = NO;
+    _contentViewShadowColor = [UIColor whiteColor];
+    _contentViewShadowOffset = CGSizeZero;
+    _contentViewShadowOpacity = 0.1f;
+    _contentViewShadowRadius = 8.0f;
+    
 }
 
 - (id)initWithContentViewController:(UIViewController *)contentViewController menuViewController:(UIViewController *)menuViewController
@@ -131,13 +139,22 @@
         [button addTarget:self action:@selector(hideMenuViewController) forControlEvents:UIControlEventTouchUpInside];
         button;
     });
-    
+
     [self.view addSubview:self.backgroundImageView];
+    
+    BlackOverlayView = [[UIView alloc] initWithFrame:self.view.bounds];
+    BlackOverlayView.backgroundColor = [UIColor blackColor];
+    BlackOverlayView.alpha = 0.0;
+    [self.backgroundImageView addSubview:BlackOverlayView];
+    
     [self re_displayController:self.menuViewController frame:self.view.bounds];
     [self re_displayController:self.contentViewController frame:self.view.bounds];
     self.menuViewController.view.alpha = 0;
     if (self.scaleBackgroundImageView)
         self.backgroundImageView.transform = CGAffineTransformMakeScale(1.7f, 1.7f);
+    
+    
+
     
     [self addMenuViewControllerMotionEffects];
     
@@ -156,6 +173,7 @@
         layer.shadowOpacity = self.contentViewShadowOpacity;
         layer.shadowRadius = self.contentViewShadowRadius;
     }
+    
     
     navigationController = (UINavigationController *)self.contentViewController;
     navigationController.delegate = self;
@@ -232,6 +250,8 @@
         self.menuViewController.view.transform = CGAffineTransformIdentity;
         if (self.scaleBackgroundImageView)
             self.backgroundImageView.transform = CGAffineTransformIdentity;
+        
+        BlackOverlayView.alpha = 0.5;
             
     } completion:^(BOOL finished) {
         [self addContentViewControllerMotionEffects];
@@ -270,6 +290,8 @@
                }
             );
         }
+        
+        BlackOverlayView.alpha = 0.0;
     } completion:^(BOOL finished) {
         [[UIApplication sharedApplication] endIgnoringInteractionEvents];
         

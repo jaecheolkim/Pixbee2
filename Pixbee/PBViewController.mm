@@ -143,7 +143,7 @@
     //[_viewFBLoginViewArea setHidden:YES];
     //[_indicator startAnimating];
     
-    [AssetLib checkNewPhoto];
+    //[AssetLib checkNewPhoto];
     
     [self goNext];
 }

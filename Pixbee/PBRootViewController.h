@@ -11,4 +11,6 @@
 
 @interface PBRootViewController : RESideMenu
 
+- (void)refreshBGImage:(UIImage*)image;
+
 @end

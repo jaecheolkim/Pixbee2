@@ -114,7 +114,7 @@
 //    UIColor *tintColor = [UIColor colorWithWhite:0.97 alpha:0.82];
 //    return [self applyBlurWithRadius:20 tintColor:tintColor saturationDeltaFactor:1.8 maskImage:nil];
     
-    UIColor *tintColor = [UIColor colorWithWhite:0.97 alpha:0.72];
+    UIColor *tintColor = [UIColor colorWithWhite:0.97 alpha:0.1];
     return [self applyBlurWithRadius:40 tintColor:tintColor saturationDeltaFactor:1.8 maskImage:nil];
 }
 

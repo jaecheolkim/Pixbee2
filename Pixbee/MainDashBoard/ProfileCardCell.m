@@ -25,10 +25,44 @@
 {
     [super prepareForReuse];
     
+    //self.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"photo-frame-2.png"]];
+    
+    //[self resetFontShape:_nameLabel];
+ 
     _nameTextField.delegate = self;
     [_nameTextField addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
 
 }
+
+
+- (void)resetFontShape
+{
+    
+//    label.attributedText=[[NSAttributedString alloc]
+//                               initWithString:@"string to both stroke and fill"
+//                               attributes:@{
+//                                            NSStrokeWidthAttributeName: [NSNumber numberWithFloat:-3.0],
+//                                            NSStrokeColorAttributeName:[UIColor yellowColor],
+//                                            NSForegroundColorAttributeName:[UIColor redColor]
+//                                            }
+//                               ];
+//
+    
+//    label.layer.shadowColor = [[UIColor colorWithRed:0/255.0 green:0/255.0 blue:0/255.0 alpha:0.7] CGColor];
+//    label.layer.shadowOffset = CGSizeMake(0.0f, 1.0f);
+//    label.layer.shadowOpacity = 1.0f;
+//    label.layer.shadowRadius = 1.0f;
+    
+    
+    [_nameLabel setTextColor:[UIColor whiteColor]];
+    [_nameLabel setShadowColor:[UIColor colorWithRed:0/255.0 green:0/255.0 blue:0/255.0 alpha:0.3]];
+    [_nameLabel setShadowOffset:CGSizeMake(0, 1)];
+    [_nameLabel setNumberOfLines:1];
+    [_nameLabel setTextAlignment:NSTextAlignmentCenter];
+//
+}
+
+
 - (void)setUserInfo:(NSDictionary *)userInfo
 {
     _userInfo = userInfo;
@@ -48,11 +82,21 @@
     [_profileImageView setImage:[SQLManager getUserProfileImage:UserID]];
      _nameLabel.text = userName;
     
+    
+//    _nameLabel.attributedText = [[NSAttributedString alloc]
+//                                 initWithString:userName
+//                                 attributes:@{
+//                                              NSForegroundColorAttributeName :[UIColor whiteColor],
+//                                              NSStrokeWidthAttributeName: [NSNumber numberWithFloat:3.0],
+//                                              NSStrokeColorAttributeName:[UIColor grayColor]
+//                                              }
+//                                 ];
+    
 }
 
 - (void)setUserColor:(int)userColor
 {
-    UIColor *color = [SQLManager getUserColor:userColor];
+    UIColor *color = [SQLManager getUserColor:userColor alpha:0.5];
     [_nameLabel setBackgroundColor:color];
 }
 

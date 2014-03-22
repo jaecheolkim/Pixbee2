@@ -28,6 +28,10 @@ static inline id ObjectOrNull(id object)
 @property (nonatomic, strong) NSString* userName;
 @property (nonatomic) int UserID;
 @property (nonatomic, strong) NSString* lastAssetURL;
+
+@property (nonatomic) int currentTotalAssetProcess;
+@property (nonatomic) int lastTotalAssetCount;
+
 @property (nonatomic) int autoAlbumScanSetting;
 @property (nonatomic) int pushNotificationSetting;
 @property (nonatomic) int testMode;

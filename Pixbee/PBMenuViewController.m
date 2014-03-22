@@ -202,7 +202,7 @@
     
     NSArray *viewControllers = navigationController.viewControllers;
     NSString *viewControllerName =  NSStringFromClass([viewControllers[0] class]);
-    NSLog(@"Contents ViewController Class = %@",viewControllerName);
+    //NSLog(@"Contents ViewController Class = %@",viewControllerName);
     
     //[UIView animateWithDuration:0.2 animations:^{
         if([viewControllerName isEqualToString:@"PBMainDashBoardViewController"]) {

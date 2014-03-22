@@ -18,7 +18,7 @@
 }
 
 
-- (IBAction)showMenu:(id)sender;
+- (IBAction)leftBarButtonHandler:(id)sender;
 
 @end
 
@@ -36,17 +36,35 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    UIImage *colorImage = [UIImage imageWithColor:[UIColor clearColor] size:CGSizeMake(30, 30)];
-    UIBarButtonItem *backButton = [[UIBarButtonItem alloc] initWithImage:colorImage style:UIBarButtonItemStylePlain target:self action:nil];
     
-    //    UIButton *backButton = [[UIButton alloc] initWithFrame: CGRectMake(0, 0, 44.0f, 30.0f)];
-    //    [backButton setImage:[UIImage imageNamed:@"back.png"]  forState:UIControlStateNormal];
-    //    [backButton addTarget:self action:@selector(popVC) forControlEvents:UIControlEventTouchUpInside];
-    self.navigationItem.rightBarButtonItem =  backButton; //[[UIBarButtonItem alloc] initWithCustomView:backButton];
-    self.navigationController.navigationBar.tintColor=[UIColor whiteColor];
+    [self.view setBackgroundColor:[UIColor colorWithRed:255/255.0 green:255/255.0 blue:255/255.0 alpha:0.1]];
     
     
-    UIImageView *titleView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"menu_setting_selected"]];
+//    UIImage *colorImage = [UIImage imageWithColor:[UIColor clearColor] size:CGSizeMake(30, 30)];
+//    UIBarButtonItem *backButton = [[UIBarButtonItem alloc] initWithImage:colorImage style:UIBarButtonItemStylePlain target:self action:nil];
+//    
+//    //    UIButton *backButton = [[UIButton alloc] initWithFrame: CGRectMake(0, 0, 44.0f, 30.0f)];
+//    //    [backButton setImage:[UIImage imageNamed:@"back.png"]  forState:UIControlStateNormal];
+//    //    [backButton addTarget:self action:@selector(popVC) forControlEvents:UIControlEventTouchUpInside];
+//    self.navigationItem.rightBarButtonItem =  backButton; //[[UIBarButtonItem alloc] initWithCustomView:backButton];
+//    self.navigationController.navigationBar.tintColor=[UIColor whiteColor];
+    
+    
+//    UIButton *backBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+//    UIImage *backBtnImage = [UIImage imageNamed:@"menu"];
+//    [backBtn setBackgroundImage:backBtnImage forState:UIControlStateNormal];
+//    [backBtn addTarget:self action:@selector(leftBarButtonHandler:) forControlEvents:UIControlEventTouchUpInside];
+//    backBtn.frame = CGRectMake(0, 0, 40, 40);
+//    UIView *backButtonView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
+//    backButtonView.bounds = CGRectOffset(backButtonView.bounds, 14, 0);
+//    [backButtonView addSubview:backBtn];
+//    UIBarButtonItem *backButton = [[UIBarButtonItem alloc] initWithCustomView:backButtonView];
+//    self.navigationItem.leftBarButtonItem = backButton;
+
+    
+    
+    
+    UIImageView *titleView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"title_setting"]];
     titleView.contentMode = UIViewContentModeScaleAspectFit;
     self.navigationItem.titleView = titleView;
     
@@ -63,11 +81,15 @@
     versionLabel.text = [NSString stringWithFormat:@"Version %@", GlobalValue.appVersion ];//@"Version 1.0";
     [self.view addSubview:versionLabel];
 
-    [self.tableView setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"background"]]];
+    
  	self.tableView.delegate = self;
 	self.tableView.dataSource = self;
 	self.tableView.rowHeight = 50.0;
     
+    
+    
+    //[self.tableView setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"background"]]];
+    [self.tableView setBackgroundColor:[UIColor clearColor]];
 
 }
 
@@ -155,7 +177,7 @@
             }
             layer.path = pathRef;
             CFRelease(pathRef);
-            layer.fillColor = [UIColor colorWithWhite:1.f alpha:0.8f].CGColor;
+            layer.fillColor =  [UIColor colorWithWhite:1.f alpha:0.5f].CGColor;
             layer.strokeColor = tableView.separatorColor.CGColor;//[UIColor lightGrayColor].CGColor;
             
             if (addLine == YES) {
@@ -552,7 +574,7 @@
 }
 */
 
-- (IBAction)showMenu:(id)sender {
+- (IBAction)leftBarButtonHandler:(id)sender {
     [self.sideMenuViewController presentMenuViewController];
 }
 @end

@@ -15,6 +15,7 @@
     //CIDetector *detector;
     CIDetector *cFaceDetector;
     BOOL isFaceRecRedy;
+    BOOL isSyncPixbeeAlbum;
 }
 @property (nonatomic, strong) CLGeocoder *geocoder;
 
@@ -68,19 +69,22 @@
 - (void) handleAssetChangedNotifiation:(NSNotification *)notification
 {
     NSDictionary *userInfo = [notification userInfo];
-   if(userInfo != nil) {
+   if(userInfo != nil && !isSyncPixbeeAlbum) {
+       
+#warning 어플 실행 중 혹은 실행 시 마다 새로운 카메라롤 새로운 사진이 있을 때 Pixbee 앨범에 동기화 !!!
         NSLog(@"userInfo = %@", userInfo);
-        NSString *insertedGroupURLs = [userInfo objectForKey:ALAssetLibraryInsertedAssetGroupsKey];
-       if(!IsEmpty(insertedGroupURLs)){
-           NSURL *assetURL = [NSURL URLWithString:insertedGroupURLs];
-           if (assetURL) {
-               [self.assetsLibrary groupForURL:assetURL resultBlock:^(ALAssetsGroup *group) {
-                   self.currentAssetGroup = group;
-               } failureBlock:^(NSError *error) {
-                   
-               }];
-           }
-       }
+       
+//        NSString *insertedGroupURLs = [userInfo objectForKey:ALAssetLibraryInsertedAssetGroupsKey];
+//       if(!IsEmpty(insertedGroupURLs)){
+//           NSURL *assetURL = [NSURL URLWithString:insertedGroupURLs];
+//           if (assetURL) {
+//               [self.assetsLibrary groupForURL:assetURL resultBlock:^(ALAssetsGroup *group) {
+//                   self.currentAssetGroup = group;
+//               } failureBlock:^(NSError *error) {
+//                   
+//               }];
+//           }
+//       }
 //        NSSet *insertedGroupURLs = [[notification userInfo] objectForKey:ALAssetLibraryInsertedAssetGroupsKey];
 //        NSURL *assetURL = [insertedGroupURLs anyObject];
 //        if (assetURL) {
@@ -96,6 +100,190 @@
         NSLog(@"userInfo == nil");
     }
 }
+
+
+- (void)checkPixbeeAlbum
+{
+    
+    //    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    //    BOOL isPixBeeAlbumCreated = [userDefaults boolForKey:@"CREATEDPIXBEEALBUM"];
+    //
+    //    if(!isPixBeeAlbumCreated){
+    NSString *albumName = @"Pixbee";
+    [self.assetsLibrary newAssetGroup:albumName withSuccess:^(BOOL success) {
+        
+        NSLog(@"======= Success create Pixbee Album !!!");
+        //            NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+        //            [userDefaults setBool:YES forKey:@"CREATEDPIXBEEALBUM"];
+        //            [userDefaults synchronize];
+    } withFailur:^(NSError *error) {
+        //            NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+        //            [userDefaults setBool:NO forKey:@"CREATEDPIXBEEALBUM"];
+        //            [userDefaults synchronize];
+        
+        NSLog(@"======= Failed create Pixbee Album = %@", error);
+    }];
+    //    }
+    
+    
+}
+
+
+- (void)checkNewPhoto
+{
+    [AssetLib checkPixbeeAlbum];
+    
+    //Check new photos and go main dashboard
+    NSLog(@"========================= >>>>>>>>  START checkNewPhoto");
+    [AssetLib syncAlbumToDB:^(NSArray *result) {
+        //NSLog(@"Result = %@", result);
+        if(result.count > 0  && result != nil){
+            NSArray *lastDistance = [result objectAtIndex:result.count-1];
+            ALAsset *lastAsset = [[lastDistance objectAtIndex:lastDistance.count-1] objectForKey:@"Asset"];
+            NSURL *assetURL = [lastAsset valueForProperty:ALAssetPropertyAssetURL];
+            
+            //NSLog(@"Last Asset URL = %@", assetURL.absoluteString);
+            
+            if(![GlobalValue.lastAssetURL isEqualToString:assetURL.absoluteString]) {
+                //New Asset found
+                
+                NSLog(@" ============== new asset found!");
+                
+                
+            }
+            //NSLog(@"Locations : %@", [AssetLib locationArray]);
+            //[AssetLib checkGeocode];
+            GlobalValue.lastAssetURL = assetURL.absoluteString;
+        }
+        
+        NSLog(@"========================= >>>>>>>>  END checkNewPhoto");
+        
+    }];
+}
+
+- (void)syncPixbeeAlbum:(void (^)(float percent))enumerationBlock completion:(void (^)(BOOL finished))completion
+{
+
+    
+    NSLog(@"Check...syncPixbeeAlbum ");
+    
+    isSyncPixbeeAlbum = YES;
+    
+    int lastTotalAssetCount = [GlobalValue lastTotalAssetCount];
+    int currentTotalAssetProcess = [GlobalValue currentTotalAssetProcess];
+    
+    
+    if(!cFaceDetector)
+    {
+        NSDictionary *detectorOptions = @{ CIDetectorAccuracy : CIDetectorAccuracyLow, CIDetectorTracking : @(NO) };
+        cFaceDetector = [CIDetector detectorOfType:CIDetectorTypeFace context:nil options:detectorOptions];
+    }
+    
+    NSLog(@"Start...syncPixbeeAlbum ");
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        @autoreleasepool {
+            
+            NSUInteger type = ALAssetsGroupSavedPhotos; // |  ALAssetsGroupFaces | ALAssetsGroupPhotoStream ;
+            
+            [self.assetsLibrary enumerateGroupsWithTypes:type usingBlock:^(ALAssetsGroup *group, BOOL *stop)
+             {
+                 if(nil!=group)
+                 {
+                     [group setAssetsFilter:[ALAssetsFilter allPhotos]];
+                     
+                     
+                     __block NSInteger numberOfAssets = group.numberOfAssets;
+                     
+                     // 현재 총 어셋 갯수와 최종 저장된 총 어셋 갯수 비교해서 틀리면 동기화.
+                     if(lastTotalAssetCount != numberOfAssets || currentTotalAssetProcess != numberOfAssets - 1)
+                     {
+                         //아직 동기화가 안되었으니 동기화 해야 함.
+                         
+                         NSString *GroupName = [group valueForProperty:ALAssetsGroupPropertyName];
+                         
+                         if ([[group valueForProperty:@"ALAssetsGroupPropertyType"] intValue] == ALAssetsGroupSavedPhotos)
+                         {
+                             
+                             if(![GroupName isEqualToString:@"Pixbee"])
+                             {
+                                 [group enumerateAssetsUsingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {
+                                     if(result != NULL) {
+                                         
+                                         CGImageRef cgImage = [result aspectRatioThumbnail];
+                                         CIImage *ciImage = [CIImage imageWithCGImage:cgImage];
+                                         NSArray *fs = [cFaceDetector featuresInImage:ciImage];
+                                         
+                                         if(!IsEmpty(fs)) {
+                                             // 신규 포토 저장.
+                                             // Save DB. [Photos] 얼굴이 검출된 사진만 Photos Table에 저장.
+                                             //int PhotoID = [SQLManager newPhotoWith:result withGroupAssetURL:GroupURL];
+                                             
+                                             NSURL *assetURL = [result valueForProperty:ALAssetPropertyAssetURL];
+                                             
+                                             [self.assetsLibrary addAssetURL:assetURL toAlbum:@"Pixbee" withCompletionBlock:^(NSURL *assetURL, NSError *error) {
+                                                 
+                                             } withFailurBlock:^(NSError *error) {
+                                                 
+                                             }];
+                                             
+                                         }
+                                         
+                                         [GlobalValue setCurrentTotalAssetProcess:(int)index];
+                                         
+                                         
+                                         //dispatch_async(dispatch_get_main_queue(), ^{
+                                         //NSLog(@" %d / %d", index, numberOfAssets);
+                                         enumerationBlock((float)index / (float)numberOfAssets);
+                                         //});
+                                         
+                                         if(index == numberOfAssets-1){
+                                             completion(YES);
+                                             NSLog(@"End...syncPixbeeAlbum = %d", (int)numberOfAssets);
+                                         }
+                                     }
+                                     //assetCounter++;
+                                 }];
+                             }
+                             
+                         }
+                         
+                     }
+                     
+                     // 마지막 에셋 개수 저장하기
+                     [GlobalValue setLastTotalAssetCount:(int)numberOfAssets];
+                     
+                 }
+                 
+                 isSyncPixbeeAlbum = NO;
+             } failureBlock:^(NSError *error) {
+                 
+                 isSyncPixbeeAlbum = NO;
+                 NSLog(@"block Failed!");
+             }];
+            
+        }
+    });
+    
+    
+//    if(lastTotalAssetCount == 0 || currentTotalAssetProcess != lastTotalAssetCount - 1)
+//    {
+//        //아직 동기화가 안되었으니 동기화 해야 함.
+    
+
+
+    
+//    }
+//    else if(currentTotalAssetProcess == lastTotalAssetCount - 1) {
+//        // 동기화가 되었음.
+//
+//
+//
+//    }
+    
+}
+
+
+
 
 
 -(void) loadAssetGroup:(void (^)(NSArray *result))success
@@ -178,6 +366,10 @@
 
 
 #pragma mark Album function
+
+
+
+
 //새로운 Group DB 추가.
 - (int)newGroupToDBWith:(ALAssetsGroup *)assetGroup
 {
@@ -251,12 +443,18 @@
     
     ALAssetsGroupEnumerationResultsBlock assetsEnumerationBlock = ^(ALAsset *result, NSUInteger index, BOOL *stop) {
         
-        if (result) {
+        if (result)
+        {
+            
+            
             //ALAssetPropertyLocation : CLLocation
             //ALAssetPropertyDate : NSDate
             
             NSString *filter = [[NSUserDefaults standardUserDefaults] objectForKey:@"ALLPHOTO_FILTER"];
-            if (filter == nil || [filter isEqualToString:@""] || [filter isEqualToString:@"DISTANCE"]) {
+            //if (filter == nil || [filter isEqualToString:@""] || [filter isEqualToString:@"DISTANCE"]) {
+            
+            if (IsEmpty(filter) || [filter isEqualToString:@"DISTANCE"])
+            {
                 CLLocation *newLocation = [result valueForProperty:ALAssetPropertyLocation];
                 if(newLocation != nil){
                     CLLocationDistance distance = [newLocation distanceFromLocation:oldLocation];
@@ -397,7 +595,8 @@
 
             }
             
-        } else {
+        }
+        else {
             if (![assets containsObject:subAssets]) {
                 [assets addObject:subAssets];
                 
@@ -479,29 +678,7 @@
 }
  
 
-- (void)checkNewPhoto
-{
-    //Check new photos and go main dashboard
-    [AssetLib syncAlbumToDB:^(NSArray *result) {
-        //NSLog(@"Result = %@", result);
-        if(result.count > 0  && result != nil){
-            NSArray *lastDistance = [result objectAtIndex:result.count-1];
-            ALAsset *lastAsset = [[lastDistance objectAtIndex:lastDistance.count-1] objectForKey:@"Asset"];
-            NSURL *assetURL = [lastAsset valueForProperty:ALAssetPropertyAssetURL];
-            
-            NSLog(@"Last Asset URL = %@", assetURL.absoluteString);
-            
-            if(![GlobalValue.lastAssetURL isEqualToString:assetURL.absoluteString]) {
-                //New Asset found
-                
-                NSLog(@" ============== new asset found!");
-            }
-            NSLog(@"Locations : %@", [AssetLib locationArray]);
-            //[AssetLib checkGeocode];
-            GlobalValue.lastAssetURL = assetURL.absoluteString;
-        }
-    }];
-}
+
 
 - (void)checkFace:(int)UserID
 {
@@ -569,8 +746,11 @@
             NSDictionary *match = nil;
             
             int i = 0;
-            for (NSArray *array in _totalAssets) {
-                for(NSDictionary *AssetInfo in array){
+            
+            for (NSArray *array in _totalAssets)
+            {
+                for(NSDictionary *AssetInfo in array)
+                {
                     
                     if(self.faceProcessStop) break ;
                     
@@ -600,6 +780,14 @@
                         // Save DB. [Photos] 얼굴이 검출된 사진만 Photos Table에 저장.
                         int PhotoID = [SQLManager newPhotoWith:photoAsset withGroupAssetURL:GroupURL];
                         
+                        NSURL *assetURL = [photoAsset valueForProperty:ALAssetPropertyAssetURL];
+                        
+                        [self.assetsLibrary addAssetURL:assetURL toAlbum:@"Pixbee" withCompletionBlock:^(NSURL *assetURL, NSError *error) {
+                            
+                        } withFailurBlock:^(NSError *error) {
+                            
+                        }];
+                        
                         for(CIFaceFeature *face in fs)
                         {
                             if(PhotoID >= 0)
@@ -627,6 +815,7 @@
                                 
                                 if(faceDic)
                                 {
+                                    // Asset 사진의 face 정보 DB에 저장.
                                     int FaceNo = [SQLManager newFaceWith:PhotoID withFeature:face withInfo:faceDic];
                                     
                                     if(isFaceRecRedy)
@@ -692,10 +881,7 @@
                             
                         }
                     }
-                    
-                    //if(cgImage) CGImageRelease(cgImage);
-                    
-                    
+
                     _currentProcess++;
                     
                     NSDictionary *processInfo = @{ @"totalV" : @(_totalProcess), @"currentV": @(_currentProcess),
@@ -704,122 +890,21 @@
                     
                     enumerationBlock(processInfo);
                     
-                    
-                    
-                    
                     i++;
                 }
             }
             
             completion(YES);
-            
-//            for(int i = 0; i < (int)[_totalAssets count]; i++){
-//            
-//                if(self.faceProcessStop) break ;
-//                
-//                ALAsset *photoAsset = [_totalAssets[i] objectForKey:@"Asset"];
-//                
-////                CGImageRef cgImage = [photoAsset aspectRatioThumbnail];
-////                UIImage *scaledImage = [FaceLib scaleImage:cgImage scale:1.2f];
-////                CIImage *ciImage = [CIImage imageWithCGImage:scaledImage.CGImage];
-//                
-//                CGImageRef cgImage = [photoAsset aspectRatioThumbnail];
-//                UIImage *scaledImage = nil;
-//                CIImage *ciImage = [CIImage imageWithCGImage:cgImage];
-//                
-//                
-//                NSArray *fs = [cFaceDetector featuresInImage:ciImage];
-//
-//                UIImage *faceImage = nil;
-//                UIImage *profileImage = nil;
-//                
-//                if(!IsEmpty(fs)) {
-//                    // 신규 포토 저장.
-//                    // Save DB. [Photos] 얼굴이 검출된 사진만 Photos Table에 저장.
-//                    int PhotoID = [SQLManager newPhotoWith:photoAsset withGroupAssetURL:GroupURL];
-//                    
-//                    for(CIFaceFeature *face in fs)
-//                    {
-//                        if(PhotoID >= 0)
-//                        {
-//                            if(face.bounds.size.width < 50.f) { // 얼굴이 작은 이미지는 스킵하자...
-//                                continue;
-//                            }
-//                            // Save DB. [Faces]
-//                            cv::Mat cvImage =  [FaceLib getFaceCVData:ciImage feature:face];
-//                            
-//                            NSData *serialized = [FaceLib serializeCvMat:cvImage];
-//                            NSString *PhotoBound = NSStringFromCGRect(ciImage.extent);
-//                            NSString *faceBound = NSStringFromCGRect(face.bounds);
-//                            NSDictionary *faceDic = @{@"PhotoBound": PhotoBound, @"faceBound":faceBound,
-//                                                     @"image": serialized};
-// 
-//                            faceImage = [FaceLib MatToUIImage:cvImage];
-//
-//                            if(faceDic)
-//                            {
-//                                int FaceNo = [SQLManager newFaceWith:PhotoID withFeature:face withInfo:faceDic];
-//
-//                                if(isFaceRecRedy)
-//                                {
-//                                    match = [FaceLib recognizeFace:cvImage];
-//
-//                                    if(match != nil){
-//                                        NSLog(@"Match : %@", match);
-//
-//                                        double currentConfidence = [match[@"confidence"] doubleValue];
-//                                        
-//                                        if([match[@"UserID"] intValue] == UserID && currentConfidence >= 0.78f)
-//                                        //if(([match[@"UserID"] intValue] == UserID && currentConfidence >= 0.78f)  || currentConfidence >= 0.9f)
-//                                        { //< 60.f){
-//                                            int PhotoNo = [SQLManager newUserPhotosWith:[match[@"UserID"] intValue]
-//                                                                              withPhoto:PhotoID
-//                                                                               withFace:FaceNo];
-//                                            if(PhotoNo) {
-//                                                if(currentConfidence > max_confidence){
-//                                                    max_confidence = currentConfidence;
-//                                                    
-//                                                    CGImageRef tmpImage = [FaceLib getFaceCGImage:ciImage bound:face.bounds];
-//                                                    profileImage = [UIImage imageWithCGImage:tmpImage];
-//                                                    
-//                                                    [SQLManager setUserProfileImage:profileImage UserID:UserID];
-//                                                }
-//                                                NSLog(@"UserID => %d Added confidence = %f",[match[@"UserID"] intValue], [match[@"confidence"] doubleValue]);
-//                                                
-//                                                scaledImage = [UIImage imageWithCGImage:cgImage];
-//                                                [_faceAssets addObject:@{@"Asset": photoAsset, @"UserID" : @(UserID), @"PhotoID" : @(PhotoID)}];
-//                                                
-//                                                _matchCount++;
-//                                            }
-//                                        }
-//                                    }
-//                                    
-//                                }
-//                            }
-//                            
-//                        }
-//                        
-//                    }
-//                }
-//                
-//                //if(cgImage) CGImageRelease(cgImage);
-//                
-//
-//                _currentProcess++;
-//
-//                NSDictionary *processInfo = @{ @"totalV" : @(_totalProcess), @"currentV": @(_currentProcess),
-//                                               @"matchV": @(_matchCount), @"scaledImage" : ObjectOrNull(scaledImage),
-//                                               @"faceImage" : ObjectOrNull(faceImage),  @"match" : ObjectOrNull(match)};
-//
-//                enumerationBlock(processInfo);
-//
-//            }
-//            
-//            completion(YES);
         }
     });
 
+    
+
 }
+
+
+
+
 
 
 - (void)loadThumbImage:(void (^)(UIImage *thumbImage))completion

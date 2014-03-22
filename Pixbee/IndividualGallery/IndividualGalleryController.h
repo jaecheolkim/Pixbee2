@@ -10,7 +10,7 @@
 #import "RESideMenu.h"
 
 @interface IndividualGalleryController : PBCommonViewController
-
+@property (strong, nonatomic) NSDictionary *userInfo;
 @property (strong, nonatomic) NSDictionary *usersPhotos;
 @property (nonatomic, assign) int UserID;
 @property (nonatomic, assign) int UserColor;

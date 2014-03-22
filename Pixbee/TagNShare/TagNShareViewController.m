@@ -312,11 +312,14 @@
                               completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
                                   if (!error) {
                                       // Link posted successfully to Facebook
-                                      NSLog([NSString stringWithFormat:@"result: %@", result]);
+                                      NSString *msg = [NSString stringWithFormat:@"result: %@", result];
+                                      NSLog(@"%@", msg);
                                   } else {
                                       // An error occurred, we need to handle the error
                                       // See: https://developers.facebook.com/docs/ios/errors
-                                      NSLog([NSString stringWithFormat:@"%@", error.description]);
+ 
+                                      NSString *msg = [NSString stringWithFormat:@"%@", error.description];
+                                      NSLog(@"%@", msg);
                                   }
                               }];
     }

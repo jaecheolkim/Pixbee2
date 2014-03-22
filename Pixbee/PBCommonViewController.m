@@ -214,12 +214,12 @@
 
 - (UIButton*)getColorButton:(int)i {
     UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
-    UIColor *bgColor = [SQLManager getUserColor:i];
+    UIColor *bgColor = [SQLManager getUserColor:i alpha:1.0];
 
     [button setBackgroundColor:bgColor];
     [button addTarget:self action:@selector(colorButtonHandler:) forControlEvents: UIControlEventTouchUpInside];
     [button setContentMode:UIViewContentModeCenter];
-    [button setFrame:CGRectMake(i * 32, 0, 32, 25)];
+    [button setFrame:CGRectMake(i * 53, 0, 53, 25)];
     [button setTag:i];
 //    [button setBackgroundImage:image forState:UIControlStateNormal];
 //    [button setBackgroundImage:selectedImage forState:UIControlStateDisabled];
@@ -232,7 +232,8 @@
     CGRect rect = [UIScreen mainScreen].bounds;
     self.colorBar = [[UIView alloc] initWithFrame:CGRectMake(0, rect.size.height, 320, 25)];
 
-    for(int i = 0 ; i < 10; i++){
+//    for(int i = 0 ; i < 10; i++){
+    for(int i = 0 ; i < 6; i++){
         UIButton *colorButton = [self getColorButton:i];
         [self.colorBar addSubview:colorButton];
     }

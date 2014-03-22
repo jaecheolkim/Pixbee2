@@ -41,7 +41,7 @@
 {
     [super setSelected:selected animated:animated];
     
-    NSLog(@"Index %d is %@", (int) _index, selected?@"selected":@"not selected");
+    //NSLog(@"Index %d is %@", (int) _index, selected?@"selected":@"not selected");
 
     double duration = 0.7f;
     if(selected){

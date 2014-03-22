@@ -20,7 +20,7 @@
 @property (weak, nonatomic) IBOutlet UITextField *nameTextField;
 @property (assign, nonatomic) int userColor;
 
-
+- (void)resetFontShape;
 @end
 
 @protocol ProfileCardCellDelegate <NSObject>

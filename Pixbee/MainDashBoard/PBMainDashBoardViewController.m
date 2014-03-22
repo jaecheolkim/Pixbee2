@@ -107,9 +107,53 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    UIImageView *titleView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"menu_facetab_selected"]];
+    //UIImage *colorImage = [UIImage imageWithColor:[UIColor clearColor] size:CGSizeMake(30, 30)];
+    
+    [self.view setBackgroundColor:[UIColor colorWithRed:255/255.0 green:255/255.0 blue:255/255.0 alpha:0.1]];
+    
+    
+    UIImageView *titleView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"title_facetab"]];
     titleView.contentMode = UIViewContentModeScaleAspectFit;
     self.navigationItem.titleView = titleView;
+    
+//    UIBarButtonItem *backButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"menu.png"] style:UIBarButtonItemStylePlain target:self action:nil];
+    
+    //    UIButton *backButton = [[UIButton alloc] initWithFrame: CGRectMake(0, 0, 44.0f, 30.0f)];
+    //    [backButton setImage:[UIImage imageNamed:@"back.png"]  forState:UIControlStateNormal];
+    //    [backButton addTarget:self action:@selector(popVC) forControlEvents:UIControlEventTouchUpInside];
+//    self.navigationItem.rightBarButtonItem =  backButton; //[[UIBarButtonItem alloc] initWithCustomView:backButton];
+//    self.navigationController.navigationBar.tintColor=[UIColor whiteColor];
+    
+    
+//    UIButton* backBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 80, 60)];
+//    [backBtn setBackgroundImage:[UIImage imageNamed:@"menu"] forState:UIControlStateNormal];
+//    [backBtn setShowsTouchWhenHighlighted:YES];
+    
+//    UIButton *backBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+//    UIImage *backBtnImage = [UIImage imageNamed:@"menu"];
+//    [backBtn setBackgroundImage:backBtnImage forState:UIControlStateNormal];
+//    [backBtn addTarget:self action:@selector(leftBarButtonHandler:) forControlEvents:UIControlEventTouchUpInside];
+//    backBtn.frame = CGRectMake(0, 0, 40, 40);
+//    UIView *backButtonView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
+//    backButtonView.bounds = CGRectOffset(backButtonView.bounds, 14, 0);
+//    [backButtonView addSubview:backBtn];
+//    UIBarButtonItem *backButton = [[UIBarButtonItem alloc] initWithCustomView:backButtonView];
+//    self.navigationItem.leftBarButtonItem = backButton;
+//
+//    
+//    backBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+//    backBtnImage = [UIImage imageNamed:@"edit"];
+//    [backBtn setBackgroundImage:backBtnImage forState:UIControlStateNormal];
+//    [backBtn addTarget:self action:@selector(rightBarButtonHandler:) forControlEvents:UIControlEventTouchUpInside];
+//    backBtn.frame = CGRectMake(0, 0, 40, 40);
+//    backButtonView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
+//    backButtonView.bounds = CGRectOffset(backButtonView.bounds, -14, 0);
+//    [backButtonView addSubview:backBtn];
+//    backButton = [[UIBarButtonItem alloc] initWithCustomView:backButtonView];
+//    self.navigationItem.rightBarButtonItem = backButton;
+    
+    
+
     
     [Flurry logEvent:@"MainDashboard_START"];
     
@@ -122,9 +166,9 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
 //    }
     
     //[self refreshNavigationBarColor:COLOR_BLACK];
-    [self refreshBGImage:nil];
+    //[self refreshBGImage:nil];
     self.collectionView.backgroundColor = [UIColor clearColor];
-    self.collectionView.backgroundView = self.bgImageView;
+    //self.collectionView.backgroundView = self.bgImageView;
 
     
     EDIT_MODE = NO;
@@ -238,6 +282,8 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
             profileCardCell.userInfo = userInfo;
             profileCardCell.indexPath = indexPath;
             
+            [profileCardCell resetFontShape];
+            
             if(EDIT_MODE){
                 profileCardCell.delegate = self;
                 
@@ -260,6 +306,8 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
 
         }
     }
+    
+
     
     return nil;
 }
@@ -773,10 +821,11 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     IndividualGalleryController *destViewController = [storyboard instantiateViewControllerWithIdentifier:@"IndividualGalleryViewController"];
     NSDictionary *userInfo = [self.users  objectAtIndex:currentIndexPath.item];
-    int UserID = [userInfo[@"UserID"] intValue];
-    int UserColor = [userInfo[@"color"] intValue];
-    destViewController.UserID = UserID;
-    destViewController.UserColor = UserColor;
+    destViewController.userInfo = userInfo;
+//    int UserID = [userInfo[@"UserID"] intValue];
+//    int UserColor = [userInfo[@"color"] intValue];
+//    destViewController.UserID = UserID;
+//    destViewController.UserColor = UserColor;
     
     [self.navigationController pushViewController:destViewController animated:YES];
 }
@@ -844,7 +893,7 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
     NSLog(@"ColorBar Selected = %d", currentColor );
     
     if(currentSelectedCell){
-        currentSelectedCell.nameLabel.backgroundColor = [SQLManager getUserColor:currentColor];
+        currentSelectedCell.nameLabel.backgroundColor = [SQLManager getUserColor:currentColor alpha:0.5];
         [currentSelectedCell setUserColor:currentColor];
     }
 }
