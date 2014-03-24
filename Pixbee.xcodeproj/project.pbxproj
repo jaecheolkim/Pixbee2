@@ -2332,7 +2332,7 @@
 			isa = PBXProject;
 			attributes = {
 				CLASSPREFIX = PB;
-				LastUpgradeCheck = 0500;
+				LastUpgradeCheck = 0510;
 				ORGANIZATIONNAME = Pixbee;
 				TargetAttributes = {
 					69ED32D818484EBB00127196 = {
@@ -2806,7 +2806,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -2845,7 +2844,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -2877,7 +2875,6 @@
 		69ED330C18484EBB00127196 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -2885,9 +2882,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/External",
-					/Users/Hoseok,
 					/Users/jaecheolkim,
-					/Users/skplanet,
 					/Users/jaecheolkim/Documents/FacebookSDK,
 					"$(PROJECT_DIR)",
 				);
@@ -2899,7 +2894,6 @@
 					"$(inherited)",
 					"$(SRCROOT)/External",
 					"$(PROJECT_DIR)/External/FaceRecognition",
-					/Users/skplanet/Pixbee2/External/FaceRecognition,
 					"$(PROJECT_DIR)/External/Flurry",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2913,7 +2907,6 @@
 		69ED330D18484EBB00127196 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -2921,9 +2914,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/External",
-					/Users/Hoseok,
 					/Users/jaecheolkim,
-					/Users/skplanet,
 					/Users/jaecheolkim/Documents/FacebookSDK,
 					"$(PROJECT_DIR)",
 				);
@@ -2935,7 +2926,6 @@
 					"$(inherited)",
 					"$(SRCROOT)/External",
 					"$(PROJECT_DIR)/External/FaceRecognition",
-					/Users/skplanet/Pixbee2/External/FaceRecognition,
 					"$(PROJECT_DIR)/External/Flurry",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2949,7 +2939,6 @@
 		69ED330F18484EBB00127196 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Pixbee.app/Pixbee";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
@@ -2972,7 +2961,6 @@
 		69ED331018484EBB00127196 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Pixbee.app/Pixbee";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",

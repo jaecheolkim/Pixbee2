@@ -30,8 +30,8 @@
 {
     UIImage *image = [UIImage imageNamed:imageName];
 
-    int width = CGImageGetWidth(image.CGImage);
-    int height = CGImageGetHeight(image.CGImage);
+    int width = (int)CGImageGetWidth(image.CGImage);
+    int height = (int)CGImageGetHeight(image.CGImage);
     int rowNum = height / n;
     int columnNum = width / n;
 
@@ -48,7 +48,7 @@
         return nil;
     }
 
-    int size = n * n * n * sizeof(float) * 4;
+    int size = (int)(n * n * n * sizeof(float) * 4);
     float *data = malloc(size);
     int bitmapOffest = 0;
     int z = 0;
@@ -65,7 +65,7 @@
                     float b = (unsigned int)bitmap[bitmapOffest + 2];
                     float a = (unsigned int)bitmap[bitmapOffest + 3];
                     
-                    int dataOffset = (z*n*n + y*n + x) * 4;
+                    int dataOffset = (int)((z*n*n + y*n + x) * 4);
 
                     data[dataOffset] = r / 255.0;
                     data[dataOffset + 1] = g / 255.0;
@@ -101,8 +101,8 @@
     size_t width = CGImageGetWidth(image);
     size_t height = CGImageGetHeight(image);
     
-    bytesPerRow   = (width * 4);
-    bitmapSize     = (bytesPerRow * height);
+    bytesPerRow   = (int)(width * 4);
+    bitmapSize     = (int)(bytesPerRow * height);
     
     bitmap = malloc( bitmapSize );
     if (bitmap == NULL)
