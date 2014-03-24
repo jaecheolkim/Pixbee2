@@ -637,76 +637,76 @@
     }];
 }
 
-// Pick Friends button handler
-- (IBAction)pickFriendsClick:(UIButton *)sender {
-    FBFriendPickerViewController *friendPickerController = [[FBFriendPickerViewController alloc] init];
-    friendPickerController.title = @"Pick Friends";
-    [friendPickerController loadData];
-    
-    // Use the modal wrapper method to display the picker.
-    [friendPickerController presentModallyFromViewController:self animated:YES handler:
-     ^(FBViewController *sender, BOOL donePressed) {
-         
-         if (!donePressed) {
-             return;
-         }
-         
-         NSString *message;
-         
-         if (friendPickerController.selection.count == 0) {
-             message = @"<No Friends Selected>";
-         } else {
-             
-             NSMutableString *text = [[NSMutableString alloc] init];
-             
-             // we pick up the users from the selection, and create a string that we use to update the text view
-             // at the bottom of the display; note that self.selection is a property inherited from our base class
-             for (id<FBGraphUser> user in friendPickerController.selection) {
-                 if ([text length]) {
-                     [text appendString:@", "];
-                 }
-                 [text appendString:user.name];
-             }
-             message = text;
-         }
-         
-         [[[UIAlertView alloc] initWithTitle:@"You Picked:"
-                                     message:message
-                                    delegate:nil
-                           cancelButtonTitle:@"OK"
-                           otherButtonTitles:nil]
-          show];
-     }];
-}
-
-// Pick Place button handler
-- (IBAction)pickPlaceClick:(UIButton *)sender {
-    FBPlacePickerViewController *placePickerController = [[FBPlacePickerViewController alloc] init];
-    placePickerController.title = @"Pick a Seattle Place";
-    placePickerController.locationCoordinate = CLLocationCoordinate2DMake(47.6097, -122.3331);
-    [placePickerController loadData];
-    
-    // Use the modal wrapper method to display the picker.
-    [placePickerController presentModallyFromViewController:self animated:YES handler:
-     ^(FBViewController *sender, BOOL donePressed) {
-         
-         if (!donePressed) {
-             return;
-         }
-         
-         NSString *placeName = placePickerController.selection.name;
-         if (!placeName) {
-             placeName = @"<No Place Selected>";
-         }
-         
-         [[[UIAlertView alloc] initWithTitle:@"You Picked:"
-                                     message:placeName
-                                    delegate:nil
-                           cancelButtonTitle:@"OK"
-                           otherButtonTitles:nil]
-          show];
-     }];
-}
+//// Pick Friends button handler
+//- (IBAction)pickFriendsClick:(UIButton *)sender {
+//    FBFriendPickerViewController *friendPickerController = [[FBFriendPickerViewController alloc] init];
+//    friendPickerController.title = @"Pick Friends";
+//    [friendPickerController loadData];
+//    
+//    // Use the modal wrapper method to display the picker.
+//    [friendPickerController presentModallyFromViewController:self animated:YES handler:
+//     ^(FBViewController *sender, BOOL donePressed) {
+//         
+//         if (!donePressed) {
+//             return;
+//         }
+//         
+//         NSString *message;
+//         
+//         if (friendPickerController.selection.count == 0) {
+//             message = @"<No Friends Selected>";
+//         } else {
+//             
+//             NSMutableString *text = [[NSMutableString alloc] init];
+//             
+//             // we pick up the users from the selection, and create a string that we use to update the text view
+//             // at the bottom of the display; note that self.selection is a property inherited from our base class
+//             for (id<FBGraphUser> user in friendPickerController.selection) {
+//                 if ([text length]) {
+//                     [text appendString:@", "];
+//                 }
+//                 [text appendString:user.name];
+//             }
+//             message = text;
+//         }
+//         
+//         [[[UIAlertView alloc] initWithTitle:@"You Picked:"
+//                                     message:message
+//                                    delegate:nil
+//                           cancelButtonTitle:@"OK"
+//                           otherButtonTitles:nil]
+//          show];
+//     }];
+//}
+//
+//// Pick Place button handler
+//- (IBAction)pickPlaceClick:(UIButton *)sender {
+//    FBPlacePickerViewController *placePickerController = [[FBPlacePickerViewController alloc] init];
+//    placePickerController.title = @"Pick a Seattle Place";
+//    placePickerController.locationCoordinate = CLLocationCoordinate2DMake(47.6097, -122.3331);
+//    [placePickerController loadData];
+//    
+//    // Use the modal wrapper method to display the picker.
+//    [placePickerController presentModallyFromViewController:self animated:YES handler:
+//     ^(FBViewController *sender, BOOL donePressed) {
+//         
+//         if (!donePressed) {
+//             return;
+//         }
+//         
+//         NSString *placeName = placePickerController.selection.name;
+//         if (!placeName) {
+//             placeName = @"<No Place Selected>";
+//         }
+//         
+//         [[[UIAlertView alloc] initWithTitle:@"You Picked:"
+//                                     message:placeName
+//                                    delegate:nil
+//                           cancelButtonTitle:@"OK"
+//                           otherButtonTitles:nil]
+//          show];
+//     }];
+//}
 
 // UIAlertView helper for post buttons
 - (void)showAlert:(NSString *)message

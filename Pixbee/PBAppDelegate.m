@@ -49,13 +49,19 @@
     
     [AssetLib syncPixbeeAlbum:^(float percent) {
         
-    } completion:^(BOOL finished) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"MeunViewControllerEventHandler"
+                                                            object:self
+                                                          userInfo:@{@"SyncPixbee": [NSString stringWithFormat:@"%f", percent]}];
         
+    } completion:^(BOOL finished) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"MeunViewControllerEventHandler"
+                                                            object:self
+                                                          userInfo:@{@"SyncPixbee":[NSString stringWithFormat:@"%f", 1.0]}];
     }];
 
     return YES;
 }
-							
+
 - (void)applicationWillResignActive:(UIApplication *)application
 {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.

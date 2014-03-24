@@ -183,7 +183,7 @@
         cFaceDetector = [CIDetector detectorOfType:CIDetectorTypeFace context:nil options:detectorOptions];
     }
     
-    NSLog(@"Start...syncPixbeeAlbum ");
+    
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         @autoreleasepool {
             
@@ -198,10 +198,16 @@
                      
                      __block NSInteger numberOfAssets = group.numberOfAssets;
                      
+                     __block NSInteger numberOfPixbeeAssets = PixbeeAssetGroup.numberOfAssets;
+                     
                      // 현재 총 어셋 갯수와 최종 저장된 총 어셋 갯수 비교해서 틀리면 동기화.
-                     if(lastTotalAssetCount != numberOfAssets || currentTotalAssetProcess != numberOfAssets - 1)
+                     if(lastTotalAssetCount != numberOfAssets ||
+                        currentTotalAssetProcess < numberOfAssets - 1 ||
+                        numberOfPixbeeAssets < 1)
                      {
                          //아직 동기화가 안되었으니 동기화 해야 함.
+                         NSLog(@"Start...syncPixbeeAlbum ");
+
                          
                          NSString *GroupName = [group valueForProperty:ALAssetsGroupPropertyName];
                          
@@ -211,7 +217,7 @@
                              if(![GroupName isEqualToString:@"Pixbee"])
                              {
                                  [group enumerateAssetsUsingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {
-                                     if(result != NULL) {
+                                     if(result != NULL && currentTotalAssetProcess < index) {
                                          
                                          CGImageRef cgImage = [result aspectRatioThumbnail];
                                          CIImage *ciImage = [CIImage imageWithCGImage:cgImage];
@@ -223,7 +229,7 @@
                                              NSString *GroupURL = nil;
                                              if(PixbeeAssetGroup) GroupURL = [PixbeeAssetGroup valueForProperty:ALAssetsGroupPropertyURL];
                                              
-                                             //int PhotoID = [SQLManager newPhotoWith:result withGroupAssetURL:GroupURL];
+                                             int PhotoID = [SQLManager newPhotoWith:result withGroupAssetURL:GroupURL];
                                              
                                              NSURL *assetURL = [result valueForProperty:ALAssetPropertyAssetURL];
                                              
@@ -246,6 +252,9 @@
                                          if(index == numberOfAssets-1){
                                              completion(YES);
                                              NSLog(@"End...syncPixbeeAlbum = %d", (int)numberOfAssets);
+                                             
+
+                                             
                                          }
                                      }
                                      //assetCounter++;

@@ -17,6 +17,8 @@
 @interface PBMenuViewController ()
 {
     //NSInteger selectedMenu;
+    
+    UIImageView *syncAnimaionView;
 
 }
 @property (strong, nonatomic) NSArray *menus;
@@ -52,12 +54,13 @@
     }
 
     // Slow motion animation
-    UIImageView *slowAnimationImageView = [[UIImageView alloc] initWithFrame:CGRectMake(16, 241, 28, 32)];
-    slowAnimationImageView.animationImages = images1;
-    slowAnimationImageView.animationDuration = 1;
+    syncAnimaionView = [[UIImageView alloc] initWithFrame:CGRectMake(18, 241, 28, 32)];
+    syncAnimaionView.animationImages = images1;
+    syncAnimaionView.animationDuration = 1;
     
-    [self.view addSubview:slowAnimationImageView];
-    [slowAnimationImageView startAnimating];
+    [self.view addSubview:syncAnimaionView];
+    syncAnimaionView.hidden = YES;
+    //[syncAnimaionView startAnimating];
 
     
     
@@ -94,7 +97,8 @@
     [self.tableView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
     
     
-    [self.view bringSubviewToFront:slowAnimationImageView];
+    [self.view bringSubviewToFront:syncAnimaionView];
+    
 
 }
 
@@ -268,7 +272,10 @@
 
 - (void)MeunViewControllerEventHandler:(NSNotification *)notification
 {
-    if([[[notification userInfo] objectForKey:@"moveTo"] isEqualToString:@"MainDashBoard"]) {
+    NSDictionary *userInfo = notification.userInfo;
+    
+    
+    if([userInfo[@"moveTo"] isEqualToString:@"MainDashBoard"]) {
         
         UINavigationController *navigationController = (UINavigationController *)self.sideMenuViewController.contentViewController;
         
@@ -280,7 +287,7 @@
 
 
     
-    if([[[notification userInfo] objectForKey:@"moveTo"] isEqualToString:@"Camera"]) {
+    if([userInfo[@"moveTo"] isEqualToString:@"Camera"]) {
 
         UINavigationController *navigationController = (UINavigationController *)self.sideMenuViewController.contentViewController;
         
@@ -288,6 +295,34 @@
         [self.sideMenuViewController hideMenuViewController];
         
 	}
+    
+
+    if([[userInfo objectForKey:@"SyncPixbee"] floatValue] < 1.0 ) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if(syncAnimaionView.hidden){
+                syncAnimaionView.hidden = NO;
+            }
+            
+            if(!syncAnimaionView.isAnimating){
+                [syncAnimaionView startAnimating];
+            }
+            
+            NSLog(@"Sync = %f", [[userInfo objectForKey:@"SyncPixbee"] floatValue]);
+
+        });
+        
+ 	}
+    
+    if([[userInfo objectForKey:@"SyncPixbee"] floatValue] >= 1.0) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [syncAnimaionView stopAnimating];
+            syncAnimaionView.hidden = YES;
+        });
+        
+
+        
+	}
+    
     
 
 }

@@ -1170,7 +1170,7 @@
 - (void)updateToolbar {
     // Counter
 	if ([self numberOfPhotos] > 1) {
-        self.title = [NSString stringWithFormat:@"%i / %i", _currentPageIndex+1,  [self numberOfPhotos]];;
+        self.title = [NSString stringWithFormat:@"%d / %d", (int)(_currentPageIndex+1),  (int)[self numberOfPhotos]];;
 		//_counterLabel.text = [NSString stringWithFormat:@"%i %@ %i", _currentPageIndex+1, NSLocalizedString(@"of", nil), [self numberOfPhotos]];
 	} else {
         self.title = nil;
