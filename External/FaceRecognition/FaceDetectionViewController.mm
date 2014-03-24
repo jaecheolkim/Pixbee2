@@ -147,7 +147,6 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 @property (nonatomic) NSInteger frameNum;
 @property (nonatomic) NSInteger numPicsTaken;
 
-@property (weak, nonatomic) IBOutlet UIView *BlurView;
 @property (weak, nonatomic) IBOutlet UIButton *closeButton;
 
 @property (weak, nonatomic) IBOutlet UIButton *flashButton;
@@ -162,6 +161,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 @property (weak, nonatomic) IBOutlet UIImageView *videoImage;
 @property (weak, nonatomic) IBOutlet UIButton *GalleryButton;
 @property (weak, nonatomic) IBOutlet UIView *DimmedView;
+@property (weak, nonatomic) IBOutlet UIButton *startButton;
 
 @property (nonatomic, retain) CALayer *adjustingFocusLayer;
 
@@ -335,6 +335,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     } else {
         [_GalleryButton setHidden:YES];
         _DimmedView.hidden = YES;
+        _startButton.hidden = YES;
         
         //[_closeButton setHidden:YES];
         [_hiveImageView setHidden:YES];
@@ -651,7 +652,12 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     
     if([_segueid isEqualToString:@"FromMenu"]){
         [self.sideMenuViewController presentMenuViewController];
-    } else {
+    }
+    else { // Go MainDashBoard
+        NSArray *trainModel = [SQLManager getTrainModelsForID:self.UserID];
+        if(IsEmpty(trainModel)){
+            [SQLManager deleteUser:self.UserID];
+        }
         
         self.modalTransitionStyle =   UIModalTransitionStyleFlipHorizontal;
         
@@ -786,7 +792,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     [UIView animateWithDuration:0.5
                      animations:^{
                          _DimmedView.alpha = 0.0;
-                         
+                         _startButton.hidden = YES;
                          layer.hidden = NO;
                          _switchButton.hidden = NO;
                          //_nameLabel.hidden = NO;
@@ -876,6 +882,9 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 //        
 //    }
 //    else
+    
+    
+    
     if([segue.identifier isEqualToString:SEGUE_6_1_TO_2_2]){
         PBSearchFaceViewController *destination = segue.destinationViewController;
         destination.UserName = self.UserName;
@@ -885,6 +894,10 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
         AllPhotosController *destination = segue.destinationViewController;
         destination.segueIdentifier = SEGUE_6_1_TO_4_4;
 
+    }
+    else if([segue.identifier isEqualToString:@"Segue6_1to4_3"]){ // Back MainDashBoard
+
+        
     }
 
 }

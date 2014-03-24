@@ -81,8 +81,8 @@
     _scaleBackgroundImageView = YES;
   
     _parallaxEnabled = YES;
-    _parallaxMenuMinimumRelativeValue = @(-15);
-    _parallaxMenuMaximumRelativeValue = @(15);
+    _parallaxMenuMinimumRelativeValue = @(-45); //-15
+    _parallaxMenuMaximumRelativeValue = @(45); //15
     
     _parallaxContentMinimumRelativeValue = @(-25);
     _parallaxContentMaximumRelativeValue = @(25);
@@ -99,7 +99,7 @@
     _contentViewShadowEnabled = NO;
     _contentViewShadowColor = [UIColor whiteColor];
     _contentViewShadowOffset = CGSizeZero;
-    _contentViewShadowOpacity = 0.1f;
+    _contentViewShadowOpacity = 0.2f;
     _contentViewShadowRadius = 8.0f;
     
 }

@@ -219,7 +219,7 @@
     [button setBackgroundColor:bgColor];
     [button addTarget:self action:@selector(colorButtonHandler:) forControlEvents: UIControlEventTouchUpInside];
     [button setContentMode:UIViewContentModeCenter];
-    [button setFrame:CGRectMake(i * 53, 0, 53, 25)];
+    [button setFrame:CGRectMake(i * 53.3, 0, 53.3, 25)];
     [button setTag:i];
 //    [button setBackgroundImage:image forState:UIControlStateNormal];
 //    [button setBackgroundImage:selectedImage forState:UIControlStateDisabled];

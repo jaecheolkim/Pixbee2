@@ -14,7 +14,7 @@ typedef void(^FailurBlock)(NSError* error);
 @interface ALAssetsLibrary(CustomPhotoAlbum)
 
 // Add new Album group
--(void)newAssetGroup:(NSString*)albumName withSuccess:(void (^)(BOOL success))success withFailur:(FailurBlock)failur;
+-(void)newAssetGroup:(NSString*)albumName withSuccess:(void (^)(ALAssetsGroup *group))success withFailur:(FailurBlock)failur;
 
 // Add new Photo to custom album
 -(void)saveImageData:(NSData *)imageData metadata:(NSDictionary *)metadata toAlbum:(NSString*)albumName withCompletionBlock:(SaveImageCompletion)completionBlock;

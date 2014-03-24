@@ -376,6 +376,12 @@
 		80D5CD7B18DD5E6500F46FF8 /* title_setting@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 80D5CD7818DD5E6500F46FF8 /* title_setting@2x.png */; };
 		80D5CD7C18DD5E6500F46FF8 /* title_unfacetab@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 80D5CD7918DD5E6500F46FF8 /* title_unfacetab@2x.png */; };
 		80D5CD7E18DD7DC800F46FF8 /* start@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 80D5CD7D18DD7DC800F46FF8 /* start@2x.png */; };
+		80D5CD8518DDF40500F46FF8 /* logo_01@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 80D5CD7F18DDF40500F46FF8 /* logo_01@2x.png */; };
+		80D5CD8618DDF40500F46FF8 /* logo_02@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 80D5CD8018DDF40500F46FF8 /* logo_02@2x.png */; };
+		80D5CD8718DDF40500F46FF8 /* logo_03@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 80D5CD8118DDF40500F46FF8 /* logo_03@2x.png */; };
+		80D5CD8818DDF40500F46FF8 /* logo_04@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 80D5CD8218DDF40500F46FF8 /* logo_04@2x.png */; };
+		80D5CD8918DDF40500F46FF8 /* logo_05@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 80D5CD8318DDF40500F46FF8 /* logo_05@2x.png */; };
+		80D5CD8A18DDF40500F46FF8 /* logo_06@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 80D5CD8418DDF40500F46FF8 /* logo_06@2x.png */; };
 		80D6B438188D0056002A156F /* UIImageView+UIImageView_FaceAwareFill.m in Sources */ = {isa = PBXBuildFile; fileRef = 80D6B437188D0056002A156F /* UIImageView+UIImageView_FaceAwareFill.m */; };
 		80D6C0A5189CC5B800BD6C74 /* refresh@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 80D6C0A4189CC5B800BD6C74 /* refresh@2x.png */; };
 		80E2736018CAE48600589867 /* PulseSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 80E2735F18CAE48600589867 /* PulseSDK.framework */; };
@@ -972,6 +978,12 @@
 		80D5CD7818DD5E6500F46FF8 /* title_setting@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "title_setting@2x.png"; sourceTree = "<group>"; };
 		80D5CD7918DD5E6500F46FF8 /* title_unfacetab@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "title_unfacetab@2x.png"; sourceTree = "<group>"; };
 		80D5CD7D18DD7DC800F46FF8 /* start@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "start@2x.png"; sourceTree = "<group>"; };
+		80D5CD7F18DDF40500F46FF8 /* logo_01@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "logo_01@2x.png"; sourceTree = "<group>"; };
+		80D5CD8018DDF40500F46FF8 /* logo_02@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "logo_02@2x.png"; sourceTree = "<group>"; };
+		80D5CD8118DDF40500F46FF8 /* logo_03@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "logo_03@2x.png"; sourceTree = "<group>"; };
+		80D5CD8218DDF40500F46FF8 /* logo_04@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "logo_04@2x.png"; sourceTree = "<group>"; };
+		80D5CD8318DDF40500F46FF8 /* logo_05@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "logo_05@2x.png"; sourceTree = "<group>"; };
+		80D5CD8418DDF40500F46FF8 /* logo_06@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "logo_06@2x.png"; sourceTree = "<group>"; };
 		80D6B436188D0056002A156F /* UIImageView+UIImageView_FaceAwareFill.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImageView+UIImageView_FaceAwareFill.h"; sourceTree = "<group>"; };
 		80D6B437188D0056002A156F /* UIImageView+UIImageView_FaceAwareFill.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImageView+UIImageView_FaceAwareFill.m"; sourceTree = "<group>"; };
 		80D6C0A4189CC5B800BD6C74 /* refresh@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "refresh@2x.png"; sourceTree = "<group>"; };
@@ -1918,6 +1930,12 @@
 		809BB2D218BDF0C000CC79A8 /* newImages */ = {
 			isa = PBXGroup;
 			children = (
+				80D5CD7F18DDF40500F46FF8 /* logo_01@2x.png */,
+				80D5CD8018DDF40500F46FF8 /* logo_02@2x.png */,
+				80D5CD8118DDF40500F46FF8 /* logo_03@2x.png */,
+				80D5CD8218DDF40500F46FF8 /* logo_04@2x.png */,
+				80D5CD8318DDF40500F46FF8 /* logo_05@2x.png */,
+				80D5CD8418DDF40500F46FF8 /* logo_06@2x.png */,
 				80D5CD7D18DD7DC800F46FF8 /* start@2x.png */,
 				80D5CD7718DD5E6500F46FF8 /* title_facetab@2x.png */,
 				80D5CD7818DD5E6500F46FF8 /* title_setting@2x.png */,
@@ -2381,6 +2399,7 @@
 				809BB2CF18BDE4B200CC79A8 /* shutterButton.png in Resources */,
 				80D5CD7318DD4C9800F46FF8 /* menu_camera_selected@2x.png in Resources */,
 				809BB31C18BDF0C000CC79A8 /* image@2x.png in Resources */,
+				80D5CD8518DDF40500F46FF8 /* logo_01@2x.png in Resources */,
 				78C1EB3A186B0A790072E7DB /* buttombar_toalbum@2x.png in Resources */,
 				78C1EB4E186B0A790072E7DB /* hive0@2x.png in Resources */,
 				78C1EB4B186B0A790072E7DB /* flash_camera_selcet@2x.png in Resources */,
@@ -2419,6 +2438,7 @@
 				7805A64618658BA000B234C1 /* SVProgressHUD.bundle in Resources */,
 				78C1EB50186B0A790072E7DB /* hive40@2x.png in Resources */,
 				80812839184D22960000CF3E /* DB_text.txt in Resources */,
+				80D5CD8A18DDF40500F46FF8 /* logo_06@2x.png in Resources */,
 				80E2D82E18BDBEAD000924AE /* defaultBG@2x.png in Resources */,
 				809BB32318BDF0C000CC79A8 /* orange@2x.png in Resources */,
 				80A8AB3118D2BAC200D82EE5 /* Hex_highlight@2x.png in Resources */,
@@ -2434,13 +2454,17 @@
 				78C1EB53186B0A790072E7DB /* hive100@2x.png in Resources */,
 				7805A6B61866B0C600B234C1 /* UserCell.xib in Resources */,
 				78C1EB39186B0A790072E7DB /* blue_button@2x.png in Resources */,
+				80D5CD8718DDF40500F46FF8 /* logo_03@2x.png in Resources */,
 				809BB30C18BDF0C000CC79A8 /* cambutton@2x.png in Resources */,
 				7805A6E01866E7B800B234C1 /* listbox@2x.png in Resources */,
 				809BB30218BDF0C000CC79A8 /* add@2x.png in Resources */,
 				809BB31F18BDF0C000CC79A8 /* login@2x.png in Resources */,
+				80D5CD8618DDF40500F46FF8 /* logo_02@2x.png in Resources */,
 				78C1EB37186B0A790072E7DB /* Backbutton_select@2x.png in Resources */,
+				80D5CD8818DDF40500F46FF8 /* logo_04@2x.png in Resources */,
 				80E3639C18805A2B00A5DF57 /* image4@2x.jpg in Resources */,
 				809BB32118BDF0C000CC79A8 /* logo_2@2x.png in Resources */,
+				80D5CD8918DDF40500F46FF8 /* logo_05@2x.png in Resources */,
 				7805A6EA1866E7B800B234C1 /* trash@2x.png in Resources */,
 				809BB33018BDF0C000CC79A8 /* yellow@2x.png in Resources */,
 				8082FF1418BF17200024CE08 /* checked@2x.png in Resources */,

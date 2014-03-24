@@ -57,7 +57,22 @@
                       }];
 }
 
--(void)newAssetGroup:(NSString*)albumName withSuccess:(void (^)(BOOL success))success withFailur:(FailurBlock)failur
+//- (ALAssetsGroup *group)findAssetGroup:(NSString*)groupName
+//{
+//    [self enumerateGroupsWithTypes:ALAssetsGroupAlbum
+//                        usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
+//                            
+//                            //compare the names of the albums
+//                            if ([albumName compare: [group valueForProperty:ALAssetsGroupPropertyName]]==NSOrderedSame) {
+//                            }
+//
+//                            } failureBlock:^(NSError *error) {
+//
+//                                
+//                            }];
+//}
+
+-(void)newAssetGroup:(NSString*)albumName withSuccess:(void (^)(ALAssetsGroup *group))success withFailur:(FailurBlock)failur
 {
     __block BOOL albumWasFound = NO;
     
@@ -73,7 +88,7 @@
                                 
                                 NSLog(@"Success add group = %@",[group valueForProperty:ALAssetsGroupPropertyName]);
                                 
-                                success(YES);
+                                success(group);
                                 
                                 //album was found, bail out of the method
                                 return;
@@ -88,7 +103,7 @@
                                                           
                                                          // NSLog(@"Success add group = %@",group);
                                                           
-                                                          success(YES);
+                                                          success(group);
                                                           
                                                       } failureBlock:^(NSError *error) {
                                                           failur(error);

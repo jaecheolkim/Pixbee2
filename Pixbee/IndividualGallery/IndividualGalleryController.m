@@ -73,15 +73,25 @@ UserCellDelegate, GalleryViewCellDelegate>
     UIColor *color = [SQLManager getUserColor:_UserColor alpha:0.5];
     UINavigationBar *navigationBar = self.navigationController.navigationBar;
   
-    UIImage *colorImage = [UIImage imageWithColor:color size:CGSizeMake(1, 1)];
-    [navigationBar setBackgroundImage:colorImage forBarMetrics:UIBarMetricsDefault];
-    navigationBar.shadowImage = [UIImage new];
-    navigationBar.translucent = YES;
+//    UIImage *colorImage = [UIImage imageWithColor:color size:CGSizeMake(1, 1)];
+//    [navigationBar setBackgroundImage:colorImage forBarMetrics:UIBarMetricsDefault];
+//    navigationBar.shadowImage = [UIImage new];
+//    navigationBar.translucent = YES;
+//    
+////    [self.navigationController.navigationBar setBarTintColor:color];
+//    NSString *navBarClassName = NSStringFromClass([self.navigationController.navigationBar class]);
+//    NSLog(@"navibar class = %@", navBarClassName);
+//    //self.navigationController.navigationBar.translucent = YES;
     
-//    [self.navigationController.navigationBar setBarTintColor:color];
-    NSString *navBarClassName = NSStringFromClass([self.navigationController.navigationBar class]);
-    NSLog(@"navibar class = %@", navBarClassName);
-    //self.navigationController.navigationBar.translucent = YES;
+    
+    
+    NSShadow *shadow = [[NSShadow alloc] init];
+    shadow.shadowColor = [UIColor colorWithRed:0/255.0 green:0/255.0 blue:0/255.0 alpha:0.3];
+    shadow.shadowOffset = CGSizeMake(0, 1);
+    [navigationBar setTitleTextAttributes: [NSDictionary dictionaryWithObjectsAndKeys:
+                                                           color, NSForegroundColorAttributeName,
+                                                           shadow, NSShadowAttributeName,
+                                                           [UIFont fontWithName:@"GillSans-Medium" size:21.0], NSFontAttributeName, nil]];
 }
 
 - (void)viewDidLoad

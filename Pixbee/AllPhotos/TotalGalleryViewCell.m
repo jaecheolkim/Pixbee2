@@ -15,6 +15,7 @@
 - (id)initWithFrame:(CGRect)frame {
 	self = [super initWithFrame:frame];
 	if (self) {
+
 	}
 	return self;
 }
@@ -22,8 +23,14 @@
 - (void)setSelected:(BOOL)selected {
     [super setSelected:selected];
     
-    if(self.selected) self.selectIcon.image = [UIImage imageNamed:@"check"];
-    else self.selectIcon.image = nil;
+    if(self.selected){
+        self.checkIcon.hidden = NO;
+        //self.selectIcon.image = [UIImage imageNamed:@"check"];
+    }
+    else {
+        self.checkIcon.hidden = YES;
+        //self.selectIcon.image = nil;
+    }
 }
 
 - (void)setPhoto:(NSDictionary *)photo
@@ -31,6 +38,9 @@
     ALAsset *asset= [photo objectForKey:@"Asset"];
     
     self.photoImageView.image = [UIImage imageWithCGImage:[asset thumbnail]];
+    
+    self.checkIcon.hidden = YES;
+    self.selectIcon.hidden = YES;
 }
 
 - (void)showSelectIcon:(BOOL)show {

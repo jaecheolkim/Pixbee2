@@ -111,6 +111,12 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
     
     [self.view setBackgroundColor:[UIColor colorWithRed:255/255.0 green:255/255.0 blue:255/255.0 alpha:0.1]];
     
+    CGRect rect = [UIScreen mainScreen].bounds;
+    self.colorBar.frame = CGRectMake(0, rect.size.height, 320, 25);
+    [self.view addSubview:self.colorBar];
+    
+    
+    
     
     UIImageView *titleView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"title_facetab"]];
     titleView.contentMode = UIViewContentModeScaleAspectFit;
@@ -289,7 +295,9 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
                 
                 profileCardCell.nameTextField.enabled = YES;
                 profileCardCell.nameTextField.placeholder = profileCardCell.nameLabel.text;
+                profileCardCell.blackOverlay.hidden = NO;
                 profileCardCell.checkImageView.hidden = NO;
+                
                 if ([selectedPhotos containsObject:indexPath]) {
                     //[cell showSelectIcon:YES];
                     profileCardCell.checkImageView.image = [UIImage imageNamed:@"check"];
@@ -299,6 +307,7 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
                 
                 profileCardCell.nameTextField.enabled = NO;
                 profileCardCell.nameTextField.placeholder = nil;
+                profileCardCell.blackOverlay.hidden = YES;
                 profileCardCell.checkImageView.hidden = YES;
             }
             
@@ -849,7 +858,7 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
     [UIView animateWithDuration:duration
                      animations:^{
                          self.colorBar.frame = CGRectMake(0, toHeight, 320, 25);
-                         [self.view addSubview:self.colorBar];
+                         //[self.view addSubview:self.colorBar];
 //                         [self.view setFrame:CGRectMake(rect.origin.x, -keyboardHeight, rect.size.width, rect.size.height)];
                      }
                      completion:^(BOOL finished){
@@ -859,8 +868,28 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
 }
 -(void)keyboardDidShow:(NSNotification*)notification
 {
-    
+//    NSDictionary *info = notification.userInfo;
+//    CGRect keyboardRect = [[info valueForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue];
+//    int keyboardHeight = keyboardRect.size.height;
+//    float duration = [[info valueForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
+//    
+//    CGRect rect = self.view.frame;
+//    
+//    
+//    
+//    float toHeight = rect.size.height - keyboardHeight - 25;
+//    
+//    [UIView animateWithDuration:0
+//                     animations:^{
+//                         self.colorBar.frame = CGRectMake(0, toHeight, 320, 25);
+//                         //[self.view addSubview:self.colorBar];
+//                         //                         [self.view setFrame:CGRectMake(rect.origin.x, -keyboardHeight, rect.size.width, rect.size.height)];
+//                     }
+//                     completion:^(BOOL finished){
+//                         
+//                     }];
 }
+
 -(void)keyboardWillHide:(NSNotification*)notification
 {
     
@@ -872,7 +901,7 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
     [UIView animateWithDuration:duration
                      animations:^{
                          self.colorBar.frame = CGRectMake(0, rect.size.height, 320, 25);
-                         [self.colorBar removeFromSuperview];
+                         //[self.colorBar removeFromSuperview];
                      }
                      completion:^(BOOL finished){
                          
@@ -880,6 +909,7 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
 
     
 }
+
 -(void)keyboardDidHide:(NSNotification*)notification
 {
     

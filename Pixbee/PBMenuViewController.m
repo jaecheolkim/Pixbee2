@@ -42,9 +42,31 @@
                         [self.storyboard instantiateViewControllerWithIdentifier:@"setting"] ];
     
     
+    NSArray *imageNames1 = @[@"logo_01", @"logo_02", @"logo_03", @"logo_04",
+                             @"logo_05", @"logo_06"];
+    
+ 
+    NSMutableArray *images1 = [[NSMutableArray alloc] init];
+    for (int i = 0; i < imageNames1.count; i++) {
+        [images1 addObject:[UIImage imageNamed:[imageNames1 objectAtIndex:i]]];
+    }
+
+    // Slow motion animation
+    UIImageView *slowAnimationImageView = [[UIImageView alloc] initWithFrame:CGRectMake(16, 241, 28, 32)];
+    slowAnimationImageView.animationImages = images1;
+    slowAnimationImageView.animationDuration = 1;
+    
+    [self.view addSubview:slowAnimationImageView];
+    [slowAnimationImageView startAnimating];
+
+    
+    
+    
     self.tableView = ({
 //        UITableView *tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, (self.view.frame.size.height - 54 * 5) / 2.0f, self.view.frame.size.width, 54 * 5) style:UITableViewStylePlain];
         CGRect tableViewFrame = CGRectMake(0, (self.view.frame.size.height - cellHeight * [_menus count]) / 2.0f, self.view.frame.size.width, cellHeight * [_menus count]);
+        
+        NSLog(@"Menu Table frame = %@", NSStringFromCGRect(tableViewFrame));
         
         UITableView *tableView = [[UITableView alloc] initWithFrame:tableViewFrame style:UITableViewStylePlain];
         tableView.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleWidth;
@@ -70,6 +92,9 @@
     
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
     [self.tableView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
+    
+    
+    [self.view bringSubviewToFront:slowAnimationImageView];
 
 }
 

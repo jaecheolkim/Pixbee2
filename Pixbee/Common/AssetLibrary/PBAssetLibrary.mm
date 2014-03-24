@@ -16,6 +16,8 @@
     CIDetector *cFaceDetector;
     BOOL isFaceRecRedy;
     BOOL isSyncPixbeeAlbum;
+    
+    ALAssetsGroup *PixbeeAssetGroup;
 }
 @property (nonatomic, strong) CLGeocoder *geocoder;
 
@@ -110,8 +112,9 @@
     //
     //    if(!isPixBeeAlbumCreated){
     NSString *albumName = @"Pixbee";
-    [self.assetsLibrary newAssetGroup:albumName withSuccess:^(BOOL success) {
+    [self.assetsLibrary newAssetGroup:albumName withSuccess:^(ALAssetsGroup *group) {
         
+        PixbeeAssetGroup = group;
         NSLog(@"======= Success create Pixbee Album !!!");
         //            NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
         //            [userDefaults setBool:YES forKey:@"CREATEDPIXBEEALBUM"];
@@ -121,6 +124,7 @@
         //            [userDefaults setBool:NO forKey:@"CREATEDPIXBEEALBUM"];
         //            [userDefaults synchronize];
         
+        PixbeeAssetGroup = nil;
         NSLog(@"======= Failed create Pixbee Album = %@", error);
     }];
     //    }
@@ -216,6 +220,9 @@
                                          if(!IsEmpty(fs)) {
                                              // 신규 포토 저장.
                                              // Save DB. [Photos] 얼굴이 검출된 사진만 Photos Table에 저장.
+                                             NSString *GroupURL = nil;
+                                             if(PixbeeAssetGroup) GroupURL = [PixbeeAssetGroup valueForProperty:ALAssetsGroupPropertyURL];
+                                             
                                              //int PhotoID = [SQLManager newPhotoWith:result withGroupAssetURL:GroupURL];
                                              
                                              NSURL *assetURL = [result valueForProperty:ALAssetPropertyAssetURL];

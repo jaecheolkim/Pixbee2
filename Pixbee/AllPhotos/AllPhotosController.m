@@ -99,6 +99,7 @@
 {
     [super viewDidLoad];
     
+    [self.view setBackgroundColor:[UIColor colorWithRed:255/255.0 green:255/255.0 blue:255/255.0 alpha:0.1]];
     
     UIImageView *titleView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"title_unfacetab"]];
     titleView.contentMode = UIViewContentModeScaleAspectFit;
@@ -156,13 +157,13 @@
     if([_segueIdentifier isEqualToString:@"Segue3_1to4_3"]){
         //From MainDashBoard newFaceTab
         
-        //[_menuButton setImage:[UIImage imageNamed:@"back"]];
-        [backBtn setBackgroundImage:[UIImage imageNamed:@"back"] forState:UIControlStateNormal];
+        [_menuButton setImage:[UIImage imageNamed:@"back"]];
+        //[backBtn setBackgroundImage:[UIImage imageNamed:@"back"] forState:UIControlStateNormal];
     }
 
-    [self refreshBGImage:nil];
+    //[self refreshBGImage:nil];
 
-    
+    //self.collectionView.allowsSelection = NO;
     self.collectionView.backgroundColor = [UIColor clearColor];
     self.collectionView.backgroundView = self.bgImageView;
 
@@ -607,10 +608,12 @@
         cell.selectIcon.hidden = NO;
         if ([selectedPhotos containsObject:indexPath]) {
             //[cell showSelectIcon:YES];
-            cell.selectIcon.image = [UIImage imageNamed:@"check"];
+            //cell.selectIcon.image = [UIImage imageNamed:@"check"];
+            cell.checkIcon.hidden = NO;
         }
     } else {
         cell.selectIcon.hidden = YES;
+        cell.checkIcon.hidden = YES;
     }
 
     
@@ -622,7 +625,8 @@
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (self.collectionView.allowsMultipleSelection) {
+    
+    if (EDIT_MODE) {
         [selectedPhotos addObject:indexPath];
         
         // UI
@@ -646,6 +650,9 @@
 //                         }];
         
         [self refreshSelectedPhotCountOnNavTilte];
+    } else {
+        TotalGalleryViewCell *cell = (TotalGalleryViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
+        cell.checkIcon.hidden = YES;
     }
 
     
@@ -1607,6 +1614,7 @@
     }
     
     [self showToolBar:EDIT_MODE];
+    //self.collectionView.allowsSelection = EDIT_MODE;
     [self.collectionView setAllowsMultipleSelection:EDIT_MODE];
     [self.collectionView reloadData];
 
