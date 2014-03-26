@@ -170,26 +170,7 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-//    static NSString *cellIdentifier = @"Cell";
-//    
-//    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
-//    
-//    if (cell == nil) {
-//        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
-//        cell.backgroundColor = [UIColor clearColor];
-//        cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:21];
-//        cell.textLabel.textColor = [UIColor whiteColor];
-//        cell.textLabel.highlightedTextColor = [UIColor lightGrayColor];
-//        cell.selectedBackgroundView = [[UIView alloc] init];
-//        
-//        [cell.contentView addSubview:menuImageView];
-//    }
-//    
-//    NSArray *titles = @[@"FaceTab", @"UnFaceTab", @"Camera", @"Setting"];
-//    NSArray *images = @[@"IconHome", @"IconCalendar", @"IconProfile", @"IconSettings"];
-//    cell.textLabel.text = titles[indexPath.row];
-//    cell.imageView.image = [UIImage imageNamed:images[indexPath.row]];
-    
+
     static NSString *CellIdentifier = CELL_ID;
     PBMenuTableViewCell *cell = (PBMenuTableViewCell*)[tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
     cell.index = indexPath.row;
@@ -279,8 +260,10 @@
         
         UINavigationController *navigationController = (UINavigationController *)self.sideMenuViewController.contentViewController;
         
-        [navigationController popToRootViewControllerAnimated:NO];
-
+        //[navigationController popToRootViewControllerAnimated:NO];
+        //[self.sideMenuViewController showMenuViewController];
+        navigationController.viewControllers = @[_viewContorllers[0]];
+        [self.sideMenuViewController hideMenuViewController];
         
 	}
     

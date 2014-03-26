@@ -320,6 +320,8 @@
 		80B4F69A18D6E1F5001380FB /* menu_setting@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 80B4F69618D6E1F5001380FB /* menu_setting@2x.png */; };
 		80B4F69D18D6E6B8001380FB /* PBMenuTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 80B4F69C18D6E6B8001380FB /* PBMenuTableViewCell.m */; };
 		80B5BD8318BF5FE40016D507 /* PBDisolveSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = 80B5BD8218BF5FE40016D507 /* PBDisolveSegue.m */; };
+		80BC68C218E2850A001BD753 /* setting_logo2.png in Resources */ = {isa = PBXBuildFile; fileRef = 80BC68C018E2850A001BD753 /* setting_logo2.png */; };
+		80BC68C318E2850A001BD753 /* setting_logo.png in Resources */ = {isa = PBXBuildFile; fileRef = 80BC68C118E2850A001BD753 /* setting_logo.png */; };
 		80D2A0C0184A1C1C008D29B2 /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 78685D551848EBAC002D2BAA /* Social.framework */; };
 		80D2A0C1184A1C29008D29B2 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 69ED32DE18484EBB00127196 /* CoreGraphics.framework */; };
 		80D2A116184A1E58008D29B2 /* AlbumListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 80D2A0C7184A1E57008D29B2 /* AlbumListViewController.m */; };
@@ -897,6 +899,8 @@
 		80B4F69C18D6E6B8001380FB /* PBMenuTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBMenuTableViewCell.m; sourceTree = "<group>"; };
 		80B5BD8118BF5FE40016D507 /* PBDisolveSegue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBDisolveSegue.h; sourceTree = "<group>"; };
 		80B5BD8218BF5FE40016D507 /* PBDisolveSegue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBDisolveSegue.m; sourceTree = "<group>"; };
+		80BC68C018E2850A001BD753 /* setting_logo2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = setting_logo2.png; sourceTree = "<group>"; };
+		80BC68C118E2850A001BD753 /* setting_logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = setting_logo.png; sourceTree = "<group>"; };
 		80D2A0C6184A1E57008D29B2 /* AlbumListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlbumListViewController.h; sourceTree = "<group>"; };
 		80D2A0C7184A1E57008D29B2 /* AlbumListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AlbumListViewController.m; sourceTree = "<group>"; };
 		80D2A0C8184A1E57008D29B2 /* ASAssetsLibrary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASAssetsLibrary.h; sourceTree = "<group>"; };
@@ -1930,6 +1934,8 @@
 		809BB2D218BDF0C000CC79A8 /* newImages */ = {
 			isa = PBXGroup;
 			children = (
+				80BC68C018E2850A001BD753 /* setting_logo2.png */,
+				80BC68C118E2850A001BD753 /* setting_logo.png */,
 				80D5CD7F18DDF40500F46FF8 /* logo_01@2x.png */,
 				80D5CD8018DDF40500F46FF8 /* logo_02@2x.png */,
 				80D5CD8118DDF40500F46FF8 /* logo_03@2x.png */,
@@ -2464,6 +2470,7 @@
 				80D5CD8818DDF40500F46FF8 /* logo_04@2x.png in Resources */,
 				80E3639C18805A2B00A5DF57 /* image4@2x.jpg in Resources */,
 				809BB32118BDF0C000CC79A8 /* logo_2@2x.png in Resources */,
+				80BC68C318E2850A001BD753 /* setting_logo.png in Resources */,
 				80D5CD8918DDF40500F46FF8 /* logo_05@2x.png in Resources */,
 				7805A6EA1866E7B800B234C1 /* trash@2x.png in Resources */,
 				809BB33018BDF0C000CC79A8 /* yellow@2x.png in Resources */,
@@ -2525,6 +2532,7 @@
 				80A8AB5318D2FA5400D82EE5 /* MenuBackground@2x.png in Resources */,
 				7805A6E21866E7B800B234C1 /* midbar@2x.png in Resources */,
 				809BB30318BDF0C000CC79A8 /* addbutton@2x.png in Resources */,
+				80BC68C218E2850A001BD753 /* setting_logo2.png in Resources */,
 				78C1EB73186B0A790072E7DB /* take_photo@2x.png in Resources */,
 				80D2A11E184A1E58008D29B2 /* playButton.png in Resources */,
 				809BB32618BDF0C000CC79A8 /* plusadd@2x.png in Resources */,

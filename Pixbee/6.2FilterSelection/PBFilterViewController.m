@@ -156,8 +156,10 @@
     _images = [NSMutableArray array];
     NSLog(@"photos = %@", _photos);
     
-    for(NSDictionary *photo in _photos) {
-        ALAsset *asset= [photo objectForKey:@"Asset"];
+//    for(NSDictionary *photo in _photos) {
+//        ALAsset *asset= [photo objectForKey:@"Asset"];
+    for(ALAsset *asset in _photos) {
+
         ALAssetRepresentation* representation = [asset defaultRepresentation];
         
         // Retrieve the image orientation from the ALAsset

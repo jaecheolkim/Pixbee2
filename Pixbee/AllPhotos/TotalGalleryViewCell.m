@@ -33,14 +33,47 @@
     }
 }
 
-- (void)setPhoto:(NSDictionary *)photo
+//- (void)setPhoto:(NSDictionary *)photo
+//{
+//    ALAsset *asset= [photo objectForKey:@"Asset"];
+//    
+//    self.photoImageView.image = [UIImage imageWithCGImage:[asset thumbnail]];
+//    
+//    self.checkIcon.hidden = YES;
+//    self.selectIcon.hidden = YES;
+//}
+
+- (void)setAsset:(ALAsset *)asset
 {
-    ALAsset *asset= [photo objectForKey:@"Asset"];
-    
     self.photoImageView.image = [UIImage imageWithCGImage:[asset thumbnail]];
     
     self.checkIcon.hidden = YES;
     self.selectIcon.hidden = YES;
+  
+}
+
+- (void)setPhotoInfo:(NSDictionary *)photoInfo
+{
+    NSString *AssetURL = photoInfo[@"AssetURL"];
+    
+    ALAssetsLibraryAssetForURLResultBlock resultBlock = ^(ALAsset *asset)
+    {
+        NSLog(@"This debug string was logged after this function was done");
+
+        self.asset = asset;
+        
+        //[self setAsset:asset];
+        
+    };
+    
+    ALAssetsLibraryAccessFailureBlock failureBlock  = ^(NSError *error)
+    {
+        NSLog(@"Unresolved error: %@, %@", error, [error localizedDescription]);
+    };
+    
+    [AssetLib.assetsLibrary assetForURL:[NSURL URLWithString:AssetURL]
+                            resultBlock:resultBlock
+                           failureBlock:failureBlock];
 }
 
 - (void)showSelectIcon:(BOOL)show {

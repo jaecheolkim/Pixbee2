@@ -1043,8 +1043,14 @@ static inline NSDate* convertDouble2Date(double date){ return [NSDate dateWithTi
  
     
     
-    query = [NSString stringWithFormat:@"SELECT PhotoID, AssetURL FROM Photos WHERE AssetURL = '%@';", AssetURL];
+    query = [NSString stringWithFormat:@"SELECT * FROM Photos WHERE AssetURL = '%@';", AssetURL];
     result = [SQLManager getRowsForQuery:query];
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"DBEventHandler"
+                                                        object:self
+                                                      userInfo:@{ @"Msg":@"changedGalleryDB", @"result":result, @"Asset":asset }];
+    
+    
     NSLog(@"[Photos] INSERT result = %@", result);
     if([result count] > 0 && result != nil)
     {
@@ -1052,6 +1058,13 @@ static inline NSDate* convertDouble2Date(double date){ return [NSDate dateWithTi
     }
 
     return PhotoID;
+}
+
+- (NSArray*)getGroupPhotos:(NSString*)GroupURL
+{
+    NSString *query = [NSString stringWithFormat:@"SELECT * FROM Photos WHERE GroupURL = '%@';", GroupURL];
+    NSArray *result = [SQLManager getRowsForQuery:query];
+    return result;
 }
 
 

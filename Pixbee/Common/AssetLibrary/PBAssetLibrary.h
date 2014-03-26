@@ -46,6 +46,7 @@
 - (void)syncAlbumToDB:(void (^)(NSArray *results))result;
 - (void)syncPixbeeAlbum:(void (^)(float percent))enumerationBlock completion:(void (^)(BOOL finished))completion;
 // 새로운 사진이 있는지 체크
+
 - (void)checkNewPhoto;
 
 - (void)checkFace:(int)UserID;

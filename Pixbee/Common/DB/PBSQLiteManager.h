@@ -84,6 +84,7 @@ enum errorCodes {
 
 #pragma mark Photos Table
 - (int)newPhotoWith:(ALAsset *)asset withGroupAssetURL:(NSString*)groupAssetURL;
+- (NSArray*)getGroupPhotos:(NSString*)GroupURL;
 - (NSArray*)getAllPhotos;
 - (NSArray*)getPhoto:(NSString *)assetURL;
 - (BOOL)deletePhoto:(int)PhotoID;

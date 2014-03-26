@@ -45,19 +45,8 @@
     [self.window makeKeyAndVisible];
     
     
-    [AssetLib checkNewPhoto];
     
-    [AssetLib syncPixbeeAlbum:^(float percent) {
-        
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"MeunViewControllerEventHandler"
-                                                            object:self
-                                                          userInfo:@{@"SyncPixbee": [NSString stringWithFormat:@"%f", percent]}];
-        
-    } completion:^(BOOL finished) {
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"MeunViewControllerEventHandler"
-                                                            object:self
-                                                          userInfo:@{@"SyncPixbee":[NSString stringWithFormat:@"%f", 1.0]}];
-    }];
+    
 
     return YES;
 }
@@ -158,6 +147,8 @@
      */
     
     //[FBAppCall handleDidBecomeActiveWithSession:[PFFacebookUtils session]];
+    
+    [AssetLib checkNewPhoto];
     
     [FBAppCall handleDidBecomeActive];
 }

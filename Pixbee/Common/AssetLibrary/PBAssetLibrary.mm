@@ -76,6 +76,9 @@
 #warning 어플 실행 중 혹은 실행 시 마다 새로운 카메라롤 새로운 사진이 있을 때 Pixbee 앨범에 동기화 !!!
         NSLog(@"userInfo = %@", userInfo);
        
+       if(!IsEmpty(userInfo)){
+           [self syncPixbee];
+       }
 //        NSString *insertedGroupURLs = [userInfo objectForKey:ALAssetLibraryInsertedAssetGroupsKey];
 //       if(!IsEmpty(insertedGroupURLs)){
 //           NSURL *assetURL = [NSURL URLWithString:insertedGroupURLs];
@@ -153,6 +156,7 @@
                 
                 NSLog(@" ============== new asset found!");
                 
+                [self syncPixbee];
                 
             }
             //NSLog(@"Locations : %@", [AssetLib locationArray]);
@@ -162,7 +166,25 @@
         
         NSLog(@"========================= >>>>>>>>  END checkNewPhoto");
         
+        
+        
     }];
+}
+
+- (void)syncPixbee
+{
+    [AssetLib syncPixbeeAlbum:^(float percent) {
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"MeunViewControllerEventHandler"
+                                                            object:self
+                                                          userInfo:@{@"SyncPixbee": [NSString stringWithFormat:@"%f", percent]}];
+        
+    } completion:^(BOOL finished) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"MeunViewControllerEventHandler"
+                                                            object:self
+                                                          userInfo:@{@"SyncPixbee":[NSString stringWithFormat:@"%f", 1.0]}];
+    }];
+
 }
 
 - (void)syncPixbeeAlbum:(void (^)(float percent))enumerationBlock completion:(void (^)(BOOL finished))completion
