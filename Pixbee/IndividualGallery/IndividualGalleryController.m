@@ -917,7 +917,7 @@ UserCellDelegate, GalleryViewCellDelegate>
                     if(faceImage != nil)
                         [SQLManager setUserProfileImage:faceImage UserID:UserID];
 
-                    [SQLManager setTrainModelForUserID:UserID withFaceData:faceData];
+                    [SQLManager addTrainModelForUserID:UserID withFaceData:faceData];
                 }
                 else {
                     CGImageRef cgImage = [asset aspectRatioThumbnail];

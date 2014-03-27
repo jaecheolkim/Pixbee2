@@ -101,10 +101,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-    _assets = [NSMutableArray array]; //[@[] mutableCopy];
-    _photos = [@[] mutableCopy];
-    
+
     UIImageView *titleView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"title_unfacetab"]];
     titleView.contentMode = UIViewContentModeScaleAspectFit;
     self.navigationItem.titleView = titleView;
@@ -116,16 +113,28 @@
 
     self.collectionView.backgroundColor = [UIColor clearColor];
 
-    [self initialNotification];
+    
+    
 
+    
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+
+    _assets = [@[] mutableCopy];
+    _photos = [@[] mutableCopy];
+    
     _shareButton.enabled = NO;
-
+    
     selectedPhotos = [NSMutableArray array];
     selectedStackImages = [NSMutableArray array];
     
     scrollViewCellFrames = [NSMutableArray array];
     
-    [self reloadDB];
+    
     
     [self initFaceTabList];
     
@@ -134,18 +143,21 @@
     currentUserID = -1;
     currentPosition = -1;
     previousPosiotion = -2;
-}
-
-
-- (void)refershControlAction
-{
+    
     [self reloadDB];
     
+    [self initialNotification];
+}
+
+- (void)viewDidDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:animated];
+    [self closeNotification];
 }
 
 - (void)dealloc
 {
-    [self closeNotification];
+    
 }
 
 
@@ -160,36 +172,81 @@
 	[[NSNotificationCenter defaultCenter] removeObserver:self name:@"DBEventHandler" object:nil];
 }
 
+
 - (void)DBEventHandler:(NSNotification *)notification
 {
-
-    
     NSDictionary *userInfo = [notification userInfo];
-    
     if([userInfo[@"Msg"] isEqualToString:@"changedGalleryDB"]) {
+        
+        __block ALAsset *newAsset = userInfo[@"Asset"];
+        __block NSIndexPath *lastIndexPath;
         dispatch_async(dispatch_get_main_queue(), ^{
-            ALAsset *newAsset = userInfo[@"Asset"];
-            [self.assets addObject:newAsset];
-            NSInteger lastIndex = [self.assets count] - 1;
-            NSIndexPath *lastIndexPath = [NSIndexPath indexPathForRow:lastIndex inSection:0];
             
-            [self.collectionView insertItemsAtIndexPaths:@[lastIndexPath]];
-            //[self.collectionView reloadData];
+            if(NSNotFound == [self.assets indexOfObject:newAsset]) {
 
-            [_collectionView scrollToItemAtIndexPath:lastIndexPath atScrollPosition:UICollectionViewScrollPositionBottom animated:NO];
+                [self.collectionView performBatchUpdates:^{
+                    
+                    [self.assets addObject:newAsset];
+                    
+                    NSInteger lastIndex = [self.assets count]-1;
+                    lastIndexPath = [NSIndexPath indexPathForRow:lastIndex inSection:0];
+                    
+                    [self.collectionView insertItemsAtIndexPaths:@[lastIndexPath]];
+                    
+                    
+                } completion:^(BOOL finished) {
+                    [self.collectionView scrollToItemAtIndexPath:lastIndexPath atScrollPosition:UICollectionViewScrollPositionBottom animated:NO];
+                }];
+            }
 
-            
         });
-        
-        
-//        NSInteger index = [self.assets indexOfObject:newAsset];
-//        if(!index){
-//            [self.assets addObject:newAsset];
-//            [self.collectionView reloadData];
-//        }
+    }
 
-	}
 }
+
+
+
+//- (void)DBEventHandler:(NSNotification *)notification
+//{
+//
+//    
+//    NSDictionary *userInfo = [notification userInfo];
+//    
+//    if([userInfo[@"Msg"] isEqualToString:@"changedGalleryDB"]) {
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            ALAsset *newAsset = userInfo[@"Asset"];
+//            [self.assets addObject:newAsset];
+//            NSInteger lastIndex = [self.assets count]-1;
+//            NSIndexPath *lastIndexPath = [NSIndexPath indexPathForRow:lastIndex inSection:0];
+//            
+//            //[self.collectionView insertItemsAtIndexPaths:@[lastIndexPath]];
+//            [self.collectionView reloadData];
+//
+//            [_collectionView scrollToItemAtIndexPath:lastIndexPath atScrollPosition:UICollectionViewScrollPositionBottom animated:NO];
+//
+//            
+////            [self.collectionView performBatchUpdates:^{
+////                
+////                [self.collectionView insertItemsAtIndexPaths:@[lastIndexPath]];
+////                
+////            } completion:^(BOOL finished) {
+////                [_collectionView scrollToItemAtIndexPath:lastIndexPath atScrollPosition:UICollectionViewScrollPositionBottom animated:NO];
+////                
+////            }];
+//
+//            
+//            
+//        });
+//        
+//        
+////        NSInteger index = [self.assets indexOfObject:newAsset];
+////        if(!index){
+////            [self.assets addObject:newAsset];
+////            [self.collectionView reloadData];
+////        }
+//
+//	}
+//}
 
 
 - (void)didReceiveMemoryWarning
@@ -203,47 +260,81 @@
     [super viewDidLayoutSubviews];
 }
 
-- (void) reloadDB {
-    
-    
-    __block NSMutableArray *tmpAssets = [@[] mutableCopy];
-    // 1
-    ALAssetsLibrary *assetsLibrary = [AllPhotosController defaultAssetsLibrary];
-    // 2
-    [assetsLibrary enumerateGroupsWithTypes:ALAssetsGroupAll usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
-        if([[group valueForProperty:ALAssetsGroupPropertyName]  isEqualToString:@"Pixbee"]){
-            __block NSInteger groupAssetCount = group.numberOfAssets;
-            
-            
-            //_photos = [SQLManager getGroupPhotos:[group valueForProperty:ALAssetsGroupPropertyURL]];
-            //NSLog(@"result count = %d / %@ ", (int)[_photos count], _photos);
-            
-            [group enumerateAssetsUsingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {
-                if(result)
-                {
-                    // 3
-                    [tmpAssets addObject:result];
-                    
-                } else {
-                    NSLog(@"index = %d / groupAssetCount = %d", (int)index, (int)groupAssetCount);
-                }
+//- (void) reloadDB {
+//    
+//    
+//    __block NSMutableArray *tmpAssets = [@[] mutableCopy];
+//    // 1
+//    ALAssetsLibrary *assetsLibrary = [AllPhotosController defaultAssetsLibrary];
+//    // 2
+//    [assetsLibrary enumerateGroupsWithTypes:ALAssetsGroupAll usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
+//        if([[group valueForProperty:ALAssetsGroupPropertyName]  isEqualToString:@"Pixbee"]){
+//            __block NSInteger groupAssetCount = group.numberOfAssets;
+//            
+//            
+//            [group enumerateAssetsUsingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {
+//                if(result)
+//                {
+//                    // 3
+//                    [tmpAssets addObject:result];
+//                    
+//                } else {
+//                    NSLog(@"index = %d / groupAssetCount = %d", (int)index, (int)groupAssetCount);
+//                }
+//
+//            }];
+//            
+//            // 4
+//            //NSSortDescriptor *sort = [NSSortDescriptor sortDescriptorWithKey:@"date" ascending:NO];
+//            //self.assets = [tmpAssets sortedArrayUsingDescriptors:@[sort]];
+//            self.assets = tmpAssets;
+//            
+//            // 5
+//            [self.collectionView reloadData];
+//            
+// 
+//        }
+//        
+//    } failureBlock:^(NSError *error) {
+//        NSLog(@"Error loading images %@", error);
+//    }];
+//}
 
-            }];
-            
-            // 4
-            //NSSortDescriptor *sort = [NSSortDescriptor sortDescriptorWithKey:@"date" ascending:NO];
-            //self.assets = [tmpAssets sortedArrayUsingDescriptors:@[sort]];
-            self.assets = tmpAssets;
-            
-            // 5
-            [self.collectionView reloadData];
-            
- 
-        }
+- (void) reloadDB
+{
+
+    __block NSMutableArray *tmpAssets = [@[] mutableCopy];
+    
+    
+    NSArray *allPixbeePhots = [SQLManager getGroupPhotos:[AssetLib.pixbeeAssetGroup valueForProperty:ALAssetsGroupPropertyURL] filter:YES];
+    
+    for(NSDictionary *photoInfo in allPixbeePhots){
+        //PhotoID, AssetURL, Longitude, Latitude, Date, CheckType <= 이걸로 나중에 필터링.
         
-    } failureBlock:^(NSError *error) {
-        NSLog(@"Error loading images %@", error);
-    }];
+        NSString *assetURL = photoInfo[@"AssetURL"];
+        
+        ALAssetsLibraryAssetForURLResultBlock resultBlock = ^(ALAsset *asset)
+        {
+            [tmpAssets addObject:asset];
+            
+            self.assets = tmpAssets;
+            [self.collectionView reloadData];
+        };
+        
+        ALAssetsLibraryAccessFailureBlock failureBlock  = ^(NSError *error)
+        {
+
+        };
+        
+        [AssetLib.assetsLibrary assetForURL:[NSURL URLWithString:assetURL]
+                                resultBlock:resultBlock
+                               failureBlock:failureBlock];
+        
+
+    }
+    
+
+    
 }
 
 
@@ -709,7 +800,23 @@
 }
 
 
-- (void)makeNewFaceTab
+#pragma mark -
+#pragma mark Add / New Facetab Methods
+
+// This method is for deleting the selected images from the data source array
+-(void)deleteItemsFromDataSourceAtIndexPaths:(NSArray  *)itemPaths
+{
+    NSMutableIndexSet *indexSet = [NSMutableIndexSet indexSet];
+    for (NSIndexPath *itemPath  in itemPaths) {
+        [indexSet addIndex:itemPath.row];
+        
+    }
+    
+    [self.assets removeObjectsAtIndexes:indexSet]; // self.images is my data source
+    
+}
+
+- (void)newFacetabFromIndexPaths:(NSArray  *)itemPaths
 {
     NSArray *result = [SQLManager newUser];
     NSDictionary *user = [result objectAtIndex:0];
@@ -717,10 +824,11 @@
     int UserID = [[user objectForKey:@"UserID"] intValue];
     int photoCount = 0;
     
-    for(NSIndexPath *indexPath in selectedPhotos)
+    
+    for(NSIndexPath *indexPath in itemPaths)
     {
         photoCount++;
-
+        
         ALAsset *asset = self.assets[indexPath.row];
         
         NSArray *faces = [AssetLib getFaceData:asset];
@@ -732,7 +840,7 @@
             if(faceImage != nil)
                 [SQLManager setUserProfileImage:faceImage UserID:UserID];
             
-            [SQLManager setTrainModelForUserID:UserID withFaceData:faceData];
+            [SQLManager addTrainModelForUserID:UserID withFaceData:faceData];
         }
         else {
             CGImageRef cgImage = [asset aspectRatioThumbnail];
@@ -743,117 +851,311 @@
         
         
         [SQLManager saveNewUserPhotoToDB:asset users:@[@(UserID)]];
+        
     }
-    
-    if(EDIT_MODE) [self toggleEdit];
-    
-    if([_segueIdentifier isEqualToString:@"Segue3_1to4_3"])
+
+}
+
+- (void)addPhotoToFacetabFromIndexPaths:(NSArray  *)itemPaths userID:(int)UserID
+{
+    for(NSIndexPath *indexPath in itemPaths)
     {
-        [self.navigationController popViewControllerAnimated:YES];
-    } else {
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"MeunViewControllerEventHandler"
-                                                            object:self
-                                                          userInfo:@{@"moveTo":@"MainDashBoard"}];
+        NSLog(@"add Index.row = %d", (int)indexPath.row);
+        ALAsset *asset = self.assets[indexPath.row];
+        
+        [SQLManager saveNewUserPhotoToDB:asset users:@[@(UserID)]];
 
     }
-    
+}
+
+- (void)makeNewFaceTab
+{
+    [self.collectionView performBatchUpdates:^{
+        
+        NSArray *selectedItemsIndexPaths = [self.collectionView indexPathsForSelectedItems];
+        // Add new facetab from the selected collection view (DB works : add)
+        [self newFacetabFromIndexPaths:selectedItemsIndexPaths];
+        
+        // Delete the items from the data source. (Data Array works : delete)
+        [self deleteItemsFromDataSourceAtIndexPaths:selectedItemsIndexPaths];
+        
+        // Now delete the items from the collection view. (CollectionView cell delete animation)
+        [self.collectionView deleteItemsAtIndexPaths:selectedItemsIndexPaths];
+        
+    } completion:^(BOOL finished) {
+        
+        if(EDIT_MODE) [self toggleEdit];
+        
+        if([_segueIdentifier isEqualToString:@"Segue3_1to4_3"])
+        {
+            [self.navigationController popViewControllerAnimated:YES];
+        } else {
+            //        [[NSNotificationCenter defaultCenter] postNotificationName:@"MeunViewControllerEventHandler"
+            //                                                            object:self
+            //                                                          userInfo:@{@"moveTo":@"MainDashBoard"}];
+        }
+
+    }];
+
 }
 
 - (void)addPhotosToFaceTab:(int)UserID
 {
-    for(NSIndexPath *indexPath in selectedPhotos)
-    {
-
-        ALAsset *asset = self.assets[indexPath.row];
-        
-        [SQLManager saveNewUserPhotoToDB:asset users:@[@(UserID)]];
-    }
     
-    [self.navigationController popViewControllerAnimated:YES];
-}
-
-- (void)doAction
-{
-    // DB작업 후 화면 전환.
-    if([_operateIdentifier isEqualToString:@"new facetab"] && !IsEmpty(_operateIdentifier)  )
-    {
-        // 새로운 Facetab 만들고 Main dashboard로 돌아가기
+    [self.collectionView performBatchUpdates:^{
         
-        if(selectedPhotos.count < 5){
-            [UIAlertView showWithTitle:@""
-                               message:@"5장 이상 등록!!"
-                     cancelButtonTitle:@"OK"
-                     otherButtonTitles:nil
-                              tapBlock:^(UIAlertView *alertView, NSInteger buttonIndex) {
-                                  if (buttonIndex == [alertView cancelButtonIndex]) {
-                                      //[self.navigationController popViewControllerAnimated:YES];
-                                  }
-                              }];
-            
-        } else {
-            //NSMutableArray *photoDatas = [NSMutableArray array];
-#warning 추후에 얼굴 등록하는 프로세스 페이지 추가 필요.
-            NSArray *result = [SQLManager newUser];
-            NSDictionary *user = [result objectAtIndex:0];
-            //NSString *UserName = [user objectForKey:@"UserName"];
-            int UserID = [[user objectForKey:@"UserID"] intValue];
-            int photoCount = 0;
-            
-            for(NSIndexPath *indexPath in selectedPhotos)
-            {
-                photoCount++;
-
-                ALAsset *asset = self.assets[indexPath.row];
-                
-                NSArray *faces = [AssetLib getFaceData:asset];
-                if(faces.count == 1 && !IsEmpty(faces)){
-                    NSDictionary *face = faces[0];
-                    NSData *faceData = face[@"image"];
-                    
-                    UIImage *faceImage = face[@"faceImage"];
-                    if(faceImage != nil)
-                        [SQLManager setUserProfileImage:faceImage UserID:UserID];
-                    
-                    [SQLManager setTrainModelForUserID:UserID withFaceData:faceData];
-                }
-                else {
-                    CGImageRef cgImage = [asset aspectRatioThumbnail];
-                    UIImage *faceImage = [UIImage imageWithCGImage:cgImage];
-                    if(faceImage != nil)
-                        [SQLManager setUserProfileImage:faceImage UserID:UserID];
-                }
-                
-                
-                [SQLManager saveNewUserPhotoToDB:asset users:@[@(UserID)]];
-            }
-            
-            [self.navigationController popViewControllerAnimated:YES];
-        }
-    }
-    
-    else if([_operateIdentifier isEqualToString:@"add Photos"] && !IsEmpty(_operateIdentifier)  )
-    {
-#warning 추후에 얼굴 등록하는 프로세스 페이지 추가 필요.
-        int UserID = [_userInfo[@"UserID"] intValue];
+        NSArray *selectedItemsIndexPaths = [self.collectionView indexPathsForSelectedItems];
+        // Add photo to facetab from the selected collection view
+        [self addPhotoToFacetabFromIndexPaths:selectedItemsIndexPaths userID:(int)UserID];
         
-        for(NSIndexPath *indexPath in selectedPhotos)
+        // Delete the items from the data source.
+        [self deleteItemsFromDataSourceAtIndexPaths:selectedItemsIndexPaths];
+        
+        // Now delete the items from the collection view.
+        [self.collectionView deleteItemsAtIndexPaths:selectedItemsIndexPaths];
+        
+    } completion:^(BOOL finished) {
+        
+        if(EDIT_MODE) [self toggleEdit];
+        
+        if([_segueIdentifier isEqualToString:@"Segue3_1to4_3"])
         {
-
-            ALAsset *asset = self.assets[indexPath.row];
-            
-
-            [SQLManager saveNewUserPhotoToDB:asset users:@[@(UserID)]];
+            [self.navigationController popViewControllerAnimated:YES];
+        } else {
+            //        [[NSNotificationCenter defaultCenter] postNotificationName:@"MeunViewControllerEventHandler"
+            //                                                            object:self
+            //                                                          userInfo:@{@"moveTo":@"MainDashBoard"}];
         }
         
-        [self.navigationController popViewControllerAnimated:YES];
-        
-    }
-    
-    else {
-        // 필터 화면으로 이동
-        [self performSegueWithIdentifier:SEGUE_GO_FILTER sender:self];
-    }
+    }];
+
 }
+
+
+
+
+
+//- (void)makeNewFaceTab
+//{
+//    NSArray *result = [SQLManager newUser];
+//    NSDictionary *user = [result objectAtIndex:0];
+//    //NSString *UserName = [user objectForKey:@"UserName"];
+//    __block int UserID = [[user objectForKey:@"UserID"] intValue];
+//    __block int photoCount = 0;
+//    
+//
+//    for(NSIndexPath *indexPath in selectedPhotos)
+//    {
+//        photoCount++;
+//        
+//        ALAsset *asset = self.assets[indexPath.row];
+//        
+//        NSArray *faces = [AssetLib getFaceData:asset];
+//        if(faces.count == 1 && !IsEmpty(faces)){
+//            NSDictionary *face = faces[0];
+//            NSData *faceData = face[@"image"];
+//            
+//            UIImage *faceImage = face[@"faceImage"];
+//            if(faceImage != nil)
+//                [SQLManager setUserProfileImage:faceImage UserID:UserID];
+//            
+//            [SQLManager addTrainModelForUserID:UserID withFaceData:faceData];
+//        }
+//        else {
+//            CGImageRef cgImage = [asset aspectRatioThumbnail];
+//            UIImage *faceImage = [UIImage imageWithCGImage:cgImage];
+//            if(faceImage != nil)
+//                [SQLManager setUserProfileImage:faceImage UserID:UserID];
+//        }
+//        
+//        
+//        [SQLManager saveNewUserPhotoToDB:asset users:@[@(UserID)]];
+//
+//    }
+//    
+//    
+//    for(NSIndexPath *indexPath in selectedPhotos)
+//    {
+//        
+//        [self.assets removeObjectAtIndex:indexPath.row];
+//    }
+//    
+//    
+//    [self.collectionView reloadData];
+//    
+//    
+//    if(EDIT_MODE) [self toggleEdit];
+//    
+//    if([_segueIdentifier isEqualToString:@"Segue3_1to4_3"])
+//    {
+//        [self.navigationController popViewControllerAnimated:YES];
+//    } else {
+////        [[NSNotificationCenter defaultCenter] postNotificationName:@"MeunViewControllerEventHandler"
+////                                                            object:self
+////                                                          userInfo:@{@"moveTo":@"MainDashBoard"}];
+//    }
+//    
+//    
+//    
+////    __weak typeof(self) weakSelf = self;
+////    [self.collectionView performBatchUpdates:^{
+////        __strong typeof(self) strongSelf = weakSelf;
+////        if (strongSelf) {
+////            //            [strongSelf.collectionView deleteItemsAtIndexPaths:@[ previousIndexPath ]];
+////            //            [strongSelf.collectionView insertItemsAtIndexPaths:@[ newIndexPath ]];
+//// 
+////
+////            
+////            [strongSelf.collectionView deleteItemsAtIndexPaths:selectedPhotos];
+////        }
+////    } completion:^(BOOL finished) {
+////        if(EDIT_MODE) [self toggleEdit];
+////        
+////        if([_segueIdentifier isEqualToString:@"Segue3_1to4_3"])
+////        {
+////            [self.navigationController popViewControllerAnimated:YES];
+////        } else {
+//////            [[NSNotificationCenter defaultCenter] postNotificationName:@"MeunViewControllerEventHandler"
+//////                                                                object:self
+//////                                                              userInfo:@{@"moveTo":@"MainDashBoard"}];
+////            
+////        }
+////        
+////    }];
+//
+//    
+//}
+
+//- (void)addPhotosToFaceTab:(int)UserID
+//{
+//
+//    //NSArray* itemPaths = [self.collectionView indexPathsForSelectedItems];
+//    NSMutableArray *indexs = [NSMutableArray array];
+//    
+//    for(NSIndexPath *indexPath in selectedPhotos)
+//    {
+//        NSLog(@"add Index.row = %d", (int)indexPath.row);
+//        ALAsset *asset = self.assets[indexPath.row];
+//        
+//        [SQLManager saveNewUserPhotoToDB:asset users:@[@(UserID)]];
+//        [indexs addObject:@(indexPath.row)];
+//    }
+//    
+//    for(NSIndexPath *indexPath in selectedPhotos)
+//    {
+//        
+//        [self.assets removeObjectAtIndex:indexPath.row];
+//    }
+//
+//    [self.collectionView performBatchUpdates:^{
+//
+//        [self.collectionView deleteItemsAtIndexPaths:selectedPhotos];
+//
+//    } completion:^(BOOL finished) {
+//
+//
+//        [selectedPhotos removeAllObjects];
+//        
+//        if(EDIT_MODE) [self toggleEdit];
+//        
+//        if([_segueIdentifier isEqualToString:@"Segue3_1to4_3"])
+//        {
+//            [self.navigationController popViewControllerAnimated:YES];
+//        }
+//        else {
+////            [[NSNotificationCenter defaultCenter] postNotificationName:@"MeunViewControllerEventHandler"
+////                                                                object:self
+////                                                              userInfo:@{@"moveTo":@"MainDashBoard"}];
+//        }
+//
+//    }];
+//
+//    
+// 
+//}
+
+//- (void)doAction
+//{
+//    // DB작업 후 화면 전환.
+//    if([_operateIdentifier isEqualToString:@"new facetab"] && !IsEmpty(_operateIdentifier)  )
+//    {
+//        // 새로운 Facetab 만들고 Main dashboard로 돌아가기
+//        
+//        if(selectedPhotos.count < 5){
+//            [UIAlertView showWithTitle:@""
+//                               message:@"5장 이상 등록!!"
+//                     cancelButtonTitle:@"OK"
+//                     otherButtonTitles:nil
+//                              tapBlock:^(UIAlertView *alertView, NSInteger buttonIndex) {
+//                                  if (buttonIndex == [alertView cancelButtonIndex]) {
+//                                      //[self.navigationController popViewControllerAnimated:YES];
+//                                  }
+//                              }];
+//            
+//        } else {
+//            //NSMutableArray *photoDatas = [NSMutableArray array];
+//#warning 추후에 얼굴 등록하는 프로세스 페이지 추가 필요.
+//            NSArray *result = [SQLManager newUser];
+//            NSDictionary *user = [result objectAtIndex:0];
+//            //NSString *UserName = [user objectForKey:@"UserName"];
+//            int UserID = [[user objectForKey:@"UserID"] intValue];
+//            int photoCount = 0;
+//            
+//            for(NSIndexPath *indexPath in selectedPhotos)
+//            {
+//                photoCount++;
+//
+//                ALAsset *asset = self.assets[indexPath.row];
+//                
+//                NSArray *faces = [AssetLib getFaceData:asset];
+//                if(faces.count == 1 && !IsEmpty(faces)){
+//                    NSDictionary *face = faces[0];
+//                    NSData *faceData = face[@"image"];
+//                    
+//                    UIImage *faceImage = face[@"faceImage"];
+//                    if(faceImage != nil)
+//                        [SQLManager setUserProfileImage:faceImage UserID:UserID];
+//                    
+//                    [SQLManager addTrainModelForUserID:UserID withFaceData:faceData];
+//                }
+//                else {
+//                    CGImageRef cgImage = [asset aspectRatioThumbnail];
+//                    UIImage *faceImage = [UIImage imageWithCGImage:cgImage];
+//                    if(faceImage != nil)
+//                        [SQLManager setUserProfileImage:faceImage UserID:UserID];
+//                }
+//                
+//                
+//                [SQLManager saveNewUserPhotoToDB:asset users:@[@(UserID)]];
+//            }
+//            
+//            [self.navigationController popViewControllerAnimated:YES];
+//        }
+//    }
+//    
+//    else if([_operateIdentifier isEqualToString:@"add Photos"] && !IsEmpty(_operateIdentifier)  )
+//    {
+//#warning 추후에 얼굴 등록하는 프로세스 페이지 추가 필요.
+//        int UserID = [_userInfo[@"UserID"] intValue];
+//        
+//        for(NSIndexPath *indexPath in selectedPhotos)
+//        {
+//
+//            ALAsset *asset = self.assets[indexPath.row];
+//            
+//
+//            [SQLManager saveNewUserPhotoToDB:asset users:@[@(UserID)]];
+//        }
+//        
+//        [self.navigationController popViewControllerAnimated:YES];
+//        
+//    }
+//    
+//    else {
+//        // 필터 화면으로 이동
+//        [self performSegueWithIdentifier:SEGUE_GO_FILTER sender:self];
+//    }
+//}
 
 - (void)showToolBar:(BOOL)show
 {
@@ -946,6 +1248,9 @@
     if(EDIT_MODE){
         self.navigationItem.rightBarButtonItem.image = nil;
         self.navigationItem.rightBarButtonItem.title = @"Cancel";
+        self.navigationItem.leftBarButtonItem.enabled = NO;
+        
+        
         
         [[NSNotificationCenter defaultCenter] postNotificationName:@"RootViewControllerEventHandler"
                                                             object:self
@@ -968,6 +1273,7 @@
         [selectedPhotos removeAllObjects];
         self.navigationItem.rightBarButtonItem.title = nil;
         self.navigationItem.rightBarButtonItem.image = [UIImage imageNamed:@"edit"];
+        self.navigationItem.leftBarButtonItem.enabled = YES;
     }
     
     [self showToolBar:EDIT_MODE];

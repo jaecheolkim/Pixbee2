@@ -64,9 +64,9 @@
     
     NSString *createUsersTable = @"CREATE TABLE IF NOT EXISTS 'Users' ('UserID' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE , 'UserName' TEXT, 'GUID' TEXT, 'UserNick' TEXT, 'UserProfile' TEXT, 'fbID' TEXT, 'fbName' TEXT, 'fbProfile' TEXT, 'seq' INTEGER DEFAULT 0, 'color' INTEGER DEFAULT 0,  'timestamp' DATETIME DEFAULT CURRENT_TIMESTAMP);";
     
-    NSString *createPhotosTable = @"CREATE TABLE IF NOT EXISTS 'Photos' ('PhotoID' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE , 'AssetURL' TEXT, 'GroupURL' TEXT, 'FilePath' TEXT, 'Date' DOUBLE, 'AssetType' INTEGER, 'Longitude' DOUBLE, 'Latitude' DOUBLE, 'Duration' DOUBLE, 'CheckType' INTEGER DEFAULT -1, 'timestamp' DATETIME DEFAULT CURRENT_TIMESTAMP);";
+    NSString *createPhotosTable = @"CREATE TABLE IF NOT EXISTS 'Photos' ('PhotoID' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE , 'AssetURL' TEXT, 'GroupURL' TEXT, 'FilePath' TEXT, 'Date' DOUBLE, 'AssetType' INTEGER, 'Longitude' DOUBLE, 'Latitude' DOUBLE, 'Duration' DOUBLE, 'CheckType' INTEGER DEFAULT 0, 'timestamp' DATETIME DEFAULT CURRENT_TIMESTAMP);";
 
-    NSString *createFacesTable = @"CREATE  TABLE  IF NOT EXISTS 'Faces' ('FaceNo' INTEGER PRIMARY KEY  NOT NULL  UNIQUE , 'PhotoID' INTEGER, 'PhotoBound' TEXT, 'FaceBound' TEXT, 'LEyePoint' TEXT, 'REyePoint' TEXT, 'MouthPoint' TEXT, 'FaceAngle' DOUBLE, 'FaceYaw' DOUBLE, 'FaceSmile' INTEGER, 'LEyeClosed' INTEGER, 'REyeClosed' INTEGER, 'image' BLOB, 'CheckType' INTEGER DEFAULT -1, 'timestamp' DATETIME DEFAULT CURRENT_TIMESTAMP);";
+    NSString *createFacesTable = @"CREATE  TABLE  IF NOT EXISTS 'Faces' ('FaceNo' INTEGER PRIMARY KEY  NOT NULL  UNIQUE , 'PhotoID' INTEGER, 'PhotoBound' TEXT, 'FaceBound' TEXT, 'LEyePoint' TEXT, 'REyePoint' TEXT, 'MouthPoint' TEXT, 'FaceAngle' DOUBLE, 'FaceYaw' DOUBLE, 'FaceSmile' INTEGER, 'LEyeClosed' INTEGER, 'REyeClosed' INTEGER, 'image' BLOB, 'CheckType' INTEGER DEFAULT 0, 'timestamp' DATETIME DEFAULT CURRENT_TIMESTAMP);";
 
     NSString *createUserPhotosTable = @"CREATE  TABLE  IF NOT EXISTS 'UserPhotos' ('no' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE , 'UserID' INTEGER, 'PhotoID' INTEGER, 'FaceNo' INTEGER, 'timestamp' DATETIME DEFAULT CURRENT_TIMESTAMP);";
     
@@ -692,6 +692,8 @@ for (id param in params ) {
 
      //UPDATE tbl_4 SET city=(SELECT tbl_3.city FROM tbl_3 WHERE tbl_4.idnum =tbl_3.idnum), state = (SELECT tbl_3.state FROM tbl_3 WHERE tbl_4.idnum = tbl_3.idnum)
  
+ 
+
  */
 
 
@@ -987,7 +989,7 @@ for (id param in params ) {
 
 }
 
-- (void)setTrainModelForUserID:(int)UserID withFaceData:(NSData*)FaceData
+- (void)addTrainModelForUserID:(int)UserID withFaceData:(NSData*)FaceData
 {
     const char* insertSQL = "INSERT INTO FaceData (UserID, image) VALUES (?, ?)";
     sqlite3_stmt *statement;
@@ -1038,32 +1040,43 @@ static inline NSDate* convertDouble2Date(double date){ return [NSDate dateWithTi
         NSError *error = [SQLManager doQuery:sqlStr];
         if (error != nil) {
             NSLog(@"Error: %@",[error localizedDescription]);
+        } else {
+            query = [NSString stringWithFormat:@"SELECT * FROM Photos WHERE AssetURL = '%@';", AssetURL];
+            result = [SQLManager getRowsForQuery:query];
+            
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"DBEventHandler"
+                                                                object:self
+                                                              userInfo:@{ @"Msg":@"changedGalleryDB", @"result":result, @"Asset":asset }];
+            
+            
+            NSLog(@"[Photos] INSERT result = %@", result);
+            if([result count] > 0 && result != nil)
+            {
+                PhotoID = [[[result objectAtIndex:0] objectForKey:@"PhotoID"] intValue];
+            }
+            
+            return PhotoID;
         }
     }
  
     
-    
-    query = [NSString stringWithFormat:@"SELECT * FROM Photos WHERE AssetURL = '%@';", AssetURL];
-    result = [SQLManager getRowsForQuery:query];
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"DBEventHandler"
-                                                        object:self
-                                                      userInfo:@{ @"Msg":@"changedGalleryDB", @"result":result, @"Asset":asset }];
-    
-    
-    NSLog(@"[Photos] INSERT result = %@", result);
-    if([result count] > 0 && result != nil)
-    {
-        PhotoID = [[[result objectAtIndex:0] objectForKey:@"PhotoID"] intValue];
-    }
+    return -1;
 
-    return PhotoID;
 }
 
-- (NSArray*)getGroupPhotos:(NSString*)GroupURL
+- (NSArray*)getGroupPhotos:(NSString*)GroupURL filter:(BOOL)all
 {
-    NSString *query = [NSString stringWithFormat:@"SELECT * FROM Photos WHERE GroupURL = '%@';", GroupURL];
+    NSString *query ;
+    if(!all){
+        query = [NSString stringWithFormat:@"SELECT PhotoID, AssetURL, Longitude, Latitude, Date, CheckType  FROM Photos WHERE GroupURL = '%@';", GroupURL];
+    } else {
+        query = [NSString stringWithFormat:@"SELECT PhotoID, AssetURL, Longitude, Latitude, Date, CheckType  FROM Photos WHERE CheckType = 0 AND GroupURL = '%@';", GroupURL];
+    }
+ 
+    NSLog(@"Query : %@", query);
+    
     NSArray *result = [SQLManager getRowsForQuery:query];
+
     return result;
 }
 
@@ -1217,6 +1230,14 @@ static inline NSDate* convertDouble2Date(double date){ return [NSDate dateWithTi
         NSError *error = [SQLManager doQuery:sqlStr];
         if (error != nil) {
             NSLog(@"Error: %@",[error localizedDescription]);
+        } else {
+            //Photos 에 사용됨을 저장.
+            NSString *query = [NSString stringWithFormat:@" UPDATE Photos SET CheckType = CheckType + 1 WHERE PhotoID = %d;", PhotoID];
+
+            NSError *error = [SQLManager doQuery:query];
+            if (error != nil) {
+                NSLog(@"Error: %@",[error localizedDescription]);
+            }
         }
     }
 
@@ -1286,6 +1307,14 @@ static inline NSDate* convertDouble2Date(double date){ return [NSDate dateWithTi
     if (error != nil) {
     	NSLog(@"Error: %@",[error localizedDescription]);
         success = NO;
+    } else {
+        //Photos 에 삭제됨을 저장.
+        NSString *query = [NSString stringWithFormat:@" UPDATE Photos SET CheckType = CheckType - 1 WHERE PhotoID = %d;", PhotoID];
+        
+        NSError *error = [SQLManager doQuery:query];
+        if (error != nil) {
+            NSLog(@"Error: %@",[error localizedDescription]);
+        }
     }
     
     return success;

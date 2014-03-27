@@ -17,7 +17,7 @@
     BOOL isFaceRecRedy;
     BOOL isSyncPixbeeAlbum;
     
-    ALAssetsGroup *PixbeeAssetGroup;
+    
 }
 @property (nonatomic, strong) CLGeocoder *geocoder;
 
@@ -117,7 +117,7 @@
     NSString *albumName = @"Pixbee";
     [self.assetsLibrary newAssetGroup:albumName withSuccess:^(ALAssetsGroup *group) {
         
-        PixbeeAssetGroup = group;
+        _pixbeeAssetGroup = group;
         NSLog(@"======= Success create Pixbee Album !!!");
         //            NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
         //            [userDefaults setBool:YES forKey:@"CREATEDPIXBEEALBUM"];
@@ -127,7 +127,7 @@
         //            [userDefaults setBool:NO forKey:@"CREATEDPIXBEEALBUM"];
         //            [userDefaults synchronize];
         
-        PixbeeAssetGroup = nil;
+        _pixbeeAssetGroup = nil;
         NSLog(@"======= Failed create Pixbee Album = %@", error);
     }];
     //    }
@@ -156,7 +156,7 @@
                 
                 NSLog(@" ============== new asset found!");
                 
-                [self syncPixbee];
+                
                 
             }
             //NSLog(@"Locations : %@", [AssetLib locationArray]);
@@ -166,7 +166,7 @@
         
         NSLog(@"========================= >>>>>>>>  END checkNewPhoto");
         
-        
+        [self syncPixbee];
         
     }];
 }
@@ -220,7 +220,7 @@
                      
                      __block NSInteger numberOfAssets = group.numberOfAssets;
                      
-                     __block NSInteger numberOfPixbeeAssets = PixbeeAssetGroup.numberOfAssets;
+                     __block NSInteger numberOfPixbeeAssets = _pixbeeAssetGroup.numberOfAssets;
                      
                      // 현재 총 어셋 갯수와 최종 저장된 총 어셋 갯수 비교해서 틀리면 동기화.
                      if(lastTotalAssetCount != numberOfAssets ||
@@ -249,7 +249,7 @@
                                              // 신규 포토 저장.
                                              // Save DB. [Photos] 얼굴이 검출된 사진만 Photos Table에 저장.
                                              NSString *GroupURL = nil;
-                                             if(PixbeeAssetGroup) GroupURL = [PixbeeAssetGroup valueForProperty:ALAssetsGroupPropertyURL];
+                                             if(_pixbeeAssetGroup) GroupURL = [_pixbeeAssetGroup valueForProperty:ALAssetsGroupPropertyURL];
                                              
                                              int PhotoID = [SQLManager newPhotoWith:result withGroupAssetURL:GroupURL];
                                              
@@ -301,23 +301,7 @@
             
         }
     });
-    
-    
-//    if(lastTotalAssetCount == 0 || currentTotalAssetProcess != lastTotalAssetCount - 1)
-//    {
-//        //아직 동기화가 안되었으니 동기화 해야 함.
-    
-
-
-    
-//    }
-//    else if(currentTotalAssetProcess == lastTotalAssetCount - 1) {
-//        // 동기화가 되었음.
-//
-//
-//
-//    }
-    
+ 
 }
 
 

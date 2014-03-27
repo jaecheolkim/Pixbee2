@@ -58,7 +58,7 @@ AssetType  	:  ALAssetTypePhoto / ALAssetTypeVideo / ALAssetTypeUnknown : int
 Longitude    : ALAssetPropertyLocation : double
 Latitude   		: ALAssetPropertyLocation : double
 Duration     : ALAssetPropertyDuration : double
-CheckType    : 미검사(-1 : default) / 검출개수 / 미검출 : int 
+CheckType    : 미검사(0 : default) / 검출개수 / 미검출 : int
 timestamp 		:  생성일자	 : datetime 
 
 [Faces]    		// 미분류된 얼굴 데이터들.
@@ -76,7 +76,7 @@ FaceSmile	:  웃는 얼굴인가 (1 혹은 0)  : BOOL
 LEyeClosed	:  왼쪽눈 감겼는가  (1 혹은 0)  : BOOL
 REyeClosed		:  오른쪽눈 감겼는가  (1 혹은 0)  : BOOL
 image		:  사진내 검출된 얼굴 raw  (100x100)	: blob
-CheckType    : 미검사(-1 : default) / 검사(Recog.) : 1 
+CheckType    : 미검사(0 : default) / 검사(Recog.) : 1 
 timestamp	:  생성 일자 : datetime 
 
 [UserPhotos]  	// 분류된 사용자별 얼굴이 포함된 사진들

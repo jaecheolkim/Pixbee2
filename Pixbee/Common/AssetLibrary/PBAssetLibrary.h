@@ -19,6 +19,7 @@
 
 @property (nonatomic, strong) ALAssetsLibrary *assetsLibrary;
 @property (nonatomic, strong) ALAssetsGroup *currentAssetGroup;
+@property (nonatomic, strong) ALAssetsGroup *pixbeeAssetGroup;
 @property (nonatomic, strong) NSMutableArray *totalAssets;
 @property (nonatomic, strong) NSMutableArray *faceAssets;
 @property (nonatomic, strong) NSMutableArray *locationArray;

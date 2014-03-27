@@ -78,13 +78,13 @@ enum errorCodes {
 - (NSInteger)numberOfFacesForUserID:(int)UserID;
 - (NSArray*)getTrainModels;
 - (NSArray*)getTrainModelsForID:(int)UserID;
-- (void)setTrainModelForUserID:(int)UserID withFaceData:(NSData*)FaceData;
+- (void)addTrainModelForUserID:(int)UserID withFaceData:(NSData*)FaceData;
 //테스트용 사용자별 얼굴 리스트
 - (NSArray*)getUsersFaces;
 
 #pragma mark Photos Table
 - (int)newPhotoWith:(ALAsset *)asset withGroupAssetURL:(NSString*)groupAssetURL;
-- (NSArray*)getGroupPhotos:(NSString*)GroupURL;
+- (NSArray*)getGroupPhotos:(NSString*)GroupURL filter:(BOOL)all;
 - (NSArray*)getAllPhotos;
 - (NSArray*)getPhoto:(NSString *)assetURL;
 - (BOOL)deletePhoto:(int)PhotoID;

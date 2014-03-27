@@ -1946,7 +1946,7 @@ bail:
 //
 //            dispatch_async(dispatch_get_main_queue(), ^{
 //                
-//                [SQLManager setTrainModelForUserID:UserID withFaceData:serialized];
+//                [SQLManager addTrainModelForUserID:UserID withFaceData:serialized];
 //                
 //                UIImage *faceImage = [FaceLib MatToUIImage:cvImage];
 //                if(faceImage) [faceImageView setImage:faceImage];
@@ -2015,10 +2015,10 @@ bail:
                     cv::flip(preprocessedFace, mirroredFace, 1);
                     
                     NSData *serialized = [FaceLib serializeCvMat:preprocessedFace];
-                    [SQLManager setTrainModelForUserID:UserID withFaceData:serialized];
+                    [SQLManager addTrainModelForUserID:UserID withFaceData:serialized];
                     
                     serialized = [FaceLib serializeCvMat:mirroredFace];
-                    [SQLManager setTrainModelForUserID:UserID withFaceData:serialized];
+                    [SQLManager addTrainModelForUserID:UserID withFaceData:serialized];
                     
                     if(GlobalValue.testMode){
                         UIImage *faceImage = [FaceLib MatToUIImage:preprocessedFace];
