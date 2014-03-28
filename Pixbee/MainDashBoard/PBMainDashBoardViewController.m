@@ -771,12 +771,16 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
 //        int UserID = [[user objectForKey:@"UserID"] intValue];
         
         NSDictionary *userInfo = [self.users  objectAtIndex:currentIndexPath.item];
-        //NSDictionary *userInfo = currentProfileCardCell.userInfo;
-        int UserID = [userInfo[@"UserID"] intValue];
+        
+        destViewController.userInfo = userInfo;
         
         
-        //destViewController.usersPhotos = [self.usersPhotos objectAtIndex:indexPath.row];
-        destViewController.UserID = UserID;
+//        //NSDictionary *userInfo = currentProfileCardCell.userInfo;
+//        int UserID = [userInfo[@"UserID"] intValue];
+//        
+//        
+//        //destViewController.usersPhotos = [self.usersPhotos objectAtIndex:indexPath.row];
+//        destViewController.UserID = UserID;
         
     }
     else if([segue.identifier isEqualToString:SEGUE_3_1_TO_4_3]){ // add new face tab from Album

@@ -51,6 +51,7 @@
     BOOL ASSETFILTER;
     
     float progressPercentage;
+
     
 }
 //@property (nonatomic, retain) APNavigationController *navController;
@@ -125,6 +126,8 @@
     
     [self.collectionView setAllowsMultipleSelection:NO];
     [self.collectionView setAllowsSelection:NO];
+    
+    [self initRefreshControl];
 
 }
 
@@ -217,7 +220,39 @@
 //        NSLog(@"Error loading images %@", error);
 //    }];
 //}
+#pragma mark -
+#pragma mark UIRefreshControl & refresh methods
 
+- (void)initRefreshControl
+{
+    NSString *str = [NSString stringWithFormat:@"Searching new photos.."];
+    
+    refreshControl = [[UIRefreshControl alloc] init];
+    refreshControl.tintColor = [UIColor yellowColor];
+    [refreshControl addTarget:self action:@selector(startRefresh) forControlEvents:UIControlEventValueChanged];
+    
+    NSMutableAttributedString *refreshString = [[NSMutableAttributedString alloc] initWithString:str];
+    [refreshString addAttributes:@{NSForegroundColorAttributeName : [UIColor yellowColor] } range:NSMakeRange(0, refreshString.length)];
+    refreshControl.attributedTitle = refreshString;
+    
+    [self.collectionView addSubview:refreshControl];
+    
+    self.collectionView.alwaysBounceVertical = YES;
+}
+
+
+-(void)startRefresh
+{
+    progressPercentage = 1.0;
+    
+    [self.navigationController setSGProgressPercentage:progressPercentage * 100];
+    
+    if(progressPercentage == 1.0f) {
+        [self.navigationController finishSGProgress];
+        [refreshControl endRefreshing];
+    }
+    
+}
 
 #pragma mark -
 #pragma mark Pixbee Sync Notification & Methods

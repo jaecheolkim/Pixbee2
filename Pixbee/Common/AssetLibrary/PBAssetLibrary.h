@@ -50,6 +50,8 @@
 
 - (void)checkNewPhoto;
 
+- (BOOL)checkFace:(int)UserID asset:(ALAsset*)asset;
+
 - (void)checkFace:(int)UserID;
 
 // 앨범 Asset 전부 뒤져서 얼굴 정보 찾아줌..

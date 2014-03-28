@@ -30,6 +30,7 @@
 IDMPhotoBrowserDelegate, GalleryViewCellDelegate>
 {
     BOOL EDIT_MODE;
+    
     NSString *UserName;
     UIColor *UserColor;
     
@@ -38,19 +39,15 @@ IDMPhotoBrowserDelegate, GalleryViewCellDelegate>
 
     NSMutableArray *selectedPhotos;
     NSString *currentAction;
-    
-    
-    
+
     UIRefreshControl *refreshControl;
     NSMutableAttributedString *refreshString;
     
 }
 
 @property (weak, nonatomic) IBOutlet UICollectionView *collectionView;
-
-@property (strong, nonatomic) GalleryViewCell *selectedCell;
+@property (nonatomic, assign) int UserID;
 @property (strong, nonatomic) NSMutableArray *photos;
-@property (strong, nonatomic) NSDictionary *user;
 
 @property (strong, nonatomic) UIActivityViewController *activityController;
 
@@ -128,11 +125,13 @@ IDMPhotoBrowserDelegate, GalleryViewCellDelegate>
 
 - (void)initRefreshControl
 {
+    NSString *str = [NSString stringWithFormat:@"Searching %@'s photos..",UserName];
+    
     refreshControl = [[UIRefreshControl alloc] init];
     refreshControl.tintColor = [UIColor yellowColor];
     [refreshControl addTarget:self action:@selector(startRefresh) forControlEvents:UIControlEventValueChanged];
     
-    refreshString = [[NSMutableAttributedString alloc] initWithString:@"Pull To Refresh"];
+    refreshString = [[NSMutableAttributedString alloc] initWithString:str];
     [refreshString addAttributes:@{NSForegroundColorAttributeName : UserColor } range:NSMakeRange(0, refreshString.length)];
     refreshControl.attributedTitle = refreshString;
     
@@ -145,7 +144,7 @@ IDMPhotoBrowserDelegate, GalleryViewCellDelegate>
 -(void)startRefresh
 {
 
-    __block NSMutableArray *tmpAssets = [@[] mutableCopy];
+    //__block NSMutableArray *tmpAssets = [@[] mutableCopy];
     
     
     NSArray *allPixbeePhots = [SQLManager getGroupPhotos:[AssetLib.pixbeeAssetGroup valueForProperty:ALAssetsGroupPropertyURL] filter:YES];
@@ -169,14 +168,18 @@ IDMPhotoBrowserDelegate, GalleryViewCellDelegate>
             
             ALAssetsLibraryAssetForURLResultBlock resultBlock = ^(ALAsset *asset)
             {
-                [tmpAssets addObject:asset];
+                NSDictionary *photoInfo = nil;
                 
-                //self.assets = tmpAssets;
-                //[self.collectionView reloadData];
+                //여기서 UserID 와 Asset 을 가지고 사용자 사진인지 아닌지 구분해서 UserID의 사진이 맞다면..
+                if([AssetLib checkFace:_UserID asset:asset])
+                {
+                    NSURL *url = [asset valueForProperty:ALAssetPropertyAssetURL];
+                    NSString *assetURL = url.absoluteString;
 
-                
-                
-                
+                    photoInfo = @{@"UserID" : @(_UserID), @"FaceNo" : @(-1), @"PhotoID": @(PhotoID), @"AssetURL": assetURL};
+
+                }
+ 
                 counter++;
                 
                 progressPercentage =  (float)counter / (float)photoCount;
@@ -184,6 +187,23 @@ IDMPhotoBrowserDelegate, GalleryViewCellDelegate>
                       progressPercentage, (int)counter, PhotoID);
                 
                 dispatch_async(dispatch_get_main_queue(), ^{
+
+                    if(NSNotFound == [self.photos indexOfObject:photoInfo] && !IsEmpty(photoInfo)) {
+                        [self.photos addObject:photoInfo];
+                        [self.collectionView reloadData];
+                        
+//                        [self.collectionView performBatchUpdates:^{
+//                            NSInteger lastIndex = [self.photos count]-1;
+//                            NSIndexPath *lastIndexPath = [NSIndexPath indexPathForRow:lastIndex inSection:0];
+//                            
+//                            [self.collectionView insertItemsAtIndexPaths:@[lastIndexPath]];
+//                            
+//                        } completion:^(BOOL finished) {
+//                            
+//                        }];
+
+                    }
+
                     [self.navigationController setSGProgressPercentage:progressPercentage * 100];
                     
                     if(progressPercentage == 1.0f) {
@@ -211,16 +231,12 @@ IDMPhotoBrowserDelegate, GalleryViewCellDelegate>
 
 - (void)refreshInfo
 {
-    self.usersPhotos = [SQLManager getUserPhotos:_UserID];
 
     selectedPhotos = [NSMutableArray array];
-    
-    self.photos = [self.usersPhotos objectForKey:@"photos"];
-    self.user = [self.usersPhotos objectForKey:@"user"];
-    
+ 
+    self.photos = (NSMutableArray*)[SQLManager getUserPhotos:_UserID];
 
     [self.collectionView reloadData];
-
 
     self.title = [NSString stringWithFormat:@"%@ (%d)", UserName, (int)[self.photos count]];
  
@@ -312,10 +328,11 @@ IDMPhotoBrowserDelegate, GalleryViewCellDelegate>
         cell.selectIcon.hidden = NO;
         
         if ([selectedPhotos containsObject:indexPath]) {
-           cell.selectIcon.image = [UIImage imageNamed:@"check"];
+           cell.checkIcon.hidden = NO;
         }
     } else {
         cell.selectIcon.hidden = YES;
+        cell.checkIcon.hidden = YES;
     }
 
 
@@ -327,11 +344,14 @@ IDMPhotoBrowserDelegate, GalleryViewCellDelegate>
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
     if(EDIT_MODE){
-        
+        [selectedPhotos addObject:indexPath];
         [self refreshSelectedPhotCountOnNavTilte];
         
     } else {
-        self.selectedCell = (GalleryViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
+        GalleryViewCell *cell = (GalleryViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
+        cell.selectIcon.hidden = YES;
+        cell.checkIcon.hidden = YES;
+        
         
         NSMutableArray *idmPhotos = [NSMutableArray arrayWithCapacity:[self.photos count]];
         for (NSDictionary *photoinfo in self.photos) {
@@ -340,14 +360,14 @@ IDMPhotoBrowserDelegate, GalleryViewCellDelegate>
         }
  
         // Create and setup browser
-        IDMPhotoBrowser *browser = [[IDMPhotoBrowser alloc] initWithPhotoURLs:idmPhotos animatedFromView:self.selectedCell]; // using initWithPhotos:animatedFromView: method to use the zoom-in animation
+        IDMPhotoBrowser *browser = [[IDMPhotoBrowser alloc] initWithPhotoURLs:idmPhotos animatedFromView:cell]; // using initWithPhotos:animatedFromView: method to use the zoom-in animation
         browser.delegate = self;
         [browser setInitialPageIndex:indexPath.row];
         browser.displayActionButton = NO;
         browser.displayArrowButton = NO;
         //        browser.displayArrowButton = YES;
         browser.displayCounterLabel = YES;
-        browser.scaleImage = self.selectedCell.photoImageView.image;
+        browser.scaleImage = cell.photoImageView.image;
 
         // Show
         [self.navigationController pushViewController:browser animated:YES];
@@ -370,54 +390,7 @@ IDMPhotoBrowserDelegate, GalleryViewCellDelegate>
 
 #pragma mark GalleryViewCellDelegate
 
-- (void)cellTap:(GalleryViewCell *)cell
-{
-    NSIndexPath *indexPath = [self.collectionView indexPathForCell:cell];
-    NSLog(@"tapItem: %d %@", (int)indexPath.row, cell.selected?@"YES":@"NO");
- 
-    if (self.collectionView.allowsMultipleSelection) {
-        if(!cell.selected){
-            [selectedPhotos addObject:indexPath];
-            //[cell showSelectIcon:YES];
-        }
-        else {
-            [selectedPhotos removeObject:indexPath];
-            //[cell showSelectIcon:NO];
-        }
 
-        [cell setNeedsDisplay];
-        [self refreshSelectedPhotCountOnNavTilte];
-        cell.selected = !cell.selected;
-    }
-    else {
-        self.selectedCell = cell;//(GalleryViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
- 
-        NSMutableArray *idmPhotos = [NSMutableArray arrayWithCapacity:[self.photos count]];
-        for (NSDictionary *photoinfo in self.photos) {
-            NSString *photo = [photoinfo objectForKey:@"AssetURL"];
-            [idmPhotos addObject:photo];
-        }
-
-        // Create and setup browser
-        IDMPhotoBrowser *browser = [[IDMPhotoBrowser alloc] initWithPhotoURLs:idmPhotos];// animatedFromView:self.selectedCell]; // using initWithPhotos:animatedFromView: method to use the zoom-in animation
-        browser.delegate = self;
-        [browser setInitialPageIndex:indexPath.row];
-        browser.displayActionButton = NO;
-        browser.displayArrowButton = NO;
-        //        browser.displayArrowButton = YES;
-        browser.displayCounterLabel = YES;
-        browser.scaleImage = self.selectedCell.photoImageView.image;
-        
-
-        
-        [self.navigationController pushViewController:browser animated:YES];
-        
-        
-        [self collectionView:self.collectionView didDeselectItemAtIndexPath:indexPath];
-    }
-
-
-}
 
 - (void)cellPressed:(GalleryViewCell *)cell
 {
@@ -426,7 +399,8 @@ IDMPhotoBrowserDelegate, GalleryViewCellDelegate>
     NSIndexPath *indexPath = [self.collectionView indexPathForCell:cell];
     
     NSLog(@"longPressItem: %d", (int)indexPath.row);
-    [selectedPhotos addObject:indexPath];
+
+    
     [self shareButtonHandler:nil];
 }
 
@@ -507,15 +481,9 @@ IDMPhotoBrowserDelegate, GalleryViewCellDelegate>
     }
     
     NSLog(@"selectedPhoto = %@", selectedPhotos);
-    NSLog(@"userInfo = %@", self.user);
-    
-//    CopyActivity *copyActivity = [[CopyActivity alloc] init];
-//    MoveActivity *moveActivity = [[MoveActivity alloc] init];
-//    NewAlbumActivity *newalbumActivity = [[NewAlbumActivity alloc] init];
+
     DeleteActivity *deleteActivity = [[DeleteActivity alloc] init];
-    
-    //NSArray *activitys = @[copyActivity, moveActivity, newalbumActivity, deleteActivity];
-    
+ 
     NSArray *activitys = @[deleteActivity];
     
     self.activityController = [[UIActivityViewController alloc] initWithActivityItems:activityItems applicationActivities:activitys];
@@ -540,33 +508,7 @@ IDMPhotoBrowserDelegate, GalleryViewCellDelegate>
                     }];
     
     [self.activityController setCompletionHandler:^(NSString *act, BOOL done) {
-//        currentAction = act;
-//        if ( [act isEqualToString:@"com.pixbee.copySharing"] ) {
-//            if (self.importView) {
-//                [self performSegueWithIdentifier:SEGUE_4_2_TO_3_2 sender:self];
-//            }
-//            else {
-//                [self performSegueWithIdentifier:SEGUE_4_1_TO_3_2 sender:self];
-//            }
-//         }
-//         else if ( [act isEqualToString:@"com.pixbee.moveSharing"] ) {
-//             if (self.importView) {
-//                 [self performSegueWithIdentifier:SEGUE_4_2_TO_3_2 sender:self];
-//             }
-//             else {
-//                 [self performSegueWithIdentifier:SEGUE_4_1_TO_3_2 sender:self];
-//             }
-//         }
-//         else if ( [act isEqualToString:@"com.pixbee.newAlbumSharing"] ) {
-//             if (self.importView) {
-//                 [self performSegueWithIdentifier:SEGUE_4_2_TO_3_2 sender:self];
-//             }
-//             else {
-//                 [self newFaceTab];
-//             }
-//             
-//          }
-//         else
+
         if ( [act isEqualToString:@"com.pixbee.deleteSharing"] ) {
 
              [self deletePhotos];
@@ -600,8 +542,7 @@ IDMPhotoBrowserDelegate, GalleryViewCellDelegate>
     for (NSIndexPath *indexPath in selectedPhotos) {
         NSLog(@"=====> indexPath.row : %d || [self.photos count] : %d", (int)indexPath.row, (int)[self.photos count]);
 
-//        GalleryViewCell *cell = (GalleryViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
-//        [cell showSelectIcon:NO];
+        
         NSDictionary *photo = [self.photos objectAtIndex:indexPath.row];
         int userID = [[photo objectForKey:@"UserID"] intValue];
         int photoID = [[photo objectForKey:@"PhotoID"] intValue];

@@ -21,15 +21,9 @@
 -(id)initWithCoder:(NSCoder *)aDecoder {
     self = [super initWithCoder:aDecoder];
     if (self) {
-        UIView *bgView = [[UIView alloc] initWithFrame:self.backgroundView.frame];
-        bgView.backgroundColor = [UIColor blueColor];
-        bgView.layer.borderColor = [[UIColor whiteColor] CGColor];
-        bgView.layer.borderWidth = 4;
-        self.selectedBackgroundView = bgView;
-        
-        
-        UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapItem:)];
-        [self addGestureRecognizer:tapGestureRecognizer];
+
+//        UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapItem:)];
+//        [self addGestureRecognizer:tapGestureRecognizer];
         
         
         UILongPressGestureRecognizer *longPressPressGestureRecognizer
@@ -41,13 +35,13 @@
     return self;
 }
 
-- (void)tapItem:(id)sender
-{
-    
-    if ([self.delegate respondsToSelector:@selector(cellTap:)]){
-        [self.delegate cellTap:self];
-    }
-}
+//- (void)tapItem:(id)sender
+//{
+//    
+//    if ([self.delegate respondsToSelector:@selector(cellTap:)]){
+//        [self.delegate cellTap:self];
+//    }
+//}
 
 - (void)longPressItem:(id)sender
 {
@@ -61,16 +55,23 @@
 
 - (void)setSelected:(BOOL)selected {
     [super setSelected:selected];
-    self.checked = selected;
+    //self.checked = selected;
     
-    if(self.selected) self.selectIcon.image = [UIImage imageNamed:@"check"];
-    else self.selectIcon.image = nil;
-    
+    if(self.selected){
+        self.checkIcon.hidden = NO;
+    }
+    else {
+        self.checkIcon.hidden = YES;
+    }
 }
 
 
 - (void)setPhoto:(NSDictionary *)photo
 {
+    self.checkIcon.hidden = YES;
+    self.selectIcon.hidden = YES;
+
+    
     NSString *imagePath = [photo objectForKey:@"AssetURL"];
     
     if (imagePath && ![imagePath isEqualToString:@""])
@@ -103,49 +104,5 @@
 
 }
 
-//- (void)showSelectIcon:(BOOL)show {
-//    //    if (show) {
-//    //        self.selectIcon.hidden = NO;
-//    //    }
-//    //    else {
-//    //        self.selectIcon.hidden = YES;
-//    //    }
-//}
-
-
-//- (void)updateCell:(NSDictionary *)photo {
-//    
-//    //[self showSelectIcon:NO];
-//    
-//    NSString *imagePath = [photo objectForKey:@"AssetURL"];
-//    
-//    if (imagePath && ![imagePath isEqualToString:@""])
-//    {
-//        self.photoImageView.image = [[SDImageCache sharedImageCache] imageFromMemoryCacheForKey:imagePath];
-//        
-//        if (self.photoImageView.image == nil) {
-//            ALAssetsLibraryAssetForURLResultBlock resultBlock = ^(ALAsset *asset)
-//            {
-//                NSLog(@"This debug string was logged after this function was done");
-//                UIImage *image = [UIImage imageWithCGImage:[asset thumbnail]];
-//                self.photoImageView.image = image;
-//                //this line is needed to display the image when it is loaded asynchronously, otherwise image will not be shown as stated in comments
-//                [self setNeedsLayout];
-//                
-//                [[SDImageCache sharedImageCache] storeImage:image forKey:imagePath toDisk:NO];
-//            };
-//            
-//            ALAssetsLibraryAccessFailureBlock failureBlock  = ^(NSError *error)
-//            {
-//                NSLog(@"Unresolved error: %@, %@", error, [error localizedDescription]);
-//            };
-//            
-//            [AssetLib.assetsLibrary assetForURL:[NSURL URLWithString:imagePath]
-//                                resultBlock:resultBlock
-//                               failureBlock:failureBlock];
-//
-//        }
-//    }
-//}
 
 @end

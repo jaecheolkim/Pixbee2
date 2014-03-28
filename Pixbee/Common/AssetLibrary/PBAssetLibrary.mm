@@ -700,7 +700,13 @@
 }
  
 
-
+- (BOOL)checkFace:(int)UserID asset:(ALAsset*)asset
+{
+    BOOL isUser = YES;
+    
+    
+    return isUser;
+}
 
 - (void)checkFace:(int)UserID
 {

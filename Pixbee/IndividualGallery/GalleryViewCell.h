@@ -13,12 +13,11 @@
 @interface GalleryViewCell : UICollectionViewCell
 @property (nonatomic, assign) id<GalleryViewCellDelegate> delegate;
 @property (strong, nonatomic) NSDictionary *photo;
-@property (strong, nonatomic) IBOutlet UIImageView *photoImageView;
-@property (strong, nonatomic) IBOutlet UIImageView *selectIcon;
-@property (nonatomic) BOOL checked;
+@property (weak, nonatomic) IBOutlet UIImageView *photoImageView;
+@property (weak, nonatomic) IBOutlet UIImageView *selectIcon;
+@property (weak, nonatomic) IBOutlet UIImageView *checkIcon;
+//@property (nonatomic) BOOL checked;
 
-//- (void)updateCell:(NSDictionary *)photo;
-//- (void)showSelectIcon:(BOOL)show;
 
 @end
 

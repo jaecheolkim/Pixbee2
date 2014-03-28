@@ -1290,31 +1290,31 @@ static inline NSDate* convertDouble2Date(double date){ return [NSDate dateWithTi
     return usersPhotos;
 }
 
-- (NSDictionary*)getUserPhotos:(int)UserID
+- (NSArray *)getUserPhotos:(int)UserID
 {
-    NSDictionary *userPhotos = nil;
-    NSArray *users = [self getUserInfo:UserID];
-    if(!IsEmpty(users)){
-        NSDictionary *user= users[0];
-        NSString *query = [NSString stringWithFormat:@"SELECT U.UserID, U.PhotoID, U.FaceNo, P.AssetURL FROM UserPhotos AS U  JOIN Photos As P ON U.PhotoID = P.PhotoID WHERE U.UserID = %d",UserID];
-        NSLog(@"Query : %@",query);
-        
-        NSArray *result = [SQLManager getRowsForQuery:query];
-
-        userPhotos = @{@"user":user,@"photos":result};
-
-    }
-    return userPhotos;
+//    NSDictionary *userPhotos = nil;
+//    NSArray *users = [self getUserInfo:UserID];
+//    if(!IsEmpty(users)){
+//        NSDictionary *user= users[0];
+//        NSString *query = [NSString stringWithFormat:@"SELECT U.UserID, U.PhotoID, U.FaceNo, P.AssetURL FROM UserPhotos AS U  JOIN Photos As P ON U.PhotoID = P.PhotoID WHERE U.UserID = %d",UserID];
+//        NSLog(@"Query : %@",query);
+//        
+//        NSArray *result = [SQLManager getRowsForQuery:query];
+//
+//        userPhotos = @{@"user":user,@"photos":result};
+//
+//    }
+//    return userPhotos;
     
 //    NSDictionary *user= users[0];
 //    
 //    //NSString *query = [NSString stringWithFormat:@"SELECT * FROM UserPhotos WHERE UserID = %d", UserID];
 //    
-//    NSString *query = [NSString stringWithFormat:@"SELECT U.UserID, U.PhotoID, U.FaceNo, P.AssetURL FROM UserPhotos AS U  JOIN Photos As P ON U.PhotoID = P.PhotoID WHERE U.UserID = %d",UserID];
-//    
-//    NSArray *result = [SQLManager getRowsForQuery:query];
-//    
-//    return result;
+    NSString *query = [NSString stringWithFormat:@"SELECT U.UserID, U.PhotoID, U.FaceNo, P.AssetURL FROM UserPhotos AS U  JOIN Photos As P ON U.PhotoID = P.PhotoID WHERE U.UserID = %d",UserID];
+    
+    NSArray *result = [SQLManager getRowsForQuery:query];
+    
+    return result;
 }
 
 - (BOOL)deleteUserPhoto:(int)UserID withPhoto:(int)PhotoID

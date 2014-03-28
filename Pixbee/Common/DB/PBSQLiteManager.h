@@ -98,7 +98,7 @@ enum errorCodes {
 #pragma mark UserPhotos Table
 - (int)newUserPhotosWith:(int)UserID withPhoto:(int)PhotoID withFace:(int)FaceNo;
 - (NSMutableArray*)getAllUserPhotos;
-- (NSDictionary*)getUserPhotos:(int)UserID;
+- (NSArray*)getUserPhotos:(int)UserID;
 - (BOOL)deleteUserPhoto:(int)UserID withPhoto:(int)PhotoID;
 
 // 사진 촬영 후 해당 사진을 UserPhotos에 저장.

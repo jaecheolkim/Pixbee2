@@ -25,11 +25,9 @@
     
     if(self.selected){
         self.checkIcon.hidden = NO;
-        //self.selectIcon.image = [UIImage imageNamed:@"check"];
     }
     else {
         self.checkIcon.hidden = YES;
-        //self.selectIcon.image = nil;
     }
 }
 

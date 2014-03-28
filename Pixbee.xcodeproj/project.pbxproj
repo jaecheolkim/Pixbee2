@@ -113,7 +113,6 @@
 		78564EDF1869F259000FB03C /* FPPopoverKeyboardResponsiveController.m in Sources */ = {isa = PBXBuildFile; fileRef = 78564EDE1869F259000FB03C /* FPPopoverKeyboardResponsiveController.m */; };
 		7856F6EC1849CD9B00A17349 /* OpenPhotoSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = 7856F6E91849CD9B00A17349 /* OpenPhotoSegue.m */; };
 		7856F6ED1849CD9B00A17349 /* OpenPhotoUnwindSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = 7856F6EB1849CD9B00A17349 /* OpenPhotoUnwindSegue.m */; };
-		7856F6F71849D29E00A17349 /* AlbumPageController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7856F6F61849D29E00A17349 /* AlbumPageController.m */; };
 		7856F6FB1849DAE000A17349 /* IndividualGalleryController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7856F6FA1849DAE000A17349 /* IndividualGalleryController.m */; };
 		7856F72C1849FA1100A17349 /* GalleryViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 7856F7271849FA1100A17349 /* GalleryViewCell.m */; };
 		78685D5D1848FA29002D2BAA /* AddingFaceToAlbumController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 78685D5C1848FA29002D2BAA /* AddingFaceToAlbumController.mm */; };
@@ -612,8 +611,6 @@
 		7856F6E91849CD9B00A17349 /* OpenPhotoSegue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OpenPhotoSegue.m; sourceTree = "<group>"; };
 		7856F6EA1849CD9B00A17349 /* OpenPhotoUnwindSegue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpenPhotoUnwindSegue.h; sourceTree = "<group>"; };
 		7856F6EB1849CD9B00A17349 /* OpenPhotoUnwindSegue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OpenPhotoUnwindSegue.m; sourceTree = "<group>"; };
-		7856F6F51849D29E00A17349 /* AlbumPageController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlbumPageController.h; sourceTree = "<group>"; };
-		7856F6F61849D29E00A17349 /* AlbumPageController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AlbumPageController.m; sourceTree = "<group>"; };
 		7856F6F91849DAE000A17349 /* IndividualGalleryController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndividualGalleryController.h; sourceTree = "<group>"; };
 		7856F6FA1849DAE000A17349 /* IndividualGalleryController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IndividualGalleryController.m; sourceTree = "<group>"; };
 		7856F7261849FA1100A17349 /* GalleryViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GalleryViewCell.h; sourceTree = "<group>"; };
@@ -1301,7 +1298,6 @@
 				78685D5E18495EB1002D2BAA /* Common */,
 				78685D5A1848F9F0002D2BAA /* AddFace */,
 				78685D6718497983002D2BAA /* Invitation */,
-				7856F6F41849D1FE00A17349 /* AlbumPage */,
 				6968D9A3186EF7DB00831442 /* AlbumSelection */,
 				7856F6F81849DAC000A17349 /* IndividualGallery */,
 				78A80529184F7ABE008E81B3 /* FullScreenPhoto */,
@@ -1579,15 +1575,6 @@
 				7805A6D11866E7B800B234C1 /* xicon@2x.png */,
 			);
 			path = Images;
-			sourceTree = "<group>";
-		};
-		7856F6F41849D1FE00A17349 /* AlbumPage */ = {
-			isa = PBXGroup;
-			children = (
-				7856F6F51849D29E00A17349 /* AlbumPageController.h */,
-				7856F6F61849D29E00A17349 /* AlbumPageController.m */,
-			);
-			path = AlbumPage;
 			sourceTree = "<group>";
 		};
 		7856F6F81849DAC000A17349 /* IndividualGallery */ = {
@@ -2776,7 +2763,6 @@
 				805CA40818AC99D400764FE1 /* UIImage+Saving.m in Sources */,
 				7805A64018658BA000B234C1 /* IDMPhoto.m in Sources */,
 				807DD95318BB5B9A003EBF30 /* UIImage+FX.m in Sources */,
-				7856F6F71849D29E00A17349 /* AlbumPageController.m in Sources */,
 				69C39FD018606B39001EDDFA /* SDWebImagePrefetcher.m in Sources */,
 				7805A63D18658BA000B234C1 /* DCIntrospect.m in Sources */,
 				807DD95B18BB6B12003EBF30 /* TWRProgressView.m in Sources */,

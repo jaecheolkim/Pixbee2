@@ -180,7 +180,7 @@ Connect now to see what your friends have</string>
                                             <rect key="frame" x="0.0" y="0.0" width="192" height="28"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="79B0DAE8-6D40-48B4-9E31-D849902BE661" translatesAutoresizingMaskIntoConstraints="NO" id="6aK-Ak-lFj">
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="92671517-69A2-488E-8A23-CF99EDD47C23" translatesAutoresizingMaskIntoConstraints="NO" id="6aK-Ak-lFj">
                                                     <rect key="frame" x="0.0" y="0.0" width="28" height="29"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
@@ -304,16 +304,21 @@ Connect now to see what your friends have</string>
                                                 <imageView userInteractionEnabled="NO" tag="100" contentMode="scaleToFill" fixedFrame="YES" image="individualphoto.png" translatesAutoresizingMaskIntoConstraints="NO" id="glb-fX-Zdn">
                                                     <rect key="frame" x="0.0" y="0.0" width="75" height="75"/>
                                                 </imageView>
-                                                <imageView hidden="YES" userInteractionEnabled="NO" alpha="0.69999999999999996" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3P5-4U-oDB">
+                                                <imageView hidden="YES" userInteractionEnabled="NO" alpha="0.29999999999999999" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3P5-4U-oDB" userLabel="Image View_black">
                                                     <rect key="frame" x="0.0" y="0.0" width="75" height="75"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                </imageView>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="check.png" translatesAutoresizingMaskIntoConstraints="NO" id="L2k-WW-ZvE">
+                                                    <rect key="frame" x="0.0" y="0.0" width="75" height="75"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 </imageView>
                                             </subviews>
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </view>
                                         <size key="customSize" width="75" height="75"/>
                                         <connections>
+                                            <outlet property="checkIcon" destination="L2k-WW-ZvE" id="stg-A6-tTN"/>
                                             <outlet property="photoImageView" destination="glb-fX-Zdn" id="1FN-vK-E3S"/>
                                             <outlet property="selectIcon" destination="3P5-4U-oDB" id="HRX-X0-WXH"/>
                                         </connections>
@@ -1394,7 +1399,7 @@ Connect now to see what your friends have</string>
         </scene>
     </scenes>
     <resources>
-        <image name="79B0DAE8-6D40-48B4-9E31-D849902BE661" width="628" height="152">
+        <image name="92671517-69A2-488E-8A23-CF99EDD47C23" width="628" height="152">
             <mutableData key="keyedArchiveRepresentation">
 YnBsaXN0MDDUAQIDBAUGPj9YJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoK4HCBMU
 GR4fIyQsLzI4O1UkbnVsbNUJCgsMDQ4PEBESVk5TU2l6ZVYkY2xhc3NcTlNJbWFnZUZsYWdzVk5TUmVw
