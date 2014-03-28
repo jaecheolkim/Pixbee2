@@ -869,7 +869,11 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 - (void)goNext
 {
     self.navigationController.navigationBarHidden = NO;
-    [self performSegueWithIdentifier:SEGUE_6_1_TO_2_2 sender:self];
+    //[self performSegueWithIdentifier:SEGUE_6_1_TO_2_2 sender:self];
+    
+    
+    
+    [self performSegueWithIdentifier:@"goInvitation" sender:self];
 }
 
 

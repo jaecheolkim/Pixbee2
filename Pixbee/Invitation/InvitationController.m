@@ -7,8 +7,13 @@
 //
 
 #import "InvitationController.h"
-
+#import "PBAppDelegate.h"
 @interface InvitationController ()
+
+@property (weak, nonatomic) IBOutlet UILabel *InvitationLabel;
+@property (weak, nonatomic) IBOutlet UILabel *DescriptionLabel;
+@property (weak, nonatomic) IBOutlet UIButton *shareFBButton;
+@property (weak, nonatomic) IBOutlet UIButton *skipButton;
 
 - (IBAction)skipButtonClickHandler:(id)sender;
 - (IBAction)shareButtonClickHandler:(id)sender;
@@ -33,6 +38,47 @@
     
     // Uncomment to display a logo as the navigation bar title
     self.navigationItem.titleView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"pixbee.png"]];
+    
+    UIColor *strokeColor = [UIColor colorWithRed:0.0/255.0 green:0.0/255.0 blue:0.0/255.0 alpha:0.15];
+    
+    //UIFont *font = [UIFont fontWithName:@"AvenirLTStd-Black" size:16];
+    
+    NSAttributedString *attributedText = [[NSAttributedString alloc] initWithString:@"Share to Facebook"
+                                                                         attributes:@{
+                                                                                      //NSFontAttributeName : font,
+                                                                                      NSForegroundColorAttributeName : [UIColor whiteColor],
+                                                                                      NSStrokeWidthAttributeName : @-3,
+                                                                                      NSStrokeColorAttributeName : strokeColor,
+                                                                                      NSUnderlineStyleAttributeName : @(NSUnderlineStyleNone) }];
+    
+
+    [self.shareFBButton setAttributedTitle:attributedText forState:UIControlStateNormal];
+    
+ 
+    attributedText = [[NSAttributedString alloc]
+                                        initWithString:@"Skip"
+                                        attributes:@{
+                                                     //NSFontAttributeName : font,
+                                                     NSForegroundColorAttributeName : [UIColor whiteColor],
+                                                     NSStrokeWidthAttributeName : @-3,
+                                                     NSStrokeColorAttributeName : strokeColor,
+                                                     NSUnderlineStyleAttributeName : @(NSUnderlineStyleNone) }
+                                        ];
+    [self.skipButton setAttributedTitle:attributedText forState:UIControlStateNormal];
+    
+    
+    [self.InvitationLabel setAttributedText:[[NSAttributedString alloc] initWithString:self.InvitationLabel.text
+                                                                            attributes:@{
+                                                                                         NSForegroundColorAttributeName : [UIColor whiteColor],
+                                                                                         NSStrokeWidthAttributeName : @-3,
+                                                                                         NSStrokeColorAttributeName : strokeColor  }]];
+    
+    [self.DescriptionLabel setAttributedText:[[NSAttributedString alloc] initWithString:self.DescriptionLabel.text
+                                                                            attributes:@{
+                                                                                         NSForegroundColorAttributeName : [UIColor whiteColor],
+                                                                                         NSStrokeWidthAttributeName : @-3,
+                                                                                         NSStrokeColorAttributeName : strokeColor  }]];
+    
 }
 
 - (void)didReceiveMemoryWarning
@@ -44,7 +90,10 @@
 #pragma mark ButtonAction
 
 - (IBAction)skipButtonClickHandler:(id)sender {
-    [self performSegueWithIdentifier:SEGUE_1_4_TO_3_1 sender:self];
+    //[self performSegueWithIdentifier:SEGUE_1_4_TO_3_1 sender:self];
+    
+    PBAppDelegate *appdelegate = (PBAppDelegate*)[[UIApplication sharedApplication] delegate];
+    [appdelegate goMainView];
 }
 
 - (IBAction)shareButtonClickHandler:(id)sender {

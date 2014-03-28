@@ -280,10 +280,19 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     GlobalValue.appVersion = build;
  }
 
-- (void)goMainView{
+- (void)goLoginView
+{
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    UIViewController *rootViewController = [storyboard instantiateViewControllerWithIdentifier:@"LoginView"];
+    
+    self.window.rootViewController = rootViewController;
+}
+
+- (void)goMainView
+{
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     //UIViewController *rootViewController = [storyboard instantiateViewControllerWithIdentifier:@"NavigationController"];
-    UIViewController *rootViewController = [storyboard instantiateViewControllerWithIdentifier:@"rootController"];
+    UIViewController *rootViewController = [storyboard instantiateViewControllerWithIdentifier:@"rootController"]; //rootController
     
     self.window.rootViewController = rootViewController;
 }

@@ -38,6 +38,8 @@
 - (void)resetFontShape
 {
     
+
+    
 //    label.attributedText=[[NSAttributedString alloc]
 //                               initWithString:@"string to both stroke and fill"
 //                               attributes:@{
@@ -46,7 +48,7 @@
 //                                            NSForegroundColorAttributeName:[UIColor redColor]
 //                                            }
 //                               ];
-//
+
     
 //    label.layer.shadowColor = [[UIColor colorWithRed:0/255.0 green:0/255.0 blue:0/255.0 alpha:0.7] CGColor];
 //    label.layer.shadowOffset = CGSizeMake(0.0f, 1.0f);

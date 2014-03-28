@@ -794,11 +794,29 @@ for (id param in params ) {
     return success;
 }
 
+
 // 해당 UserID의 UserPhotos 데이터 모두 삭제.
 - (BOOL)deleteAllUserPhotosForUserID:(int)UserID
 {
     BOOL success = YES;
-    NSString *sqlStr = [NSString stringWithFormat:@"DELETE FROM UserPhotos WHERE UserID = %d", UserID];
+    
+    // UnfaceTab에서 참조할 수 있게 Photos 테이블의 CheckType 변경.
+    NSString *sqlStr = [NSString stringWithFormat:@"SELECT PhotoID FROM UserPhotos WHERE UserID = %d", UserID];
+    NSArray *result = [SQLManager getRowsForQuery:sqlStr];
+    for(NSDictionary *info in result){
+        int photoId = [info[@"PhotoID"] intValue];
+        
+        //Photos 에 삭제됨을 저장.
+        NSString *query = [NSString stringWithFormat:@" UPDATE Photos SET CheckType = CheckType - 1 WHERE PhotoID = %d;", photoId];
+        
+        NSError *error = [SQLManager doQuery:query];
+        if (error != nil) {
+            NSLog(@"Error: %@",[error localizedDescription]);
+        }
+    }
+    
+    
+    sqlStr = [NSString stringWithFormat:@"DELETE FROM UserPhotos WHERE UserID = %d", UserID];
     NSLog(@"delete qury :: %@", sqlStr);
     NSError *error = [SQLManager doQuery:sqlStr];
     if (error != nil) {
@@ -1227,6 +1245,7 @@ static inline NSDate* convertDouble2Date(double date){ return [NSDate dateWithTi
         NSString *sqlStr = [NSString stringWithFormat:
                             @"INSERT INTO UserPhotos (UserID, PhotoID, FaceNo) VALUES (%d, %d, %d);",
                             UserID, PhotoID, FaceNo];
+        NSLog(@"INSERT QUERY = %@", sqlStr);
         NSError *error = [SQLManager doQuery:sqlStr];
         if (error != nil) {
             NSLog(@"Error: %@",[error localizedDescription]);

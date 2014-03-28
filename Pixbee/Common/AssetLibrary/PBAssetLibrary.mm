@@ -239,7 +239,7 @@
                              if(![GroupName isEqualToString:@"Pixbee"])
                              {
                                  [group enumerateAssetsUsingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {
-                                     if(result != NULL && currentTotalAssetProcess < index) {
+                                     if(result != NULL && ( (currentTotalAssetProcess < index) || numberOfPixbeeAssets < 1) ){
                                          
                                          CGImageRef cgImage = [result aspectRatioThumbnail];
                                          CIImage *ciImage = [CIImage imageWithCGImage:cgImage];

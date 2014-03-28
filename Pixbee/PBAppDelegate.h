@@ -12,6 +12,7 @@
 
 @property (strong, nonatomic) UIWindow *window;
 
+- (void)goLoginView;
 - (void)goMainView;
 - (void)createParseUser:(NSDictionary*)userProfile;
 @end

@@ -17,8 +17,8 @@
 @property (strong, nonatomic) IBOutlet UIImageView *selectIcon;
 @property (nonatomic) BOOL checked;
 
-- (void)updateCell:(NSDictionary *)photo;
-- (void)showSelectIcon:(BOOL)show;
+//- (void)updateCell:(NSDictionary *)photo;
+//- (void)showSelectIcon:(BOOL)show;
 
 @end
 

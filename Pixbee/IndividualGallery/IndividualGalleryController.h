@@ -2,7 +2,7 @@
 //  IndividualGalleryController.h
 //  Pixbee
 //
-//  Created by 호석 이 on 2013. 11. 30..
+//  Created by JCKIM on 2013. 11. 30..
 //  Copyright (c) 2013년 Pixbee. All rights reserved.
 //
 
@@ -13,5 +13,5 @@
 @property (strong, nonatomic) NSDictionary *userInfo;
 @property (strong, nonatomic) NSDictionary *usersPhotos;
 @property (nonatomic, assign) int UserID;
-@property (nonatomic, assign) int UserColor;
+
 @end

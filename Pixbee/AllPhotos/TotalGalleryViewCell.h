@@ -11,14 +11,10 @@
 
 @interface TotalGalleryViewCell : UICollectionViewCell
 
-@property (strong, nonatomic) IBOutlet UIImageView *photoImageView;
-@property (strong, nonatomic) IBOutlet UIImageView *selectIcon;
+@property (weak, nonatomic) IBOutlet UIImageView *photoImageView;
+@property (weak, nonatomic) IBOutlet UIImageView *selectIcon;
 @property (weak, nonatomic) IBOutlet UIImageView *checkIcon;
-//@property (strong, nonatomic) NSDictionary *photo;
-@property(nonatomic, strong) ALAsset *asset;
-@property(nonatomic, strong) NSDictionary *photoInfo;
 
-- (void)updateCell:(NSDictionary *)photo;
-- (void)showSelectIcon:(BOOL)show;
+@property (strong, nonatomic) ALAsset *asset;
 
 @end

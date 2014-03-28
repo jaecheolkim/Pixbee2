@@ -121,14 +121,16 @@ using namespace cv;
     for(NSDictionary *model in models){
         int UserID = [model[@"UserID"] intValue];
         NSData *imageData = model[@"imageData"];
-        
-        // Then convert NSData to a cv::Mat. Images are standardized into 100x100
-        cv::Mat faceData = [self dataToMat:imageData
-                                     width:@100 //[NSNumber numberWithInt:100]
-                                    height:@100]; //[NSNumber numberWithInt:100]];
-        // Put this image into the model
-        images.push_back(faceData);
-        labels.push_back(UserID);
+        if(!IsEmpty(imageData)){
+            // Then convert NSData to a cv::Mat. Images are standardized into 100x100
+            cv::Mat faceData = [self dataToMat:imageData
+                                         width:@100 //[NSNumber numberWithInt:100]
+                                        height:@100]; //[NSNumber numberWithInt:100]];
+            // Put this image into the model
+            images.push_back(faceData);
+            labels.push_back(UserID);
+        }
+
         
     }
     

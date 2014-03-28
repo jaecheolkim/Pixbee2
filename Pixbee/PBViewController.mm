@@ -43,6 +43,23 @@
     
     FBHELPER.delegate = self;
     
+    
+    UIColor *strokeColor = [UIColor colorWithRed:0.0/255.0 green:0.0/255.0 blue:0.0/255.0 alpha:0.15];
+    
+    //UIFont *font = [UIFont fontWithName:@"AvenirLTStd-Black" size:16];
+    
+    NSAttributedString *attributedText = [[NSAttributedString alloc] initWithString:@"Join with Facebook"
+                                                                         attributes:@{
+                                                                                      //NSFontAttributeName : font,
+                                                                                      NSForegroundColorAttributeName : [UIColor whiteColor],
+                                                                                      NSStrokeWidthAttributeName : @-3,
+                                                                                      NSStrokeColorAttributeName : strokeColor,
+                                                                                      NSUnderlineStyleAttributeName : @(NSUnderlineStyleNone) }];
+    
+    
+    [self.FBLoginButton setAttributedTitle:attributedText forState:UIControlStateNormal];
+
+    
     //_indicator.hidden = YES;
     _FBLoginButton.alpha = 0.0;
     _FBLoginButton.enabled = NO;
@@ -72,7 +89,7 @@
     } else {
         
         [UIView transitionWithView:_PixbeeLogo
-                          duration:1.5
+                          duration:0.7
                            options:UIViewAnimationOptionTransitionCrossDissolve
                         animations:^{
                             _PixbeeLogo.image = [UIImage imageNamed:@"logo_2"];
@@ -162,9 +179,9 @@
         
         self.navigationController.navigationBarHidden = NO;
         
-        if(!isFirstVisit)
-            [self performSegueWithIdentifier:SEGUE_1_2_TO_3_1 sender:self];
-        else
+//        if(!isFirstVisit)
+//            [self performSegueWithIdentifier:SEGUE_1_2_TO_3_1 sender:self];
+//        else
             [self performSegueWithIdentifier:SEGUE_FACEANALYZE sender:self];
         
 //    });

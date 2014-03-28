@@ -74,7 +74,7 @@
         [self.navigationController popViewControllerAnimated:YES];
     } else {
         PBAppDelegate *appdelegate = (PBAppDelegate*)[[UIApplication sharedApplication] delegate];
-        [appdelegate goMainView];
+        [appdelegate goLoginView];
     }
 
 }

@@ -107,6 +107,13 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+//    // remove navigationbar buttom line
+//    for (UIView *parentView in self.navigationController.navigationBar.subviews)
+//        for (UIView *childView in parentView.subviews)
+//            if ([childView isKindOfClass:[UIImageView class]])
+//                [childView removeFromSuperview];
+    
+    
     //UIImage *colorImage = [UIImage imageWithColor:[UIColor clearColor] size:CGSizeMake(30, 30)];
     
     [self.view setBackgroundColor:[UIColor colorWithRed:255/255.0 green:255/255.0 blue:255/255.0 alpha:0.1]];

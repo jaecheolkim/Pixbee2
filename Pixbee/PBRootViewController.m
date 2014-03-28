@@ -132,7 +132,7 @@
     PBMenuViewController *menuController = (PBMenuViewController *)self.menuViewController;
     if(!menuController.willViewed)
     {
-    
+
         UINavigationController *navigationController = (UINavigationController *)self.contentViewController;
         
         NSString *navBarClassName = NSStringFromClass([navigationController.navigationBar class]);
