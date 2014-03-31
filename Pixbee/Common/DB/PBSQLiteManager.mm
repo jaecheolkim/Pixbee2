@@ -1033,7 +1033,10 @@ static inline NSDate* convertDouble2Date(double date){ return [NSDate dateWithTi
 {
     int PhotoID = -1;
     
-    NSString *AssetURL = [asset valueForProperty:ALAssetPropertyAssetURL];
+    NSURL *URL = [asset valueForProperty:ALAssetPropertyAssetURL];
+    NSString *AssetURL  = URL.absoluteString;
+    
+    //NSString *AssetURL = [asset valueForProperty:ALAssetPropertyAssetURL];
 
     NSString *query = [NSString stringWithFormat:@"SELECT PhotoID FROM Photos WHERE AssetURL = '%@';", AssetURL];
     NSArray *result = [SQLManager getRowsForQuery:query];

@@ -208,6 +208,7 @@
 		803E574218CEB56B00BE14EA /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 803E574118CEB56B00BE14EA /* FacebookSDK.framework */; };
 		803E574418CF2E2800BE14EA /* focus@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 803E574318CF2E2800BE14EA /* focus@2x.png */; };
 		803E576018CF7A6F00BE14EA /* APNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 803E575F18CF7A6F00BE14EA /* APNavigationController.m */; };
+		8048F6BA18E9604A0094EE12 /* BFNavigationBarDrawer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8048F6B918E9604A0094EE12 /* BFNavigationBarDrawer.m */; };
 		805CA40118AC99D400764FE1 /* UIImage+Blurring.m in Sources */ = {isa = PBXBuildFile; fileRef = 805CA3EE18AC99D400764FE1 /* UIImage+Blurring.m */; };
 		805CA40218AC99D400764FE1 /* UIImage+Enhancing.m in Sources */ = {isa = PBXBuildFile; fileRef = 805CA3F018AC99D400764FE1 /* UIImage+Enhancing.m */; };
 		805CA40318AC99D400764FE1 /* UIImage+Filtering.m in Sources */ = {isa = PBXBuildFile; fileRef = 805CA3F218AC99D400764FE1 /* UIImage+Filtering.m */; };
@@ -734,6 +735,9 @@
 		803E574318CF2E2800BE14EA /* focus@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "focus@2x.png"; sourceTree = "<group>"; };
 		803E575E18CF7A6F00BE14EA /* APNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APNavigationController.h; sourceTree = "<group>"; };
 		803E575F18CF7A6F00BE14EA /* APNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = APNavigationController.m; sourceTree = "<group>"; };
+		8048F6B718E9604A0094EE12 /* BFNavigationBarDrawer-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BFNavigationBarDrawer-Prefix.pch"; sourceTree = "<group>"; };
+		8048F6B818E9604A0094EE12 /* BFNavigationBarDrawer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BFNavigationBarDrawer.h; sourceTree = "<group>"; };
+		8048F6B918E9604A0094EE12 /* BFNavigationBarDrawer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BFNavigationBarDrawer.m; sourceTree = "<group>"; };
 		805CA3ED18AC99D400764FE1 /* UIImage+Blurring.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Blurring.h"; sourceTree = "<group>"; };
 		805CA3EE18AC99D400764FE1 /* UIImage+Blurring.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Blurring.m"; sourceTree = "<group>"; };
 		805CA3EF18AC99D400764FE1 /* UIImage+Enhancing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Enhancing.h"; sourceTree = "<group>"; };
@@ -1774,6 +1778,16 @@
 			path = DropDownToolBar;
 			sourceTree = "<group>";
 		};
+		8048F6B618E9604A0094EE12 /* BFNavigationBarDrawer */ = {
+			isa = PBXGroup;
+			children = (
+				8048F6B718E9604A0094EE12 /* BFNavigationBarDrawer-Prefix.pch */,
+				8048F6B818E9604A0094EE12 /* BFNavigationBarDrawer.h */,
+				8048F6B918E9604A0094EE12 /* BFNavigationBarDrawer.m */,
+			);
+			path = BFNavigationBarDrawer;
+			sourceTree = "<group>";
+		};
 		805CA3EC18AC99D400764FE1 /* NYXImagesKit_Categories */ = {
 			isa = PBXGroup;
 			children = (
@@ -2048,6 +2062,7 @@
 		80D2A0C4184A1E57008D29B2 /* External */ = {
 			isa = PBXGroup;
 			children = (
+				8048F6B618E9604A0094EE12 /* BFNavigationBarDrawer */,
 				80BC692918E4A29F001BD753 /* UINavigationController+SGProgress */,
 				80A8AB3C18D2E58800D82EE5 /* RESideMenu */,
 				803E574718CF791D00BE14EA /* DropDownToolBar */,
@@ -2708,6 +2723,7 @@
 				69C39FCE18606B39001EDDFA /* SDWebImageDownloader.m in Sources */,
 				80D2A117184A1E58008D29B2 /* ASAssetsLibrary.m in Sources */,
 				7805A64418658BA000B234C1 /* IDMTapDetectingView.m in Sources */,
+				8048F6BA18E9604A0094EE12 /* BFNavigationBarDrawer.m in Sources */,
 				78685D5D1848FA29002D2BAA /* AddingFaceToAlbumController.mm in Sources */,
 				7805A66C18659ECC00B234C1 /* AFXMLRequestOperation.m in Sources */,
 				803E576018CF7A6F00BE14EA /* APNavigationController.m in Sources */,

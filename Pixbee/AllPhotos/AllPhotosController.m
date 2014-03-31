@@ -22,6 +22,8 @@
 
 #import "GalleryViewController.h"
 
+#import "BFNavigationBarDrawer.h"
+
 #define CLAMP(x, low, high)  (((x) > (high)) ? (high) : (((x) < (low)) ? (low) : (x)))
 
 
@@ -57,7 +59,7 @@
     NSIndexPath *lastAccessed;
     UIPanGestureRecognizer *swipeToSelectGestureRecognizer;
 
-
+    BFNavigationBarDrawer *drawer;
     
 }
 //@property (nonatomic, retain) APNavigationController *navController;
@@ -134,6 +136,8 @@
     [self.collectionView setAllowsSelection:NO];
     
     [self initRefreshControl];
+    
+    [self initNaviMenu];
 
 }
 
@@ -226,6 +230,36 @@
 //        NSLog(@"Error loading images %@", error);
 //    }];
 //}
+
+- (void)initNaviMenu
+{
+    // Init a drawer with default size
+
+	drawer = [[BFNavigationBarDrawer alloc] init];
+    
+    drawer.barStyle = self.navigationController.navigationBar.barStyle;
+    drawer.barTintColor = self.navigationController.navigationBar.barTintColor;
+    drawer.tintColor = self.navigationController.navigationBar.tintColor;
+	
+	// Assign the table view as the affected scroll view of the drawer.
+	// This will make sure the scroll view is properly scrolled and updated
+	// when the drawer is shown.
+	drawer.scrollView = self.collectionView;
+	
+	// Add some buttons to the drawer.
+	UIBarButtonItem *button1 = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(action:)];
+	UIBarButtonItem *button2 = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:0];
+	UIBarButtonItem *button3 = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemOrganize target:self action:@selector(action:)];
+	UIBarButtonItem *button4 = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:0];
+	UIBarButtonItem *button5 = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemTrash target:self action:@selector(action:)];
+	drawer.items = @[button1, button2, button3, button4, button5];
+
+}
+
+- (void)action:(id)sender {
+	NSLog(@"Button pressed.");
+}
+
 #pragma mark -
 #pragma mark UIRefreshControl & refresh methods
 
@@ -417,7 +451,7 @@
         
         GalleryViewController* galleryViewController = [[GalleryViewController alloc] init];
         galleryViewController.assets = self.assets;
-        galleryViewController.selectedIndex = indexPath.row;
+        //galleryViewController.selectedIndex = indexPath.row;
         [self.navigationController pushViewController:galleryViewController animated:YES];
 
         
@@ -585,6 +619,13 @@
         
         
         faceCount++;
+        
+        if(faceCount == [users count]) // Add new facetab
+        {
+            
+        }
+        
+        
     }
 }
 
@@ -1090,6 +1131,8 @@
 
 }
 
+
+
 - (void)toggleEdit
 {
     EDIT_MODE = !EDIT_MODE;
@@ -1108,8 +1151,12 @@
         
         [self initSwipeToSelectPanGesture];
         
+        [drawer showFromNavigationBar:self.navigationController.navigationBar animated:YES];
+        
     }
     else {
+        
+        [drawer hideAnimated:YES];
         
         [self removeSwipeToSelectPanGesture];
         
