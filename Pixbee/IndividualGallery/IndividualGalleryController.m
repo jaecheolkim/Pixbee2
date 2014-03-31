@@ -26,6 +26,8 @@
 
 #import "GalleryViewController.h"
 
+#define REFRESH_COLOR RGB_COLOR(254,196,57)
+
 @interface IndividualGalleryController ()
 <UICollectionViewDataSource, UICollectionViewDelegate,
 IDMPhotoBrowserDelegate, GalleryViewCellDelegate>
@@ -43,6 +45,10 @@ IDMPhotoBrowserDelegate, GalleryViewCellDelegate>
 
     UIRefreshControl *refreshControl;
     NSMutableAttributedString *refreshString;
+    
+    NSIndexPath *lastAccessed;
+    UIPanGestureRecognizer *swipeToSelectGestureRecognizer;
+
     
 }
 
@@ -74,7 +80,7 @@ IDMPhotoBrowserDelegate, GalleryViewCellDelegate>
 
     _UserID = [_userInfo[@"UserID"] intValue];
 
-    UserColor = [SQLManager getUserColor:[_userInfo[@"color"] intValue] alpha:1.0];
+    UserColor = [UIColor whiteColor]; //[SQLManager getUserColor:[_userInfo[@"color"] intValue] alpha:1.0];
     UserName = _userInfo[@"UserName"];
 
     [self.view setBackgroundColor:[UIColor colorWithRed:255/255.0 green:255/255.0 blue:255/255.0 alpha:0.1]];
@@ -97,6 +103,24 @@ IDMPhotoBrowserDelegate, GalleryViewCellDelegate>
     [self initRefreshControl];
 
 
+
+    // List all fonts on iPhone
+//    NSArray *familyNames = [[NSArray alloc] initWithArray:[UIFont familyNames]];
+//    NSArray *fontNames;
+//    NSInteger indFamily, indFont;
+//    for (indFamily=0; indFamily<[familyNames count]; ++indFamily)
+//    {
+//        NSLog(@"Family name: %@", [familyNames objectAtIndex:indFamily]);
+//        fontNames = [[NSArray alloc] initWithArray:
+//                     [UIFont fontNamesForFamilyName:
+//                      [familyNames objectAtIndex:indFamily]]];
+//        for (indFont=0; indFont<[fontNames count]; ++indFont)
+//        {
+//            NSLog(@"    Font name: %@", [fontNames objectAtIndex:indFont]);
+//        }
+// 
+//    }
+ 
 }
 
 
@@ -129,11 +153,16 @@ IDMPhotoBrowserDelegate, GalleryViewCellDelegate>
     NSString *str = [NSString stringWithFormat:@"Searching %@'s photos..",UserName];
     
     refreshControl = [[UIRefreshControl alloc] init];
-    refreshControl.tintColor = [UIColor yellowColor];
+    refreshControl.tintColor = REFRESH_COLOR;//[UIColor yellowColor];
     [refreshControl addTarget:self action:@selector(startRefresh) forControlEvents:UIControlEventValueChanged];
     
     refreshString = [[NSMutableAttributedString alloc] initWithString:str];
-    [refreshString addAttributes:@{NSForegroundColorAttributeName : UserColor } range:NSMakeRange(0, refreshString.length)];
+    [refreshString addAttributes:@{NSForegroundColorAttributeName : REFRESH_COLOR } range:NSMakeRange(0, refreshString.length)];
+    
+    UIFont *font = [UIFont fontWithName:@"Avenir-Medium" size:12];
+    [refreshString addAttribute:NSFontAttributeName value:font range:NSMakeRange(0, [refreshString length])];
+
+    
     refreshControl.attributedTitle = refreshString;
     
     [self.collectionView addSubview:refreshControl];
@@ -144,6 +173,29 @@ IDMPhotoBrowserDelegate, GalleryViewCellDelegate>
 
 -(void)startRefresh
 {
+    if( AssetLib.isSyncPixbeeAlbum) {
+        NSString *msg = @"Please wait until sync Pixbee.";
+        refreshString = [[NSMutableAttributedString alloc] initWithString:msg];
+        [refreshString addAttributes:@{NSForegroundColorAttributeName : REFRESH_COLOR } range:NSMakeRange(0, refreshString.length)];
+        
+        UIFont *font = [UIFont fontWithName:@"Avenir-Medium" size:12];
+        [refreshString addAttribute:NSFontAttributeName value:font range:NSMakeRange(0, [refreshString length])];
+
+        refreshControl.attributedTitle = refreshString;
+        
+//        [NSThread sleepForTimeInterval:1.0];
+//        [refreshControl endRefreshing];
+
+        //__weak IndividualGalleryController *weakSelf = self;
+        int64_t delayInSeconds = 2.0;
+        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
+        dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+            [refreshControl endRefreshing];
+        });
+        
+        
+        return;
+    }
 
     if([AssetLib prepareFaceRecognizeForUser:_UserID])
     {
@@ -453,8 +505,13 @@ IDMPhotoBrowserDelegate, GalleryViewCellDelegate>
         self.navigationItem.rightBarButtonItem.image = nil;
         self.navigationItem.rightBarButtonItem.title = @"Cancel";
         
+        [self initSwipeToSelectPanGesture];
+        
     }
     else {
+        
+        [self removeSwipeToSelectPanGesture];
+        
         [[NSNotificationCenter defaultCenter] postNotificationName:@"RootViewControllerEventHandler"
                                                             object:self
                                                           userInfo:@{@"panGestureEnabled":@"YES"}];
@@ -557,5 +614,72 @@ IDMPhotoBrowserDelegate, GalleryViewCellDelegate>
     [self refresh];
 
 }
+
+#pragma mark -
+#pragma mark SwiptToSelect methods
+
+- (void)initSwipeToSelectPanGesture
+{
+    swipeToSelectGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handleGesture:)];
+    [self.view addGestureRecognizer:swipeToSelectGestureRecognizer];
+    [swipeToSelectGestureRecognizer setMinimumNumberOfTouches:1];
+    [swipeToSelectGestureRecognizer setMaximumNumberOfTouches:1];
+}
+
+- (void)removeSwipeToSelectPanGesture
+{
+    [self.view removeGestureRecognizer:swipeToSelectGestureRecognizer];
+    swipeToSelectGestureRecognizer.delegate = nil;
+    swipeToSelectGestureRecognizer = nil;
+}
+
+- (void) handleGesture:(UIPanGestureRecognizer *)gestureRecognizer
+{
+    float pointerX = [gestureRecognizer locationInView:self.collectionView].x;
+    float pointerY = [gestureRecognizer locationInView:self.collectionView].y;
+    
+    for (UICollectionViewCell *cell in self.collectionView.visibleCells) {
+        float cellSX = cell.frame.origin.x;
+        float cellEX = cell.frame.origin.x + cell.frame.size.width;
+        float cellSY = cell.frame.origin.y;
+        float cellEY = cell.frame.origin.y + cell.frame.size.height;
+        
+        if (pointerX >= cellSX && pointerX <= cellEX && pointerY >= cellSY && pointerY <= cellEY)
+        {
+            NSIndexPath *touchOver = [self.collectionView indexPathForCell:cell];
+            
+            if (lastAccessed != touchOver)
+            {
+                if (cell.selected)
+                    [self deselectCellForCollectionView:self.collectionView atIndexPath:touchOver];
+                else
+                    [self selectCellForCollectionView:self.collectionView atIndexPath:touchOver];
+            }
+            
+            lastAccessed = touchOver;
+        }
+    }
+    
+    if (gestureRecognizer.state == UIGestureRecognizerStateEnded)
+    {
+        lastAccessed = nil;
+        self.collectionView.scrollEnabled = YES;
+    }
+    
+    
+}
+
+- (void) selectCellForCollectionView:(UICollectionView *)collection atIndexPath:(NSIndexPath *)indexPath
+{
+    [collection selectItemAtIndexPath:indexPath animated:YES scrollPosition:UICollectionViewScrollPositionNone];
+    [self collectionView:collection didSelectItemAtIndexPath:indexPath];
+}
+
+- (void) deselectCellForCollectionView:(UICollectionView *)collection atIndexPath:(NSIndexPath *)indexPath
+{
+    [collection deselectItemAtIndexPath:indexPath animated:YES];
+    [self collectionView:collection didDeselectItemAtIndexPath:indexPath];
+}
+
 
 @end

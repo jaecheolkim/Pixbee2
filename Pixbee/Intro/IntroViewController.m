@@ -25,14 +25,14 @@
 //    
 //    IntroModel *model3 = [[IntroModel alloc] initWithTitle:@"Example 3" description:@"The Tempest is the first play in the First Folio edition (see the signature) even though it is a later play (namely 1610) than Hamlet (1600), for example. The first page is reproduced here" image:@"image3.jpg" button:button];
     
-    NSString *Title[5] = {@"Welcome to pixbee", @"Register or Tag the face", @"Organize", @"Share", @"Smart and Fun"};
-    NSString *Message[5] = {@"Redefined the camera \nfrom the human face", @"Pixbee detects face \nautomatically", @"Manage your memories \nby your friends or family", @"Share your memories with \nyour friends and family", @"With pixbee \nyou can enjoy photo-taking \nwith your friends and family \nin simpler and smater way"};
+    NSString *Title[5] = {@"Welcome to Pixbee", @"Register the face", @"Organize", @"Share", @"Smart and Fun"};
+    NSString *Message[5] = {@"Redefined the camera \nfrom the human face", @"Pixbee automatically \ndetects face", @"Manage your memories \nby friends or family", @"Share your memories \nwith friends or family", @"With Pixbee \nyou can enjoy photo-taking \nwith your friends and family"};
     
     UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(30, 487, 260, 53)];
     button.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"Intro_start_bg"]];
     button.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:20];
     [button setTitle:@"Start pixbee" forState:UIControlStateNormal];
-    button.titleLabel.textColor = [UIColor blackColor];
+    button.titleLabel.textColor = [UIColor whiteColor];
     button.layer.cornerRadius = 8;
     button.layer.borderWidth = 1;
     button.layer.borderColor = [UIColor clearColor].CGColor;

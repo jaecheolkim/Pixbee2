@@ -11,6 +11,9 @@
 #import "IntroViewController.h"
 #import "RFRateMe.h"
 
+#define LINE_COLOR RGB_COLOR(76.0, 76.0, 76.0)
+#define TEXT_COLOR RGB_COLOR(54.0, 54.0, 54.0)
+
 @interface PBSettingTableViewController ()
 {
     UISwitch *AlbumScanSwitch;
@@ -69,7 +72,7 @@
     self.navigationItem.titleView = titleView;
     
     
-    UIImageView *logo = [[UIImageView alloc] initWithFrame:CGRectMake(126, 440, 68, 22)];
+    UIImageView *logo = [[UIImageView alloc] initWithFrame:CGRectMake(113, 435, 95, 32)];
     logo.image = [UIImage imageNamed:@"setting_logo"];
     [self.view addSubview:logo];
     
@@ -179,13 +182,13 @@
             layer.path = pathRef;
             CFRelease(pathRef);
             layer.fillColor =  [UIColor colorWithWhite:1.f alpha:0.5f].CGColor;
-            layer.strokeColor = tableView.separatorColor.CGColor;//[UIColor lightGrayColor].CGColor;
+            layer.strokeColor = LINE_COLOR.CGColor; //tableView.separatorColor.CGColor;//[UIColor lightGrayColor].CGColor;
             
             if (addLine == YES) {
                 CALayer *lineLayer = [[CALayer alloc] init];
                 CGFloat lineHeight = (1.f / [UIScreen mainScreen].scale);
                 lineLayer.frame = CGRectMake(CGRectGetMinX(bounds), bounds.size.height-lineHeight, bounds.size.width, lineHeight);
-                lineLayer.backgroundColor = tableView.separatorColor.CGColor;
+                lineLayer.backgroundColor = LINE_COLOR.CGColor; //tableView.separatorColor.CGColor;
                 [layer addSublayer:lineLayer];
             }
             UIView *testView = [[UIView alloc] initWithFrame:bounds];
@@ -202,7 +205,7 @@
     [label setTextAlignment:NSTextAlignmentLeft];
     [label setFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:17]];
     [label setBackgroundColor:[UIColor clearColor]];
-    [label setTextColor:color] ;//]RGB_COLOR(115.0, 115.0, 115.0)]; 76 114 205
+    [label setTextColor:color] ;//]TEXT_COLOR]; 76 114 205
     [label setTag:tag];
     [label setText:title];
     return label;
@@ -266,7 +269,7 @@
             if((UILabel *)[cell.contentView viewWithTag:LOGINOUT_TAG]) {
                 [(UILabel *)[cell.contentView viewWithTag:LOGINOUT_TAG] setText:title];
             } else {
-                UILabel *label = [self getTitleLabel:title tag:LOGINOUT_TAG color:RGB_COLOR(115.0, 115.0, 115.0)];
+                UILabel *label = [self getTitleLabel:title tag:LOGINOUT_TAG color:TEXT_COLOR];
                 [cell.contentView addSubview:label];
             }
         }
@@ -284,7 +287,7 @@
             if((UILabel *)[cell.contentView viewWithTag:AUTOALBUMSCAN_TAG]) {
                 [(UILabel *)[cell.contentView viewWithTag:AUTOALBUMSCAN_TAG] setText:title];
             } else {
-                UILabel *label = [self getTitleLabel:title tag:AUTOALBUMSCAN_TAG color:RGB_COLOR(115.0, 115.0, 115.0)];
+                UILabel *label = [self getTitleLabel:title tag:AUTOALBUMSCAN_TAG color:TEXT_COLOR];
                 [cell.contentView addSubview:label];
             }
             
@@ -324,7 +327,7 @@
             if((UILabel *)[cell.contentView viewWithTag:PUSHNOTI_TAG]) {
                 [(UILabel *)[cell.contentView viewWithTag:PUSHNOTI_TAG] setText:title];
             } else {
-                UILabel *label = [self getTitleLabel:title tag:PUSHNOTI_TAG color:RGB_COLOR(115.0, 115.0, 115.0)];
+                UILabel *label = [self getTitleLabel:title tag:PUSHNOTI_TAG color:TEXT_COLOR];
                 [cell.contentView addSubview:label];
             }
             
@@ -365,7 +368,7 @@
             if((UILabel *)[cell.contentView viewWithTag:PIXBEEINTRO_TAG]) {
                 [(UILabel *)[cell.contentView viewWithTag:PIXBEEINTRO_TAG] setText:title];
             } else {
-                UILabel *label = [self getTitleLabel:title tag:PIXBEEINTRO_TAG color:RGB_COLOR(115.0, 115.0, 115.0)];
+                UILabel *label = [self getTitleLabel:title tag:PIXBEEINTRO_TAG color:TEXT_COLOR];
                 [cell.contentView addSubview:label];
             }
             
@@ -382,7 +385,7 @@
             if((UILabel *)[cell.contentView viewWithTag:RATEPIXBEE_TAG]) {
                 [(UILabel *)[cell.contentView viewWithTag:RATEPIXBEE_TAG] setText:title];
             } else {
-                UILabel *label = [self getTitleLabel:title tag:RATEPIXBEE_TAG color:RGB_COLOR(115.0, 115.0, 115.0)];
+                UILabel *label = [self getTitleLabel:title tag:RATEPIXBEE_TAG color:TEXT_COLOR];
                 [cell.contentView addSubview:label];
             }
         }
@@ -400,7 +403,7 @@
             if((UILabel *)[cell.contentView viewWithTag:TERMOFUSE_TAG]) {
                 [(UILabel *)[cell.contentView viewWithTag:TERMOFUSE_TAG] setText:title];
             } else {
-                UILabel *label = [self getTitleLabel:title tag:TERMOFUSE_TAG color:RGB_COLOR(115.0, 115.0, 115.0)];
+                UILabel *label = [self getTitleLabel:title tag:TERMOFUSE_TAG color:TEXT_COLOR];
                 [cell.contentView addSubview:label];
             }
         }

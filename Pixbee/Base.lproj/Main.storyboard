@@ -117,14 +117,13 @@ Connect now to see what your friends have</string>
                                     <action selector="shareButtonClickHandler:" destination="KFK-YT-ZKu" eventType="touchUpInside" id="FSz-CW-p0j"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="X3F-v3-JrX">
-                                <rect key="frame" x="262" y="12" width="54" height="34"/>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="X3F-v3-JrX">
+                                <rect key="frame" x="60" y="522" width="200" height="37"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" name="Avenir-Black" family="Avenir" pointSize="18"/>
+                                <fontDescription key="fontDescription" name="Avenir-Black" family="Avenir" pointSize="16"/>
                                 <size key="titleShadowOffset" width="1" height="1"/>
-                                <state key="normal" title="Skip">
+                                <state key="normal" title="Skip" backgroundImage="skip_bt.png">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                    <color key="titleShadowColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
                                     <action selector="skipButtonClickHandler:" destination="KFK-YT-ZKu" eventType="touchUpInside" id="iTF-w6-ewQ"/>
@@ -180,7 +179,7 @@ Connect now to see what your friends have</string>
                                             <rect key="frame" x="0.0" y="0.0" width="192" height="28"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="44AF685D-232C-4BC3-9B4E-AE5DD5A5BA4F" translatesAutoresizingMaskIntoConstraints="NO" id="6aK-Ak-lFj">
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="F3804240-281A-42C8-977D-2E5BAAD6C7D5" translatesAutoresizingMaskIntoConstraints="NO" id="6aK-Ak-lFj">
                                                     <rect key="frame" x="0.0" y="0.0" width="28" height="29"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
@@ -1399,7 +1398,7 @@ Connect now to see what your friends have</string>
         </scene>
     </scenes>
     <resources>
-        <image name="44AF685D-232C-4BC3-9B4E-AE5DD5A5BA4F" width="628" height="152">
+        <image name="F3804240-281A-42C8-977D-2E5BAAD6C7D5" width="628" height="152">
             <mutableData key="keyedArchiveRepresentation">
 YnBsaXN0MDDUAQIDBAUGPj9YJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoK4HCBMU
 GR4fIyQsLzI4O1UkbnVsbNUJCgsMDQ4PEBESVk5TU2l6ZVYkY2xhc3NcTlNJbWFnZUZsYWdzVk5TUmVw
@@ -7839,6 +7838,7 @@ Bd3JAAAAAAAABAEAAAAAAAAAQgAAAAAAAAAAAAAAAAAF3cs
         <image name="profile.png" width="320" height="320"/>
         <image name="share.png" width="40" height="40"/>
         <image name="skip.png" width="86" height="43"/>
+        <image name="skip_bt.png" width="159" height="39"/>
         <image name="social_facebook.png" width="42" height="42"/>
         <image name="social_facebook_act.png" width="42" height="42"/>
         <image name="social_instagram.png" width="42" height="42"/>

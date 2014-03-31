@@ -27,6 +27,7 @@
 @property (nonatomic) int currentProcess;
 @property (nonatomic) int matchCount;
 @property (nonatomic) BOOL faceProcessStop;
+@property (nonatomic) BOOL isSyncPixbeeAlbum;
 
 +(PBAssetsLibrary*)sharedInstance;
 

@@ -15,7 +15,7 @@
     //CIDetector *detector;
     CIDetector *cFaceDetector;
     BOOL isFaceRecRedy;
-    BOOL isSyncPixbeeAlbum;
+    
     
     
 }
@@ -71,7 +71,7 @@
 - (void) handleAssetChangedNotifiation:(NSNotification *)notification
 {
     NSDictionary *userInfo = [notification userInfo];
-   if(userInfo != nil && !isSyncPixbeeAlbum) {
+   if(userInfo != nil && !_isSyncPixbeeAlbum) {
        
 #warning 어플 실행 중 혹은 실행 시 마다 새로운 카메라롤 새로운 사진이 있을 때 Pixbee 앨범에 동기화 !!!
         NSLog(@"userInfo = %@", userInfo);
@@ -193,7 +193,7 @@
     
     NSLog(@"Check...syncPixbeeAlbum ");
     
-    isSyncPixbeeAlbum = YES;
+    _isSyncPixbeeAlbum = YES;
     
     int lastTotalAssetCount = [GlobalValue lastTotalAssetCount];
     int currentTotalAssetProcess = [GlobalValue currentTotalAssetProcess];
@@ -292,10 +292,10 @@
                      
                  }
                  
-                 isSyncPixbeeAlbum = NO;
+                 _isSyncPixbeeAlbum = NO;
              } failureBlock:^(NSError *error) {
                  
-                 isSyncPixbeeAlbum = NO;
+                 _isSyncPixbeeAlbum = NO;
                  NSLog(@"block Failed!");
              }];
             

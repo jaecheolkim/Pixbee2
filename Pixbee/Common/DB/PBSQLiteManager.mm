@@ -478,7 +478,7 @@
     NSArray *result = [SQLManager getRowsForQuery:query];
     NSLog(@"[Users] QUERY result = %@", result);
     int seq = 0;
-    int color = arc4random_uniform(10);
+    int color = 0; //default black   arc4random_uniform(10);
     if(!IsEmpty(result))
     {
         seq = (int)[result count];

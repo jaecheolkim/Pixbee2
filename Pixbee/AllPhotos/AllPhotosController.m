@@ -1188,6 +1188,32 @@
 
 }
 
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    if ([segue.identifier isEqualToString:SEGUE_GO_FILTER]){
+        self.navigationController.navigationBarHidden = NO;
+        PBFilterViewController *destination = segue.destinationViewController;
+        
+        NSMutableArray *photoDatas = [NSMutableArray array];
+        
+        for(NSIndexPath *indexPath in selectedPhotos){
+            
+            ALAsset *asset = self.assets[indexPath.row];
+            [photoDatas addObject:asset];
+            
+        }
+        
+        destination.photos = photoDatas;
+        
+    }
+}
+
+
+
+#pragma mark -
+#pragma mark SwiptToSelect methods
+
 - (void)initSwipeToSelectPanGesture
 {
     swipeToSelectGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handleGesture:)];
@@ -1253,25 +1279,6 @@
 
 
 
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    if ([segue.identifier isEqualToString:SEGUE_GO_FILTER]){
-        self.navigationController.navigationBarHidden = NO;
-        PBFilterViewController *destination = segue.destinationViewController;
-        
-        NSMutableArray *photoDatas = [NSMutableArray array];
-        
-        for(NSIndexPath *indexPath in selectedPhotos){
-
-            ALAsset *asset = self.assets[indexPath.row];
-            [photoDatas addObject:asset];
-            
-        }
-        
-        destination.photos = photoDatas;
-        
-    }
-}
 
 
 
