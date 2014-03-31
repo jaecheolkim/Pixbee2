@@ -143,6 +143,8 @@
                                   NSString *msg = [NSString stringWithFormat:@"result: %@", result];
                                   // Link posted successfully to Facebook
                                   NSLog(@"%@",msg);
+                                  [self skipButtonClickHandler:nil];
+                                  
                               } else {
                                   // An error occurred, we need to handle the error
                                   // See: https://developers.facebook.com/docs/ios/errors

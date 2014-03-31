@@ -20,6 +20,8 @@
 
 #import "UINavigationController+SGProgress.h"
 
+#import "GalleryViewController.h"
+
 #define CLAMP(x, low, high)  (((x) > (high)) ? (high) : (((x) < (low)) ? (low) : (x)))
 
 
@@ -51,6 +53,10 @@
     BOOL ASSETFILTER;
     
     float progressPercentage;
+    
+    NSIndexPath *lastAccessed;
+    UIPanGestureRecognizer *swipeToSelectGestureRecognizer;
+
 
     
 }
@@ -243,15 +249,19 @@
 
 -(void)startRefresh
 {
-    progressPercentage = 1.0;
+    [AssetLib checkNewPhoto];
     
-    [self.navigationController setSGProgressPercentage:progressPercentage * 100];
+     [refreshControl endRefreshing];
     
-    if(progressPercentage == 1.0f) {
-        [self.navigationController finishSGProgress];
-        [refreshControl endRefreshing];
-    }
+//    progressPercentage = 1.0;
+//    
+//    [self.navigationController setSGProgressPercentage:progressPercentage * 100];
     
+//    if(progressPercentage == 1.0f) {
+//        [self.navigationController finishSGProgress];
+//        [refreshControl endRefreshing];
+//    }
+//    
 }
 
 #pragma mark -
@@ -405,6 +415,12 @@
         TotalGalleryViewCell *cell = (TotalGalleryViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
         cell.checkIcon.hidden = YES;
         
+        GalleryViewController* galleryViewController = [[GalleryViewController alloc] init];
+        galleryViewController.assets = self.assets;
+        galleryViewController.selectedIndex = indexPath.row;
+        [self.navigationController pushViewController:galleryViewController animated:YES];
+
+        
     }
 }
 
@@ -494,10 +510,12 @@
 //            [self performSegueWithIdentifier:SEGUE_4_1_TO_3_2 sender:self];
 //        }
         if ( [act isEqualToString:@"com.pixbee.moveSharing"] ) {
+            [self removeSwipeToSelectPanGesture];
             [self showFaceTabBar:YES];
             //[self performSegueWithIdentifier:SEGUE_4_1_TO_3_2 sender:self];
         }
         else if ( [act isEqualToString:@"com.pixbee.newAlbumSharing"] ) {
+            [self removeSwipeToSelectPanGesture];
             [self makeNewFaceTab];
             
         }
@@ -1088,8 +1106,12 @@
                                                           userInfo:@{@"panGestureEnabled":@"NO"}];
         backBtn.enabled = NO;
         
+        [self initSwipeToSelectPanGesture];
+        
     }
     else {
+        
+        [self removeSwipeToSelectPanGesture];
         
         [[NSNotificationCenter defaultCenter] postNotificationName:@"RootViewControllerEventHandler"
                                                             object:self
@@ -1118,6 +1140,70 @@
     [self refreshSelectedPhotCountOnNavTilte];
 
 }
+
+- (void)initSwipeToSelectPanGesture
+{
+    swipeToSelectGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handleGesture:)];
+    [self.view addGestureRecognizer:swipeToSelectGestureRecognizer];
+    [swipeToSelectGestureRecognizer setMinimumNumberOfTouches:1];
+    [swipeToSelectGestureRecognizer setMaximumNumberOfTouches:1];
+}
+
+- (void)removeSwipeToSelectPanGesture
+{
+    [self.view removeGestureRecognizer:swipeToSelectGestureRecognizer];
+    swipeToSelectGestureRecognizer.delegate = nil;
+    swipeToSelectGestureRecognizer = nil;
+}
+
+- (void) handleGesture:(UIPanGestureRecognizer *)gestureRecognizer
+{
+    float pointerX = [gestureRecognizer locationInView:self.collectionView].x;
+    float pointerY = [gestureRecognizer locationInView:self.collectionView].y;
+    
+    for (UICollectionViewCell *cell in self.collectionView.visibleCells) {
+        float cellSX = cell.frame.origin.x;
+        float cellEX = cell.frame.origin.x + cell.frame.size.width;
+        float cellSY = cell.frame.origin.y;
+        float cellEY = cell.frame.origin.y + cell.frame.size.height;
+        
+        if (pointerX >= cellSX && pointerX <= cellEX && pointerY >= cellSY && pointerY <= cellEY)
+        {
+            NSIndexPath *touchOver = [self.collectionView indexPathForCell:cell];
+            
+            if (lastAccessed != touchOver)
+            {
+                if (cell.selected)
+                    [self deselectCellForCollectionView:self.collectionView atIndexPath:touchOver];
+                else
+                    [self selectCellForCollectionView:self.collectionView atIndexPath:touchOver];
+            }
+            
+            lastAccessed = touchOver;
+        }
+    }
+    
+    if (gestureRecognizer.state == UIGestureRecognizerStateEnded)
+    {
+        lastAccessed = nil;
+        self.collectionView.scrollEnabled = YES;
+    }
+    
+    
+}
+
+- (void) selectCellForCollectionView:(UICollectionView *)collection atIndexPath:(NSIndexPath *)indexPath
+{
+    [collection selectItemAtIndexPath:indexPath animated:YES scrollPosition:UICollectionViewScrollPositionNone];
+    [self collectionView:collection didSelectItemAtIndexPath:indexPath];
+}
+
+- (void) deselectCellForCollectionView:(UICollectionView *)collection atIndexPath:(NSIndexPath *)indexPath
+{
+    [collection deselectItemAtIndexPath:indexPath animated:YES];
+    [self collectionView:collection didDeselectItemAtIndexPath:indexPath];
+}
+
 
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender

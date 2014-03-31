@@ -698,12 +698,102 @@
 
     return result;
 }
- 
 
-- (BOOL)checkFace:(int)UserID asset:(ALAsset*)asset
+
+- (BOOL)prepareFaceRecognizeForUser:(int)UserID
 {
-    BOOL isUser = YES;
+    NSArray *trainModel = [SQLManager getTrainModelsForID:UserID];
     
+    if(!IsEmpty(trainModel)){
+        isFaceRecRedy = [FaceLib initRecognizer:LBPHFaceRecognizer models:trainModel];
+    }
+    
+    if(!cFaceDetector)
+    {
+        NSDictionary *detectorOptions = @{ CIDetectorAccuracy : CIDetectorAccuracyLow, CIDetectorTracking : @(NO) };
+        cFaceDetector = [CIDetector detectorOfType:CIDetectorTypeFace context:nil options:detectorOptions];
+    }
+
+    return isFaceRecRedy;
+}
+
+
+- (BOOL)checkFace:(int)UserID asset:(ALAsset*)asset photoID:(int)PhotoID
+{
+    BOOL isUser = NO;
+
+    CGImageRef cgImage = [asset aspectRatioThumbnail];
+    CIImage *ciImage = [CIImage imageWithCGImage:cgImage];
+ 
+    NSArray *fs = [cFaceDetector featuresInImage:ciImage];
+    
+    NSDictionary *match = nil;
+    
+    if(!IsEmpty(fs)) {
+        for(CIFaceFeature *face in fs)
+        {
+            if(face.bounds.size.width < 50.f) { // 얼굴이 작은 이미지는 스킵하자...
+                continue;
+            }
+            
+            cv::Mat cvImage =  [FaceLib getFaceCVData:ciImage feature:face];
+            if(isFaceRecRedy)
+            {
+                match = [FaceLib recognizeFace:cvImage];
+                
+                if(match != nil){
+                    NSLog(@"Match : %@", match);
+                    PBFaceRecognizer currentRecognizerType = (PBFaceRecognizer)[match[@"currentRecognizerType"] intValue];
+                    double currentConfidence = [match[@"confidence"] doubleValue];
+                    
+                    
+                    if(currentRecognizerType == LBPHFaceRecognizer)
+                    {
+                        if([match[@"UserID"] intValue] == UserID && currentConfidence < 150.f) //for LBPH   150
+                            //if([match[@"UserID"] intValue] == UserID && currentConfidence < 60.f) //for LBPH
+                        {
+                            int PhotoNo = [SQLManager newUserPhotosWith:[match[@"UserID"] intValue]
+                                                              withPhoto:PhotoID
+                                                               withFace:-1];
+                            
+                            return YES;
+
+                        } else {
+                            return NO;
+                        }
+                        
+                    }
+                    else if(currentRecognizerType == EigenFaceRecognizer || currentRecognizerType == FisherFaceRecognizer)
+                    {
+                        if([match[@"UserID"] intValue] == UserID && currentConfidence >= 0.8f) //for EigenFace
+                        {
+                            int PhotoNo = [SQLManager newUserPhotosWith:[match[@"UserID"] intValue]
+                                                              withPhoto:PhotoID
+                                                               withFace:-1];
+                            
+                            return YES;
+
+                        } else {
+                            return NO;
+                        }
+                        
+                    }
+                    
+                }
+                
+                else {
+                    return NO;
+                }
+                
+            } else {
+                return NO;
+            }
+        }
+        
+    }
+    else {
+        return NO;
+    }
     
     return isUser;
 }
@@ -761,8 +851,12 @@
             isFaceRecRedy = [FaceLib initRecognizer:LBPHFaceRecognizer models:trainModel];
         }
         
-        NSDictionary *detectorOptions = @{ CIDetectorAccuracy : CIDetectorAccuracyLow, CIDetectorTracking : @(NO) };
-        cFaceDetector = [CIDetector detectorOfType:CIDetectorTypeFace context:nil options:detectorOptions];
+        if(!cFaceDetector)
+        {
+            NSDictionary *detectorOptions = @{ CIDetectorAccuracy : CIDetectorAccuracyLow, CIDetectorTracking : @(NO) };
+            cFaceDetector = [CIDetector detectorOfType:CIDetectorTypeFace context:nil options:detectorOptions];
+        }
+        
 
     }
     

@@ -50,7 +50,8 @@
 
 - (void)checkNewPhoto;
 
-- (BOOL)checkFace:(int)UserID asset:(ALAsset*)asset;
+- (BOOL)prepareFaceRecognizeForUser:(int)UserID;
+- (BOOL)checkFace:(int)UserID asset:(ALAsset*)asset photoID:(int)PhotoID;
 
 - (void)checkFace:(int)UserID;
 

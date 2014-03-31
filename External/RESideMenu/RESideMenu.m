@@ -401,7 +401,7 @@
     if (self.panFromEdge && [gestureRecognizer isKindOfClass:[UIPanGestureRecognizer class]] && !self.visibleLeftMenu) {
         CGPoint point = [touch locationInView:gestureRecognizer.view];
 #warning 원래는 30이었는데 100으로 바꿨음.
-        if (point.x < 320) { //30
+        if (point.x < 70) { //30
             return YES;
         } else {
             return NO;

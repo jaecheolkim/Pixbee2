@@ -272,12 +272,12 @@ static UIImage* playButtonImage()
 {
     _asset = asset;
    
-    imageScrollView.isVideo = _asset.isVideo;
-    if (_asset.isVideo)
-    {
-        playButton = [self createPlayButton];
-        [self addSubview:playButton];
-    }
+//    imageScrollView.isVideo = _asset.isVideo;
+//    if (_asset.isVideo)
+//    {
+//        playButton = [self createPlayButton];
+//        [self addSubview:playButton];
+//    }
 }
 
 -(void)menuBarsWillAppear

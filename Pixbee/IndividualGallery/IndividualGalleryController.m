@@ -24,6 +24,7 @@
 #import "FXBlurView.h"
 #import "UINavigationController+SGProgress.h"
 
+#import "GalleryViewController.h"
 
 @interface IndividualGalleryController ()
 <UICollectionViewDataSource, UICollectionViewDelegate,
@@ -144,88 +145,90 @@ IDMPhotoBrowserDelegate, GalleryViewCellDelegate>
 -(void)startRefresh
 {
 
-    //__block NSMutableArray *tmpAssets = [@[] mutableCopy];
-    
-    
-    NSArray *allPixbeePhots = [SQLManager getGroupPhotos:[AssetLib.pixbeeAssetGroup valueForProperty:ALAssetsGroupPropertyURL] filter:YES];
-    
-    dispatch_queue_t serialQueue = dispatch_queue_create("com.pixbee.serialqueue", DISPATCH_QUEUE_SERIAL);
-    dispatch_semaphore_t exeSignal = dispatch_semaphore_create(1);
-    
-    __block NSInteger photoCount = [allPixbeePhots count];
-    __block NSInteger counter = 0;
-    __block float progressPercentage = 0.0f;
-    
-    for(NSDictionary *photoInfo in allPixbeePhots){
-        //PhotoID, AssetURL, Longitude, Latitude, Date, CheckType <= 이걸로 나중에 필터링.
-
-        dispatch_async(serialQueue, ^{
+    if([AssetLib prepareFaceRecognizeForUser:_UserID])
+    {
+        NSArray *allPixbeePhots = [SQLManager getGroupPhotos:[AssetLib.pixbeeAssetGroup valueForProperty:ALAssetsGroupPropertyURL] filter:YES];
+        
+        dispatch_queue_t serialQueue = dispatch_queue_create("com.pixbee.serialqueue", DISPATCH_QUEUE_SERIAL);
+        dispatch_semaphore_t exeSignal = dispatch_semaphore_create(1);
+        
+        __block NSInteger photoCount = [allPixbeePhots count];
+        __block NSInteger counter = 0;
+        __block float progressPercentage = 0.0f;
+        
+        for(NSDictionary *photoInfo in allPixbeePhots){
+            //PhotoID, AssetURL, Longitude, Latitude, Date, CheckType <= 이걸로 나중에 필터링.
             
-            dispatch_semaphore_wait(exeSignal, DISPATCH_TIME_FOREVER);
-            
-            NSString *AssetURL = photoInfo[@"AssetURL"];
-            int PhotoID = [photoInfo[@"PhotoID"] intValue];
-            
-            ALAssetsLibraryAssetForURLResultBlock resultBlock = ^(ALAsset *asset)
-            {
-                NSDictionary *photoInfo = nil;
+            dispatch_async(serialQueue, ^{
                 
-                //여기서 UserID 와 Asset 을 가지고 사용자 사진인지 아닌지 구분해서 UserID의 사진이 맞다면..
-                if([AssetLib checkFace:_UserID asset:asset])
+                dispatch_semaphore_wait(exeSignal, DISPATCH_TIME_FOREVER);
+                
+                NSString *AssetURL = photoInfo[@"AssetURL"];
+                int PhotoID = [photoInfo[@"PhotoID"] intValue];
+                
+                ALAssetsLibraryAssetForURLResultBlock resultBlock = ^(ALAsset *asset)
                 {
-                    NSURL *url = [asset valueForProperty:ALAssetPropertyAssetURL];
-                    NSString *assetURL = url.absoluteString;
-
-                    photoInfo = @{@"UserID" : @(_UserID), @"FaceNo" : @(-1), @"PhotoID": @(PhotoID), @"AssetURL": assetURL};
-
-                }
- 
-                counter++;
-                
-                progressPercentage =  (float)counter / (float)photoCount;
-                NSLog(@"progress = %f  / counter = %d / PhotoID = %d",
-                      progressPercentage, (int)counter, PhotoID);
-                
-                dispatch_async(dispatch_get_main_queue(), ^{
-
-                    if(NSNotFound == [self.photos indexOfObject:photoInfo] && !IsEmpty(photoInfo)) {
-                        [self.photos addObject:photoInfo];
-                        [self.collectionView reloadData];
-                        
-//                        [self.collectionView performBatchUpdates:^{
-//                            NSInteger lastIndex = [self.photos count]-1;
-//                            NSIndexPath *lastIndexPath = [NSIndexPath indexPathForRow:lastIndex inSection:0];
-//                            
-//                            [self.collectionView insertItemsAtIndexPaths:@[lastIndexPath]];
-//                            
-//                        } completion:^(BOOL finished) {
-//                            
-//                        }];
-
-                    }
-
-                    [self.navigationController setSGProgressPercentage:progressPercentage * 100];
+                    NSDictionary *photoInfo = nil;
                     
-                    if(progressPercentage == 1.0f) {
-                        [self.navigationController finishSGProgress];
-                        [refreshControl endRefreshing];
-                    }
-                });
+                    //여기서 UserID 와 Asset 을 가지고 사용자 사진인지 아닌지 구분해서 UserID의 사진이 맞다면..
+                    if([AssetLib checkFace:_UserID asset:asset photoID:PhotoID])
+                    {
+                        NSURL *url = [asset valueForProperty:ALAssetPropertyAssetURL];
+                        NSString *assetURL = url.absoluteString;
+                        
+                        photoInfo = @{@"UserID" : @(_UserID), @"FaceNo" : @(-1), @"PhotoID": @(PhotoID), @"AssetURL": assetURL};
+                        
+                    } 
+                    
+                    counter++;
+                    
+                    progressPercentage =  (float)counter / (float)photoCount;
+                    NSLog(@"progress = %f  / counter = %d / PhotoID = %d",
+                          progressPercentage, (int)counter, PhotoID);
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        
+                        if(NSNotFound == [self.photos indexOfObject:photoInfo] && !IsEmpty(photoInfo)) {
+//                            [self.photos addObject:photoInfo];
+//                            [self.collectionView reloadData];
+                            
+                            [self.collectionView performBatchUpdates:^{
+                                //NSInteger lastIndex = [self.photos count]-1;
+                                [self.photos insertObject:photoInfo atIndex:0];
+                                NSIndexPath *lastIndexPath = [NSIndexPath indexPathForRow:0 inSection:0];
+                                [self.collectionView insertItemsAtIndexPaths:@[lastIndexPath]];
+                            //
+                            } completion:^(BOOL finished) {
+                            //
+                             }];
+                            
+                        }
+                        
+                        [self.navigationController setSGProgressPercentage:progressPercentage * 100];
+                        
+                        if(progressPercentage == 1.0f) {
+                            [self.navigationController finishSGProgress];
+                            [refreshControl endRefreshing];
+                        }
+                    });
+                    
+                    dispatch_semaphore_signal(exeSignal);
+                };
                 
-                dispatch_semaphore_signal(exeSignal);
-            };
-            
-            ALAssetsLibraryAccessFailureBlock failureBlock  = ^(NSError *error)
-            {
-                dispatch_semaphore_signal(exeSignal);
-            };
-            
-            [AssetLib.assetsLibrary assetForURL:[NSURL URLWithString:AssetURL]
-                                    resultBlock:resultBlock
-                                   failureBlock:failureBlock];
+                ALAssetsLibraryAccessFailureBlock failureBlock  = ^(NSError *error)
+                {
+                    dispatch_semaphore_signal(exeSignal);
+                };
+                
+                [AssetLib.assetsLibrary assetForURL:[NSURL URLWithString:AssetURL]
+                                        resultBlock:resultBlock
+                                       failureBlock:failureBlock];
+                
+            });
+        }
 
-        });
     }
+
 }
 
 

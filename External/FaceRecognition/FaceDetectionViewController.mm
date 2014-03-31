@@ -181,9 +181,6 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 @implementation FaceDetectionViewController
 
 
-
-
-
 // Add this Method
 - (BOOL)prefersStatusBarHidden {
     return YES;
@@ -227,34 +224,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
     
     instructPoint = @[NSStringFromCGPoint(CGPointMake(0, 0)),  ];
 
-    isReadyToScanFace = NO;
-    //[FaceLib initDetector:CIDetectorAccuracyLow Tacking:YES];
-    
-//    NSDictionary *detectorOptions = @{ CIDetectorAccuracy : CIDetectorAccuracyLow, CIDetectorTracking : @(YES) };
-//	faceDetector = [CIDetector detectorOfType:CIDetectorTypeFace context:nil options:detectorOptions];
-//
-//    if(self.faceMode == FaceModeRecognize) {
-//        NSArray *trainModel = [SQLManager getTrainModels];
-//        NSLog(@"trainModel = %@", trainModel);
-//        
-//        if(!IsEmpty(trainModel)){
-//            isFaceRecRedy = [FaceLib initRecognizer:LBPHFaceRecognizer models:trainModel];
-//        }
-//    }
-    
-    NSDictionary *detectorOptions = @{ CIDetectorAccuracy : CIDetectorAccuracyLow, CIDetectorTracking : @(YES) };
-	faceDetector = [CIDetector detectorOfType:CIDetectorTypeFace context:nil options:detectorOptions];
-    
-    if(self.faceMode == FaceModeRecognize) {
-        NSArray *trainModel = [SQLManager getTrainModels];
-        //NSLog(@"trainModel = %@", trainModel);
-        
-        if(!IsEmpty(trainModel)){
-            isFaceRecRedy = [FaceLib initRecognizer:LBPHFaceRecognizer models:trainModel];
-        }
-    }
-    
-    isReadyToScanFace = YES;
+
     
     
 
@@ -370,7 +340,6 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 
 
 
-
 //
 //- (UIViewController *)childViewControllerForStatusBarHidden {
 //    return nil;
@@ -393,6 +362,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 	
     
     [self setupAVCapture];
+    [self initFaceRecognize];
     
 }
 
@@ -414,13 +384,13 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 	[super viewWillDisappear:animated];
     
      NSLog(@"- (void)viewWillDisappear:(BOOL)animated ");
-    
+    [self removeFaceButtonAll];
     
     isReadyToScanFace = NO;
     [self teardownAVCapture];
-    [selectedUsers removeAllObjects];
+    //[selectedUsers removeAllObjects];
     [unSelectedUSers removeAllObjects];
-    [selectedUserButtons removeAllObjects];
+    //[selectedUserButtons removeAllObjects];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:MotionOrientationChangedNotification object:nil];
 }
 
@@ -906,6 +876,16 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
 
 }
 
+- (void)removeFaceButtonAll
+{
+    for(UIButton_FaceIcon* button in selectedUserButtons){
+        [button removeFromSuperview];
+    }
+    
+    [selectedUserButtons removeAllObjects];
+    [selectedUsers removeAllObjects];
+}
+
 - (void)addNewFaceButton:(int)UserID
 {
 
@@ -996,9 +976,6 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
                 button1.frame = DetectFaceTabs[i];
             }
         }
-        
-        
-        
     } else {
         NSLog(@"---------------Drag End Inside ==> TouchUpInside");
         UIImage *profileImage = [SQLManager getUserProfileImage:button0.UserID];
@@ -1007,152 +984,36 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
         button0.choice = !button0.choice;
         
         [button0 setPenTagonProfileImage:profileImage];
-        
-        //[button0 setImage:profileImage forState:UIControlStateNormal];
-        //[button0 setBackgroundImage:nil forState:UIControlStateNormal];
-        //[self.view addSubview:button0];
-
-        
     }
 }
 
 
-//- (void)addNewFaceIcon:(int)UserID
-//{
-//    [_faceListScrollView setHidden:NO];
-//    
-//    int faceCount = (int)_faceListScrollView.subviews.count;
-//    
-//    // 동일 사용자 중복
-//    for(UIView *view in _faceListScrollView.subviews){
-//        if([view isKindOfClass:[UIButton class]]){
-//            UIButton_FaceIcon *button = (UIButton_FaceIcon*)view;
-//            if(button.UserID == UserID) return;
-//        }
-//    }
-//    
-//    UIImage *profileImage = [SQLManager getUserProfileImage:UserID];
-//
-//    UIButton_FaceIcon* button = [UIButton_FaceIcon buttonWithType:UIButtonTypeCustom];
-//    [button addTarget:self action:@selector(imageTouch:withEvent:) forControlEvents:UIControlEventTouchDown];
-//    [button addTarget:self action:@selector(imageMoved:withEvent:) forControlEvents:UIControlEventTouchDragInside];
-//    [button addTarget:self action:@selector(imageEnd:withEvent:) forControlEvents:UIControlEventTouchUpInside];
-//    
-//    //[button setProfileImage:profileImage];
-//    [button setPenTagonProfileImage:profileImage];
-//
-//    button.frame = CGRectMake(10+faceCount*60, 9.0f, 50.0f, 50.0f);
-//    button.UserID = UserID;
-//    button.index = faceCount;
-//    button.originRect = button.frame;
-//    
-//    [_faceListScrollView addSubview:button];
-//
-//    [selectedUsers addObject:@(UserID)];
-//    
-//    NSLog(@"ADD || selectedUsers = %@", selectedUsers);
-//    NSLog(@"facecount = %d / frame = %@",faceCount, NSStringFromCGRect(button.frame));
-//    
-//    [_faceListScrollView setContentSize:CGSizeMake(10 + faceCount*60 + 50, 67.0)];
-////    [_faceListScrollView setContentOffset:button.frame.origin animated:YES];
-//    
-//}
+- (void)initFaceRecognize
+{
+    isReadyToScanFace = NO;
+    
+    NSDictionary *detectorOptions = @{ CIDetectorAccuracy : CIDetectorAccuracyLow, CIDetectorTracking : @(YES) };
+	faceDetector = [CIDetector detectorOfType:CIDetectorTypeFace context:nil options:detectorOptions];
+    
+    if(self.faceMode == FaceModeRecognize) {
+        NSArray *trainModel = [SQLManager getTrainModels];
+        //NSLog(@"trainModel = %@", trainModel);
+        
+        if(!IsEmpty(trainModel)){
+            isFaceRecRedy = [FaceLib initRecognizer:LBPHFaceRecognizer models:trainModel];
+        }
+    }
+    
+    isReadyToScanFace = YES;
+}
 
-//
-//- (void) imageTouch:(id) sender withEvent:(UIEvent *) event
-//{
-//    if(_faceListScrollView.dragging || _faceListScrollView.decelerating) return;
-//    
-//    CGPoint point = [[[event allTouches] anyObject] locationInView:self.view];
-//    UIButton_FaceIcon *button0 = (UIButton_FaceIcon*)sender;
-//    [self.view addSubview:button0];
-//    button0.originRect = button0.frame;
-//    button0.center = point;
-//    
-//    [UIView animateWithDuration:0.2 animations:^{
-//        button0.frame = CGRectMake(button0.frame.origin.x, button0.frame.origin.y - 50, 100, 100);
-//        [button0 setImage:nil forState:UIControlStateNormal];
-//        [button0 setBackgroundImage:button0.profileImage forState:UIControlStateNormal];
-//    }];
-//
-//    int index = button0.index;
-//    
-//    // Face Icon 재정렬
-//    for(UIView *view in _faceListScrollView.subviews){
-//        if([view isKindOfClass:[UIButton class]]){
-//            UIButton_FaceIcon *button = (UIButton_FaceIcon*)view;
-//            if(button.index > index){
-//                button.index = button.index - 1;
-//                [UIView animateWithDuration:0.2 animations:^{
-//                    button.frame = CGRectMake(10+button.index*60, 9.0f, 50.0f, 50.0f);
-//                    button.originRect = button.frame;
-//                }];
-//            }
-//        }
-//    }
-//    
-//}
-//
-//- (void) imageMoved:(id)sender withEvent:(UIEvent *) event
-//{
-//    if(_faceListScrollView.dragging || _faceListScrollView.decelerating) return;
-//    
-//    CGPoint point = [[[event allTouches] anyObject] locationInView:self.view];
-//    UIControl *control = sender;
-//    control.center = point;
-//}
-//
-//- (void) imageEnd:(id) sender withEvent:(UIEvent *) event
-//{
-//    if(_faceListScrollView.dragging || _faceListScrollView.decelerating) return;
-//    
-//    CGPoint point = [[[event allTouches] anyObject] locationInView:self.view];
-//    
-//    UIButton_FaceIcon *button0 = (UIButton_FaceIcon*)sender;
-//
-//    if(!CGRectContainsPoint (_faceListScrollView.frame, point)){
-//        NSLog(@"---------------Drag End Outside");
-//        
-//        [button0 removeFromSuperview];
-//        
-//        int userid = button0.UserID;
-//        
-//        [self exceptUSerFromTrainDB:userid];
-//        
-//        NSLog(@"REMOVE || selectedUsers = %@", selectedUsers);
-//        
-//    
-//    } else {
-//        NSLog(@"---------------Drag End Inside");
-//        
-//        int index = button0.index;
-//
-//        for(UIView *view in _faceListScrollView.subviews){
-//            if([view isKindOfClass:[UIButton class]]){
-//                UIButton_FaceIcon *button = (UIButton_FaceIcon*)view;
-//                if(button.index >= index){
-//                    button.index = button.index + 1;
-//                    [UIView animateWithDuration:0.2 animations:^{
-//                        button.frame = CGRectMake(10+button.index*60, 9.0f, 50.0f, 50.0f);
-//                        button.originRect = button.frame;
-//                    }];
-//                }
-//            }
-//        }
-//        
-//        button0.frame = CGRectMake(10+index*60, 9.0f, 50.0f, 50.0f);
-//        [button0 setImage:button0.profileImage forState:UIControlStateNormal];
-//        [button0 setBackgroundImage:nil forState:UIControlStateNormal];
-//        [_faceListScrollView addSubview:button0];
-//    }
-//}
 
 - (void)exceptUSerFromTrainDB:(int)userid
 {
     [selectedUsers removeObject:@(userid)];
     [unSelectedUSers addObject:@(userid)];
     //if(![unSelectedUSers containsObject:@(userid)])
-        
+    
     
     NSArray *users = [SQLManager getAllUsers];
     int userCount = (int)[users count];
@@ -1172,11 +1033,11 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
         NSArray *trainModel = [SQLManager getTrainModels];
         if(!IsEmpty(trainModel))
             [FaceLib trainModel:trainModel];
-
+        
     }
-
+    
     isFaceRecRedy = YES;
-
+    
 }
 
 #pragma mark - AV setup
@@ -2117,11 +1978,16 @@ bail:
 
 - (NSString *)getSuffix:(NSString*)str divider:(NSString*)div
 {
+    NSString *string = nil;
+    
     NSRange range = [str rangeOfString:div];
     NSInteger start = range.location + 1;
     NSInteger size = [str length] - start;
-    NSRange searchRange = NSMakeRange(start,size);
-    NSString *string = [str substringWithRange:searchRange];
+    if(start > 0  && size > 0) {
+        NSRange searchRange = NSMakeRange(start,size);
+        string = [str substringWithRange:searchRange];
+    }
+
     return string;
 }
 
@@ -2252,13 +2118,17 @@ bail:
                     //if([value hasPrefix:tmpUserName] || [value hasPrefix:[NSString stringWithFormat:@"? %@",tmpUserName]])
                 {
                     //NSString *vName = [self getPrefix:value divider:@":"];
-                    double vConfidence = [[self getSuffix:value divider:@":"] doubleValue];
-                    if(confidence > vConfidence){
-                        recognisedFaces[@(trackingID)] = @"Unknown";
+                    NSString *cstring = [self getSuffix:value divider:@":"];
+                    if(!IsEmpty(cstring)) {
+                        double vConfidence = [[self getSuffix:value divider:@":"] doubleValue];
+                        if(confidence > vConfidence){
+                            recognisedFaces[@(trackingID)] = @"Unknown";
+                        }
+                        else {
+                            recognisedFaces[key] = @"Unknown";
+                        }
                     }
-                    else {
-                        recognisedFaces[key] = @"Unknown";
-                    }
+
                     
                     isFindFace = NO;
                     break;

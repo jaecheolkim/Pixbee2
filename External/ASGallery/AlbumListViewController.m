@@ -104,6 +104,7 @@
             
             GalleryViewController* galleryViewController = [[GalleryViewController alloc] init];
             galleryViewController.assets = assets;
+            galleryViewController.selectedIndex = 2;
             [self.navigationController pushViewController:galleryViewController animated:YES];
         }
             
