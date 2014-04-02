@@ -25,7 +25,8 @@
 //    UIImage *image = [UIImage maskImage:profileImage
 //                               withMask:[UIImage imageNamed:@"photo_profile_hive@2x.png"]];
     _profileImage = profileImage;
-    [self setImage:_profileImage forState:UIControlStateNormal];
+    //[self setImage:_profileImage forState:UIControlStateNormal];
+    [self setBackgroundImage:_profileImage forState:UIControlStateNormal];
 }
 
 - (void)setPenTagonProfileImage:(UIImage *)penTagonProfileImage

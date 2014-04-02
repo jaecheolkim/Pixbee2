@@ -163,23 +163,6 @@
                          
               self.assets = AssetLib.faceAssets;
               
-//              ALAsset *photoAsset = [self.assets lastObject];
-//              NSArray *faces = [AssetLib getFaceData:photoAsset];
-//              if(faces.count == 1 && !IsEmpty(faces)){
-//                  NSDictionary *face = faces[0];
-//                  UIImage *faceImage = face[@"faceImage"];
-//                  if(faceImage != nil)
-//                      [SQLManager setUserProfileImage:faceImage UserID:self.UserID];
-//              }
-//              else {
-//                  CGImageRef cgImage = [photoAsset aspectRatioThumbnail];
-//                  UIImage *faceImage = [UIImage imageWithCGImage:cgImage];
-//                  if(faceImage != nil)
-//                      [SQLManager setUserProfileImage:faceImage UserID:self.UserID];
-//              }
-              
-              
-              
               [self.flowView reloadData];
               // Wait one second and then fade in the view
               [UIView animateWithDuration:0.3

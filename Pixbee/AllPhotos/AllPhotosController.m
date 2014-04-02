@@ -37,6 +37,8 @@
     
     NSMutableArray *selectedStackImages;
     
+    NSMutableArray *angleArray;
+    
     NSMutableArray *scrollViewCellFrames;
     
     UIRefreshControl *refreshControl;
@@ -138,6 +140,7 @@
     [self initRefreshControl];
     
     [self initNaviMenu];
+    
 
 }
 
@@ -153,7 +156,7 @@
     
     selectedPhotos = [NSMutableArray array];
     selectedStackImages = [NSMutableArray array];
-    
+    angleArray = [NSMutableArray array];
     scrollViewCellFrames = [NSMutableArray array];
 
     [self initStackImages];
@@ -231,6 +234,10 @@
 //    }];
 //}
 
+#pragma mark -
+#pragma mark Navi Drawer Sub Menu methods
+
+
 - (void)initNaviMenu
 {
     // Init a drawer with default size
@@ -247,17 +254,23 @@
 	drawer.scrollView = self.collectionView;
 	
 	// Add some buttons to the drawer.
-	UIBarButtonItem *button1 = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(action:)];
+	UIBarButtonItem *button1 = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(newFacetabAction:)];
 	UIBarButtonItem *button2 = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:0];
-	UIBarButtonItem *button3 = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemOrganize target:self action:@selector(action:)];
+	UIBarButtonItem *button3 = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemOrganize target:self action:@selector(moveFacetabAction:)];
 	UIBarButtonItem *button4 = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:0];
-	UIBarButtonItem *button5 = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemTrash target:self action:@selector(action:)];
+	UIBarButtonItem *button5 = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemTrash target:self action:@selector(deleteAction:)];
 	drawer.items = @[button1, button2, button3, button4, button5];
 
 }
 
-- (void)action:(id)sender {
-	NSLog(@"Button pressed.");
+- (void)newFacetabAction:(id)sender {
+	NSLog(@"newFacetabAction Button pressed.");
+}
+- (void)moveFacetabAction:(id)sender {
+	NSLog(@"moveFacetabAction Button pressed.");
+}
+- (void)deleteAction:(id)sender {
+	NSLog(@"deleteAction Button pressed.");
 }
 
 #pragma mark -
@@ -565,6 +578,8 @@
 - (IBAction)closeFaceTabButtonHandler:(id)sender {
     [self showStackImages:NO];
     [self showFaceTabBar:NO];
+    
+    if(EDIT_MODE) [self initSwipeToSelectPanGesture];
 
 }
 
@@ -581,463 +596,6 @@
 
 
 
-- (void)initFaceTabList
-{
-    [self cleanFaceTabList];
-    
-    NSArray *users = [SQLManager getAllUsers];
-    int faceCount = 0;
-    
-    int margin = 8;
-    int size = 88;
-    int y = 4;//29;
-    
-    for(NSDictionary *userInfo in users) {
-        
-        int UserID = [userInfo[@"UserID"] intValue];
-        UIImage *profileImage = [SQLManager getUserProfileImage:UserID];
-        
-        CGRect buttonFrame = CGRectMake(margin + faceCount * (margin + size), y, size, size);
-        CGSize contentSize = CGSizeMake(margin + faceCount * (margin + size) + size, _faceTabScrollView.frame.size.height);
-
-        [scrollViewCellFrames addObject:NSStringFromCGRect(buttonFrame)];
-        
-        UIButton_FaceIcon* button = [UIButton_FaceIcon buttonWithType:UIButtonTypeCustom];
-
-        [button setProfileImage:profileImage];
-
-        button.frame = buttonFrame;
-
-        button.UserID = UserID;
-        button.index = faceCount;
-        button.originRect = button.frame;
-        
-        [_faceTabScrollView addSubview:button];
-
-        [_faceTabScrollView setContentSize:contentSize];
-        
-        
-        
-        faceCount++;
-        
-        if(faceCount == [users count]) // Add new facetab
-        {
-            
-        }
-        
-        
-    }
-}
-
-- (void)cleanFaceTabList
-{
-    [scrollViewCellFrames removeAllObjects];
-    
-    for(id view in _faceTabScrollView.subviews){
-        if ([view respondsToSelector:@selector(removeFromSuperview)]){
-            [view removeFromSuperview];
-        }
-    }
-    
-    [_faceTabScrollView setContentSize:CGSizeZero];
-    
-}
-
-- (void)initStackImages
-{
-    _stackImages.hidden = YES;
-    
-    [_stackImages addTarget:self action:@selector(imageTouch:withEvent:) forControlEvents:UIControlEventTouchDown];
-    [_stackImages addTarget:self action:@selector(imageMoved:withEvent:) forControlEvents:UIControlEventTouchDragInside];
-    [_stackImages addTarget:self action:@selector(imageEnd:withEvent:) forControlEvents:UIControlEventTouchUpInside];
-
-    
-}
-
-- (void)gatteringStackImages
-{
- 
-    NSLog(@"self.faceTabListBar frame = %@", NSStringFromCGRect(self.faceTabListBar.frame));
-    _stackImages.frame = CGRectMake(0, 0, 320, 568);
-    for(NSIndexPath *indexPath in selectedPhotos)
-    {
-
-        ALAsset *asset = self.assets[indexPath.row];
-        UIImage *thumbImage = [UIImage imageWithCGImage:[asset thumbnail]];
-        
-        UIImageView *imgView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 75,75)];
-        imgView.image = thumbImage;
-        imgView.alpha = 0.9;
-        
-        UICollectionViewCell *cell = [self.collectionView cellForItemAtIndexPath:indexPath];
-        //[cell addSubview:imgView];
-
-        CGPoint convertedPoint = [self.view convertPoint:cell.center fromView:cell.superview];
-        imgView.center = convertedPoint;
-        
-#warning 이상하게 self.view 에 이미지들 붙이면 facetablistbar 가 사라짐... 아래 구문이 되어야 모이는 애니메이션이 되는데...
-        //[self.view addSubview:imgView];
-        //[self.view insertSubview:imgView aboveSubview:self.faceTabListBar];
-        
-        
-        [selectedStackImages addObject:imgView];
-    }
- }
-
-- (void)attatchStackImages
-{
-    for(UIImageView *imgView in selectedStackImages)
-    {
-        imgView.frame = CGRectMake(110, 234, 100, 100);
-    }
-}
-
-- (void)alignStackImages
-{
-
-    NSInteger imageCount = [selectedStackImages count];
-    double angle = -0.3;
-    
-    NSMutableArray *angleArray = [NSMutableArray array];
-    
-    for(int i = 0; i < imageCount; i++) {
-        UIImageView *imgView = [selectedStackImages objectAtIndex:i];
-        imgView.frame = CGRectMake(0, 0, 100, 100);
-        [_stackImages addSubview:imgView];
-        
-        angle =  ((double)arc4random() / 0x100000000);
-        if(i % 2) angle = angle * -1 ;
-        if(i == (imageCount -1)) angle = 0;
-        
-        [angleArray addObject:@(angle)];
-    }
-
-    
-    [UIView animateWithDuration:0.25
-                          delay:0.1
-                        options:UIViewAnimationOptionCurveEaseInOut
-                     animations:^{
-                         for(int i = 0; i < imageCount; i++) {
-                             UIImageView *imgView = [selectedStackImages objectAtIndex:i];
-                             double viewAngle = [[angleArray objectAtIndex:i] doubleValue];
-                             imgView.transform = CGAffineTransformMakeRotation(viewAngle);
-                             
-                         }
-                     }
-                     completion:^(BOOL finished){
-                         
-                     }];
-    
-
-    
-}
-
-- (void)showStackImages:(BOOL)show
-{
-    float duration = 0.3;
-    float delay = 0.1;
-    
-    if(!show){
-        duration = 0.1;
-        delay = 0.0;
-    }
-    else {
-        [self gatteringStackImages];
-    }
-    
-    [UIView animateWithDuration:duration
-                          delay:delay
-                        options: UIViewAnimationOptionCurveEaseIn
-                     animations:^{
-                         if(show) {
-                             _stackImages.frame = CGRectMake(110, 234, 100, 100);  // 다시 보일때 중앙위치에 처음 사이즈로 복귀.
-                             _stackImages.hidden = NO;
-                             [self attatchStackImages];
-                         } else {
-                             _stackImages.hidden = YES;
-                         }
-                     }
-                     completion:^(BOOL finished){
-                         if(show){
-                             [self alignStackImages];
-                             
-                         } else {
-                             for(UIView *view in _stackImages.subviews){
-                                 [view removeFromSuperview];
-                             }
-                         }
-                     }];
-}
-
-
-- (void) imageTouch:(id) sender withEvent:(UIEvent *) event
-{
-    //if(_faceListScrollView.dragging || _faceListScrollView.decelerating) return;
-    
-    CGPoint point = [[[event allTouches] anyObject] locationInView:self.view];
-    
-    lastTouchPoint = point;
-    
-    _stackImages.center = point;
-
-}
-
-- (void) imageMoved:(id)sender withEvent:(UIEvent *) event
-{
-    //if(_faceListScrollView.dragging || _faceListScrollView.decelerating) return;
-    
-    CGPoint point = [[[event allTouches] anyObject] locationInView:self.view];
-    
-    UIControl *control = sender;
-    control.center = point;
-
-    if(CGRectContainsPoint (_faceTabListBar.frame, point))
-    {
-        NSLog(@"Button.point = %@", NSStringFromCGPoint(point));
-        
-        CGSize contentSize = [_faceTabScrollView contentSize];
-        CGPoint contentOffset = [_faceTabScrollView contentOffset];
-        CGFloat frameWidth = [_faceTabScrollView frame].size.width;
-        
-        CGFloat deltaX = ((point.x - lastTouchPoint.x) / [_stackImages bounds].size.width) * [_faceTabScrollView contentSize].width;
-        CGPoint newContentOffset = CGPointMake(CLAMP(contentOffset.x + deltaX, 0, contentSize.width - frameWidth), contentOffset.y);
-        
-        NSLog(@"deltaX = %f / newContentOffset = %@", deltaX, NSStringFromCGPoint(newContentOffset));
-        
-        lastTouchPoint = point;
-        
-        
-        if(TRUE) //newContentOffset.x >= 0 &&  newContentOffset.x < contentSize.width)
-        {
-            NSInteger subViewCount = [_faceTabScrollView.subviews count] - 1;
-            if(subViewCount > 3) {
-                [_faceTabScrollView setContentOffset:newContentOffset animated:NO];
-            }
-            
-            
-            
-//            lastTouchPoint = point;
-            
-            
-            //NSInteger cellCount = 0;
-#warning 왜 subViewCount가 1개 더 붙는지 모르겠다...
-            
-            //NSInteger subViewCount = [_faceTabScrollView.subviews count] - 1;
-            
-
-            
-            currentPosition = round((point.x +  newContentOffset.x )/ 96.0);
-            NSLog(@"CurrentPosition = %d", currentPosition);
-            
-            if(currentPosition >= 0 && currentPosition < subViewCount && currentPosition != previousPosiotion )
-            {
-                id cellObject = [_faceTabScrollView.subviews objectAtIndex:currentPosition];
-                
-                if([NSStringFromClass([cellObject class]) isEqualToString:@"UIButton_FaceIcon"])
-                {
-                  
-                    for(NSInteger i = 0; i < subViewCount; i++){
-                        //for(UIView *cell in _faceTabScrollView.subviews){
-                        UIButton_FaceIcon *cell = (UIButton_FaceIcon *)[_faceTabScrollView.subviews objectAtIndex:i];
-                        NSString *cellRect = [scrollViewCellFrames objectAtIndex:i];
-                        cell.frame = CGRectFromString(cellRect);
-                        //cellCount++;
-                    }
-                    
-                    UIButton_FaceIcon *cell = (UIButton_FaceIcon *)cellObject;
-                    
-                    //if(currentPosition != previousPosiotion) {
-                        [UIView animateWithDuration:0.2 animations:^{
-                            CGPoint cellCenter = cell.center;
-                            CGRect cellFrame = cell.frame;
-                            cell.frame = CGRectMake(cellFrame.origin.x - 10, cellFrame.origin.y - 10, cellFrame.size.width * 1.3, cellFrame.size.height * 1.3);
-                            cell.center = cellCenter;
-                            
-                        } completion:^(BOOL finished) {
-                            currentUserID = cell.UserID;
-                            
-                        }];
-                    //}
-
-                    
-                    previousPosiotion =  currentPosition;
-                    
-                    
-                } else {
-                    return;
-                }
-                
-                NSLog(@"newContentOffset = %@ / currentPosition = %d / userID = %d", NSStringFromCGPoint(newContentOffset), currentPosition, currentUserID);
-            }
-            
-
-            
-        }
- 
-        
-    }
-
-}
-
-- (void) imageEnd:(id) sender withEvent:(UIEvent *) event
-{
-    //if(_faceTabScrollView.dragging || _faceTabScrollView.decelerating) return;
-    
-    lastTouchPoint = CGPointZero;
-    CGPoint point = [[[event allTouches] anyObject] locationInView:self.view];
-    if(CGRectContainsPoint (_faceTabListBar.frame, point))
-    {
-
-        [self showStackImages:NO];
-        [self showFaceTabBar:NO];
-        
-        
-        if(currentUserID > 0) {
-            
-            [self addPhotosToFaceTab:currentUserID];
-        }
-        
-        currentUserID = -1;
-        
-    }
-
-}
-
-
-#pragma mark -
-#pragma mark Add / New Facetab Methods
-
-// This method is for deleting the selected images from the data source array
--(void)deleteItemsFromDataSourceAtIndexPaths:(NSArray  *)itemPaths
-{
-    NSMutableIndexSet *indexSet = [NSMutableIndexSet indexSet];
-    for (NSIndexPath *itemPath  in itemPaths) {
-        [indexSet addIndex:itemPath.row];
-        
-    }
-    
-    [self.assets removeObjectsAtIndexes:indexSet]; // self.images is my data source
-    
-}
-
-- (void)newFacetabFromIndexPaths:(NSArray  *)itemPaths
-{
-    NSArray *result = [SQLManager newUser];
-    NSDictionary *user = [result objectAtIndex:0];
-    //NSString *UserName = [user objectForKey:@"UserName"];
-    int UserID = [[user objectForKey:@"UserID"] intValue];
-    int photoCount = 0;
-    
-    
-    for(NSIndexPath *indexPath in itemPaths)
-    {
-        photoCount++;
-        
-        ALAsset *asset = self.assets[indexPath.row];
-        
-        NSArray *faces = [AssetLib getFaceData:asset];
-        
-        if(faces.count == 1 && !IsEmpty(faces)){
-            NSDictionary *face = faces[0];
-            NSData *faceData = face[@"image"];
-            
-            UIImage *faceImage = face[@"faceImage"];
-            if(faceImage != nil)
-                [SQLManager setUserProfileImage:faceImage UserID:UserID];
-            
-            [SQLManager addTrainModelForUserID:UserID withFaceData:faceData];
-        }
-        else {
-            CGImageRef cgImage = [asset thumbnail];
-            UIImage *faceImage = [UIImage imageWithCGImage:cgImage];
-            if(faceImage != nil)
-                [SQLManager setUserProfileImage:faceImage UserID:UserID];
-        }
-        
-        
-        [SQLManager saveNewUserPhotoToDB:asset users:@[@(UserID)]];
-        
-    }
-
-}
-
-- (void)addPhotoToFacetabFromIndexPaths:(NSArray  *)itemPaths userID:(int)UserID
-{
-    for(NSIndexPath *indexPath in itemPaths)
-    {
-        NSLog(@"add Index.row = %d", (int)indexPath.row);
-        ALAsset *asset = self.assets[indexPath.row];
-        
-        [SQLManager saveNewUserPhotoToDB:asset users:@[@(UserID)]];
-
-    }
-}
-
-- (void)makeNewFaceTab
-{
- 
-    [self.collectionView performBatchUpdates:^{
-        
-        NSArray *selectedItemsIndexPaths = [self.collectionView indexPathsForSelectedItems];
-        // Add new facetab from the selected collection view (DB works : add)
-        [self newFacetabFromIndexPaths:selectedItemsIndexPaths];
-        
-        // Delete the items from the data source. (Data Array works : delete)
-        [self deleteItemsFromDataSourceAtIndexPaths:selectedItemsIndexPaths];
-        
-        // Now delete the items from the collection view. (CollectionView cell delete animation)
-        [self.collectionView deleteItemsAtIndexPaths:selectedItemsIndexPaths];
-        
-    } completion:^(BOOL finished) {
-        
-        if(EDIT_MODE) [self toggleEdit];
-
-        if([_segueIdentifier isEqualToString:@"Segue3_1to4_3"])
-        {
-            [self.navigationController popViewControllerAnimated:YES];
-        } else {
-            //        [[NSNotificationCenter defaultCenter] postNotificationName:@"MeunViewControllerEventHandler"
-            //                                                            object:self
-            //                                                          userInfo:@{@"moveTo":@"MainDashBoard"}];
-        }
-
-    }];
-
-}
-
-- (void)addPhotosToFaceTab:(int)UserID
-{
-
-    [self.collectionView performBatchUpdates:^{
-        
-        NSArray *selectedItemsIndexPaths = [self.collectionView indexPathsForSelectedItems];
-        // Add photo to facetab from the selected collection view
-        [self addPhotoToFacetabFromIndexPaths:selectedItemsIndexPaths userID:(int)UserID];
-        
-        // Delete the items from the data source.
-        [self deleteItemsFromDataSourceAtIndexPaths:selectedItemsIndexPaths];
-        
-        // Now delete the items from the collection view.
-        [self.collectionView deleteItemsAtIndexPaths:selectedItemsIndexPaths];
-        
-    } completion:^(BOOL finished) {
-        
-        if(EDIT_MODE) [self toggleEdit];
- 
-        if([_segueIdentifier isEqualToString:@"Segue3_1to4_3"])
-        {
-            [self.navigationController popViewControllerAnimated:YES];
-        } else {
-            //        [[NSNotificationCenter defaultCenter] postNotificationName:@"MeunViewControllerEventHandler"
-            //                                                            object:self
-            //                                                          userInfo:@{@"moveTo":@"MainDashBoard"}];
-        }
-        
-        
-        
-    }];
-
-}
 
 
 
@@ -1189,6 +747,553 @@
 }
 
 
+#pragma mark -
+#pragma mark Facetab List & stack images methods
+
+
+- (void)initFaceTabList
+{
+    [self cleanFaceTabList];
+    
+    NSArray *users = [SQLManager getAllUsers];
+    int faceCount = 0;
+    
+    int margin = 8;
+    int size = 88;
+    int y = 4;//29;
+    
+    for(NSDictionary *userInfo in users) {
+        
+        int UserID = [userInfo[@"UserID"] intValue];
+        UIImage *profileImage = [SQLManager getUserProfileImage:UserID];
+        
+        CGRect buttonFrame = CGRectMake(margin + faceCount * (margin + size), y, size, size);
+        CGSize contentSize = CGSizeMake(margin + faceCount * (margin + size) + size, _faceTabScrollView.frame.size.height);
+        
+        [scrollViewCellFrames addObject:NSStringFromCGRect(buttonFrame)];
+        
+        UIButton_FaceIcon* button = [UIButton_FaceIcon buttonWithType:UIButtonTypeCustom];
+        
+        [button setProfileImage:profileImage];
+        
+        button.frame = buttonFrame;
+        
+        button.UserID = UserID;
+        button.index = faceCount;
+        button.originRect = button.frame;
+        
+        [_faceTabScrollView addSubview:button];
+        
+        [_faceTabScrollView setContentSize:contentSize];
+        
+        
+        
+        faceCount++;
+        
+        if(faceCount == [users count]) // Add new facetab
+        {
+            
+        }
+        
+        
+    }
+}
+
+- (void)cleanFaceTabList
+{
+    [scrollViewCellFrames removeAllObjects];
+    
+    for(id view in _faceTabScrollView.subviews){
+        if ([view respondsToSelector:@selector(removeFromSuperview)]){
+            [view removeFromSuperview];
+        }
+    }
+    
+    [_faceTabScrollView setContentSize:CGSizeZero];
+    
+}
+
+- (void)initStackImages
+{
+    _stackImages.hidden = YES;
+    
+    [_stackImages addTarget:self action:@selector(imageTouch:withEvent:) forControlEvents:UIControlEventTouchDown];
+    [_stackImages addTarget:self action:@selector(imageMoved:withEvent:) forControlEvents:UIControlEventTouchDragInside];
+    [_stackImages addTarget:self action:@selector(imageEnd:withEvent:) forControlEvents:UIControlEventTouchUpInside];
+    
+    
+}
+
+- (void)gatteringStackImages
+{
+    
+    NSLog(@"self.faceTabListBar frame = %@", NSStringFromCGRect(self.faceTabListBar.frame));
+    _stackImages.frame = CGRectMake(0, 0, 320, 568);
+    for(NSIndexPath *indexPath in selectedPhotos)
+    {
+        
+        ALAsset *asset = self.assets[indexPath.row];
+        UIImage *thumbImage = [UIImage imageWithCGImage:[asset thumbnail]];
+        
+        UIImageView *imgView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 75,75)];
+        imgView.image = thumbImage;
+        imgView.alpha = 0.9;
+        
+        UICollectionViewCell *cell = [self.collectionView cellForItemAtIndexPath:indexPath];
+        //[cell addSubview:imgView];
+        
+        CGPoint convertedPoint = [self.view convertPoint:cell.center fromView:cell.superview];
+        imgView.center = convertedPoint;
+        
+#warning 이상하게 self.view 에 이미지들 붙이면 facetablistbar 가 사라짐... 아래 구문이 되어야 모이는 애니메이션이 되는데...
+        //[self.view addSubview:imgView];
+        //[self.view insertSubview:imgView aboveSubview:self.faceTabListBar];
+        
+        
+        [selectedStackImages addObject:imgView];
+    }
+}
+
+- (void)attatchStackImages
+{
+    for(UIImageView *imgView in selectedStackImages)
+    {
+        imgView.frame = CGRectMake(110, 234, 100, 100);
+    }
+}
+
+
+
+- (void)alignStackImages
+{
+    
+    NSInteger imageCount = [selectedStackImages count];
+    double angle = -0.3;
+    
+    [angleArray removeAllObjects];
+    
+    for(int i = 0; i < imageCount; i++) {
+        UIImageView *imgView = [selectedStackImages objectAtIndex:i];
+        imgView.frame = CGRectMake(0, 0, 100, 100);
+        [_stackImages addSubview:imgView];
+        
+        angle =  ((double)arc4random() / 0x100000000);
+        if(i % 2) angle = angle * -1 ;
+        if(i == (imageCount -1)) angle = 0;
+        
+        [angleArray addObject:@(angle)];
+    }
+    
+    
+    [UIView animateWithDuration:0.25
+                          delay:0.1
+                        options:UIViewAnimationOptionCurveEaseInOut
+                     animations:^{
+                         for(int i = 0; i < imageCount; i++) {
+                             UIImageView *imgView = [selectedStackImages objectAtIndex:i];
+                             double viewAngle = [[angleArray objectAtIndex:i] doubleValue];
+                             imgView.transform = CGAffineTransformMakeRotation(viewAngle);
+                             
+                         }
+                     }
+                     completion:^(BOOL finished){
+                         
+                     }];
+    
+    
+    
+}
+
+
+- (void)showStackImages:(BOOL)show
+{
+    float duration = 0.3;
+    float delay = 0.1;
+    
+    if(!show){
+        duration = 0.1;
+        delay = 0.0;
+    }
+    else {
+        [self gatteringStackImages];
+    }
+    
+    [UIView animateWithDuration:duration
+                          delay:delay
+                        options: UIViewAnimationOptionCurveEaseIn
+                     animations:^{
+                         if(show) {
+                             _stackImages.frame = CGRectMake(110, 234, 100, 100);  // 다시 보일때 중앙위치에 처음 사이즈로 복귀.
+                             _stackImages.hidden = NO;
+                             [self attatchStackImages];
+                         } else {
+                             _stackImages.hidden = YES;
+                         }
+                     }
+                     completion:^(BOOL finished){
+                         if(show){
+                             [self alignStackImages];
+                             
+                         } else {
+                             for(UIView *view in _stackImages.subviews){
+                                 [view removeFromSuperview];
+                             }
+                         }
+                     }];
+}
+
+
+
+
+- (void) imageTouch:(id) sender withEvent:(UIEvent *) event
+{
+    //if(_faceListScrollView.dragging || _faceListScrollView.decelerating) return;
+    
+    CGPoint point = [[[event allTouches] anyObject] locationInView:self.view];
+    
+    lastTouchPoint = point;
+    
+    _stackImages.center = point;
+    
+}
+
+- (void) imageMoved:(id)sender withEvent:(UIEvent *) event
+{
+    //if(_faceListScrollView.dragging || _faceListScrollView.decelerating) return;
+    
+    CGPoint point = [[[event allTouches] anyObject] locationInView:self.view];
+    
+    UIControl *control = sender;
+    control.center = point;
+    
+    if(CGRectContainsPoint (_faceTabListBar.frame, point))
+    {
+        int angleCount = 0;
+        for(UIImageView *imgView in selectedStackImages)
+        {
+            
+            imgView.transform = CGAffineTransformMakeScale(0.5, 0.5);
+            double viewAngle = [[angleArray objectAtIndex:angleCount] doubleValue];
+            //imgView.transform = CGAffineTransformMakeRotation(viewAngle);
+            
+            imgView.transform =  CGAffineTransformRotate(imgView.transform, viewAngle);
+            angleCount++;
+        }
+        
+        NSLog(@"Button.point = %@", NSStringFromCGPoint(point));
+        
+        CGSize contentSize = [_faceTabScrollView contentSize];
+        CGPoint contentOffset = [_faceTabScrollView contentOffset];
+        CGFloat frameWidth = [_faceTabScrollView frame].size.width;
+        
+        if(contentSize.width < frameWidth)
+            contentSize = CGSizeMake(frameWidth, contentSize.height);
+        
+        CGFloat deltaX = ((point.x - lastTouchPoint.x) / [_stackImages bounds].size.width) * [_faceTabScrollView contentSize].width;
+        CGPoint newContentOffset = CGPointMake(CLAMP(contentOffset.x + deltaX, 0, contentSize.width - frameWidth), contentOffset.y);
+        
+        NSLog(@"deltaX = %f / newContentOffset = %@", deltaX, NSStringFromCGPoint(newContentOffset));
+        
+        lastTouchPoint = point;
+        
+        
+        if(TRUE) //newContentOffset.x >= 0 &&  newContentOffset.x < contentSize.width)
+        {
+
+        }
+        
+        NSInteger subViewCount = [_faceTabScrollView.subviews count] ;
+        if(subViewCount > 3) {
+            [_faceTabScrollView setContentOffset:newContentOffset animated:NO];
+        }
+        
+        currentPosition = (int)((point.x +  newContentOffset.x )/ 96.0);
+        NSLog(@"CurrentPosition = %d", currentPosition);
+        
+        if(currentPosition >= 0 && currentPosition <= subViewCount)// && currentPosition != previousPosiotion )
+        {
+            
+            [UIView animateWithDuration:0.2 animations:^{
+                int index = 0;
+                for(id cellObject in _faceTabScrollView.subviews){
+                    if([NSStringFromClass([cellObject class]) isEqualToString:@"UIButton_FaceIcon"])
+                    {
+                        UIButton_FaceIcon *cell = (UIButton_FaceIcon *)cellObject;
+                        
+                        if(index == currentPosition){
+                            cell.transform = CGAffineTransformMakeScale(1.1, 1.1);
+                            
+                            currentUserID = cell.UserID;
+                        } else {
+                            cell.transform = CGAffineTransformMakeScale(0.7, 0.7);
+                        }
+                        
+                        index++;
+                    }
+                }
+                
+            } completion:^(BOOL finished) {
+            }];
+            
+            previousPosiotion =  currentPosition;
+            
+            
+            NSLog(@"newContentOffset = %@ / currentPosition = %d / userID = %d", NSStringFromCGPoint(newContentOffset), currentPosition, currentUserID);
+        }
+        else {
+            currentUserID = -1;
+        }
+
+
+    }
+    
+    else {
+        [UIView animateWithDuration:0.2 animations:^{
+            int index = 0;
+            for(id cellObject in _faceTabScrollView.subviews){
+                if([NSStringFromClass([cellObject class]) isEqualToString:@"UIButton_FaceIcon"])
+                {
+                    UIButton_FaceIcon *cell = (UIButton_FaceIcon *)cellObject;
+                    
+                    NSString *cellRect = [scrollViewCellFrames objectAtIndex:index];
+                    
+                    cell.frame = CGRectFromString(cellRect);
+                    
+                    cell.transform = CGAffineTransformMakeScale(1.0, 1.0);
+                    
+                    index++;
+                }
+            }
+            
+        } completion:^(BOOL finished) {
+        }];
+        
+        currentPosition = -1;
+    }
+    
+}
+
+- (void) imageEnd:(id) sender withEvent:(UIEvent *) event
+{
+    //if(_faceTabScrollView.dragging || _faceTabScrollView.decelerating) return;
+    
+    lastTouchPoint = CGPointZero;
+    CGPoint point = [[[event allTouches] anyObject] locationInView:self.view];
+    if(CGRectContainsPoint (_faceTabListBar.frame, point) && currentUserID > 0)
+    {
+        
+        [self showStackImages:NO];
+        [self showFaceTabBar:NO];
+        
+        [self addPhotosToFaceTab:currentUserID];
+//        if(currentUserID > 0) {
+//
+//        }
+        
+        currentUserID = -1;
+        
+    } else {
+
+//        int angleCount = 0;
+//        for(UIImageView *imgView in selectedStackImages)
+//        {
+//            
+//            imgView.transform = CGAffineTransformMakeScale(1.0, 1.0);
+//            double viewAngle = [[angleArray objectAtIndex:angleCount] doubleValue];
+//            //imgView.transform = CGAffineTransformMakeRotation(viewAngle);
+//            imgView.transform =  CGAffineTransformRotate(imgView.transform, viewAngle);
+//            angleCount++;
+//        }
+        
+        // facetab 프로필 버튼 사이즈 다시 복원.
+//        int index = 0;
+//        for(id cellObject in _faceTabScrollView.subviews) {
+//            if([NSStringFromClass([cellObject class]) isEqualToString:@"UIButton_FaceIcon"])
+//            {
+//                UIButton_FaceIcon *cell = (UIButton_FaceIcon *)[_faceTabScrollView.subviews objectAtIndex:index];
+//                NSString *cellRect = [scrollViewCellFrames objectAtIndex:index];
+//                cell.frame = CGRectFromString(cellRect);
+//                index++;
+//            }
+//        }
+        
+        
+        [UIView animateWithDuration:0.2 animations:^{
+ 
+            int index = 0;
+            for(id cellObject in _faceTabScrollView.subviews){
+                if([NSStringFromClass([cellObject class]) isEqualToString:@"UIButton_FaceIcon"])
+                {
+                    UIButton_FaceIcon *cell = (UIButton_FaceIcon *)cellObject;
+                    
+                    NSString *cellRect = [scrollViewCellFrames objectAtIndex:index];
+                    cell.frame = CGRectFromString(cellRect);
+                    
+                    cell.transform = CGAffineTransformMakeScale(1.0, 1.0);
+                    
+                    index++;
+                }
+            }
+            
+            
+            int angleCount = 0;
+            for(UIImageView *imgView in selectedStackImages)
+            {
+                
+                imgView.transform = CGAffineTransformMakeScale(1.0, 1.0);
+                double viewAngle = [[angleArray objectAtIndex:angleCount] doubleValue];
+                //imgView.transform = CGAffineTransformMakeRotation(viewAngle);
+                imgView.transform =  CGAffineTransformRotate(imgView.transform, viewAngle);
+                angleCount++;
+            }
+            
+        } completion:^(BOOL finished) {
+        }];
+
+
+    }
+    
+}
+
+
+#pragma mark -
+#pragma mark Add / New Facetab Methods
+
+// This method is for deleting the selected images from the data source array
+-(void)deleteItemsFromDataSourceAtIndexPaths:(NSArray  *)itemPaths
+{
+    NSMutableIndexSet *indexSet = [NSMutableIndexSet indexSet];
+    for (NSIndexPath *itemPath  in itemPaths) {
+        [indexSet addIndex:itemPath.row];
+        
+    }
+    
+    [self.assets removeObjectsAtIndexes:indexSet]; // self.images is my data source
+    
+}
+
+- (void)newFacetabFromIndexPaths:(NSArray  *)itemPaths
+{
+    NSArray *result = [SQLManager newUser];
+    NSDictionary *user = [result objectAtIndex:0];
+    //NSString *UserName = [user objectForKey:@"UserName"];
+    int UserID = [[user objectForKey:@"UserID"] intValue];
+    int photoCount = 0;
+    
+    
+    for(NSIndexPath *indexPath in itemPaths)
+    {
+        photoCount++;
+        
+        ALAsset *asset = self.assets[indexPath.row];
+        
+        NSArray *faces = [AssetLib getFaceData:asset];
+        
+        if(faces.count == 1 && !IsEmpty(faces)){
+            NSDictionary *face = faces[0];
+            NSData *faceData = face[@"image"];
+            
+            UIImage *faceImage = face[@"faceImage"];
+            if(faceImage != nil)
+                [SQLManager setUserProfileImage:faceImage UserID:UserID];
+            
+            [SQLManager addTrainModelForUserID:UserID withFaceData:faceData];
+        }
+        else {
+            CGImageRef cgImage = [asset thumbnail];
+            UIImage *faceImage = [UIImage imageWithCGImage:cgImage];
+            if(faceImage != nil)
+                [SQLManager setUserProfileImage:faceImage UserID:UserID];
+        }
+        
+        
+        [SQLManager saveNewUserPhotoToDB:asset users:@[@(UserID)]];
+        
+    }
+    
+}
+
+- (void)addPhotoToFacetabFromIndexPaths:(NSArray  *)itemPaths userID:(int)UserID
+{
+    for(NSIndexPath *indexPath in itemPaths)
+    {
+        NSLog(@"add Index.row = %d", (int)indexPath.row);
+        ALAsset *asset = self.assets[indexPath.row];
+        
+        [SQLManager saveNewUserPhotoToDB:asset users:@[@(UserID)]];
+        
+    }
+}
+
+- (void)makeNewFaceTab
+{
+    
+    [self.collectionView performBatchUpdates:^{
+        
+        NSArray *selectedItemsIndexPaths = [self.collectionView indexPathsForSelectedItems];
+        // Add new facetab from the selected collection view (DB works : add)
+        [self newFacetabFromIndexPaths:selectedItemsIndexPaths];
+        
+        // Delete the items from the data source. (Data Array works : delete)
+        [self deleteItemsFromDataSourceAtIndexPaths:selectedItemsIndexPaths];
+        
+        // Now delete the items from the collection view. (CollectionView cell delete animation)
+        [self.collectionView deleteItemsAtIndexPaths:selectedItemsIndexPaths];
+        
+    } completion:^(BOOL finished) {
+        
+        if(EDIT_MODE) [self toggleEdit];
+        
+        if([_segueIdentifier isEqualToString:@"Segue3_1to4_3"])
+        {
+            [self.navigationController popViewControllerAnimated:YES];
+        } else {
+            //        [[NSNotificationCenter defaultCenter] postNotificationName:@"MeunViewControllerEventHandler"
+            //                                                            object:self
+            //                                                          userInfo:@{@"moveTo":@"MainDashBoard"}];
+        }
+        
+    }];
+    
+}
+
+- (void)addPhotosToFaceTab:(int)UserID
+{
+    
+    [self.collectionView performBatchUpdates:^{
+        
+        NSArray *selectedItemsIndexPaths = [self.collectionView indexPathsForSelectedItems];
+        // Add photo to facetab from the selected collection view
+        [self addPhotoToFacetabFromIndexPaths:selectedItemsIndexPaths userID:(int)UserID];
+        
+        // Delete the items from the data source.
+        [self deleteItemsFromDataSourceAtIndexPaths:selectedItemsIndexPaths];
+        
+        // Now delete the items from the collection view.
+        [self.collectionView deleteItemsAtIndexPaths:selectedItemsIndexPaths];
+        
+    } completion:^(BOOL finished) {
+        
+        if(EDIT_MODE) [self toggleEdit];
+        
+        if([_segueIdentifier isEqualToString:@"Segue3_1to4_3"])
+        {
+            [self.navigationController popViewControllerAnimated:YES];
+        } else {
+            //        [[NSNotificationCenter defaultCenter] postNotificationName:@"MeunViewControllerEventHandler"
+            //                                                            object:self
+            //                                                          userInfo:@{@"moveTo":@"MainDashBoard"}];
+        }
+        
+        
+        
+    }];
+    
+}
+
+#pragma mark -
+#pragma mark Segue methods
+
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     if ([segue.identifier isEqualToString:SEGUE_GO_FILTER]){
@@ -1216,10 +1321,13 @@
 
 - (void)initSwipeToSelectPanGesture
 {
-    swipeToSelectGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handleGesture:)];
-    [self.view addGestureRecognizer:swipeToSelectGestureRecognizer];
-    [swipeToSelectGestureRecognizer setMinimumNumberOfTouches:1];
-    [swipeToSelectGestureRecognizer setMaximumNumberOfTouches:1];
+    if(swipeToSelectGestureRecognizer == nil){
+        swipeToSelectGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handleGesture:)];
+        [self.view addGestureRecognizer:swipeToSelectGestureRecognizer];
+        [swipeToSelectGestureRecognizer setMinimumNumberOfTouches:1];
+        [swipeToSelectGestureRecognizer setMaximumNumberOfTouches:1];
+    }
+
 }
 
 - (void)removeSwipeToSelectPanGesture

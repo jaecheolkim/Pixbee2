@@ -295,7 +295,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
         
         
         layer.hidden = YES;
-        _switchButton.hidden = YES;
+        //_switchButton.hidden = YES;
         _nameLabel.hidden = YES;
         _instructionsLabel.hidden = YES;
         _mixedIndicator.hidden = YES;
@@ -672,6 +672,8 @@ AVCaptureVideoDataOutputSampleBufferDelegate>
         
         if (imageDataSampleBuffer)
         {
+            [self showShutterFlash];
+            
             imageData = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageDataSampleBuffer];
             
             ALAssetsLibrary *assLib = [[ALAssetsLibrary alloc] init];
@@ -1837,17 +1839,20 @@ bail:
 
 - (void)showShutterFlash
 {
-    UIView *flashView = [[UIView alloc] initWithFrame:[[self view] frame]];
-    [flashView setBackgroundColor:[UIColor whiteColor]];
-    [[[self view] window] addSubview:flashView];
-    [UIView animateWithDuration:.4f
-                     animations:^{
-                         [flashView setAlpha:0.f];
-                     }
-                     completion:^(BOOL finished){
-                         [flashView removeFromSuperview];
-                     }
-     ];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        UIView *flashView = [[UIView alloc] initWithFrame:[[self view] frame]];
+        [flashView setBackgroundColor:[UIColor whiteColor]];
+        [[[self view] window] addSubview:flashView];
+        [UIView animateWithDuration:.4f
+                         animations:^{
+                             [flashView setAlpha:0.f];
+                         }
+                         completion:^(BOOL finished){
+                             [flashView removeFromSuperview];
+                         }
+         ];
+    });
+
 }
 
 - (void)collectFace:(CIFaceFeature *)feature inImage:(CIImage *)ciImage ofUserID:(int)UserID
