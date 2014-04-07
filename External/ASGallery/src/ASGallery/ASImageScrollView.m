@@ -201,7 +201,7 @@
     self.zoomScale = self.minimumZoomScale;
 }
 
-- (void)scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(UIView *)view atScale:(CGFloat)scale
+- (void)scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(UIView *)view atScale:(float)scale
 {
     [self.zoomDelegate imageViewDidEndZoomingAtScale:scale];
     

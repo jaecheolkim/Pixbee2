@@ -30,7 +30,8 @@
 - (void)pan:(UIPanGestureRecognizer*)recognizer
 {
     UIView* view = self.navigationController.view;
-    if (recognizer.state == UIGestureRecognizerStateBegan) {
+    if (recognizer.state == UIGestureRecognizerStateBegan)
+    {
         CGPoint location = [recognizer locationInView:view];
         if (location.x <  CGRectGetMidX(view.bounds) && self.navigationController.viewControllers.count > 1) { // left half
             self.interactionController = [UIPercentDrivenInteractiveTransition new];
@@ -44,11 +45,14 @@
             [self.navigationController pushViewController:vc animated:YES ];
         }
         
-    } else if (recognizer.state == UIGestureRecognizerStateChanged) {
+    } else if (recognizer.state == UIGestureRecognizerStateChanged)
+    {
         CGPoint translation = [recognizer translationInView:view];
         CGFloat d = fabs(translation.x / CGRectGetWidth(view.bounds));
         [self.interactionController updateInteractiveTransition:d];
-    } else if (recognizer.state == UIGestureRecognizerStateEnded) {
+        
+    } else if (recognizer.state == UIGestureRecognizerStateEnded)
+    {
         NSLog(@"animator.operation = %d / x = %d", (int)(self.animator.operation), (int)[recognizer velocityInView:view].x);
         if(self.animator.operation == UINavigationControllerOperationPush){
             if ([recognizer velocityInView:view].x <= 0) {
@@ -75,8 +79,11 @@
     if (operation == UINavigationControllerOperationPop) {
          
         return self.animator;
+        
     } else if(operation == UINavigationControllerOperationPush) {
+        
         return self.animator;
+        
     } else {
         return nil;
     }

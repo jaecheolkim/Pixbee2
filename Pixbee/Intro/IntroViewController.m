@@ -41,11 +41,11 @@
     [button addTarget:self action:@selector(action:) forControlEvents: UIControlEventTouchUpInside];
 
     
-    IntroModel *model1 = [[IntroModel alloc] initWithTitle:Title[0] description:Message[0] image:@"image1.jpg" button:nil];
-    IntroModel *model2 = [[IntroModel alloc] initWithTitle:Title[1] description:Message[1] image:@"image2.jpg" button:nil];
-    IntroModel *model3 = [[IntroModel alloc] initWithTitle:Title[2] description:Message[2] image:@"image3.jpg" button:nil];
-    IntroModel *model4 = [[IntroModel alloc] initWithTitle:Title[3] description:Message[3] image:@"image4.jpg" button:nil];
-    IntroModel *model5 = [[IntroModel alloc] initWithTitle:Title[4] description:Message[4] image:@"image5.jpg" button:button];
+    IntroModel *model1 = [[IntroModel alloc] initWithTitle:Title[0] description:Message[0] image:@"Intro1.png" button:nil];
+    IntroModel *model2 = [[IntroModel alloc] initWithTitle:Title[1] description:Message[1] image:@"Intro2.png" button:nil];
+    IntroModel *model3 = [[IntroModel alloc] initWithTitle:Title[2] description:Message[2] image:@"Intro3.png" button:nil];
+    IntroModel *model4 = [[IntroModel alloc] initWithTitle:Title[3] description:Message[3] image:@"Intro4.png" button:nil];
+    IntroModel *model5 = [[IntroModel alloc] initWithTitle:Title[4] description:Message[4] image:@"Intro5.png" button:button];
     
     self.view = [[IntroControll alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height) pages:@[model1, model2, model3, model4, model5]];
 }

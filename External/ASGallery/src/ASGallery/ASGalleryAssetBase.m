@@ -38,7 +38,7 @@
 -(NSString*)generateCacheKey:(ASGalleryImageType)imageType
 {
     // warning never use here self.url -> too long suspend main thread!!!
-    return  [NSString stringWithFormat:@"%lu:%u",(unsigned long)[self hash],imageType];
+    return  [NSString stringWithFormat:@"%u:%u",[self hash],imageType];
 }
 
 -(ASCache*)cacheForType:(ASGalleryImageType)imageType

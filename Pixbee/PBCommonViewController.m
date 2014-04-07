@@ -11,7 +11,9 @@
 #import "UIImage+ImageEffects.h"
 #import "UIImage+Addon.h"
 @interface PBCommonViewController () //<UITextFieldDelegate>
-
+{
+    UIImageView *navBarHairlineImageView;
+}
 @end
 
 @implementation PBCommonViewController
@@ -106,6 +108,9 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    navBarHairlineImageView = [self findHairlineImageViewUnder:self.navigationController.navigationBar];
+    
 
     [self.view setBackgroundColor:[UIColor colorWithRed:255/255.0 green:255/255.0 blue:255/255.0 alpha:0.1]];
     
@@ -117,11 +122,21 @@
                                                            shadow, NSShadowAttributeName,
                                                            [UIFont fontWithName:@"GillSans-Medium" size:21.0], NSFontAttributeName, nil]];
 
+    
     [self initialNotification];
     
     [self addColorBar];
     
 }
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    
+    navBarHairlineImageView.hidden = YES;
+}
+
 
 - (void)viewDidUnload
 {
@@ -137,6 +152,18 @@
 }
 
 
+- (UIImageView *)findHairlineImageViewUnder:(UIView *)view {
+    if ([view isKindOfClass:UIImageView.class] && view.bounds.size.height <= 1.0) {
+        return (UIImageView *)view;
+    }
+    for (UIView *subview in view.subviews) {
+        UIImageView *imageView = [self findHairlineImageViewUnder:subview];
+        if (imageView) {
+            return imageView;
+        }
+    }
+    return nil;
+}
 
 
 - (void)initialNotification

@@ -205,13 +205,18 @@
 - (void)setPanGestureEnabled:(BOOL)panGestureEnabled
 {
     if(panGestureEnabled) {
-        panGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGestureRecognized:)];
-        panGestureRecognizer.delegate = self;
-        [self.view addGestureRecognizer:panGestureRecognizer];
+        if(panGestureRecognizer == nil){
+            panGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGestureRecognized:)];
+            panGestureRecognizer.delegate = self;
+            [self.view addGestureRecognizer:panGestureRecognizer];
+        }
+
     } else {
-        [self.view removeGestureRecognizer:panGestureRecognizer];
-        panGestureRecognizer.delegate = nil;
-        panGestureRecognizer = nil;
+        if(panGestureRecognizer != nil){
+            [self.view removeGestureRecognizer:panGestureRecognizer];
+            panGestureRecognizer.delegate = nil;
+            panGestureRecognizer = nil;
+        }
     }
 }
 
@@ -540,13 +545,14 @@
     
     return;
 }
+
 - (void)panGestureRecognized:(UIPanGestureRecognizer *)recognizer
 {
-//    CGPoint velocity = [recognizer velocityInView:self.view];
-//    
-//    if(velocity.x > 0)
-//    {
-//        NSLog(@"gesture went right");
+    CGPoint velocity = [recognizer velocityInView:self.view];
+    
+    if(velocity.x > 0)
+    {
+        NSLog(@"gesture went right");
 //        if(_visibleRightMode) {
 //            NSLog(@"<<<<<-------------------------------go Back to LeftMenuContent !!");
 //           // [self RightContentHandling:recognizer];
@@ -554,10 +560,10 @@
 //            NSLog(@"------------------------------->>>>>Open Left Menu !!");
 //            //[self LeftMenuHandling:recognizer];
 //        }
-//    }
-//    else
-//    {
-//        NSLog(@"gesture went left");
+    }
+    else
+    {
+        NSLog(@"gesture went left");
 //        if(self.visibleLeftMenu) {
 //            NSLog(@"<<<<<-------------------------------Close LeftMenu !!");
 //            //[self LeftMenuHandling:recognizer];
@@ -565,8 +571,8 @@
 //            NSLog(@"------------------------------->>>>>Open Right ViewController !!");
 //            //[self RightContentHandling:recognizer];
 //        }
-//    }
-    
+    }
+
     
     [self LeftMenuHandling:recognizer];
 }

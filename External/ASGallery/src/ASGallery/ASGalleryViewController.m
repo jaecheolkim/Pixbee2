@@ -339,7 +339,7 @@
         firstVisiblePageIndex = 0;
     int lastVisiblePageIndex  = floorf((CGRectGetMaxX(visibleBounds)-1) / CGRectGetWidth(visibleBounds));
     if (lastVisiblePageIndex >= numberOfAssets)
-        lastVisiblePageIndex = (int)(numberOfAssets - 1);
+        lastVisiblePageIndex = numberOfAssets - 1;
     
     if (firstVisiblePageIndex == lastVisiblePageIndex)
     {
@@ -351,13 +351,13 @@
         }
     }
     
-    int firstNeededPageIndex = (int)(firstVisiblePageIndex - (self.previewImagesToPreload+2)); //  with +2 gisteresis to prevent REMOVE/ADD on tilePages noice!
+    int firstNeededPageIndex = firstVisiblePageIndex - (self.previewImagesToPreload+2); //  with +2 gisteresis to prevent REMOVE/ADD on tilePages noice!
     if (firstNeededPageIndex < 0)
         firstNeededPageIndex = 0;
     
-    int lastNeededPageIndex  = (int)(lastVisiblePageIndex + (self.previewImagesToPreload+2)); // with +2 gisteresis to prevent REMOVE/ADD on tilePages noice!
+    int lastNeededPageIndex  = lastVisiblePageIndex + (self.previewImagesToPreload+2); // with +2 gisteresis to prevent REMOVE/ADD on tilePages noice!
     if (lastNeededPageIndex >= numberOfAssets)
-        lastNeededPageIndex = (int)(numberOfAssets - 1);
+        lastNeededPageIndex = numberOfAssets - 1;
     
     // Recycle no-longer-visible pages
     for (ASGalleryPage *page in _visiblePages) {

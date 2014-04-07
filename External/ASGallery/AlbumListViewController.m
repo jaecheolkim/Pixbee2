@@ -73,7 +73,7 @@
     
     cell.textLabel.text = [group valueForProperty:ALAssetsGroupPropertyName];
     cell.imageView.image = [UIImage imageWithCGImage:[group posterImage]];
-    cell.detailTextLabel.text = [NSString stringWithFormat:@"(%ld)",(long)[group numberOfAssets]];
+    cell.detailTextLabel.text = [NSString stringWithFormat:@"(%u)",[group numberOfAssets]];
     
     
     return cell;
@@ -104,7 +104,7 @@
             
             GalleryViewController* galleryViewController = [[GalleryViewController alloc] init];
             galleryViewController.assets = assets;
-            galleryViewController.selectedIndex = 2;
+            galleryViewController.selectedIndex = 1;
             [self.navigationController pushViewController:galleryViewController animated:YES];
         }
             

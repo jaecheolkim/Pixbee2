@@ -42,6 +42,7 @@
     NSMutableArray *scrollViewCellFrames;
     
     UIRefreshControl *refreshControl;
+    NSMutableAttributedString *refreshString;
     
     NSString *currentAction;
     
@@ -62,7 +63,9 @@
     UIPanGestureRecognizer *swipeToSelectGestureRecognizer;
 
     BFNavigationBarDrawer *drawer;
-    
+    UIBarButtonItem *newFaceTabButton;
+    UIBarButtonItem *addFaceTabButton;
+    UIBarButtonItem *deleteButton;
 }
 //@property (nonatomic, retain) APNavigationController *navController;
 @property (strong, nonatomic) IBOutlet UICollectionView *collectionView;
@@ -147,7 +150,6 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    
 
     _assets = [@[] mutableCopy];
     _photos = [@[] mutableCopy];
@@ -194,49 +196,8 @@
     [super viewDidLayoutSubviews];
 }
 
-//- (void) reloadDB {
-//    
-//    
-//    __block NSMutableArray *tmpAssets = [@[] mutableCopy];
-//    // 1
-//    ALAssetsLibrary *assetsLibrary = [AllPhotosController defaultAssetsLibrary];
-//    // 2
-//    [assetsLibrary enumerateGroupsWithTypes:ALAssetsGroupAll usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
-//        if([[group valueForProperty:ALAssetsGroupPropertyName]  isEqualToString:@"Pixbee"]){
-//            __block NSInteger groupAssetCount = group.numberOfAssets;
-//            
-//            
-//            [group enumerateAssetsUsingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {
-//                if(result)
-//                {
-//                    // 3
-//                    [tmpAssets addObject:result];
-//                    
-//                } else {
-//                    NSLog(@"index = %d / groupAssetCount = %d", (int)index, (int)groupAssetCount);
-//                }
-//
-//            }];
-//            
-//            // 4
-//            //NSSortDescriptor *sort = [NSSortDescriptor sortDescriptorWithKey:@"date" ascending:NO];
-//            //self.assets = [tmpAssets sortedArrayUsingDescriptors:@[sort]];
-//            self.assets = tmpAssets;
-//            
-//            // 5
-//            [self.collectionView reloadData];
-//            
-// 
-//        }
-//        
-//    } failureBlock:^(NSError *error) {
-//        NSLog(@"Error loading images %@", error);
-//    }];
-//}
-
 #pragma mark -
 #pragma mark Navi Drawer Sub Menu methods
-
 
 - (void)initNaviMenu
 {
@@ -246,20 +207,26 @@
     
     drawer.barStyle = self.navigationController.navigationBar.barStyle;
     drawer.barTintColor = self.navigationController.navigationBar.barTintColor;
-    drawer.tintColor = self.navigationController.navigationBar.tintColor;
+    drawer.tintColor = [UIColor whiteColor ]; //self.navigationController.navigationBar.tintColor;
 	
 	// Assign the table view as the affected scroll view of the drawer.
 	// This will make sure the scroll view is properly scrolled and updated
 	// when the drawer is shown.
 	drawer.scrollView = self.collectionView;
-	
+
+    
 	// Add some buttons to the drawer.
-	UIBarButtonItem *button1 = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(newFacetabAction:)];
+	newFaceTabButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(newFacetabAction:)];
 	UIBarButtonItem *button2 = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:0];
-	UIBarButtonItem *button3 = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemOrganize target:self action:@selector(moveFacetabAction:)];
+	addFaceTabButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemOrganize target:self action:@selector(moveFacetabAction:)];
 	UIBarButtonItem *button4 = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:0];
-	UIBarButtonItem *button5 = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemTrash target:self action:@selector(deleteAction:)];
-	drawer.items = @[button1, button2, button3, button4, button5];
+	deleteButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemTrash target:self action:@selector(deleteAction:)];
+	drawer.items = @[newFaceTabButton, button2, addFaceTabButton, button4, deleteButton];
+    
+    
+    newFaceTabButton.enabled = NO;
+    addFaceTabButton.enabled = NO;
+    deleteButton.enabled = NO;
 
 }
 
@@ -281,11 +248,21 @@
     NSString *str = [NSString stringWithFormat:@"Searching new photos.."];
     
     refreshControl = [[UIRefreshControl alloc] init];
-    refreshControl.tintColor = [UIColor yellowColor];
+    refreshControl.tintColor = REFRESH_COLOR;//[UIColor yellowColor];
     [refreshControl addTarget:self action:@selector(startRefresh) forControlEvents:UIControlEventValueChanged];
     
-    NSMutableAttributedString *refreshString = [[NSMutableAttributedString alloc] initWithString:str];
-    [refreshString addAttributes:@{NSForegroundColorAttributeName : [UIColor yellowColor] } range:NSMakeRange(0, refreshString.length)];
+    NSShadow *shadow = [[NSShadow alloc] init];
+    shadow.shadowColor = [UIColor grayColor];
+    
+    refreshString = [[NSMutableAttributedString alloc] initWithString:str];
+    [refreshString addAttributes:@{NSForegroundColorAttributeName : REFRESH_COLOR , NSShadowAttributeName : shadow  } range:NSMakeRange(0, refreshString.length)];
+    
+    
+    
+    
+    UIFont *font = [UIFont fontWithName:@"Avenir-Medium" size:12];
+    [refreshString addAttribute:NSFontAttributeName value:font range:NSMakeRange(0, [refreshString length])];
+    
     refreshControl.attributedTitle = refreshString;
     
     [self.collectionView addSubview:refreshControl];

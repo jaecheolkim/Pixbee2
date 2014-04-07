@@ -12,7 +12,7 @@
 
 // Return the name that should be displayed below the icon in the sharing menu
 - (NSString *)activityTitle {
-    return @"New Album";
+    return @"New Facetab";
 }
 
 // Return the string that uniquely identifies this activity type

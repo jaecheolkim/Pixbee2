@@ -26,7 +26,7 @@
 
 #import "GalleryViewController.h"
 
-#define REFRESH_COLOR RGB_COLOR(254,196,57)
+
 
 @interface IndividualGalleryController ()
 <UICollectionViewDataSource, UICollectionViewDelegate,
@@ -156,12 +156,17 @@ IDMPhotoBrowserDelegate, GalleryViewCellDelegate>
     refreshControl.tintColor = REFRESH_COLOR;//[UIColor yellowColor];
     [refreshControl addTarget:self action:@selector(startRefresh) forControlEvents:UIControlEventValueChanged];
     
+    NSShadow *shadow = [[NSShadow alloc] init];
+    shadow.shadowColor = [UIColor grayColor];
+    
     refreshString = [[NSMutableAttributedString alloc] initWithString:str];
-    [refreshString addAttributes:@{NSForegroundColorAttributeName : REFRESH_COLOR } range:NSMakeRange(0, refreshString.length)];
+    [refreshString addAttributes:@{NSForegroundColorAttributeName : REFRESH_COLOR , NSShadowAttributeName : shadow  } range:NSMakeRange(0, refreshString.length)];
+    
+
+
     
     UIFont *font = [UIFont fontWithName:@"Avenir-Medium" size:12];
     [refreshString addAttribute:NSFontAttributeName value:font range:NSMakeRange(0, [refreshString length])];
-
     
     refreshControl.attributedTitle = refreshString;
     
@@ -169,6 +174,7 @@ IDMPhotoBrowserDelegate, GalleryViewCellDelegate>
     
     self.collectionView.alwaysBounceVertical = YES;
 }
+
 
 
 -(void)startRefresh

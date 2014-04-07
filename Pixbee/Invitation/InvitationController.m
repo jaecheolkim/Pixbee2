@@ -125,6 +125,11 @@
 
 
 - (void)posting{
+#warning 페북 피드 수정하기.
+//    Pixbee - Facial recognition camera
+//    Redefine the camera from the human eyes
+//    Organize your memories by friends or family
+    
     // Put together the dialog parameters
     NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:
                                    @"Sharing Tutorial", @"name",
