@@ -64,7 +64,7 @@
                         <outlet property="indicator" destination="qb8-m8-uLT" id="lW3-sh-1kF"/>
                         <outlet property="titleLabel" destination="865-Lf-H1z" id="x6b-nD-Tlx"/>
                         <segue destination="gUD-Yk-XTw" kind="custom" identifier="Segue1_2to3_1" customClass="SCTPushLeft" id="LcM-q7-xNX"/>
-                        <segue destination="dri-x2-AEn" kind="modal" identifier="SegueFaceAnalyze" customClass="PBDisolveSegue" id="fsZ-en-OWS"/>
+                        <segue destination="dri-x2-AEn" kind="custom" identifier="SegueFaceAnalyze" customClass="PBDisolveSegue" id="fsZ-en-OWS"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
@@ -179,7 +179,7 @@ Connect now to see what your friends have</string>
                                             <rect key="frame" x="0.0" y="0.0" width="192" height="28"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="72D8B240-32FC-4FD2-940C-5BC79730E256" translatesAutoresizingMaskIntoConstraints="NO" id="6aK-Ak-lFj">
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="7E82E497-CC59-496D-B8BE-ED59FB89B87E" translatesAutoresizingMaskIntoConstraints="NO" id="6aK-Ak-lFj">
                                                     <rect key="frame" x="0.0" y="0.0" width="28" height="29"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
@@ -593,8 +593,8 @@ Connect now to see what your friends have</string>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                             </view>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="320" translatesAutoresizingMaskIntoConstraints="NO" id="dTV-e8-DDg">
-                                <rect key="frame" x="0.0" y="35" width="320" height="98"/>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="320" translatesAutoresizingMaskIntoConstraints="NO" id="dTV-e8-DDg">
+                                <rect key="frame" x="0.0" y="38" width="320" height="102"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" name="AvenirNext-HeavyItalic" family="Avenir Next" pointSize="29"/>
                                 <color key="textColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
@@ -1416,7 +1416,7 @@ Connect now to see what your friends have</string>
         </scene>
     </scenes>
     <resources>
-        <image name="72D8B240-32FC-4FD2-940C-5BC79730E256" width="628" height="152">
+        <image name="7E82E497-CC59-496D-B8BE-ED59FB89B87E" width="628" height="152">
             <mutableData key="keyedArchiveRepresentation">
 YnBsaXN0MDDUAQIDBAUGPj9YJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoK4HCBMU
 GR4fIyQsLzI4O1UkbnVsbNUJCgsMDQ4PEBESVk5TU2l6ZVYkY2xhc3NcTlNJbWFnZUZsYWdzVk5TUmVw

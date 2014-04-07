@@ -253,6 +253,7 @@
     
     NSShadow *shadow = [[NSShadow alloc] init];
     shadow.shadowColor = [UIColor grayColor];
+    shadow.shadowOffset = CGSizeMake(0, 1);
     
     refreshString = [[NSMutableAttributedString alloc] initWithString:str];
     [refreshString addAttributes:@{NSForegroundColorAttributeName : REFRESH_COLOR , NSShadowAttributeName : shadow  } range:NSMakeRange(0, refreshString.length)];

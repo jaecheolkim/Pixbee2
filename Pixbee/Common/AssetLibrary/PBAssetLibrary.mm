@@ -205,102 +205,209 @@
         cFaceDetector = [CIDetector detectorOfType:CIDetectorTypeFace context:nil options:detectorOptions];
     }
     
+    dispatch_queue_t serialQueue = dispatch_queue_create("com.pixbee.syncPixbeeAlbum", DISPATCH_QUEUE_SERIAL);
+    dispatch_semaphore_t exeSignal = dispatch_semaphore_create(1);
     
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        @autoreleasepool {
-            
-            NSUInteger type = ALAssetsGroupSavedPhotos; // |  ALAssetsGroupFaces | ALAssetsGroupPhotoStream ;
-            
-            [self.assetsLibrary enumerateGroupsWithTypes:type usingBlock:^(ALAssetsGroup *group, BOOL *stop)
+    dispatch_async(serialQueue, ^{
+        
+        dispatch_semaphore_wait(exeSignal, DISPATCH_TIME_FOREVER);
+        
+        // do something...
+        
+        NSUInteger type = ALAssetsGroupSavedPhotos; // |  ALAssetsGroupFaces | ALAssetsGroupPhotoStream ;
+        
+        [self.assetsLibrary enumerateGroupsWithTypes:type usingBlock:^(ALAssetsGroup *group, BOOL *stop)
+         {
+             if(nil!=group)
              {
-                 if(nil!=group)
+                 [group setAssetsFilter:[ALAssetsFilter allPhotos]];
+                 
+                 
+                 __block NSInteger numberOfAssets = group.numberOfAssets;
+                 
+                 __block NSInteger numberOfPixbeeAssets = _pixbeeAssetGroup.numberOfAssets;
+                 
+                 // 현재 총 어셋 갯수와 최종 저장된 총 어셋 갯수 비교해서 틀리면 동기화.
+                 if(lastTotalAssetCount != numberOfAssets ||
+                    currentTotalAssetProcess < numberOfAssets - 1 ||
+                    numberOfPixbeeAssets < 1)
                  {
-                     [group setAssetsFilter:[ALAssetsFilter allPhotos]];
+                     //아직 동기화가 안되었으니 동기화 해야 함.
+                     NSLog(@"Start...syncPixbeeAlbum ");
                      
                      
-                     __block NSInteger numberOfAssets = group.numberOfAssets;
+                     NSString *GroupName = [group valueForProperty:ALAssetsGroupPropertyName];
                      
-                     __block NSInteger numberOfPixbeeAssets = _pixbeeAssetGroup.numberOfAssets;
-                     
-                     // 현재 총 어셋 갯수와 최종 저장된 총 어셋 갯수 비교해서 틀리면 동기화.
-                     if(lastTotalAssetCount != numberOfAssets ||
-                        currentTotalAssetProcess < numberOfAssets - 1 ||
-                        numberOfPixbeeAssets < 1)
+                     if ([[group valueForProperty:@"ALAssetsGroupPropertyType"] intValue] == ALAssetsGroupSavedPhotos)
                      {
-                         //아직 동기화가 안되었으니 동기화 해야 함.
-                         NSLog(@"Start...syncPixbeeAlbum ");
-
                          
-                         NSString *GroupName = [group valueForProperty:ALAssetsGroupPropertyName];
-                         
-                         if ([[group valueForProperty:@"ALAssetsGroupPropertyType"] intValue] == ALAssetsGroupSavedPhotos)
+                         if(![GroupName isEqualToString:@"Pixbee"])
                          {
-                             
-                             if(![GroupName isEqualToString:@"Pixbee"])
-                             {
-                                 [group enumerateAssetsUsingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {
-                                     if(result != NULL && ( (currentTotalAssetProcess < index) || numberOfPixbeeAssets < 1) ){
+                             [group enumerateAssetsUsingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {
+                                 if(result != NULL && ( (currentTotalAssetProcess < index) || numberOfPixbeeAssets < 1) ){
+                                     
+                                     CGImageRef cgImage = [result aspectRatioThumbnail];
+                                     CIImage *ciImage = [CIImage imageWithCGImage:cgImage];
+                                     NSArray *fs = [cFaceDetector featuresInImage:ciImage];
+                                     
+                                     if(!IsEmpty(fs)) {
+                                         // 신규 포토 저장.
+                                         // Save DB. [Photos] 얼굴이 검출된 사진만 Photos Table에 저장.
+                                         NSString *GroupURL = nil;
+                                         if(_pixbeeAssetGroup) GroupURL = [_pixbeeAssetGroup valueForProperty:ALAssetsGroupPropertyURL];
                                          
-                                         CGImageRef cgImage = [result aspectRatioThumbnail];
-                                         CIImage *ciImage = [CIImage imageWithCGImage:cgImage];
-                                         NSArray *fs = [cFaceDetector featuresInImage:ciImage];
+                                         int PhotoID = [SQLManager newPhotoWith:result withGroupAssetURL:GroupURL];
                                          
-                                         if(!IsEmpty(fs)) {
-                                             // 신규 포토 저장.
-                                             // Save DB. [Photos] 얼굴이 검출된 사진만 Photos Table에 저장.
-                                             NSString *GroupURL = nil;
-                                             if(_pixbeeAssetGroup) GroupURL = [_pixbeeAssetGroup valueForProperty:ALAssetsGroupPropertyURL];
-                                             
-                                             int PhotoID = [SQLManager newPhotoWith:result withGroupAssetURL:GroupURL];
-                                             
-                                             NSURL *assetURL = [result valueForProperty:ALAssetPropertyAssetURL];
-                                             
-                                             [self.assetsLibrary addAssetURL:assetURL toAlbum:@"Pixbee" withCompletionBlock:^(NSURL *assetURL, NSError *error) {
-                                                 
-                                             } withFailurBlock:^(NSError *error) {
-                                                 
-                                             }];
-                                             
-                                         }
+                                         NSURL *assetURL = [result valueForProperty:ALAssetPropertyAssetURL];
                                          
-                                         [GlobalValue setCurrentTotalAssetProcess:(int)index];
-                                         
-                                         
-                                         //dispatch_async(dispatch_get_main_queue(), ^{
-                                         //NSLog(@" %d / %d", index, numberOfAssets);
-                                         enumerationBlock((float)index / (float)numberOfAssets);
-                                         //});
-                                         
-                                         if(index == numberOfAssets-1){
-                                             completion(YES);
-                                             NSLog(@"End...syncPixbeeAlbum = %d", (int)numberOfAssets);
+                                         [self.assetsLibrary addAssetURL:assetURL toAlbum:@"Pixbee" withCompletionBlock:^(NSURL *assetURL, NSError *error) {
                                              
-
+                                         } withFailurBlock:^(NSError *error) {
                                              
-                                         }
+                                         }];
+                                         
                                      }
-                                     //assetCounter++;
-                                 }];
-                             }
-                             
+                                     
+                                     [GlobalValue setCurrentTotalAssetProcess:(int)index];
+                                     
+                                     
+                                     //dispatch_async(dispatch_get_main_queue(), ^{
+                                     //NSLog(@" %d / %d", index, numberOfAssets);
+                                     enumerationBlock((float)index / (float)numberOfAssets);
+                                     //});
+                                     
+                                     if(index == numberOfAssets-1){
+                                         completion(YES);
+                                         NSLog(@"End...syncPixbeeAlbum = %d", (int)numberOfAssets);
+                                         
+                                         
+                                         
+                                     }
+                                 }
+                                 //assetCounter++;
+                             }];
                          }
                          
                      }
                      
-                     // 마지막 에셋 개수 저장하기
-                     [GlobalValue setLastTotalAssetCount:(int)numberOfAssets];
-                     
                  }
                  
-                 _isSyncPixbeeAlbum = NO;
-             } failureBlock:^(NSError *error) {
+                 // 마지막 에셋 개수 저장하기
+                 [GlobalValue setLastTotalAssetCount:(int)numberOfAssets];
                  
-                 _isSyncPixbeeAlbum = NO;
-                 NSLog(@"block Failed!");
-             }];
-            
-        }
-    });
+             }
+             
+             _isSyncPixbeeAlbum = NO;
+         } failureBlock:^(NSError *error) {
+             
+             _isSyncPixbeeAlbum = NO;
+             NSLog(@"block Failed!");
+         }];
+        
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+        });
+        
+        dispatch_semaphore_signal(exeSignal);
+     });
+    
+    
+    
+//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+//        @autoreleasepool {
+//            
+//            NSUInteger type = ALAssetsGroupSavedPhotos; // |  ALAssetsGroupFaces | ALAssetsGroupPhotoStream ;
+//            
+//            [self.assetsLibrary enumerateGroupsWithTypes:type usingBlock:^(ALAssetsGroup *group, BOOL *stop)
+//             {
+//                 if(nil!=group)
+//                 {
+//                     [group setAssetsFilter:[ALAssetsFilter allPhotos]];
+//                     
+//                     
+//                     __block NSInteger numberOfAssets = group.numberOfAssets;
+//                     
+//                     __block NSInteger numberOfPixbeeAssets = _pixbeeAssetGroup.numberOfAssets;
+//                     
+//                     // 현재 총 어셋 갯수와 최종 저장된 총 어셋 갯수 비교해서 틀리면 동기화.
+//                     if(lastTotalAssetCount != numberOfAssets ||
+//                        currentTotalAssetProcess < numberOfAssets - 1 ||
+//                        numberOfPixbeeAssets < 1)
+//                     {
+//                         //아직 동기화가 안되었으니 동기화 해야 함.
+//                         NSLog(@"Start...syncPixbeeAlbum ");
+//
+//                         
+//                         NSString *GroupName = [group valueForProperty:ALAssetsGroupPropertyName];
+//                         
+//                         if ([[group valueForProperty:@"ALAssetsGroupPropertyType"] intValue] == ALAssetsGroupSavedPhotos)
+//                         {
+//                             
+//                             if(![GroupName isEqualToString:@"Pixbee"])
+//                             {
+//                                 [group enumerateAssetsUsingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {
+//                                     if(result != NULL && ( (currentTotalAssetProcess < index) || numberOfPixbeeAssets < 1) ){
+//                                         
+//                                         CGImageRef cgImage = [result aspectRatioThumbnail];
+//                                         CIImage *ciImage = [CIImage imageWithCGImage:cgImage];
+//                                         NSArray *fs = [cFaceDetector featuresInImage:ciImage];
+//                                         
+//                                         if(!IsEmpty(fs)) {
+//                                             // 신규 포토 저장.
+//                                             // Save DB. [Photos] 얼굴이 검출된 사진만 Photos Table에 저장.
+//                                             NSString *GroupURL = nil;
+//                                             if(_pixbeeAssetGroup) GroupURL = [_pixbeeAssetGroup valueForProperty:ALAssetsGroupPropertyURL];
+//                                             
+//                                             int PhotoID = [SQLManager newPhotoWith:result withGroupAssetURL:GroupURL];
+//                                             
+//                                             NSURL *assetURL = [result valueForProperty:ALAssetPropertyAssetURL];
+//                                             
+//                                             [self.assetsLibrary addAssetURL:assetURL toAlbum:@"Pixbee" withCompletionBlock:^(NSURL *assetURL, NSError *error) {
+//                                                 
+//                                             } withFailurBlock:^(NSError *error) {
+//                                                 
+//                                             }];
+//                                             
+//                                         }
+//                                         
+//                                         [GlobalValue setCurrentTotalAssetProcess:(int)index];
+//                                         
+//                                         
+//                                         //dispatch_async(dispatch_get_main_queue(), ^{
+//                                         //NSLog(@" %d / %d", index, numberOfAssets);
+//                                         enumerationBlock((float)index / (float)numberOfAssets);
+//                                         //});
+//                                         
+//                                         if(index == numberOfAssets-1){
+//                                             completion(YES);
+//                                             NSLog(@"End...syncPixbeeAlbum = %d", (int)numberOfAssets);
+//                                             
+//
+//                                             
+//                                         }
+//                                     }
+//                                     //assetCounter++;
+//                                 }];
+//                             }
+//                             
+//                         }
+//                         
+//                     }
+//                     
+//                     // 마지막 에셋 개수 저장하기
+//                     [GlobalValue setLastTotalAssetCount:(int)numberOfAssets];
+//                     
+//                 }
+//                 
+//                 _isSyncPixbeeAlbum = NO;
+//             } failureBlock:^(NSError *error) {
+//                 
+//                 _isSyncPixbeeAlbum = NO;
+//                 NSLog(@"block Failed!");
+//             }];
+//            
+//        }
+//    });
  
 }
 

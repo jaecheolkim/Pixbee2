@@ -74,14 +74,14 @@ CGPoint AnglePoint[10] = {
 
 
 NSString *AngleDesc[10] = {
-    @"show me your best selfie pose !",
-    @"Please smile :)",
-    @"Look straight",
-    @"tilt up",
-    @"tuck your chin",
-    @"look to your right",
-    @"look to your left",
-    @"Say “Pixebee” ~"
+    @"1 / 8 \nshow me your best selfie pose !",
+    @"2 / 8 \nPlease smile :)",
+    @"3 / 8 \nLook straight",
+    @"4 / 8 \ntilt up",
+    @"5 / 8 \ntuck your chin",
+    @"6 / 8 \nlook to your right",
+    @"7 / 8 \nlook to your left",
+    @"8 / 8 \nSay “Pixebee” ~"
 };
 
 CGRect DetectFaceTabs[6] = {
@@ -297,17 +297,28 @@ AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
         [mixedIndicator loadIndicator];
         _mixedIndicator = mixedIndicator;
         
-        //_instructionsLabel.hidden = NO;
-        [_instructionsLabel setText:@"Please Smile !"];
-        //[_instructionsLabel setFont:[UIFont fontWithName:@"HelveticaNeue-light" size:29]];//[UIFont systemFontOfSize:16]];
+
+//       [_instructionsLabel setFont:[UIFont fontWithName:@"HelveticaNeue-light" size:29]];
         [_instructionsLabel setTextColor:[UIColor whiteColor]];
         [_instructionsLabel setShadowColor:[UIColor grayColor]];
         [_instructionsLabel setShadowOffset:CGSizeMake(1, 1)];
-        [_instructionsLabel setNumberOfLines:2];
+        [_instructionsLabel setNumberOfLines:3];
         [_instructionsLabel setBackgroundColor:[UIColor clearColor]];
         [_instructionsLabel setTextAlignment:NSTextAlignmentCenter];
         
-        //_nameLabel.hidden = NO;
+
+        NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:@"     "];
+        
+        UIFont *font = [UIFont fontWithName:@"AvenirNext-HeavyItalic" size:26];
+        [attributedString addAttribute:NSFontAttributeName value:font range:NSMakeRange(0, [attributedString length])];
+        
+        [attributedString addAttribute:NSForegroundColorAttributeName
+                                 value:[UIColor yellowColor]
+                                 range:NSMakeRange(3, 2)];
+
+        
+        [_instructionsLabel setAttributedText:attributedString];
+ 
         
         [_nameLabel setText:@"Sahra"];
         [_nameLabel setFont:[UIFont fontWithName:@"HelveticaNeue-light" size:16]];
@@ -320,7 +331,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
         
         
         layer.hidden = YES;
-        //_switchButton.hidden = YES;
+
         _nameLabel.hidden = YES;
         _instructionsLabel.hidden = YES;
         _mixedIndicator.hidden = YES;
@@ -353,23 +364,9 @@ AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
         [self.view addGestureRecognizer:_panGestureRecognizer];
     }
 
-    //[_closeButton bootstrapStyle];
-    
     ani_step = 0;
     currentAngle = 0.0;
-    //[self startTimer];
-    
 
-    
-//    UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapScreen:)];
-//    [self.view addGestureRecognizer:tapGestureRecognizer];
-    
-    
-//    UIPanGestureRecognizer *popRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePanGesture:)];
-// 
-//    [self.view addGestureRecognizer:popRecognizer];
- 
-    
     [self refreshAlbumIcon];
     
     
@@ -411,7 +408,6 @@ AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
             NSLog(@"gesture went left");   
         }
 
-        
     }
 
     return YES;
@@ -441,29 +437,6 @@ AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
             vc.assets = galleryAssets;
             vc.selectedIndex = 0;
             [self.navigationController pushViewController:vc animated:YES ];
-            
-            
-//            NSMutableArray* assets = [NSMutableArray array];
-//            ALAssetsGroup* group = [ASAssetsLibrary sharedInstance].groups[1];
-//            [group enumerateAssetsUsingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {
-//                
-//                if (result){
-//                    ALAssetAdapter* gasset = [[ALAssetAdapter alloc] init];
-//                    gasset.asset = result;
-//                    
-//                    [assets addObject:gasset];
-//                }else{
-//
-//                    
-//                    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-//                    FullScreenPhotoController *vc = [storyboard instantiateViewControllerWithIdentifier:@"galleryView"];
-//                    vc.assets = galleryAssets;
-//                    vc.selectedIndex = 2;
-//                    [self.navigationController pushViewController:vc animated:YES ];
-//                }
-//                
-//            }];
-            
 
         }
         
@@ -488,7 +461,6 @@ AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
                 [self.interactionController cancelInteractiveTransition];
             }
         }
-        //_visibleRightMode = NO;
         self.interactionController = nil;
     }
     
@@ -496,17 +468,10 @@ AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
 
 }
 
-//
-//- (UIViewController *)childViewControllerForStatusBarHidden {
-//    return nil;
-//}
-
-
-
 - (void)viewWillAppear:(BOOL)animated
 {
 	[super viewWillAppear:animated];
-    //[self.navigationController.navigationBar setBackgroundColor:[UIColor redColor]];
+
     self.navigationController.navigationBarHidden = YES;
     
     
@@ -525,23 +490,9 @@ AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
     [super viewDidAppear:animated];
 }
 
-
-
-
 - (void)viewWillDisappear:(BOOL)animated
 {
 	[super viewWillDisappear:animated];
-    
-//    self.navigationController.navigationBarHidden = NO;
-//    
-//     NSLog(@"- (void)viewWillDisappear:(BOOL)animated ");
-//    [self removeFaceButtonAll];
-//    
-//    isReadyToScanFace = NO;
-//    [self teardownAVCapture];
-//    [unSelectedUSers removeAllObjects];
-//    //[selectedUserButtons removeAllObjects];
-//    [[NSNotificationCenter defaultCenter] removeObserver:self name:MotionOrientationChangedNotification object:nil];
 }
 
 
@@ -554,8 +505,6 @@ AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
     [self teardownAVCapture];
     [unSelectedUSers removeAllObjects];
 
-    //[galleryAssets removeAllObjects];
-    
     [[NSNotificationCenter defaultCenter] removeObserver:self name:MotionOrientationChangedNotification object:nil];
 
 }
@@ -565,10 +514,6 @@ AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-
-
-
-
 
 
 - (void)OrientationEventHandler:(NSNotification *)notification
@@ -650,9 +595,10 @@ AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
 
 - (void)startTimer
 {
-    if(aniTimer == nil)
-        aniTimer = [NSTimer scheduledTimerWithTimeInterval:3 target:self selector:@selector(spinit:) userInfo:nil repeats:YES];
-        //[self performSelector:@selector(spinit:) withObject:nil afterDelay:3];
+    if(aniTimer == nil){
+        aniTimer = [NSTimer scheduledTimerWithTimeInterval:4.0 target:self selector:@selector(spinit:) userInfo:nil repeats:YES];
+        [aniTimer fire];
+    }
 }
 
 - (void)spinit:(NSTimer *)timer
@@ -662,33 +608,45 @@ AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
          if(ani_step > 7) {
              [aniTimer invalidate];
              aniTimer = nil;
-             //_instructionsLabel.text = @"Thank you.";
              return;
          }
          
-         // AnglePoint[10] AngleDesc[10]
+         isReadyToScanFace = NO;
          
-//         CGPoint location = AnglePoint[ani_step];
-//         CGSize viewSize = self.view.bounds.size;
-//         aniLoc = CGPointMake((location.x - viewSize.width / 2) / viewSize.width,
-//                              (location.y - viewSize.height / 2) / viewSize.height);
-//         
-//         NSLog(@"GuidePoint = %@ in View(%@)", NSStringFromCGPoint(location), NSStringFromCGRect(self.view.bounds));
+         NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:AngleDesc[ani_step]];
          
-         _instructionsLabel.text = AngleDesc[ani_step];
+         UIFont *font = [UIFont fontWithName:@"AvenirNext-HeavyItalic" size:24];
+         [attributedString addAttribute:NSFontAttributeName value:font range:NSMakeRange(0, [attributedString length])];
          
-         //[self guideAnimation:aniLoc];
+         [attributedString addAttribute:NSForegroundColorAttributeName
+                                  value:[UIColor yellowColor]
+                                  range:NSMakeRange(3, 2)];
          
-         ani_step++;
-         
-         //[aniTimer pause];
-     });
-    
 
-    
-    
-    //[aniTimer pause];
-    
+         [UIView animateWithDuration:0.7
+                               delay:0
+                             options:UIViewAnimationCurveEaseIn | UIViewAnimationOptionAllowUserInteraction
+                          animations:^{
+                              _instructionsLabel.transform = CGAffineTransformMakeScale(1.3, 1.3);
+                              _instructionsLabel.alpha = 0.0;
+
+                              _instructionsLabel.transform = CGAffineTransformIdentity;
+                              _instructionsLabel.alpha = 1.0;
+                              
+                              [_instructionsLabel setAttributedText:attributedString];
+                              
+                          }
+                          completion:^(BOOL finished){
+                              isReadyToScanFace = YES;
+                           }];
+
+         
+
+         
+         
+
+         ani_step++;
+     });
 }
 
 //center = 160,284
@@ -901,7 +859,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
                          _switchButton.hidden = NO;
                          //_nameLabel.hidden = NO;
                          _instructionsLabel.hidden = NO;
-                         _mixedIndicator.hidden = NO;
+                         //_mixedIndicator.hidden = NO;
                          
                      } completion:^(BOOL finished) {
                          isStart = YES;
@@ -1593,98 +1551,6 @@ bail:
 }
 
 
-//- (void)processImage:(CMSampleBufferRef)sampleBuffer
-//{
-// 
-//	// got an image
-//	CVPixelBufferRef pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
-//	CFDictionaryRef attachments = CMCopyDictionaryOfAttachments(kCFAllocatorDefault, sampleBuffer, kCMAttachmentMode_ShouldPropagate);
-//	__block CIImage *ciImage = [[CIImage alloc] initWithCVPixelBuffer:pixelBuffer options:(__bridge NSDictionary *)attachments];
-//	if (attachments)
-//		CFRelease(attachments);
-//
-//	UIDeviceOrientation curDeviceOrientation = [[MotionOrientation sharedInstance] deviceOrientation];
-//    // [[UIDevice currentDevice] orientation];
-//	int exifOrientation;
-//
-//	enum {
-//		PHOTOS_EXIF_0ROW_TOP_0COL_LEFT			= 1, //   1  =  0th row is at the top, and 0th column is on the left (THE DEFAULT).
-//		PHOTOS_EXIF_0ROW_TOP_0COL_RIGHT			= 2, //   2  =  0th row is at the top, and 0th column is on the right.
-//		PHOTOS_EXIF_0ROW_BOTTOM_0COL_RIGHT      = 3, //   3  =  0th row is at the bottom, and 0th column is on the right.
-//		PHOTOS_EXIF_0ROW_BOTTOM_0COL_LEFT       = 4, //   4  =  0th row is at the bottom, and 0th column is on the left.
-//		PHOTOS_EXIF_0ROW_LEFT_0COL_TOP          = 5, //   5  =  0th row is on the left, and 0th column is the top.
-//		PHOTOS_EXIF_0ROW_RIGHT_0COL_TOP         = 6, //   6  =  0th row is on the right, and 0th column is the top.
-//		PHOTOS_EXIF_0ROW_RIGHT_0COL_BOTTOM      = 7, //   7  =  0th row is on the right, and 0th column is the bottom.
-//		PHOTOS_EXIF_0ROW_LEFT_0COL_BOTTOM       = 8  //   8  =  0th row is on the left, and 0th column is the bottom.
-//	};
-//	
-//	switch (curDeviceOrientation) {
-//		case UIDeviceOrientationPortraitUpsideDown:  // Device oriented vertically, home button on the top
-//			exifOrientation = PHOTOS_EXIF_0ROW_LEFT_0COL_BOTTOM;
-//			break;
-//		case UIDeviceOrientationLandscapeLeft:       // Device oriented horizontally, home button on the right
-//			if (isUsingFrontFacingCamera)
-//				exifOrientation = PHOTOS_EXIF_0ROW_BOTTOM_0COL_RIGHT;
-//			else
-//				exifOrientation = PHOTOS_EXIF_0ROW_TOP_0COL_LEFT;
-//			break;
-//		case UIDeviceOrientationLandscapeRight:      // Device oriented horizontally, home button on the left
-//			if (isUsingFrontFacingCamera)
-//				exifOrientation = PHOTOS_EXIF_0ROW_TOP_0COL_LEFT;
-//			else
-//				exifOrientation = PHOTOS_EXIF_0ROW_BOTTOM_0COL_RIGHT;
-//			break;
-//		case UIDeviceOrientationPortrait:            // Device oriented vertically, home button on the bottom
-//		default:
-//			exifOrientation = PHOTOS_EXIF_0ROW_RIGHT_0COL_TOP;
-//			break;
-//	}
-//    
-//	NSDictionary *imageOptions = [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:exifOrientation] forKey:CIDetectorImageOrientation];
-// 
-//    NSArray *features = [faceDetector featuresInImage:ciImage options:imageOptions];
-//    
-//    CMFormatDescriptionRef fdesc = CMSampleBufferGetFormatDescription(sampleBuffer);
-//    CGRect clap = CMVideoFormatDescriptionGetCleanAperture(fdesc, false /*originIsTopLeft == false*/);
-//
-//    
-//    if(self.faceMode == FaceModeCollect) { // 얼굴 등록일 경우.
-//        CIFaceFeature *feature = nil;
-//        
-//        if ([features count]) {
-//            feature = [features objectAtIndex:0];
-//        }
-//        
-//        if (self.frameNum == 15) { //매 0.5초마다 검사.
-//            if(ciImage && [features count] == 1)
-//                [self collectFace:feature inImage:ciImage ofUserID:_UserID];
-//            else if(ciImage && [features count] > 1 ) {
-//#warning 한명 이상은 얼굴 등록 할 수 없음 메시지 뿌려주기
-//                
-//            }
-//            self.frameNum = 1;
-//        }
-//        else {
-//            self.frameNum++;
-//        }
-//        
-//    }
-//    else { // 얼굴 인식일 경우.
-//        
-//        dispatch_async(dispatch_get_main_queue(), ^(void) {
-//            [self drawFaceBoxesForFeatures:features forVideoBox:clap orientation:curDeviceOrientation];
-//        });
-//        
-//        if ([features count]) {
-//            //NSLog(@"feature tracking id: %d", ((CIFaceFeature *)features[0]).trackingID);
-//            
-//            for (CIFaceFeature *feature in features) {
-//                if(ciImage) [self identifyFace:feature inImage:ciImage];
-//            }
-//        }
-//    }
-//
-//}
 
 - (void) captureOutput:(AVCaptureOutput *)captureOutput didOutputMetadataObjects:(NSArray *)faces fromConnection:(AVCaptureConnection *)connection
 {
@@ -1926,43 +1792,6 @@ bail:
 
 
 #pragma mark -
-//- (void)collectFace:(CIFaceFeature *)feature inImage:(CIImage *)ciImage ofUserID:(int)UserID
-//{
-//    if(_numPicsTaken > 10) return;
-// 
-//    if(feature.hasLeftEyePosition && feature.hasRightEyePosition){
-//        UIImageOrientation imageOrient = [[MotionOrientation sharedInstance] currentImageOrientationWithFrontCamera:isUsingFrontFacingCamera MirrorFlip:NO];
-//        BOOL isLandScape = [[MotionOrientation sharedInstance] deviceIsLandscape];
-//        cv::Mat cvImage = [FaceLib getFaceImage:ciImage feature:feature orient:imageOrient landscape:isLandScape];
-//        
-//        if(cvImage.data != NULL){
-//            NSData *serialized = [FaceLib serializeCvMat:cvImage];
-//
-//            dispatch_async(dispatch_get_main_queue(), ^{
-//                
-//                [SQLManager addTrainModelForUserID:UserID withFaceData:serialized];
-//                
-//                UIImage *faceImage = [FaceLib MatToUIImage:cvImage];
-//                if(faceImage) [faceImageView setImage:faceImage];
-//
-//                if(_numPicsTaken%2 == 0){
-//                    NSString *imagePath = [NSString stringWithFormat:@"hive%d.png", (int)_numPicsTaken * 10];
-//                    [_hiveImageView setImage:[UIImage imageNamed:imagePath]];
-//                }
-//
-//                self.instructionsLabel.text = [NSString stringWithFormat:@"Taken %@'s face : %ld of 10", self.UserName, (long)self.numPicsTaken];
-//                
-//                if (self.numPicsTaken == 10) {
-//                    [self performSelector:@selector(goNext) withObject:nil afterDelay:2];
-//                }
-//            });
-//            
-//            self.numPicsTaken++;
-//
-//            
-//        }
-//    }
-//}
 
 - (void)showShutterFlash
 {
@@ -2023,13 +1852,9 @@ bail:
                     }
                     
                     if(_numPicsTaken%2 == 0){
-//                        NSString *imagePath = [NSString stringWithFormat:@"hive%d.png", (int)_numPicsTaken * TOTAL_COLLECT];
-//                        [_hiveImageView setImage:[UIImage imageNamed:imagePath]];
-                        
-                        [_mixedIndicator updateWithTotalBytes:100 downloadedBytes:(int)_numPicsTaken * TOTAL_COLLECT];
+
+                        //[_mixedIndicator updateWithTotalBytes:100 downloadedBytes:(int)_numPicsTaken * TOTAL_COLLECT];
                     }
-                    
-                    //self.instructionsLabel.text = [NSString stringWithFormat:@"Taken %d / 10", (int)self.numPicsTaken];
                     
                     if(ani_step > 7){
                     //if (self.numPicsTaken == TOTAL_COLLECT) {

@@ -202,6 +202,8 @@ IDMPhotoBrowserDelegate, GalleryViewCellDelegate>
         
         return;
     }
+    
+
 
     if([AssetLib prepareFaceRecognizeForUser:_UserID])
     {

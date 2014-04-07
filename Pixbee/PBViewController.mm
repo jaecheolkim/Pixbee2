@@ -42,12 +42,8 @@
     [super viewDidLoad];
     
     FBHELPER.delegate = self;
-    
-    
+ 
     UIColor *strokeColor = [UIColor colorWithRed:0.0/255.0 green:0.0/255.0 blue:0.0/255.0 alpha:0.15];
-    
-    //UIFont *font = [UIFont fontWithName:@"AvenirLTStd-Black" size:16];
-    
     NSAttributedString *attributedText = [[NSAttributedString alloc] initWithString:@"Join with Facebook"
                                                                          attributes:@{
                                                                                       //NSFontAttributeName : font,
@@ -59,8 +55,6 @@
     
     [self.FBLoginButton setAttributedTitle:attributedText forState:UIControlStateNormal];
 
-    
-    //_indicator.hidden = YES;
     _FBLoginButton.alpha = 0.0;
     _FBLoginButton.enabled = NO;
     if(IsEmpty(GlobalValue.userName)) isFirstVisit = YES;
@@ -71,7 +65,6 @@
 
 - (void)viewDidUnload
 {
-    //    self.loginButton = nil;
     self.PixbeeLogo = nil;
     
     [super viewDidUnload];
@@ -82,9 +75,8 @@
     [super viewDidAppear:animated];
     
     if (FBSession.activeSession.state == FBSessionStateOpen
-        || FBSession.activeSession.state == FBSessionStateOpenTokenExtended) {
-        
-        //[self checkNexProcess];
+        || FBSession.activeSession.state == FBSessionStateOpenTokenExtended)
+    {
         
     } else {
         
@@ -97,43 +89,12 @@
                             _FBLoginButton.alpha = 1.0;
                         }
                         completion:^(BOOL finished) {
-                            //_FBLoginButton.hidden = NO;
+
                             _FBLoginButton.enabled = YES;
                         }];
         
     }
     
-
-//    [FBHELPER loadFBLoginView:self.viewFBLoginViewArea];
-//    FBHELPER.delegate = self;
-//    
-//    [_indicator setHidesWhenStopped:YES];
-    
-    // Check if user is cached and linked to Facebook, if so, bypass login
-//    if ([PFUser currentUser] && [PFFacebookUtils isLinkedWithUser:[PFUser currentUser]]) {
-//        NSDictionary *profile = [[PFUser currentUser] objectForKey:@"profile"];
-//        
-//        NSLog(@"Current User = %@", profile);
-//        
-//        [self checkNexProcess:profile];
-//        
-//    } else {
-//
-//        [UIView transitionWithView:_PixbeeLogo
-//                          duration:1.5
-//                           options:UIViewAnimationOptionTransitionCrossDissolve
-//                        animations:^{
-//                            _PixbeeLogo.image = [UIImage imageNamed:@"logo_2"];
-//                            _titleLabel.alpha = 0.0;
-//                            _FBLoginButton.alpha = 1.0;
-//                        }
-//                        completion:^(BOOL finished) {
-//                            //_FBLoginButton.hidden = NO;
-//                             _FBLoginButton.enabled = YES;
-//                        }];
-//        
-//        
-//    }
 }
 
 - (void)didReceiveMemoryWarning
@@ -156,37 +117,20 @@
 {
     if(isCalledCheckNewPhotos) return;
     isCalledCheckNewPhotos = YES;
-    
-    //[_viewFBLoginViewArea setHidden:YES];
-    //[_indicator startAnimating];
-    
-    //[AssetLib checkNewPhoto];
-    
+
     [self goNext];
 }
 
 - (void)goNext
 {
-    
-    // Start the long-running task and return immediately.
-//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^ {
-        
-        if(isCalledGoNext) return;
-        isCalledGoNext = YES;
-        
-        
-        [_indicator stopAnimating];
-        
-        self.navigationController.navigationBarHidden = NO;
-        
-//        if(!isFirstVisit)
-//            [self performSegueWithIdentifier:SEGUE_1_2_TO_3_1 sender:self];
-//        else
-            [self performSegueWithIdentifier:SEGUE_FACEANALYZE sender:self];
-        
-//    });
-    
+    if(isCalledGoNext) return;
+    isCalledGoNext = YES;
 
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [_indicator stopAnimating];
+        [self performSegueWithIdentifier:SEGUE_FACEANALYZE sender:self];
+    });
+    
 }
 
 
@@ -203,69 +147,7 @@
     
     
     [FBHELPER doFBLogin];
-
-//    NSArray *permissionsArray = @[ @"user_about_me" ];//, @"user_relationships", @"user_birthday", @"user_location"];
-//
-//    [PFFacebookUtils logInWithPermissions:permissionsArray block:^(PFUser *user, NSError *error) {
-//
-//        if (!user) {
-//            if (!error) {
-//                NSLog(@"Uh oh. The user cancelled the Facebook login.");
-//                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Log In Error" message:@"Uh oh. The user cancelled the Facebook login." delegate:nil cancelButtonTitle:nil otherButtonTitles:@"Dismiss", nil];
-//                [alert show];
-//            } else {
-//                NSLog(@"Uh oh. An error occurred: %@", error);
-////                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Log In Error" message:[error description] delegate:nil cancelButtonTitle:nil otherButtonTitles:@"Dismiss", nil];
-////                [alert show];
-//                
-//                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Log In Error" message:@"Check Setting > Facebook > Pixbee on/off or check Facebook login information" delegate:nil cancelButtonTitle:nil otherButtonTitles:@"Dismiss", nil];
-//                [alert show];
-//                [PFUser logOut];
-//                
-//                _FBLoginButton.enabled = YES;
-//                
-//                [_indicator stopAnimating];
-//   
-//            }
-//        } else {
-//            NSDictionary *profile = user[@"profile"];
-//            NSLog(@"Current User = %@", profile);
-//            
-//            if (user.isNew) {
-//                NSLog(@"User with facebook signed up and logged in! = %@", user);
-// 
-//                [[PFUser currentUser] setObject:profile forKey:@"profile"];
-//                [[PFUser currentUser] saveInBackground];
-//                
-//             } else {
-//                NSLog(@"User with facebook logged in! = %@", user);
-// 
-//             }
-//            
-//            if(IsEmpty(GlobalValue.userName)) {
-//                int UserID = [SQLManager newUserWithPFUser:profile];
-//                
-//                GlobalValue.userName = profile[@"name"]; // user.name;
-//                GlobalValue.UserID = UserID;
-//                NSLog(@"Default user name = %@ / id = %d", GlobalValue.userName, UserID);
-//                
-//                isFirstVisit = YES;
-//            } else {
-//                isFirstVisit = NO;
-//            }
-//                
-//            
-// 
-//            [self checkNexProcess];
-//            
-// 
-//        }
-//        
-//    }];
-    
-    //[_indicator startAnimating]; // Show loading indicator until login is finished
 }
-
 
 
 #pragma mark FBHelperDelegate
@@ -296,13 +178,6 @@
             isFirstVisit = NO;
         }
 
-//        // Start the long-running task and return immediately.
-//        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^
-//                       {
-//                           [self checkNexProcess];
-//                       });
-        
-        
         [self checkNexProcess];
         
 
@@ -323,91 +198,6 @@
     [_indicator stopAnimating];
 
 }
-
-////맨 마지막에 호출 됨.
-//- (void)FBLoginFetchedUserInfo:(id<FBGraphUser>)user
-//{
-//    NSLog(@"====== FB Loged in... user :%@", user );
-//    NSLog(@"========================FB Loged user : %@", user.name );
-//    
-//    if(IsEmpty(GlobalValue.userName)) {
-//        int UserID = [SQLManager newUserWithFBUser:user];
-//
-//        GlobalValue.userName = user.name;
-//        GlobalValue.UserID = UserID;
-//        NSLog(@"Default user name = %@ / id = %d", GlobalValue.userName, UserID);
-//        isFirstVisit = YES;
-//    }
-//#warning 이상하게 이게 두번 호출되어서 다음 NavigationController 문제가 생겼음 (결국 Push를 두번 한 꼴.)
-//    [self checkNewPhotos];
-//
-//}
-//
-//- (void)FBLogedInUser
-//{
-//    [self getFBFriend];
-//}
-//
-//- (void)FBHandleError {
-//    
-//    //[self performSegueWithIdentifier:SEGUE_FACEANALYZE sender:self];
-//}
-//
-//- (void)getFBFriend {
-//    dispatch_async(dispatch_get_main_queue(), ^(void) {
-//        FBHELPER.friends = nil;
-//        
-//        // 사진(small, normal, large, square
-//        NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
-//                                @"name,id,picture.type(normal)", @"fields",
-//                                nil
-//                                ];
-//        
-//        [FBRequestConnection startWithGraphPath:@"/me/friends"
-//                                     parameters:params
-//                                     HTTPMethod:@"GET"
-//                              completionHandler:^(
-//                                                  FBRequestConnection *connection,
-//                                                  id result,
-//                                                  NSError *error
-//                                                  ) {
-//                                  /* handle the result */
-//                                  NSDictionary *data = (NSDictionary *)result;
-//                                  NSArray *friends = [data objectForKey:@"data"];
-//                                  FBHELPER.friends = friends;
-//                                  
-//                                  [FBRequestConnection startWithGraphPath:@"/me"
-//                                                               parameters:nil
-//                                                               HTTPMethod:@"GET"
-//                                                        completionHandler:^(
-//                                                                            FBRequestConnection *connection,
-//                                                                            id result,
-//                                                                            NSError *error
-//                                                                            ) {
-//                                                            NSLog(@"ME : result = %@", result);
-//                                                            
-//                                                            NSMutableArray *array = [NSMutableArray arrayWithArray:FBHELPER.friends];
-//                                                            [array insertObject:@{@"name":result[@"name"], @"id":result[@"id"], @"picture":[NSNull null]} atIndex:0];
-//
-//                                                            FBHELPER.friends = (NSArray*)array;
-//                                                            
-//                                                            NSLog(@"Friends = %@", FBHELPER.friends);
-//                                                        }];
-//                                  
-//                                  
-//                                  
-//                                  //[self goNext];
-//                                  //[self performSegueWithIdentifier:SEGUE_FACEANALYZE sender:self];
-//                              }];
-//
-//    });
-//}
-
-//
-////친구 리스트를 다 받았을 때 위임되는 함수.
-//- (void)finishFriendLists:(NSArray*)friendList {
-//    
-//}
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
