@@ -30,6 +30,7 @@
 #import "UIImage+ImageEffects.h"
 #import "SDImageCache.h"
 
+//#import <QuartzCore/QuartzCore.h>
 #import "FXBlurView.h"
 
 #import "FullScreenPhotoController.h"
@@ -45,7 +46,7 @@
 static void *IsAdjustingFocusingContext = &IsAdjustingFocusingContext;
 
 #define CAPTURE_FPS 30
-const int TOTAL_COLLECT = 10;
+//const int TOTAL_COLLECT = 10;
 const double CHANGE_IN_IMAGE_FOR_COLLECTION = 0.1; //0.3;
 // How much the facial image should change before collecting a new face photo for training.
 const double CHANGE_IN_SECONDS_FOR_COLLECTION = 1.0 ; //1.0 원래는 1초에 하나씩이지만 0.3초마다 수집하게 바꿈.
@@ -110,9 +111,9 @@ AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
     AVCaptureStillImageOutput *stillImageOutput;
     AVCaptureVideoDataOutput *videoDataOutput;
     AVCaptureMetadataOutput *metadataOutput;
-
+    
     dispatch_queue_t videoDataOutputQueue;
-
+    
     BOOL isUsingFrontFacingCamera;
     BOOL isFlashOn;
     
@@ -124,10 +125,10 @@ AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
     CALayer *layer;
 	CATransformLayer *transformLayer;
     CGPoint aniLoc;
-
+    
     BOOL showGuide;
     UIImage *guideImage;
-
+    
     BOOL isReadyToScanFace;
     
     NSArray *instructPoint;
@@ -155,13 +156,15 @@ AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
     BOOL isStart;
     
     
-     NSMutableArray* galleryAssets;
+    NSMutableArray* galleryAssets;
+    
+    UIView *galleryView;
 
 }
 @property (weak, nonatomic) IBOutlet UIView *topView;
-//@property (weak, nonatomic) IBOutlet UILabel *timeLabel;
+
 @property (weak, nonatomic) IBOutlet UILabel *instructionsLabel;
-@property (weak, nonatomic) IBOutlet UILabel *nameLabel;
+
 @property (nonatomic) NSInteger frameNum;
 @property (nonatomic) NSInteger numPicsTaken;
 
@@ -169,22 +172,15 @@ AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
 
 @property (weak, nonatomic) IBOutlet UIButton *flashButton;
 @property (weak, nonatomic) IBOutlet UIButton *switchButton;
-@property (weak, nonatomic) IBOutlet UIImageView *hiveImageView;
-@property (weak, nonatomic) IBOutlet BasicBottomView *CameraBottomView;
-@property (nonatomic, retain) MBSwitch *cameraSwitch;
+//@property (weak, nonatomic) IBOutlet UIImageView *hiveImageView;
+
 @property (weak, nonatomic) IBOutlet UIButton *snapButton;
-@property (weak, nonatomic) IBOutlet UIScrollView *faceListScrollView;
-@property (weak, nonatomic) IBOutlet UIImageView *shutterImage;
-@property (weak, nonatomic) IBOutlet UIImageView *cameraImage;
-@property (weak, nonatomic) IBOutlet UIImageView *videoImage;
-@property (weak, nonatomic) IBOutlet UIButton *GalleryButton;
+//@property (weak, nonatomic) IBOutlet UIImageView *shutterImage;
+
 @property (weak, nonatomic) IBOutlet UIView *DimmedView;
 @property (weak, nonatomic) IBOutlet UIButton *startButton;
 
 @property (nonatomic, retain) CALayer *adjustingFocusLayer;
-
-@property (weak, nonatomic) RMDownloadIndicator *mixedIndicator;
-@property (assign, nonatomic)CGFloat downloadedBytes;
 
 @property (strong, nonatomic, readonly) UIPanGestureRecognizer *panGestureRecognizer;
 
@@ -192,6 +188,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
 @property (strong, nonatomic) Animator* animator;
 @property (strong, nonatomic) UIPercentDrivenInteractiveTransition* interactionController;
 
+//@property (weak, nonatomic) IBOutlet FXBlurView *BlurView;
 
 - (IBAction)toggleFlash:(id)sender;
 - (IBAction)switchCameras:(id)sender;
@@ -215,10 +212,13 @@ AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
 {
     [super viewDidLoad];
     
-    //self.BlurView.tintColor  = RGBA_COLOR(255, 255, 255, 0.3);
-    //self.BlurView.dynamic = YES;
-    //self.BlurView.alpha = 0.9;
-
+//    galleryView = [[UIView alloc] initWithFrame:CGRectMake(320, 0, 320, 568)];
+//    galleryView.backgroundColor = [UIColor blackColor];
+//    galleryView.alpha = 0.5;
+//    [self.view addSubview:galleryView];
+    
+    
+    
     NSLog(@"SegueFrom = %@", _segueid);
     if([_segueid isEqualToString:@"Segue3_1to6_1"]){
         [_closeButton setImage:[UIImage imageNamed:@"close"] forState:UIControlStateNormal];
@@ -241,9 +241,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
     
     
     isStart = NO;
-    
-//    _topView.backgroundColor = [UIColor clearColor];
-    
+
     old_time = 0;
     old_prepreprocessedFace = cv::Mat();
     
@@ -263,40 +261,17 @@ AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
     guideImage = [UIImage imageNamed:@"focus"];//[UIImage imageNamed:@"hive_line"];
     
     _instructionsLabel.hidden = YES;
-    _nameLabel.hidden = YES;
-    
-    [_faceListScrollView setBackgroundColor:[UIColor blackColor]];
-    [_faceListScrollView setAlpha:0.7];
-    [_faceListScrollView setHidden:YES];
-    
+
     if(self.faceMode == FaceModeCollect){
         
         self.navigationController.navigationBarHidden = YES;
         [_snapButton setHidden:YES];
-        [_GalleryButton setHidden:YES];
-        
-        //_timeLabel.hidden = YES;
 
-        
         [self setupGuide];
-        
-        _nameLabel.text = _UserName;
-        
+
         self.numPicsTaken = 0;
         
-        [_hiveImageView setHidden:YES];
-        RMDownloadIndicator *mixedIndicator = [[RMDownloadIndicator alloc]initWithFrame:CGRectMake(115, 450, 90, 90) type:kRMMixedIndictor];
-        [mixedIndicator setBackgroundColor:[UIColor clearColor]];
-        
-        //    [mixedIndicator setFillColor:[UIColor colorWithRed:16./255 green:119./255 blue:234./255 alpha:1.0f]];
-        //    [mixedIndicator setStrokeColor:[UIColor colorWithRed:16./255 green:119./255 blue:234./255 alpha:1.0f]];
-        [mixedIndicator setFillColor:[UIColor colorWithRed:237.0/255.0 green:188.0/255.0 blue:49.0/255.0 alpha:1.0]];
-        [mixedIndicator setStrokeColor:[UIColor colorWithRed:237.0/255.0 green:188.0/255.0 blue:49.0/255.0 alpha:1.0]];
-        mixedIndicator.radiusPercent = 0.45;
-        [self.view addSubview:mixedIndicator];
-        [mixedIndicator loadIndicator];
-        _mixedIndicator = mixedIndicator;
-        
+        //[_hiveImageView setHidden:YES];
 
 //       [_instructionsLabel setFont:[UIFont fontWithName:@"HelveticaNeue-light" size:29]];
         [_instructionsLabel setTextColor:[UIColor whiteColor]];
@@ -319,45 +294,19 @@ AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
         
         [_instructionsLabel setAttributedText:attributedString];
  
-        
-        [_nameLabel setText:@"Sahra"];
-        [_nameLabel setFont:[UIFont fontWithName:@"HelveticaNeue-light" size:16]];
-        [_nameLabel setTextColor:[UIColor whiteColor]];
-        [_nameLabel setShadowColor:[UIColor grayColor]];
-        [_nameLabel setShadowOffset:CGSizeMake(1, 1)];
-        [_nameLabel setNumberOfLines:2];
-        [_nameLabel setBackgroundColor:[UIColor clearColor]];
-        [_nameLabel setTextAlignment:NSTextAlignmentCenter];
-        
-        
+
         layer.hidden = YES;
 
-        _nameLabel.hidden = YES;
         _instructionsLabel.hidden = YES;
-        _mixedIndicator.hidden = YES;
-        
-        
-        
+
     } else {
-        [_GalleryButton setHidden:YES];
+
         _DimmedView.hidden = YES;
         _startButton.hidden = YES;
         
-        //[_closeButton setHidden:YES];
-        [_hiveImageView setHidden:YES];
         [_instructionsLabel setHidden:YES];
         
-        self.cameraSwitch = [[MBSwitch alloc] initWithFrame:CGRectMake(248, 41, 61.0, 18.0)]; //12
-        [self.CameraBottomView addSubview:_cameraSwitch];
-        [_cameraSwitch addTarget:self action:@selector(switchCameraVideo:) forControlEvents:UIControlEventValueChanged];
-        
-#warning 이번 버전(최초)에서는 카메라/비디오 스위치와 비디오 모드 빼고 가기로 함.
-        _cameraSwitch.hidden = YES;
-        _cameraImage.hidden = YES;
-        _videoImage.hidden = YES;
-        
-        
-        
+
         _panGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self
                                                                         action:@selector(handlePanGesture:)];
         _panGestureRecognizer.delegate = self;
@@ -367,20 +316,80 @@ AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
     ani_step = 0;
     currentAngle = 0.0;
 
-    [self refreshAlbumIcon];
+    //[self refreshAlbumIcon];
     
     
     self.navigationController.delegate = self;
     self.animator = [Animator new];
 
+    NSLog(@"viewDidLoad = %@", @"---- END");
 }
 
-- (id<UIViewControllerAnimatedTransitioning>)navigationController:(UINavigationController *)navigationController animationControllerForOperation:(UINavigationControllerOperation)operation fromViewController:(UIViewController *)fromVC toViewController:(UIViewController *)toVC
+
+
+- (void)viewWillAppear:(BOOL)animated
+{
+     NSLog(@"viewWillAppear = %@", @"---- START");
+    
+	[super viewWillAppear:animated];
+
+    self.navigationController.navigationBarHidden = YES;
+
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(OrientationEventHandler:)
+												 name:MotionOrientationChangedNotification object:nil];
+
+    [self setupAVCapture];
+    [self initFaceRecognize];
+    
+    NSLog(@"viewWillAppear = %@", @"---- END");
+    
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+	[super viewWillDisappear:animated];
+}
+
+
+- (void)viewDidDisappear:(BOOL)animated
+{
+    NSLog(@"viewDidDisappear = %@", @"---- START");
+    
+    [super viewDidDisappear:animated];
+    [self removeFaceButtonAll];
+    
+    isReadyToScanFace = NO;
+    [self teardownAVCapture];
+    [unSelectedUSers removeAllObjects];
+
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:MotionOrientationChangedNotification object:nil];
+    
+    NSLog(@"viewDidDisappear = %@", @"---- END");
+
+}
+
+- (void)didReceiveMemoryWarning
+{
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+
+
+
+- (id<UIViewControllerAnimatedTransitioning>)navigationController:(UINavigationController *)navigationController
+                                  animationControllerForOperation:(UINavigationControllerOperation)operation
+                                               fromViewController:(UIViewController *)fromVC
+                                                 toViewController:(UIViewController *)toVC
 {
     self.animator.operation = operation;
     
     if (operation == UINavigationControllerOperationPop) {
-        
         return self.animator;
     } else if(operation == UINavigationControllerOperationPush) {
         return self.animator;
@@ -390,7 +399,8 @@ AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
     
 }
 
-- (id<UIViewControllerInteractiveTransitioning>)navigationController:(UINavigationController *)navigationController interactionControllerForAnimationController:(id<UIViewControllerAnimatedTransitioning>)animationController
+- (id<UIViewControllerInteractiveTransitioning>)navigationController:(UINavigationController *)navigationController
+                         interactionControllerForAnimationController:(id<UIViewControllerAnimatedTransitioning>)animationController
 {
     return self.interactionController;
 }
@@ -402,19 +412,91 @@ AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
         CGPoint velocity = [(UIPanGestureRecognizer*)gestureRecognizer velocityInView:self.view];
         
         if(velocity.x > 0) {
-           return NO;
+            //if(self.animator.operation == UINavigationControllerOperationPush) return YES;
+            return NO;
         }
         else {
-            NSLog(@"gesture went left");   
+            NSLog(@"gesture went left");
+            
         }
-
+        
     }
-
+    
     return YES;
     
 }
 
- 
+
+
+//- (void)handlePanGesture:(UIPanGestureRecognizer *)gestureRecognizer {
+//
+//    //if(![galleryAssets count]) return;
+//
+//    UIView* view = self.navigationController.view;
+//    if (gestureRecognizer.state == UIGestureRecognizerStateBegan) {
+//
+//        CGPoint location = [gestureRecognizer locationInView:view];
+//        if (location.x <  CGRectGetMidX(view.bounds) ) {  // POP
+//            self.animator.operation = UINavigationControllerOperationPop;
+//
+//
+//        }
+//
+//        else if(location.x >  CGRectGetMidX(view.bounds) ){// PUSH
+//            self.animator.operation = UINavigationControllerOperationPush;
+//
+//
+//        }
+//
+//    }
+//    else if (gestureRecognizer.state == UIGestureRecognizerStateChanged)
+//    {
+//        CGPoint translation = [gestureRecognizer translationInView:view];
+//        CGFloat d = fabs(translation.x / CGRectGetWidth(view.bounds));
+//        CGRect frame;
+//
+//        if(self.animator.operation == UINavigationControllerOperationPush)
+//            frame = CGRectMake(320 - d * 320, 0, 320, 568);
+//        else
+//            frame = CGRectMake(d * 320, 0, 320, 568);
+//
+//        galleryView.frame = frame;
+//        NSLog(@"UIGestureRecognizerStateChanged d = %f", d);
+//    }
+//    else if (gestureRecognizer.state == UIGestureRecognizerStateEnded)
+//    {
+//        NSLog(@"animator.operation = %d / x = %d", (int)(self.animator.operation), (int)[gestureRecognizer velocityInView:view].x);
+//        if(self.animator.operation == UINavigationControllerOperationPush){
+//            if ([gestureRecognizer velocityInView:view].x <= 0) {
+//                galleryView.frame = CGRectMake(0, 0, 320, 568);
+//                [[NSNotificationCenter defaultCenter] postNotificationName:@"RootViewControllerEventHandler"
+//                                                                    object:self
+//                                                                  userInfo:@{@"panGestureEnabled":@"NO"}];
+//
+//            } else {
+//                galleryView.frame = CGRectMake(320, 0, 320, 568);
+//            }
+//        } else if(self.animator.operation == UINavigationControllerOperationPop){
+//            if ([gestureRecognizer velocityInView:view].x > 0) {
+//                galleryView.frame = CGRectMake(320, 0, 320, 568);
+//                [[NSNotificationCenter defaultCenter] postNotificationName:@"RootViewControllerEventHandler"
+//                                                                    object:self
+//                                                                  userInfo:@{@"panGestureEnabled":@"YES"}];
+//
+//
+//            } else {
+//                galleryView.frame = CGRectMake(0, 0, 320, 568);
+//            }
+//        }
+//        self.interactionController = nil;
+//    }
+//
+//    return;
+//
+//}
+
+
+
 - (void)handlePanGesture:(UIPanGestureRecognizer *)gestureRecognizer {
     
     if(![galleryAssets count]) return;
@@ -429,7 +511,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
             [self.navigationController popViewControllerAnimated:YES];
         }
         
-        else if(location.x >  CGRectGetMidX(view.bounds) ){// && viewControllerCount == 1) { //right half
+        else if(location.x >  300) {//CGRectGetMidX(view.bounds) ){  //right half
             self.interactionController = [UIPercentDrivenInteractiveTransition new];
             
             UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
@@ -437,13 +519,14 @@ AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
             vc.assets = galleryAssets;
             vc.selectedIndex = 0;
             [self.navigationController pushViewController:vc animated:YES ];
-
+            
         }
         
     } else if (gestureRecognizer.state == UIGestureRecognizerStateChanged) {
         CGPoint translation = [gestureRecognizer translationInView:view];
         CGFloat d = fabs(translation.x / CGRectGetWidth(view.bounds));
         [self.interactionController updateInteractiveTransition:d];
+        NSLog(@"UIGestureRecognizerStateChanged d = %f", d);
     } else if (gestureRecognizer.state == UIGestureRecognizerStateEnded) {
         NSLog(@"animator.operation = %d / x = %d", (int)(self.animator.operation), (int)[gestureRecognizer velocityInView:view].x);
         if(self.animator.operation == UINavigationControllerOperationPush){
@@ -465,56 +548,8 @@ AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
     }
     
     return;
-
-}
-
-- (void)viewWillAppear:(BOOL)animated
-{
-	[super viewWillAppear:animated];
-
-    self.navigationController.navigationBarHidden = YES;
-    
-    
-    NSLog(@"- (void)viewWillAppear:(BOOL)animated ");
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(OrientationEventHandler:)
-												 name:MotionOrientationChangedNotification object:nil];
-
-    [self setupAVCapture];
-    [self initFaceRecognize];
     
 }
-
-- (void)viewDidAppear:(BOOL)animated
-{
-    [super viewDidAppear:animated];
-}
-
-- (void)viewWillDisappear:(BOOL)animated
-{
-	[super viewWillDisappear:animated];
-}
-
-
-- (void)viewDidDisappear:(BOOL)animated
-{
-    [super viewDidDisappear:animated];
-    [self removeFaceButtonAll];
-    
-    isReadyToScanFace = NO;
-    [self teardownAVCapture];
-    [unSelectedUSers removeAllObjects];
-
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:MotionOrientationChangedNotification object:nil];
-
-}
-
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
-
 
 - (void)OrientationEventHandler:(NSNotification *)notification
 {
@@ -524,20 +559,10 @@ AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
     
     dispatch_async(dispatch_get_main_queue(), ^(void) {
         [UIView animateWithDuration:0.2 animations:^{
-            _shutterImage.transform = CGAffineTransformMakeRotation(currentAngle) ;
-            _cameraImage.transform = CGAffineTransformMakeRotation(currentAngle) ;
-            _videoImage.transform = CGAffineTransformMakeRotation(currentAngle) ;
-            _GalleryButton.transform = CGAffineTransformMakeRotation(currentAngle) ;
-            
+            //_shutterImage.transform = CGAffineTransformMakeRotation(currentAngle) ;
             _flashButton.transform  = CGAffineTransformMakeRotation(currentAngle) ;
             _switchButton.imageView.transform  = CGAffineTransformMakeRotation(currentAngle) ;
             
-            // Face Icon rotate
-            for(UIView *view in _faceListScrollView.subviews){
-                if([view isKindOfClass:[UIButton class]]){
-                    view.transform  = CGAffineTransformMakeRotation(currentAngle) ;
-                }
-            }
         }];
 
     });
@@ -759,76 +784,77 @@ AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
         }];
 
     }
-
 }
 
-
-//- (IBAction)closeCamera:(id)sender
-//{
-//    //[self teardownAVCapture];
-//    
-//    if(self.faceMode == FaceModeCollect && [_segueid isEqualToString:SEGUE_FACEANALYZE])
-//    {
-//        [self goNext];
-//        
-//    } else {
-//        if([_segueid isEqualToString:SEGUE_3_1_TO_6_1]) {
-//            // Check face DB
-//        }
-//        
-//        self.navigationController.navigationBarHidden = NO;
-//        [self.navigationController popViewControllerAnimated:YES];
-//        //[self dismissViewControllerAnimated:YES completion:nil];
-//    }
-//}
 
 // 사진 저장하는 모듈  (DB 포함)
 -(void)saveImage:(CMSampleBufferRef)jpegSampleBuffer
 {
     NSData *imgData = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:jpegSampleBuffer];
-    
-    ALAssetsLibrary *assLib = [[ALAssetsLibrary alloc] init];
-    
-    [assLib saveImageData:imgData
-                 metadata:nil
-                  toAlbum:@"Pixbee"
-      withCompletionBlock:^(NSURL *assetURL, NSError *error) {
-          if (error) {
 
-              if ([ALAssetsLibrary authorizationStatus] != ALAuthorizationStatusAuthorized) {
-                  
-                  NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-                  BOOL showCameraRollGuide = [userDefaults boolForKey:@"SHOWCAMERAROLLGUIDE"];
-                  
-                  if (!showCameraRollGuide) {
-                      UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"To save Photos to Camera Roll", @"To save Photos to Camera Roll")
-                                                                      message:NSLocalizedString(@"Go to iPhone Settings > Privacy > Photo,\nand turn ON Pixbee.", @"Go to iPhone Settings > Privacy > Photo,\nand turn ON Pudding Camera.")
-                                                                     delegate:nil
-                                                            cancelButtonTitle:NSLocalizedString(@"Done", @"Done")
-                                                            otherButtonTitles:nil];
-                      [alert show];
-                      
-                      [userDefaults setBool:YES forKey:@"SHOWCAMERAROLLGUIDE"];
-                      [userDefaults synchronize];
-                  }
-              }
+    
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        @autoreleasepool {
+            
+            
+            UIImage *image = [UIImage imageWithData:imgData];
+            image = [image fixRotation];
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self saveImageAnimation:image];
+            });
+            
+            
+            
+            
+            [AssetLib.assetsLibrary saveImageData:imgData
+                                         metadata:nil
+                                          toAlbum:@"Pixbee"
+                              withCompletionBlock:^(NSURL *assetURL, NSError *error) {
+                                  if (error) {
+                                      dispatch_async(dispatch_get_main_queue(), ^{
+                                          if ([ALAssetsLibrary authorizationStatus] != ALAuthorizationStatusAuthorized) {
+                                              
+                                              NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+                                              BOOL showCameraRollGuide = [userDefaults boolForKey:@"SHOWCAMERAROLLGUIDE"];
+                                              
+                                              if (!showCameraRollGuide) {
+                                                  UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"To save Photos to Camera Roll", @"To save Photos to Camera Roll")
+                                                                                                  message:NSLocalizedString(@"Go to iPhone Settings > Privacy > Photo,\nand turn ON Pixbee.", @"Go to iPhone Settings > Privacy > Photo,\nand turn ON Pudding Camera.")
+                                                                                                 delegate:nil
+                                                                                        cancelButtonTitle:NSLocalizedString(@"Done", @"Done")
+                                                                                        otherButtonTitles:nil];
+                                                  [alert show];
+                                                  
+                                                  [userDefaults setBool:YES forKey:@"SHOWCAMERAROLLGUIDE"];
+                                                  [userDefaults synchronize];
+                                              }
+                                          }
+                                      });
 
-          }
-          
-          else {
-              UIImage *image = [UIImage imageWithData:imgData];
-              image = [image fixRotation];
-              [[SDImageCache sharedImageCache] storeImage:image forKey:@"LastImage" toDisk:YES];
-              
-              NSLog(@"PHOTO SAVED - assetURL: %@", assetURL);
-              
-              [self savePhoto:assetURL users:selectedUsers];
-              
-              [[NSNotificationCenter defaultCenter] postNotificationName:@"RootViewControllerEventHandler"
-                                                                  object:self
-                                                                userInfo:@{@"refreshBGImage":@"YES"}];
-          }
-      }];
+                                      
+                                  }
+                                  
+                                  else {
+                                      
+                                      [[SDImageCache sharedImageCache] storeImage:image forKey:@"LastImage" toDisk:YES];
+                                      
+                                      [self savePhoto:assetURL users:selectedUsers];
+                                      
+                                      dispatch_async(dispatch_get_main_queue(), ^{
+                                          [[NSNotificationCenter defaultCenter] postNotificationName:@"RootViewControllerEventHandler"
+                                                                                              object:self
+                                                                                            userInfo:@{@"refreshBGImage":@"YES"}];
+                                      });
+                                      
+                                  }
+                              }];
+            
+            
+        }
+    });
+    
+
 
 }
 
@@ -857,9 +883,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
                          _startButton.hidden = YES;
                          layer.hidden = NO;
                          _switchButton.hidden = NO;
-                         //_nameLabel.hidden = NO;
                          _instructionsLabel.hidden = NO;
-                         //_mixedIndicator.hidden = NO;
                          
                      } completion:^(BOOL finished) {
                          isStart = YES;
@@ -893,7 +917,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
         NSURL *assetURL = [asset valueForProperty:ALAssetPropertyAssetURL];
         GlobalValue.lastAssetURL = assetURL.absoluteString;
         
-        [self refreshAlbumIcon];
+        //[self refreshAlbumIcon];
         
         // add galleryAsset
         ALAssetAdapter* gasset = [[ALAssetAdapter alloc] init];
@@ -916,7 +940,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
 {
     [AssetLib loadThumbImage:^(UIImage *thumbImage)
      {
-         [_GalleryButton setImage:thumbImage forState:UIControlStateNormal];
+//         [_GalleryButton setImage:thumbImage forState:UIControlStateNormal];
      }];
 }
 
@@ -926,10 +950,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
 - (void)goNext
 {
     self.navigationController.navigationBarHidden = NO;
-    //[self performSegueWithIdentifier:SEGUE_6_1_TO_2_2 sender:self];
-    
-    
-    
+
     [self performSegueWithIdentifier:@"goInvitation" sender:self];
 }
 
@@ -1007,8 +1028,6 @@ AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
     
     NSLog(@"ADD || selectedUsers = %@", selectedUsers);
     NSLog(@"facecount = %d / frame = %@",faceCount, NSStringFromCGRect(button.frame));
-    
-    //[_faceListScrollView setContentSize:CGSizeMake(10 + faceCount*60 + 50, 67.0)];
 }
 
 - (void) imageTouch:(id) sender withEvent:(UIEvent *) event
@@ -1079,12 +1098,14 @@ AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
 {
     isReadyToScanFace = NO;
     
-    NSDictionary *detectorOptions = @{ CIDetectorAccuracy : CIDetectorAccuracyLow, CIDetectorTracking : @(YES) };
-	faceDetector = [CIDetector detectorOfType:CIDetectorTypeFace context:nil options:detectorOptions];
+    if(!faceDetector) {
+        NSDictionary *detectorOptions = @{ CIDetectorAccuracy : CIDetectorAccuracyLow, CIDetectorTracking : @(YES) };
+        faceDetector = [CIDetector detectorOfType:CIDetectorTypeFace context:nil options:detectorOptions];
+    }
     
     if(self.faceMode == FaceModeRecognize) {
         NSArray *trainModel = [SQLManager getTrainModels];
-        //NSLog(@"trainModel = %@", trainModel);
+        NSLog(@"trainModel = %d", (int)[trainModel count]);
         
         if(!IsEmpty(trainModel)){
             isFaceRecRedy = [FaceLib initRecognizer:LBPHFaceRecognizer models:trainModel];
@@ -1793,6 +1814,33 @@ bail:
 
 #pragma mark -
 
+- (void)saveImageAnimation:(UIImage *)image
+{
+    //dispatch_async(dispatch_get_main_queue(), ^{
+        UIImageView *flashView = [[UIImageView alloc] initWithFrame:[previewView frame]];
+        flashView.image = image;
+        [flashView setBackgroundColor:[UIColor clearColor]];
+        [previewView addSubview:flashView];
+        
+        CGAffineTransform transform = CGAffineTransformMakeScale(0.7, 0.7);
+        transform = CGAffineTransformTranslate(transform, 420, 0);
+
+        
+        [UIView animateWithDuration:.3f
+                              delay:0
+                            options:UIViewAnimationCurveEaseIn | UIViewAnimationOptionAllowUserInteraction
+                         animations:^{
+                             flashView.transform = transform;
+
+                         }
+                         completion:^(BOOL finished){
+                             [flashView removeFromSuperview];
+                         }
+         ];
+    //});
+
+}
+
 - (void)showShutterFlash
 {
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -1837,14 +1885,14 @@ bail:
                     
                     [self showShutterFlash];
                     
-                    cv::Mat mirroredFace;
-                    cv::flip(preprocessedFace, mirroredFace, 1);
+//                    cv::Mat mirroredFace;
+//                    cv::flip(preprocessedFace, mirroredFace, 1);
                     
                     NSData *serialized = [FaceLib serializeCvMat:preprocessedFace];
                     [SQLManager addTrainModelForUserID:UserID withFaceData:serialized];
                     
-                    serialized = [FaceLib serializeCvMat:mirroredFace];
-                    [SQLManager addTrainModelForUserID:UserID withFaceData:serialized];
+//                    serialized = [FaceLib serializeCvMat:mirroredFace];
+//                    [SQLManager addTrainModelForUserID:UserID withFaceData:serialized];
                     
                     if(GlobalValue.testMode){
                         UIImage *faceImage = [FaceLib MatToUIImage:preprocessedFace];
@@ -2003,25 +2051,15 @@ bail:
         {
            
             if(confidence < 50.f){ // For LBPH
-//                if(GlobalValue.testMode)
-                    name = [NSString stringWithFormat:@"%@:%.2f", dbUserName, confidence];
-//                else
-//                    name = [NSString stringWithFormat:@"%@ ", tmpUserName];
+                name = [NSString stringWithFormat:@"%@:%.2f", dbUserName, confidence];
                 isFindFace = YES;
             }
-            //else if(confidence > 50.f && confidence < 60.f){ // For LBPH
             else if(confidence > 50.f && confidence < 80.f){ // For LBPH
-//                if(GlobalValue.testMode)
-                    name = [NSString stringWithFormat:@"? %@:%.2f", dbUserName, confidence];
-//                else
-//                    name = [NSString stringWithFormat:@"? %@ ", tmpUserName];
+                name = [NSString stringWithFormat:@"? %@:%.2f", dbUserName, confidence];
                 isFindFace = YES;
             }
             else {
-//                if(GlobalValue.testMode)
-                    name = [NSString stringWithFormat:@"Unknown[%d:%.2f]", UserID, confidence];
-//                else
-//                    name = [NSString stringWithFormat:@"Unknown"];
+                name = [NSString stringWithFormat:@"Unknown[%d:%.2f]", UserID, confidence];
                 isFindFace = NO;
             }
             
@@ -2029,31 +2067,18 @@ bail:
         }
         else if(currentRecognizerType == EigenFaceRecognizer || currentRecognizerType == FisherFaceRecognizer)
         {
-            //NSString *name;
             if(confidence >= 0.8f){ // For EigenFace
-//                if(GlobalValue.testMode)
-                    name = [NSString stringWithFormat:@"%@:%.2f", dbUserName, confidence];
-//                else
-//                    name = [NSString stringWithFormat:@"%@ ", tmpUserName];
-                
+                name = [NSString stringWithFormat:@"%@:%.2f", dbUserName, confidence];
                 isFindFace = YES;
             }
             else if(confidence > 0.7f && confidence < 0.8f){ // For EigenFace
-//                if(GlobalValue.testMode)
-                    name = [NSString stringWithFormat:@"? %@:%.2f", dbUserName, confidence];
-//                else
-//                    name = [NSString stringWithFormat:@"? %@ ", tmpUserName];
-                
+                name = [NSString stringWithFormat:@"? %@:%.2f", dbUserName, confidence];
                 isFindFace = YES;
             }
             else {
-//                if(GlobalValue.testMode)
-                    name = [NSString stringWithFormat:@"Unknown[%d:%.2f]", UserID, confidence];
-//                else
-//                    name = [NSString stringWithFormat:@"Unknown"];
+                name = [NSString stringWithFormat:@"Unknown[%d:%.2f]", UserID, confidence];
                 isFindFace = NO;
             }
-            //recognisedFaces[@(trackingID)] = name;
         }
         
         recognisedFaces[@(trackingID)] = name;
@@ -2063,18 +2088,11 @@ bail:
         if(allkeys.count > 1){
             for(NSNumber *key in allkeys)
             {
-                //rint cTrackingID = [key intValue];
                 NSString *value = recognisedFaces[key];
-                
-                
-                //if(cTrackingID == trackingID) continue;
-                
-                
+
                 if(([value rangeOfString:dbUserName].location != NSNotFound) ||
                    ([value rangeOfString:[NSString stringWithFormat:@"? %@",dbUserName]].location != NSNotFound))
-                    //if([value hasPrefix:tmpUserName] || [value hasPrefix:[NSString stringWithFormat:@"? %@",tmpUserName]])
                 {
-                    //NSString *vName = [self getPrefix:value divider:@":"];
                     NSString *cstring = [self getSuffix:value divider:@":"];
                     if(!IsEmpty(cstring)) {
                         double vConfidence = [[self getSuffix:value divider:@":"] doubleValue];
@@ -2099,14 +2117,10 @@ bail:
         
         dispatch_async(dispatch_get_main_queue(), ^{
             if(isFindFace)
-                //[self addNewFaceIcon:UserID];
                 [self addNewFaceButton:UserID];
             
         });
     }
-
-    //if([processing[@(trackingID)] intValue] > 2);
-    //[processing removeObjectForKey:[NSNumber numberWithInt:trackingID]];
 }
 
 //this comes from http://code.opencv.org/svn/gsoc2012/ios/trunk/HelloWorld_iOS/HelloWorld_iOS/VideoCameraController.m

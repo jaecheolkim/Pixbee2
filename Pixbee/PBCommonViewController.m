@@ -10,6 +10,8 @@
 #import "SDImageCache.h"
 #import "UIImage+ImageEffects.h"
 #import "UIImage+Addon.h"
+#import "SVProgressHUD.h"
+
 @interface PBCommonViewController () //<UITextFieldDelegate>
 {
     UIImageView *navBarHairlineImageView;
@@ -272,5 +274,22 @@
 }
 
 
+#pragma mark - SVProgressHUD
+
+- (void)showProgressHUDWithMessage:(NSString *)message {
+    [SVProgressHUD showWithStatus:message];
+}
+
+- (void)hideProgressHUD:(BOOL)animated {
+    [SVProgressHUD dismiss];
+}
+
+- (void)showProgressHUDCompleteMessage:(NSString *)message {
+    if (message) {
+        [SVProgressHUD showSuccessWithStatus:message];
+    } else {
+        [SVProgressHUD dismiss];
+    }
+}
 
 @end

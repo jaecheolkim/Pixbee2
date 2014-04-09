@@ -26,4 +26,11 @@
 
 // ColorButton Protocol
 - (void)colorButtonHandler:(id)sender;
+
+
+// Progress methods
+- (void)showProgressHUDWithMessage:(NSString *)message;
+- (void)hideProgressHUD:(BOOL)animated;
+- (void)showProgressHUDCompleteMessage:(NSString *)message;
+
 @end

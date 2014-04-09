@@ -8,8 +8,13 @@
 
 #import "InvitationController.h"
 #import "PBAppDelegate.h"
+#import "SDImageCache.h"
+#import "UIImage+ImageEffects.h"
+#import "UIImage+Addon.h"
+
 @interface InvitationController ()
 
+@property (weak, nonatomic) IBOutlet UIImageView *bgImageView;
 @property (weak, nonatomic) IBOutlet UILabel *InvitationLabel;
 @property (weak, nonatomic) IBOutlet UILabel *DescriptionLabel;
 @property (weak, nonatomic) IBOutlet UIButton *shareFBButton;
@@ -34,6 +39,8 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    [self refreshBGImage:nil];
 	// Do any additional setup after loading the view.
     
     // Uncomment to display a logo as the navigation bar title
@@ -88,6 +95,26 @@
 }
 
 #pragma mark ButtonAction
+
+- (void)refreshBGImage:(UIImage*)image
+{
+    
+    UIImage *lastImage;
+    
+    if(image != nil) {
+        lastImage = image;
+    } else {
+        lastImage = [[SDImageCache sharedImageCache] imageFromDiskCacheForKey:@"LastImage"];
+        if(IsEmpty(lastImage)) {
+            lastImage = [UIImage imageNamed:@"bg.png"];
+        }
+    }
+    
+    
+    lastImage = [lastImage applyExtraLightEffect];
+    self.bgImageView.image = lastImage;
+    
+}
 
 - (IBAction)skipButtonClickHandler:(id)sender {
     //[self performSegueWithIdentifier:SEGUE_1_4_TO_3_1 sender:self];

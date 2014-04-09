@@ -102,25 +102,6 @@ IDMPhotoBrowserDelegate, GalleryViewCellDelegate>
  
     [self initRefreshControl];
 
-
-
-    // List all fonts on iPhone
-//    NSArray *familyNames = [[NSArray alloc] initWithArray:[UIFont familyNames]];
-//    NSArray *fontNames;
-//    NSInteger indFamily, indFont;
-//    for (indFamily=0; indFamily<[familyNames count]; ++indFamily)
-//    {
-//        NSLog(@"Family name: %@", [familyNames objectAtIndex:indFamily]);
-//        fontNames = [[NSArray alloc] initWithArray:
-//                     [UIFont fontNamesForFamilyName:
-//                      [familyNames objectAtIndex:indFamily]]];
-//        for (indFont=0; indFont<[fontNames count]; ++indFont)
-//        {
-//            NSLog(@"    Font name: %@", [fontNames objectAtIndex:indFont]);
-//        }
-// 
-//    }
- 
 }
 
 
@@ -202,8 +183,6 @@ IDMPhotoBrowserDelegate, GalleryViewCellDelegate>
         
         return;
     }
-    
-
 
     if([AssetLib prepareFaceRecognizeForUser:_UserID])
     {
@@ -249,18 +228,18 @@ IDMPhotoBrowserDelegate, GalleryViewCellDelegate>
                     dispatch_async(dispatch_get_main_queue(), ^{
                         
                         if(NSNotFound == [self.photos indexOfObject:photoInfo] && !IsEmpty(photoInfo)) {
-//                            [self.photos addObject:photoInfo];
-//                            [self.collectionView reloadData];
+                            [self.photos addObject:photoInfo];
+                            [self.collectionView reloadData];
                             
-                            [self.collectionView performBatchUpdates:^{
-                                //NSInteger lastIndex = [self.photos count]-1;
-                                [self.photos insertObject:photoInfo atIndex:0];
-                                NSIndexPath *lastIndexPath = [NSIndexPath indexPathForRow:0 inSection:0];
-                                [self.collectionView insertItemsAtIndexPaths:@[lastIndexPath]];
-                            //
-                            } completion:^(BOOL finished) {
-                            //
-                             }];
+//                            [self.collectionView performBatchUpdates:^{
+//                                //NSInteger lastIndex = [self.photos count]-1;
+//                                [self.photos insertObject:photoInfo atIndex:0];
+//                                NSIndexPath *lastIndexPath = [NSIndexPath indexPathForRow:0 inSection:0];
+//                                [self.collectionView insertItemsAtIndexPaths:@[lastIndexPath]];
+//                                
+//                            } completion:^(BOOL finished) {
+//                                
+//                            }];
                             
                         }
                         
@@ -398,8 +377,6 @@ IDMPhotoBrowserDelegate, GalleryViewCellDelegate>
         cell.checkIcon.hidden = YES;
     }
 
-
-    
     return cell;
 }
 
@@ -446,14 +423,11 @@ IDMPhotoBrowserDelegate, GalleryViewCellDelegate>
         [selectedPhotos removeObject:indexPath];
         [self refreshSelectedPhotCountOnNavTilte];
     }
-
 }
 
 
 
 #pragma mark GalleryViewCellDelegate
-
-
 
 - (void)cellPressed:(GalleryViewCell *)cell
 {
@@ -502,7 +476,8 @@ IDMPhotoBrowserDelegate, GalleryViewCellDelegate>
 #pragma mark -
 #pragma mark ButtonAction
 //Edit Button
-- (IBAction)editButtonClickHandler:(id)sender {
+- (IBAction)editButtonClickHandler:(id)sender
+{
     EDIT_MODE = !EDIT_MODE;
     
     if(EDIT_MODE){
@@ -537,7 +512,8 @@ IDMPhotoBrowserDelegate, GalleryViewCellDelegate>
 
 
 
-- (IBAction)shareButtonHandler:(id)sender {
+- (IBAction)shareButtonHandler:(id)sender
+{
     
     NSMutableArray *activityItems = [NSMutableArray arrayWithCapacity:[selectedPhotos count]];
     

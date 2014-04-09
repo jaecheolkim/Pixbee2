@@ -19,6 +19,7 @@
 #import "UIImageView+WebCache.h"
 #import "FXImageView.h"
 
+#import "BFNavigationBarDrawer.h"
 
 
 #define LX_LIMITED_MOVEMENT 0
@@ -40,6 +41,11 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
     FaceMode facemode;
     
     int currentColor;
+    
+    BFNavigationBarDrawer *drawer;
+    UIBarButtonItem *deleteButton;
+    
+    UICollectionViewCell *addFacetabcell;
 }
 
 
@@ -72,9 +78,11 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
 {
     if(EDIT_MODE){
         if([selectedPhotos count] > 0) {
-            _deleteButton.enabled = YES;
+            //_deleteButton.enabled = YES;
+            deleteButton.enabled = YES;
         } else {
-            _deleteButton.enabled = NO;
+            //_deleteButton.enabled = NO;
+            deleteButton.enabled = NO;
         }
     }
 }
@@ -106,89 +114,26 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
-//    // remove navigationbar buttom line
-//    for (UIView *parentView in self.navigationController.navigationBar.subviews)
-//        for (UIView *childView in parentView.subviews)
-//            if ([childView isKindOfClass:[UIImageView class]])
-//                [childView removeFromSuperview];
-    
-    
-    //UIImage *colorImage = [UIImage imageWithColor:[UIColor clearColor] size:CGSizeMake(30, 30)];
-    
+
     [self.view setBackgroundColor:[UIColor colorWithRed:255/255.0 green:255/255.0 blue:255/255.0 alpha:0.1]];
     
     CGRect rect = [UIScreen mainScreen].bounds;
     self.colorBar.frame = CGRectMake(0, rect.size.height, 320, 25);
     [self.view addSubview:self.colorBar];
     
-    
-    
-    
+
     UIImageView *titleView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"title_facetab"]];
     titleView.contentMode = UIViewContentModeScaleAspectFit;
     self.navigationItem.titleView = titleView;
     
-//    UIBarButtonItem *backButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"menu.png"] style:UIBarButtonItemStylePlain target:self action:nil];
-    
-    //    UIButton *backButton = [[UIButton alloc] initWithFrame: CGRectMake(0, 0, 44.0f, 30.0f)];
-    //    [backButton setImage:[UIImage imageNamed:@"back.png"]  forState:UIControlStateNormal];
-    //    [backButton addTarget:self action:@selector(popVC) forControlEvents:UIControlEventTouchUpInside];
-//    self.navigationItem.rightBarButtonItem =  backButton; //[[UIBarButtonItem alloc] initWithCustomView:backButton];
-//    self.navigationController.navigationBar.tintColor=[UIColor whiteColor];
-    
-    
-//    UIButton* backBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 80, 60)];
-//    [backBtn setBackgroundImage:[UIImage imageNamed:@"menu"] forState:UIControlStateNormal];
-//    [backBtn setShowsTouchWhenHighlighted:YES];
-    
-//    UIButton *backBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-//    UIImage *backBtnImage = [UIImage imageNamed:@"menu"];
-//    [backBtn setBackgroundImage:backBtnImage forState:UIControlStateNormal];
-//    [backBtn addTarget:self action:@selector(leftBarButtonHandler:) forControlEvents:UIControlEventTouchUpInside];
-//    backBtn.frame = CGRectMake(0, 0, 40, 40);
-//    UIView *backButtonView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
-//    backButtonView.bounds = CGRectOffset(backButtonView.bounds, 14, 0);
-//    [backButtonView addSubview:backBtn];
-//    UIBarButtonItem *backButton = [[UIBarButtonItem alloc] initWithCustomView:backButtonView];
-//    self.navigationItem.leftBarButtonItem = backButton;
-//
-//    
-//    backBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-//    backBtnImage = [UIImage imageNamed:@"edit"];
-//    [backBtn setBackgroundImage:backBtnImage forState:UIControlStateNormal];
-//    [backBtn addTarget:self action:@selector(rightBarButtonHandler:) forControlEvents:UIControlEventTouchUpInside];
-//    backBtn.frame = CGRectMake(0, 0, 40, 40);
-//    backButtonView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
-//    backButtonView.bounds = CGRectOffset(backButtonView.bounds, -14, 0);
-//    [backButtonView addSubview:backBtn];
-//    backButton = [[UIBarButtonItem alloc] initWithCustomView:backButtonView];
-//    self.navigationItem.rightBarButtonItem = backButton;
-    
-    
-
-    
     [Flurry logEvent:@"MainDashboard_START"];
-    
-//    NSArray *ver = [[UIDevice currentDevice].systemVersion componentsSeparatedByString:@"."];
-//    if ([[ver objectAtIndex:0] intValue] >= 7) {
-//        self.navigationController.navigationBar.barTintColor = [UIColor colorWithRed:89/255.0f green:174/255.0f blue:235/255.0f alpha:0.7f];
-//        self.navigationController.navigationBar.translucent = NO;
-//    }else{
-//        self.navigationController.navigationBar.tintColor = [UIColor colorWithRed:89/255.0f green:174/255.0f blue:235/255.0f alpha:0.7f];
-//    }
-    
-    //[self refreshNavigationBarColor:COLOR_BLACK];
-    //[self refreshBGImage:nil];
     self.collectionView.backgroundColor = [UIColor clearColor];
-    //self.collectionView.backgroundView = self.bgImageView;
 
-    
     EDIT_MODE = NO;
     
     selectedPhotos = [NSMutableArray array];
     
-    
+    [self initNaviMenu];
  }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -212,6 +157,45 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
     
     
     [self showToolBar:NO];
+}
+
+#pragma mark -
+#pragma mark Navi Drawer Sub Menu methods
+
+- (void)initNaviMenu
+{
+    // Init a drawer with default size
+    
+	drawer = [[BFNavigationBarDrawer alloc] init];
+    
+    drawer.barStyle = self.navigationController.navigationBar.barStyle;
+    drawer.barTintColor = self.navigationController.navigationBar.barTintColor;
+    drawer.tintColor = [UIColor whiteColor ]; //self.navigationController.navigationBar.tintColor;
+	
+	// Assign the table view as the affected scroll view of the drawer.
+	// This will make sure the scroll view is properly scrolled and updated
+	// when the drawer is shown.
+	drawer.scrollView = self.collectionView;
+    
+	UIBarButtonItem *button4 = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:0];
+	deleteButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemTrash target:self action:@selector(deleteAction:)];
+	drawer.items = @[button4, deleteButton];
+
+    deleteButton.enabled = NO;
+    
+}
+
+
+- (void)deleteAction:(id)sender {
+	NSLog(@"deleteAction Button pressed.");
+    
+    ActionSheetType = 200;
+    UIActionSheet *deleteMenu = [[UIActionSheet alloc] initWithTitle:nil
+                                                            delegate:self
+                                                   cancelButtonTitle:NSLocalizedString(@"Cancel", @"")
+                                              destructiveButtonTitle:NSLocalizedString(@"Delete selected FaceTag", @"")
+                                                   otherButtonTitles:nil];
+	[deleteMenu showInView:self.view];
 }
 
 
@@ -407,11 +391,6 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
             if(EDIT_MODE)
             {
                 [selectedPhotos removeObject:indexPath];
-                
-                //ProfileCardCell *profileCardCell = (ProfileCardCell *)[collectionView cellForItemAtIndexPath:indexPath];
-                
-                //[(UICollectionViewCell *)profileCardCell setSelected:NO];
-                //profileCardCell.checkImageView.hidden = YES;
             }
             
             [self refreshDeleteButton];
@@ -544,8 +523,12 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
                                                           userInfo:@{@"panGestureEnabled":@"NO"}];
         _leftBarButton.enabled = NO;
         
+        [drawer showFromNavigationBar:self.navigationController.navigationBar animated:YES];
+        
     }
     else {
+        
+        [drawer hideAnimated:YES];
         
         [[NSNotificationCenter defaultCenter] postNotificationName:@"RootViewControllerEventHandler"
                                                             object:self
@@ -572,7 +555,7 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
 //        }
     }
     
-    [self showToolBar:EDIT_MODE];
+    //[self showToolBar:EDIT_MODE];
     
     [self refreshDeleteButton];
     
@@ -606,10 +589,14 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
 }
 
 - (IBAction)addFaceTabButtonHandler:(id)sender {
+    
     NSLog(@"Add Face Tab");
+    
+    if(EDIT_MODE) return;
+    
     ActionSheetType = 100;
     
-    [self.view addSubview:[self getSnapShot]];
+    //[self.view addSubview:[self getSnapShot]];
     
     
     UIActionSheet *popupQuery = [[UIActionSheet alloc] initWithTitle:nil

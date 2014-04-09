@@ -20,8 +20,11 @@
                            if (error!=nil) {
                                completionBlock(assetURL, error);
                                return;
+                           } else {
+                               completionBlock(assetURL, nil);
                            }
-                           
+
+#warning Pixbee 앨범으로 저장하기 너무 시간이 걸려 주석 달아 놓음.
                            //add the asset to the custom photo album
                            [self addAssetURL: assetURL
                                      toAlbum:albumName

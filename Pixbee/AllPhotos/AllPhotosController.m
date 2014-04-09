@@ -127,13 +127,7 @@
     titleView.contentMode = UIViewContentModeScaleAspectFit;
     self.navigationItem.titleView = titleView;
 
-    NSLog(@"segueIdentifier = %@", _segueIdentifier);
-    if([_segueIdentifier isEqualToString:@"Segue3_1to4_3"]){
-        [_menuButton setImage:[UIImage imageNamed:@"back"]];
-        ASSETFILTER = NO;
-    } else {
-        ASSETFILTER = YES;
-    }
+
 
     self.collectionView.backgroundColor = [UIColor clearColor];
     
@@ -143,6 +137,26 @@
     [self initRefreshControl];
     
     [self initNaviMenu];
+    
+    
+    NSLog(@"segueIdentifier = %@", _segueIdentifier);
+    if([_segueIdentifier isEqualToString:@"Segue3_1to4_3"]){
+        ASSETFILTER = NO;
+        EDIT_MODE = YES;
+        
+        [_menuButton setImage:[UIImage imageNamed:@"back"]];
+        
+        self.navigationItem.rightBarButtonItem.image = nil;
+        self.navigationItem.rightBarButtonItem.title = @"OK";
+        
+        [self initSwipeToSelectPanGesture];
+        [self.collectionView setAllowsSelection:EDIT_MODE];
+        [self.collectionView setAllowsMultipleSelection:EDIT_MODE];
+        
+        
+    } else {
+        ASSETFILTER = YES;
+    }
     
 
 }
@@ -221,8 +235,9 @@
 	addFaceTabButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemOrganize target:self action:@selector(moveFacetabAction:)];
 	UIBarButtonItem *button4 = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:0];
 	deleteButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemTrash target:self action:@selector(deleteAction:)];
-	drawer.items = @[newFaceTabButton, button2, addFaceTabButton, button4, deleteButton];
-    
+	
+//    drawer.items = @[newFaceTabButton, button2, addFaceTabButton, button4, deleteButton];
+    drawer.items = @[button4, newFaceTabButton, button2, addFaceTabButton];
     
     newFaceTabButton.enabled = NO;
     addFaceTabButton.enabled = NO;
@@ -230,11 +245,17 @@
 
 }
 
+
+
 - (void)newFacetabAction:(id)sender {
 	NSLog(@"newFacetabAction Button pressed.");
+    [self removeSwipeToSelectPanGesture];
+    [self makeNewFaceTab];
 }
 - (void)moveFacetabAction:(id)sender {
 	NSLog(@"moveFacetabAction Button pressed.");
+    [self removeSwipeToSelectPanGesture];
+    [self showFaceTabBar:YES];
 }
 - (void)deleteAction:(id)sender {
 	NSLog(@"deleteAction Button pressed.");
@@ -275,18 +296,7 @@
 -(void)startRefresh
 {
     [AssetLib checkNewPhoto];
-    
-     [refreshControl endRefreshing];
-    
-//    progressPercentage = 1.0;
-//    
-//    [self.navigationController setSGProgressPercentage:progressPercentage * 100];
-    
-//    if(progressPercentage == 1.0f) {
-//        [self.navigationController finishSGProgress];
-//        [refreshControl endRefreshing];
-//    }
-//    
+    [refreshControl endRefreshing];
 }
 
 #pragma mark -
@@ -380,10 +390,13 @@
         
         ALAssetsLibraryAssetForURLResultBlock resultBlock = ^(ALAsset *asset)
         {
-            [tmpAssets addObject:asset];
-            
-            self.assets = tmpAssets;
-            [self.collectionView reloadData];
+            if(!IsEmpty(asset)){
+                [tmpAssets addObject:asset];
+                
+                self.assets = tmpAssets;
+                [self.collectionView reloadData];
+            }
+
         };
         
         ALAssetsLibraryAccessFailureBlock failureBlock  = ^(NSError *error)
@@ -462,13 +475,22 @@
 
 - (void)refreshSelectedPhotCountOnNavTilte
 {
-    _shareButton.enabled = NO;
+    //_shareButton.enabled = NO;
+    
+    newFaceTabButton.enabled = NO;
+    addFaceTabButton.enabled = NO;
+    deleteButton.enabled = NO;
+    
     int selectcount = 0;
     if(!IsEmpty(selectedPhotos)) {
         selectcount = (int)[selectedPhotos count];
     }
     if(selectcount) {
-        _shareButton.enabled = YES;
+        //_shareButton.enabled = YES;
+        
+        newFaceTabButton.enabled = YES;
+        addFaceTabButton.enabled = YES;
+        deleteButton.enabled = YES;
     }
     
     
@@ -572,13 +594,6 @@
     
 }
 
-
-
-
-
-
-
-
 - (void)showToolBar:(BOOL)show
 {
 
@@ -661,13 +676,18 @@
 
 }
 
-- (IBAction)rightBarButtonHandler:(id)sender {
-    
-    [self toggleEdit];
-
+- (IBAction)rightBarButtonHandler:(id)sender
+{
+    if(ASSETFILTER) { // UnfaceTab 일 경우
+        
+         [self toggleEdit];
+    }
+    else { // New Album from Main Dashboard
+        
+        // Create New Album and go back
+        [self makeNewFaceTab];
+    }
 }
-
-
 
 - (void)toggleEdit
 {
@@ -703,7 +723,7 @@
         
         [self showStackImages:NO];
         [self showFaceTabBar:NO];
-
+        
         [selectedStackImages removeAllObjects];
         
         [selectedPhotos removeAllObjects];
@@ -712,17 +732,20 @@
         self.navigationItem.leftBarButtonItem.enabled = YES;
     }
     
-    [self showToolBar:EDIT_MODE];
+    //[self showToolBar:EDIT_MODE];
     
     [self.collectionView setAllowsSelection:EDIT_MODE];
     [self.collectionView setAllowsMultipleSelection:EDIT_MODE];
     
     [self.collectionView reloadData];
-
+    
     
     [self refreshSelectedPhotCountOnNavTilte];
-
 }
+
+
+
+
 
 
 #pragma mark -
@@ -1152,12 +1175,12 @@
 
 - (void)newFacetabFromIndexPaths:(NSArray  *)itemPaths
 {
+    
     NSArray *result = [SQLManager newUser];
     NSDictionary *user = [result objectAtIndex:0];
-    //NSString *UserName = [user objectForKey:@"UserName"];
+
     int UserID = [[user objectForKey:@"UserID"] intValue];
     int photoCount = 0;
-    
     
     for(NSIndexPath *indexPath in itemPaths)
     {
@@ -1165,30 +1188,38 @@
         
         ALAsset *asset = self.assets[indexPath.row];
         
-        NSArray *faces = [AssetLib getFaceData:asset];
-        
-        if(faces.count == 1 && !IsEmpty(faces)){
-            NSDictionary *face = faces[0];
-            NSData *faceData = face[@"image"];
+        if(photoCount == [itemPaths count]) {
+            NSArray *faces = [AssetLib getFaceData:asset];
             
-            UIImage *faceImage = face[@"faceImage"];
-            if(faceImage != nil)
-                [SQLManager setUserProfileImage:faceImage UserID:UserID];
-            
-            [SQLManager addTrainModelForUserID:UserID withFaceData:faceData];
-        }
-        else {
-            CGImageRef cgImage = [asset thumbnail];
-            UIImage *faceImage = [UIImage imageWithCGImage:cgImage];
-            if(faceImage != nil)
-                [SQLManager setUserProfileImage:faceImage UserID:UserID];
+            if(faces.count == 1 && !IsEmpty(faces)){
+                NSDictionary *face = faces[0];
+                NSData *faceData = face[@"image"];
+                
+                UIImage *faceImage = face[@"faceImage"];
+                if(faceImage != nil)
+                    [SQLManager setUserProfileImage:faceImage UserID:UserID];
+                
+                [SQLManager addTrainModelForUserID:UserID withFaceData:faceData];
+            }
+//            else {
+//                CGImageRef cgImage = [asset thumbnail];
+//                UIImage *faceImage = [UIImage imageWithCGImage:cgImage];
+//                if(faceImage != nil)
+//                    [SQLManager setUserProfileImage:faceImage UserID:UserID];
+//            }
+
         }
         
-        
+        CGImageRef cgImage = [asset thumbnail];
+        UIImage *faceImage = [UIImage imageWithCGImage:cgImage];
+        if(faceImage != nil)
+            [SQLManager setUserProfileImage:faceImage UserID:UserID];
+
+
         [SQLManager saveNewUserPhotoToDB:asset users:@[@(UserID)]];
         
     }
-    
+
 }
 
 - (void)addPhotoToFacetabFromIndexPaths:(NSArray  *)itemPaths userID:(int)UserID
@@ -1205,20 +1236,33 @@
 
 - (void)makeNewFaceTab
 {
-    
+    [self showProgressHUDWithMessage:@"..."];
+
     [self.collectionView performBatchUpdates:^{
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            @autoreleasepool {
+                NSArray *selectedItemsIndexPaths = [self.collectionView indexPathsForSelectedItems];
+                
+                // Add new facetab from the selected collection view (DB works : add)
+                [self newFacetabFromIndexPaths:selectedItemsIndexPaths];
+                
+                // Delete the items from the data source. (Data Array works : delete)
+                [self deleteItemsFromDataSourceAtIndexPaths:selectedItemsIndexPaths];
+                
+
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    // Now delete the items from the collection view. (CollectionView cell delete animation)
+                    [self.collectionView deleteItemsAtIndexPaths:selectedItemsIndexPaths];
+                });
+            }
+        });
         
-        NSArray *selectedItemsIndexPaths = [self.collectionView indexPathsForSelectedItems];
-        // Add new facetab from the selected collection view (DB works : add)
-        [self newFacetabFromIndexPaths:selectedItemsIndexPaths];
-        
-        // Delete the items from the data source. (Data Array works : delete)
-        [self deleteItemsFromDataSourceAtIndexPaths:selectedItemsIndexPaths];
-        
-        // Now delete the items from the collection view. (CollectionView cell delete animation)
-        [self.collectionView deleteItemsAtIndexPaths:selectedItemsIndexPaths];
+
         
     } completion:^(BOOL finished) {
+        
+        [self hideProgressHUD:YES];
         
         if(EDIT_MODE) [self toggleEdit];
         
@@ -1237,20 +1281,30 @@
 
 - (void)addPhotosToFaceTab:(int)UserID
 {
+    [self showProgressHUDWithMessage:@"..."];
     
     [self.collectionView performBatchUpdates:^{
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            @autoreleasepool {
+                NSArray *selectedItemsIndexPaths = [self.collectionView indexPathsForSelectedItems];
+                // Add photo to facetab from the selected collection view
+                [self addPhotoToFacetabFromIndexPaths:selectedItemsIndexPaths userID:(int)UserID];
+                
+                // Delete the items from the data source.
+                [self deleteItemsFromDataSourceAtIndexPaths:selectedItemsIndexPaths];
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    
+                // Now delete the items from the collection view.
+                [self.collectionView deleteItemsAtIndexPaths:selectedItemsIndexPaths];
+                });
+            }
+        });
         
-        NSArray *selectedItemsIndexPaths = [self.collectionView indexPathsForSelectedItems];
-        // Add photo to facetab from the selected collection view
-        [self addPhotoToFacetabFromIndexPaths:selectedItemsIndexPaths userID:(int)UserID];
-        
-        // Delete the items from the data source.
-        [self deleteItemsFromDataSourceAtIndexPaths:selectedItemsIndexPaths];
-        
-        // Now delete the items from the collection view.
-        [self.collectionView deleteItemsAtIndexPaths:selectedItemsIndexPaths];
+
         
     } completion:^(BOOL finished) {
+        [self hideProgressHUD:YES];
         
         if(EDIT_MODE) [self toggleEdit];
         
