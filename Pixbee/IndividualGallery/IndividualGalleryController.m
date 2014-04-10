@@ -26,7 +26,7 @@
 
 #import "GalleryViewController.h"
 
-
+#import "BFNavigationBarDrawer.h"
 
 @interface IndividualGalleryController ()
 <UICollectionViewDataSource, UICollectionViewDelegate,
@@ -49,7 +49,11 @@ IDMPhotoBrowserDelegate, GalleryViewCellDelegate>
     NSIndexPath *lastAccessed;
     UIPanGestureRecognizer *swipeToSelectGestureRecognizer;
 
-    
+    BFNavigationBarDrawer *drawer;
+    UIBarButtonItem *refreshButton;
+    UIBarButtonItem *shareButton;
+    UIBarButtonItem *deleteButton;
+
 }
 
 @property (weak, nonatomic) IBOutlet UICollectionView *collectionView;
@@ -60,6 +64,7 @@ IDMPhotoBrowserDelegate, GalleryViewCellDelegate>
 
 @property (weak, nonatomic) IBOutlet UIView *toolbar;
 @property (weak, nonatomic) IBOutlet UIButton *shareButton;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *backButton;
 
 - (IBAction)editButtonClickHandler:(id)sender;
 
@@ -101,7 +106,8 @@ IDMPhotoBrowserDelegate, GalleryViewCellDelegate>
     self.collectionView.backgroundColor = [UIColor clearColor];
  
     [self initRefreshControl];
-
+    
+    [self initNaviMenu];
 }
 
 
@@ -124,6 +130,98 @@ IDMPhotoBrowserDelegate, GalleryViewCellDelegate>
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+
+
+#pragma mark -
+#pragma mark Navi Drawer Sub Menu methods
+- (UIBarButtonItem*)customToolbarButtonImage:(UIImage*)image imageSelected:(UIImage*)selectedImage action:(SEL)action {
+    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+    [button setImage:image forState:UIControlStateNormal];
+    [button setBackgroundImage:selectedImage forState:UIControlStateDisabled];
+    [button addTarget:self action:action forControlEvents:UIControlEventTouchUpInside];
+    [button setContentMode:UIViewContentModeCenter];
+    [button setFrame:CGRectMake(0, 0, 40, 40)];
+    
+    UIBarButtonItem *buttonItem = [[UIBarButtonItem alloc] initWithCustomView:button];
+    
+    return buttonItem;
+}
+
+
+- (void)initNaviMenu
+{
+    // Init a drawer with default size
+    
+	drawer = [[BFNavigationBarDrawer alloc] init];
+    
+    drawer.barStyle = self.navigationController.navigationBar.barStyle;
+    drawer.barTintColor = self.navigationController.navigationBar.barTintColor;
+    drawer.tintColor = [UIColor whiteColor ]; //self.navigationController.navigationBar.tintColor;
+	
+	// Assign the table view as the affected scroll view of the drawer.
+	// This will make sure the scroll view is properly scrolled and updated
+	// when the drawer is shown.
+	drawer.scrollView = self.collectionView;
+    
+    
+	// Add some buttons to the drawer.
+	//refreshButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(refreshAction:)];
+    
+    refreshButton = [self customToolbarButtonImage:[UIImage imageNamed:@"refresh"] imageSelected:nil action:@selector(refreshAction:)];
+    
+	UIBarButtonItem *button2 = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:0];
+	shareButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(shareAction:)];
+	UIBarButtonItem *button4 = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:0];
+	deleteButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemTrash target:self action:@selector(deleteAction:)];
+	
+    drawer.items = @[refreshButton, button2, shareButton, button4, deleteButton];
+
+    //refreshButton.enabled = NO;
+    shareButton.enabled = NO;
+    deleteButton.enabled = NO;
+    
+}
+
+
+
+- (void)refreshAction:(id)sender {
+	NSLog(@"refreshAction Button pressed.");
+    //[self editButtonClickHandler:nil];
+    //[refreshControl beginRefreshing];
+    
+    [self startRefresh];
+    
+}
+
+- (void)shareAction:(id)sender {
+	NSLog(@"moveFacetabAction Button pressed.");
+    [self shareButtonHandler:nil];
+
+    
+}
+
+- (void)deleteAction:(id)sender {
+	NSLog(@"deleteAction Button pressed.");
+    [self deletePhotos];
+}
+
+- (void)rotateRefreshButton:(BOOL)start
+{
+    CALayer *layer = refreshButton.customView.layer;
+
+    if(start){
+        CABasicAnimation *rotate = [CABasicAnimation animationWithKeyPath:@"transform.rotation.z"];
+        rotate.timingFunction = [CAMediaTimingFunction functionWithName: kCAMediaTimingFunctionLinear];
+        rotate.fromValue = @(0);
+        rotate.toValue = @(2 * M_PI);
+        rotate.duration = 1.0;
+        rotate.repeatCount = HUGE_VALF;
+        [layer addAnimation:rotate forKey:@"transform.rotation.z"];
+    } else {
+        [layer removeAnimationForKey:@"transform.rotation.z"];
+    }
+ }
+
 
 
 #pragma mark -
@@ -186,6 +284,12 @@ IDMPhotoBrowserDelegate, GalleryViewCellDelegate>
 
     if([AssetLib prepareFaceRecognizeForUser:_UserID])
     {
+        EDIT_MODE = NO;
+        [self.collectionView setAllowsMultipleSelection:EDIT_MODE];
+        [self.collectionView setAllowsSelection:EDIT_MODE];
+        
+        [self rotateRefreshButton:YES];
+        
         NSArray *allPixbeePhots = [SQLManager getGroupPhotos:[AssetLib.pixbeeAssetGroup valueForProperty:ALAssetsGroupPropertyURL] filter:YES];
         
         dispatch_queue_t serialQueue = dispatch_queue_create("com.pixbee.serialqueue", DISPATCH_QUEUE_SERIAL);
@@ -231,6 +335,9 @@ IDMPhotoBrowserDelegate, GalleryViewCellDelegate>
                             [self.photos addObject:photoInfo];
                             [self.collectionView reloadData];
                             
+                            self.title = [NSString stringWithFormat:@"%@ (%d)", UserName, (int)[self.photos count]];
+
+                        
 //                            [self.collectionView performBatchUpdates:^{
 //                                //NSInteger lastIndex = [self.photos count]-1;
 //                                [self.photos insertObject:photoInfo atIndex:0];
@@ -248,6 +355,14 @@ IDMPhotoBrowserDelegate, GalleryViewCellDelegate>
                         if(progressPercentage == 1.0f) {
                             [self.navigationController finishSGProgress];
                             [refreshControl endRefreshing];
+                            
+                            [self rotateRefreshButton:NO];
+                            
+                            
+                            EDIT_MODE = YES;
+                            [self.collectionView setAllowsMultipleSelection:EDIT_MODE];
+                            [self.collectionView setAllowsSelection:EDIT_MODE];
+
                         }
                     });
                     
@@ -316,13 +431,22 @@ IDMPhotoBrowserDelegate, GalleryViewCellDelegate>
 
 - (void)refreshSelectedPhotCountOnNavTilte
 {
-    _shareButton.enabled = NO;
+    //refreshButton.enabled = NO;
+    shareButton.enabled = NO;
+    deleteButton.enabled = NO;
+    
+    //_shareButton.enabled = NO;
+    
     int selectcount = 0;
     if(!IsEmpty(selectedPhotos)) {
         selectcount = (int)[selectedPhotos count];
     }
     if(selectcount) {
-        _shareButton.enabled = YES;
+        //_shareButton.enabled = YES;
+        
+        //refreshButton.enabled = YES;
+        shareButton.enabled = YES;
+        deleteButton.enabled = YES;
     }
     
     [UIView animateWithDuration:0.3
@@ -481,6 +605,8 @@ IDMPhotoBrowserDelegate, GalleryViewCellDelegate>
     EDIT_MODE = !EDIT_MODE;
     
     if(EDIT_MODE){
+        _backButton.enabled = NO;
+        
         [[NSNotificationCenter defaultCenter] postNotificationName:@"RootViewControllerEventHandler"
                                                             object:self
                                                           userInfo:@{@"panGestureEnabled":@"NO"}];
@@ -490,8 +616,12 @@ IDMPhotoBrowserDelegate, GalleryViewCellDelegate>
         
         [self initSwipeToSelectPanGesture];
         
+        [drawer showFromNavigationBar:self.navigationController.navigationBar animated:YES];
+        
     }
     else {
+        
+        [drawer hideAnimated:YES];
         
         [self removeSwipeToSelectPanGesture];
         
@@ -502,9 +632,11 @@ IDMPhotoBrowserDelegate, GalleryViewCellDelegate>
         [selectedPhotos removeAllObjects];
         self.navigationItem.rightBarButtonItem.title = nil;
         self.navigationItem.rightBarButtonItem.image = [UIImage imageNamed:@"edit"];
+        
+        _backButton.enabled = YES;
     }
     
-    [self showToolBar:EDIT_MODE];
+    //[self showToolBar:EDIT_MODE];
     [self.collectionView setAllowsMultipleSelection:EDIT_MODE];
     [self.collectionView reloadData];
 
@@ -528,7 +660,7 @@ IDMPhotoBrowserDelegate, GalleryViewCellDelegate>
 
     DeleteActivity *deleteActivity = [[DeleteActivity alloc] init];
  
-    NSArray *activitys = @[deleteActivity];
+    NSArray *activitys = nil;//@[deleteActivity];
     
     self.activityController = [[UIActivityViewController alloc] initWithActivityItems:activityItems applicationActivities:activitys];
     [self.activityController setExcludedActivityTypes:@[UIActivityTypePostToTwitter,

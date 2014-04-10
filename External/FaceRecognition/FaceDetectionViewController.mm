@@ -984,6 +984,9 @@ AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
 
 }
 
+#pragma mark - Face Button
+
+
 - (void)removeFaceButtonAll
 {
     for(UIButton_FaceIcon* button in selectedUserButtons){
@@ -1093,7 +1096,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
     }
 }
 
-
+#pragma mark - init Face Engine
 - (void)initFaceRecognize
 {
     isReadyToScanFace = NO;

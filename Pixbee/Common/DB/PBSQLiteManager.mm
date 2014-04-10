@@ -613,7 +613,7 @@
     NSString *imagePath = [NSString stringWithFormat:@"profileImage_%d.png",UserID];
     UIImage *profileImage = [[SDImageCache sharedImageCache] imageFromDiskCacheForKey:imagePath];
     if(IsEmpty(profileImage)) {
-        profileImage = [UIImage imageNamed:@"noname@2x.png"];
+        profileImage = [UIImage imageNamed:@"ananymous.png"];
         //profileImage = [UIImage maskImage:image withMask:[UIImage imageNamed:@"photo_profile_hive@2x.png"]];
         //[[SDImageCache sharedImageCache] storeImage:profileImage forKey:imagePath toDisk:YES];
     }
