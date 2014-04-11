@@ -43,6 +43,10 @@
 
 #import "BBCyclingLabel.h"
 
+#import "iCarousel.h"
+
+//#import "PBGalleryView.h"
+
 static void *IsAdjustingFocusingContext = &IsAdjustingFocusingContext;
 
 #define CAPTURE_FPS 30
@@ -98,7 +102,8 @@ CGRect DetectFaceTabs[6] = {
 @interface FaceDetectionViewController ()
 <UIGestureRecognizerDelegate,
 AVCaptureMetadataOutputObjectsDelegate,
-AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
+AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate,
+iCarouselDataSource, iCarouselDelegate>
 {
     IBOutlet UIView *previewView;
     IBOutlet UIView *faceView;
@@ -158,7 +163,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
     
     NSMutableArray* galleryAssets;
     
-    UIView *galleryView;
+//    PBGalleryView *galleryView;
 
 }
 @property (weak, nonatomic) IBOutlet UIView *topView;
@@ -188,6 +193,11 @@ AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
 @property (strong, nonatomic) Animator* animator;
 @property (strong, nonatomic) UIPercentDrivenInteractiveTransition* interactionController;
 
+
+@property (weak, nonatomic) IBOutlet UIView *galleryView;
+@property (weak, nonatomic) IBOutlet iCarousel *carousel;
+@property (nonatomic, strong) NSMutableArray *items;
+
 //@property (weak, nonatomic) IBOutlet FXBlurView *BlurView;
 
 - (IBAction)toggleFlash:(id)sender;
@@ -201,23 +211,35 @@ AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
 @end
 
 @implementation FaceDetectionViewController
-
-
 // Add this Method
 - (BOOL)prefersStatusBarHidden {
     return YES;
 }
 
+
+- (void)awakeFromNib
+{
+    self.items = [NSMutableArray array];
+    for (int i = 0; i < 100; i++)
+    {
+        [_items addObject:@(i)];
+    }
+}
+
+- (void)dealloc
+{
+    _carousel.delegate = nil;
+    _carousel.dataSource = nil;
+}
+
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
-//    galleryView = [[UIView alloc] initWithFrame:CGRectMake(320, 0, 320, 568)];
-//    galleryView.backgroundColor = [UIColor blackColor];
-//    galleryView.alpha = 0.5;
+//    galleryView = [[PBGalleryView alloc] initWithFrame:CGRectMake(320, 0, 320, 568)];
 //    [self.view addSubview:galleryView];
-    
-    
+
     
     NSLog(@"SegueFrom = %@", _segueid);
     if([_segueid isEqualToString:@"Segue3_1to6_1"]){
@@ -321,6 +343,11 @@ AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
     
     self.navigationController.delegate = self;
     self.animator = [Animator new];
+    
+    
+    _carousel.type = iCarouselTypeLinear;
+    _carousel.dataSource = self;
+    _carousel.delegate = self;
 
     NSLog(@"viewDidLoad = %@", @"---- END");
 }
@@ -373,6 +400,14 @@ AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
 
 }
 
+- (void)viewDidUnload
+{
+    [super viewDidUnload];
+    
+    //free up memory by releasing subviews
+    self.carousel = nil;
+}
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -412,11 +447,18 @@ AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
         CGPoint velocity = [(UIPanGestureRecognizer*)gestureRecognizer velocityInView:self.view];
         
         if(velocity.x > 0) {
-            //if(self.animator.operation == UINavigationControllerOperationPush) return YES;
+            if(self.animator.operation == UINavigationControllerOperationPush){
+               return YES;
+            }
+            
             return NO;
         }
         else {
             NSLog(@"gesture went left");
+            // galleryView가 보여 줬을 때 도 다시 보이지 않도록
+//            if(self.animator.operation == UINavigationControllerOperationPush){
+//               return NO;
+//            }
             
         }
         
@@ -428,128 +470,128 @@ AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
 
 
 
-//- (void)handlePanGesture:(UIPanGestureRecognizer *)gestureRecognizer {
-//
-//    //if(![galleryAssets count]) return;
-//
-//    UIView* view = self.navigationController.view;
-//    if (gestureRecognizer.state == UIGestureRecognizerStateBegan) {
-//
-//        CGPoint location = [gestureRecognizer locationInView:view];
-//        if (location.x <  CGRectGetMidX(view.bounds) ) {  // POP
-//            self.animator.operation = UINavigationControllerOperationPop;
-//
-//
-//        }
-//
-//        else if(location.x >  CGRectGetMidX(view.bounds) ){// PUSH
-//            self.animator.operation = UINavigationControllerOperationPush;
-//
-//
-//        }
-//
-//    }
-//    else if (gestureRecognizer.state == UIGestureRecognizerStateChanged)
-//    {
-//        CGPoint translation = [gestureRecognizer translationInView:view];
-//        CGFloat d = fabs(translation.x / CGRectGetWidth(view.bounds));
-//        CGRect frame;
-//
-//        if(self.animator.operation == UINavigationControllerOperationPush)
-//            frame = CGRectMake(320 - d * 320, 0, 320, 568);
-//        else
-//            frame = CGRectMake(d * 320, 0, 320, 568);
-//
-//        galleryView.frame = frame;
-//        NSLog(@"UIGestureRecognizerStateChanged d = %f", d);
-//    }
-//    else if (gestureRecognizer.state == UIGestureRecognizerStateEnded)
-//    {
-//        NSLog(@"animator.operation = %d / x = %d", (int)(self.animator.operation), (int)[gestureRecognizer velocityInView:view].x);
-//        if(self.animator.operation == UINavigationControllerOperationPush){
-//            if ([gestureRecognizer velocityInView:view].x <= 0) {
-//                galleryView.frame = CGRectMake(0, 0, 320, 568);
-//                [[NSNotificationCenter defaultCenter] postNotificationName:@"RootViewControllerEventHandler"
-//                                                                    object:self
-//                                                                  userInfo:@{@"panGestureEnabled":@"NO"}];
-//
-//            } else {
-//                galleryView.frame = CGRectMake(320, 0, 320, 568);
-//            }
-//        } else if(self.animator.operation == UINavigationControllerOperationPop){
-//            if ([gestureRecognizer velocityInView:view].x > 0) {
-//                galleryView.frame = CGRectMake(320, 0, 320, 568);
-//                [[NSNotificationCenter defaultCenter] postNotificationName:@"RootViewControllerEventHandler"
-//                                                                    object:self
-//                                                                  userInfo:@{@"panGestureEnabled":@"YES"}];
-//
-//
-//            } else {
-//                galleryView.frame = CGRectMake(0, 0, 320, 568);
-//            }
-//        }
-//        self.interactionController = nil;
-//    }
-//
-//    return;
-//
-//}
-
-
-
 - (void)handlePanGesture:(UIPanGestureRecognizer *)gestureRecognizer {
-    
-    if(![galleryAssets count]) return;
-    
+
+    //if(![galleryAssets count]) return;
+
     UIView* view = self.navigationController.view;
     if (gestureRecognizer.state == UIGestureRecognizerStateBegan) {
-        
+
         CGPoint location = [gestureRecognizer locationInView:view];
-        //int viewControllerCount = (int)self.navigationController.viewControllers.count;
-        if (location.x <  CGRectGetMidX(view.bounds) ){// && viewControllerCount > 1) { // left half
-            self.interactionController = [UIPercentDrivenInteractiveTransition new];
-            [self.navigationController popViewControllerAnimated:YES];
+        if (location.x <  CGRectGetMidX(view.bounds) ) {  // POP
+            self.animator.operation = UINavigationControllerOperationPop;
+
+
         }
-        
-        else if(location.x >  300) {//CGRectGetMidX(view.bounds) ){  //right half
-            self.interactionController = [UIPercentDrivenInteractiveTransition new];
-            
-            UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-            FullScreenPhotoController *vc = [storyboard instantiateViewControllerWithIdentifier:@"galleryView"];
-            vc.assets = galleryAssets;
-            vc.selectedIndex = 0;
-            [self.navigationController pushViewController:vc animated:YES ];
-            
+
+        else if(location.x >  CGRectGetMidX(view.bounds) ){// PUSH
+            self.animator.operation = UINavigationControllerOperationPush;
+
+
         }
-        
-    } else if (gestureRecognizer.state == UIGestureRecognizerStateChanged) {
+
+    }
+    else if (gestureRecognizer.state == UIGestureRecognizerStateChanged)
+    {
         CGPoint translation = [gestureRecognizer translationInView:view];
         CGFloat d = fabs(translation.x / CGRectGetWidth(view.bounds));
-        [self.interactionController updateInteractiveTransition:d];
+        CGRect frame;
+
+        if(self.animator.operation == UINavigationControllerOperationPush)
+            frame = CGRectMake(320 - d * 320, 0, 320, 568);
+        else
+            frame = CGRectMake(d * 320, 0, 320, 568);
+
+        _galleryView.frame = frame;
         NSLog(@"UIGestureRecognizerStateChanged d = %f", d);
-    } else if (gestureRecognizer.state == UIGestureRecognizerStateEnded) {
+    }
+    else if (gestureRecognizer.state == UIGestureRecognizerStateEnded)
+    {
         NSLog(@"animator.operation = %d / x = %d", (int)(self.animator.operation), (int)[gestureRecognizer velocityInView:view].x);
         if(self.animator.operation == UINavigationControllerOperationPush){
             if ([gestureRecognizer velocityInView:view].x <= 0) {
-                [self.interactionController finishInteractiveTransition];
-                
+                _galleryView.frame = CGRectMake(0, 0, 320, 568);
+                [[NSNotificationCenter defaultCenter] postNotificationName:@"RootViewControllerEventHandler"
+                                                                    object:self
+                                                                  userInfo:@{@"panGestureEnabled":@"NO"}];
+
             } else {
-                [self.interactionController cancelInteractiveTransition];
+                _galleryView.frame = CGRectMake(320, 0, 320, 568);
             }
         } else if(self.animator.operation == UINavigationControllerOperationPop){
             if ([gestureRecognizer velocityInView:view].x > 0) {
-                [self.interactionController finishInteractiveTransition];
-                
+                _galleryView.frame = CGRectMake(320, 0, 320, 568);
+                [[NSNotificationCenter defaultCenter] postNotificationName:@"RootViewControllerEventHandler"
+                                                                    object:self
+                                                                  userInfo:@{@"panGestureEnabled":@"YES"}];
+
+
             } else {
-                [self.interactionController cancelInteractiveTransition];
+                _galleryView.frame = CGRectMake(0, 0, 320, 568);
             }
         }
         self.interactionController = nil;
     }
-    
+
     return;
-    
+
 }
+
+
+
+//- (void)handlePanGesture:(UIPanGestureRecognizer *)gestureRecognizer {
+//    
+//    if(![galleryAssets count]) return;
+//    
+//    UIView* view = self.navigationController.view;
+//    if (gestureRecognizer.state == UIGestureRecognizerStateBegan) {
+//        
+//        CGPoint location = [gestureRecognizer locationInView:view];
+//        //int viewControllerCount = (int)self.navigationController.viewControllers.count;
+//        if (location.x <  CGRectGetMidX(view.bounds) ){// && viewControllerCount > 1) { // left half
+//            self.interactionController = [UIPercentDrivenInteractiveTransition new];
+//            [self.navigationController popViewControllerAnimated:YES];
+//        }
+//        
+//        else if(location.x >  300) {//CGRectGetMidX(view.bounds) ){  //right half
+//            self.interactionController = [UIPercentDrivenInteractiveTransition new];
+//            
+//            UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+//            FullScreenPhotoController *vc = [storyboard instantiateViewControllerWithIdentifier:@"galleryView"];
+//            vc.assets = galleryAssets;
+//            vc.selectedIndex = 0;
+//            [self.navigationController pushViewController:vc animated:YES ];
+//            
+//        }
+//        
+//    } else if (gestureRecognizer.state == UIGestureRecognizerStateChanged) {
+//        CGPoint translation = [gestureRecognizer translationInView:view];
+//        CGFloat d = fabs(translation.x / CGRectGetWidth(view.bounds));
+//        [self.interactionController updateInteractiveTransition:d];
+//        NSLog(@"UIGestureRecognizerStateChanged d = %f", d);
+//    } else if (gestureRecognizer.state == UIGestureRecognizerStateEnded) {
+//        NSLog(@"animator.operation = %d / x = %d", (int)(self.animator.operation), (int)[gestureRecognizer velocityInView:view].x);
+//        if(self.animator.operation == UINavigationControllerOperationPush){
+//            if ([gestureRecognizer velocityInView:view].x <= 0) {
+//                [self.interactionController finishInteractiveTransition];
+//                
+//            } else {
+//                [self.interactionController cancelInteractiveTransition];
+//            }
+//        } else if(self.animator.operation == UINavigationControllerOperationPop){
+//            if ([gestureRecognizer velocityInView:view].x > 0) {
+//                [self.interactionController finishInteractiveTransition];
+//                
+//            } else {
+//                [self.interactionController cancelInteractiveTransition];
+//            }
+//        }
+//        self.interactionController = nil;
+//    }
+//    
+//    return;
+//    
+//}
 
 - (void)OrientationEventHandler:(NSNotification *)notification
 {
@@ -2229,5 +2271,166 @@ bail:
     [faceView addSubview:nameButton];
     nameButton.transform  = CGAffineTransformMakeRotation(currentAngle);
 }
+
+
+#pragma mark -
+#pragma mark iCarousel methods
+
+- (void)carouselWillBeginScrollingAnimation:(iCarousel *)carousel
+{
+    NSLog(@"carouselWillBeginScrollingAnimation");
+}
+
+- (void)carouselDidEndScrollingAnimation:(iCarousel *)carousel
+{
+    // 여기가 맨 마지막 이벤트 임..
+    NSLog(@"carouselDidEndScrollingAnimation / CurrentIndex = %d", (int)carousel.currentItemIndex);
+}
+
+- (BOOL)carousel:(iCarousel *)carousel shouldSelectItemAtIndex:(NSInteger)index
+{
+    return YES;
+}
+
+- (void)carousel:(iCarousel *)carousel didSelectItemAtIndex:(NSInteger)index
+{
+    NSLog(@"didSelectItemAtIndex = %d", (int)index);
+}
+
+- (void)carouselCurrentItemIndexDidChange:(iCarousel *)carousel
+{
+    NSLog(@"currentItemIndex = %d", (int)carousel.currentItemIndex);
+}
+
+- (NSUInteger)numberOfItemsInCarousel:(iCarousel *)carousel
+{
+    //return the total number of items in the carousel
+    return [_items count];
+}
+
+- (UIView *)carousel:(iCarousel *)carousel viewForItemAtIndex:(NSUInteger)index reusingView:(UIView *)view
+{
+    UILabel *label = nil;
+    
+    //create new view if no view is available for recycling
+    if (view == nil)
+    {
+        //don't do anything specific to the index within
+        //this `if (view == nil) {...}` statement because the view will be
+        //recycled and used with other index values later
+        view = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 250.0f, 400.0f)];
+        view.backgroundColor = [UIColor yellowColor];
+        ((UIImageView *)view).image = [UIImage imageNamed:@"page.png"];
+        view.contentMode = UIViewContentModeCenter;
+        
+        label = [[UILabel alloc] initWithFrame:view.bounds];
+        label.backgroundColor = [UIColor clearColor];
+        label.textAlignment = NSTextAlignmentCenter;
+        label.font = [label.font fontWithSize:50];
+        label.tag = 1;
+        [view addSubview:label];
+    }
+    else
+    {
+        //get a reference to the label in the recycled view
+        label = (UILabel *)[view viewWithTag:1];
+    }
+    
+    //set item label
+    //remember to always set any properties of your carousel item
+    //views outside of the `if (view == nil) {...}` check otherwise
+    //you'll get weird issues with carousel item content appearing
+    //in the wrong place in the carousel
+    label.text = [_items[index] stringValue];
+    
+    return view;
+    
+    //    UIButton *button = (UIButton *)view;
+    //	if (button == nil)
+    //	{
+    //		//no button available to recycle, so create new one
+    //		UIImage *image = [UIImage imageNamed:@"page.png"];
+    //		button = [UIButton buttonWithType:UIButtonTypeCustom];
+    //		button.frame = CGRectMake(0.0f, 0.0f, image.size.width, image.size.height);
+    //		[button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    //		[button setBackgroundImage:image forState:UIControlStateNormal];
+    //		button.titleLabel.font = [button.titleLabel.font fontWithSize:50];
+    //		[button addTarget:self action:@selector(buttonTapped:) forControlEvents:UIControlEventTouchUpInside];
+    //	}
+    //
+    //	//set button label
+    //	[button setTitle:[NSString stringWithFormat:@"%d", (int)index] forState:UIControlStateNormal];
+    //
+    //	return button;
+    
+}
+
+- (CGFloat)carousel:(iCarousel *)carousel valueForOption:(iCarouselOption)option withDefault:(CGFloat)value
+{
+    
+    
+    //    switch (option)
+    //    {
+    //        case iCarouselOptionSpacing:
+    //            return value * 1.1f;
+    //        case iCarouselOptionFadeMin:
+    //            return -0.2;
+    //        case iCarouselOptionFadeMax:
+    //            return 0.2;
+    //        case iCarouselOptionFadeRange:
+    //            return 2.0;
+    //        default:
+    //            return value;
+    //    }
+    //
+    //    return value;
+    
+    //customize carousel display
+    switch (option)
+    {
+        case iCarouselOptionWrap:
+        {
+            //normally you would hard-code this to YES or NO
+            return YES;
+        }
+        case iCarouselOptionSpacing:
+        {
+            //add a bit of spacing between the item views
+            return value * 1.1f;
+        }
+            //        case iCarouselOptionFadeMax:
+            //        {
+            //            if (carousel.type == iCarouselTypeCustom)
+            //            {
+            //                //set opacity based on distance from camera
+            //                return 0.0f;
+            //            }
+            //            return value;
+            //        }
+            
+        case iCarouselOptionFadeMin:
+        {
+            return -0.2;
+        }
+            
+        case iCarouselOptionFadeMax:
+        {
+            return 0.2;
+        }
+            
+        case iCarouselOptionFadeRange:
+        {
+            return 1.0;
+        }
+            
+            
+            
+        default:
+        {
+            return value;
+        }
+    }
+}
+
 
 @end

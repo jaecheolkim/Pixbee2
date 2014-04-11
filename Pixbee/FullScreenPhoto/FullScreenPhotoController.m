@@ -78,7 +78,11 @@
 
 -(id<ASGalleryAsset>)galleryController:(ASGalleryViewController *)controller assetAtIndex:(NSUInteger)index
 {
-    return self.assets[index];
+    NSInteger count = [self.assets count] - 1;
+    
+    return self.assets[count - index];
+    
+    // return self.assets[index];
 }
 
 -(void)updateTitle

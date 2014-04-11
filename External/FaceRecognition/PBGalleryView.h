@@ -7,7 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "iCarousel.h"
 
-@interface PBGalleryView : UIView
+@interface PBGalleryView : UIView <iCarouselDataSource, iCarouselDelegate>
 
+@property (nonatomic, strong) NSMutableArray *photoAssets;
+@property (nonatomic, assign) BOOL isShown;
+@property (nonatomic, strong) iCarousel *carousel;
 @end

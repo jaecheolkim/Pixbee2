@@ -170,6 +170,8 @@
 		8031155618C0451300CAEC9A /* placeholder@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8031155518C0451300CAEC9A /* placeholder@2x.png */; };
 		8033E77918F66B4900861CDD /* refresh@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8033E77818F66B4900861CDD /* refresh@2x.png */; };
 		8033E77B18F670FE00861CDD /* ananymous.png in Resources */ = {isa = PBXBuildFile; fileRef = 8033E77A18F670FE00861CDD /* ananymous.png */; };
+		8033E77E18F7B6AC00861CDD /* PBGalleryView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8033E77D18F7B6AC00861CDD /* PBGalleryView.m */; };
+		8033E78018F7BBF500861CDD /* page.png in Resources */ = {isa = PBXBuildFile; fileRef = 8033E77F18F7BBF500861CDD /* page.png */; };
 		803E574218CEB56B00BE14EA /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 803E574118CEB56B00BE14EA /* FacebookSDK.framework */; };
 		803E574418CF2E2800BE14EA /* focus@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 803E574318CF2E2800BE14EA /* focus@2x.png */; };
 		803E576018CF7A6F00BE14EA /* APNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 803E575F18CF7A6F00BE14EA /* APNavigationController.m */; };
@@ -636,6 +638,9 @@
 		8031155518C0451300CAEC9A /* placeholder@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "placeholder@2x.png"; sourceTree = "<group>"; };
 		8033E77818F66B4900861CDD /* refresh@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "refresh@2x.png"; sourceTree = "<group>"; };
 		8033E77A18F670FE00861CDD /* ananymous.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ananymous.png; sourceTree = "<group>"; };
+		8033E77C18F7B6AC00861CDD /* PBGalleryView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBGalleryView.h; sourceTree = "<group>"; };
+		8033E77D18F7B6AC00861CDD /* PBGalleryView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBGalleryView.m; sourceTree = "<group>"; };
+		8033E77F18F7BBF500861CDD /* page.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = page.png; sourceTree = "<group>"; };
 		803E574118CEB56B00BE14EA /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FacebookSDK.framework; path = ../../../Documents/FacebookSDK/FacebookSDK.framework; sourceTree = "<group>"; };
 		803E574318CF2E2800BE14EA /* focus@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "focus@2x.png"; sourceTree = "<group>"; };
 		803E575E18CF7A6F00BE14EA /* APNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APNavigationController.h; sourceTree = "<group>"; };
@@ -1803,6 +1808,7 @@
 		809BB2D218BDF0C000CC79A8 /* newImages */ = {
 			isa = PBXGroup;
 			children = (
+				8033E77F18F7BBF500861CDD /* page.png */,
 				8033E77818F66B4900861CDD /* refresh@2x.png */,
 				8058CC3E18E9DC6B009A0274 /* skip_bt@2x.png */,
 				8048F6C518E9A66D0094EE12 /* Intro_start_bg.png */,
@@ -2032,6 +2038,8 @@
 				80A9615018D7532800DC3F26 /* Animator.m */,
 				80A9614C18D7531F00DC3F26 /* NavigationControllerDelegate.h */,
 				80A9614D18D7531F00DC3F26 /* NavigationControllerDelegate.m */,
+				8033E77C18F7B6AC00861CDD /* PBGalleryView.h */,
+				8033E77D18F7B6AC00861CDD /* PBGalleryView.m */,
 				80D55210186C710000B54974 /* FaceDetectionViewController.h */,
 				80D55211186C710000B54974 /* FaceDetectionViewController.mm */,
 				80AA4191189E8F9700B7CF56 /* retinex.mm */,
@@ -2239,6 +2247,7 @@
 				78C1EB4B186B0A790072E7DB /* flash_camera_selcet@2x.png in Resources */,
 				80B4F69A18D6E1F5001380FB /* menu_setting@2x.png in Resources */,
 				7805A6E41866E7B800B234C1 /* newalbum@2x.png in Resources */,
+				8033E78018F7BBF500861CDD /* page.png in Resources */,
 				809BB31818BDF0C000CC79A8 /* facebookshare@2x.png in Resources */,
 				809BB30518BDF0C000CC79A8 /* americanrose@2x.png in Resources */,
 				809BB31A18BDF0C000CC79A8 /* filled@2x.png in Resources */,
@@ -2527,6 +2536,7 @@
 				80AA418B189D0F4E00B7CF56 /* SFCollectionViewCell.m in Sources */,
 				6968D9A2186EEE0000831442 /* NewAlbumActivity.m in Sources */,
 				69CCA956185AD758002567CF /* SwapImageView.m in Sources */,
+				8033E77E18F7B6AC00861CDD /* PBGalleryView.m in Sources */,
 				7805A64218658BA000B234C1 /* IDMPhotoBrowser.m in Sources */,
 				7805A66818659ECC00B234C1 /* AFJSONRequestOperation.m in Sources */,
 				7856F72C1849FA1100A17349 /* GalleryViewCell.m in Sources */,
