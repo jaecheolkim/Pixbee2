@@ -177,7 +177,7 @@
 
     [self initStackImages];
     
-    currentUserID = -1;
+    currentUserID = -2;
     currentPosition = -1;
     previousPosiotion = -2;
     
@@ -757,19 +757,33 @@
     [self cleanFaceTabList];
     
     NSArray *users = [SQLManager getAllUsers];
+    
     int faceCount = 0;
     
     int margin = 8;
     int size = 88;
     int y = 4;//29;
+ 
     
-    for(NSDictionary *userInfo in users) {
+    for(int i = 0 ; i < [users count] + 1; i++ )
+    {
+        CGRect buttonFrame = CGRectMake(margin + i * (margin + size), y, size, size);
+        CGSize contentSize = CGSizeMake(margin + i * (margin + size) + size, _faceTabScrollView.frame.size.height);
+
+        int UserID;
+        UIImage *profileImage;
         
-        int UserID = [userInfo[@"UserID"] intValue];
-        UIImage *profileImage = [SQLManager getUserProfileImage:UserID];
+        if(i == 0) {
+            UserID = -1;
+            profileImage = [UIImage imageNamed:@"add"];
+            
+        } else {
+            NSDictionary *userInfo = users[i-1];
+            
+            UserID = [userInfo[@"UserID"] intValue];
+            profileImage = [SQLManager getUserProfileImage:UserID];
+        }
         
-        CGRect buttonFrame = CGRectMake(margin + faceCount * (margin + size), y, size, size);
-        CGSize contentSize = CGSizeMake(margin + faceCount * (margin + size) + size, _faceTabScrollView.frame.size.height);
         
         [scrollViewCellFrames addObject:NSStringFromCGRect(buttonFrame)];
         
@@ -780,24 +794,41 @@
         button.frame = buttonFrame;
         
         button.UserID = UserID;
-        button.index = faceCount;
+        button.index = i;
         button.originRect = button.frame;
         
         [_faceTabScrollView addSubview:button];
         
         [_faceTabScrollView setContentSize:contentSize];
-        
-        
-        
-        faceCount++;
-        
-        if(faceCount == [users count]) // Add new facetab
-        {
-            
-        }
-        
-        
     }
+    
+//    for(NSDictionary *userInfo in users) {
+//
+//        int UserID = [userInfo[@"UserID"] intValue];
+//        UIImage *profileImage = [SQLManager getUserProfileImage:UserID];
+//        
+//        CGRect buttonFrame = CGRectMake(margin + faceCount * (margin + size), y, size, size);
+//        CGSize contentSize = CGSizeMake(margin + faceCount * (margin + size) + size, _faceTabScrollView.frame.size.height);
+//        
+//        [scrollViewCellFrames addObject:NSStringFromCGRect(buttonFrame)];
+//        
+//        UIButton_FaceIcon* button = [UIButton_FaceIcon buttonWithType:UIButtonTypeCustom];
+//        
+//        [button setProfileImage:profileImage];
+//        
+//        button.frame = buttonFrame;
+//        
+//        button.UserID = UserID;
+//        button.index = faceCount;
+//        button.originRect = button.frame;
+//        
+//        [_faceTabScrollView addSubview:button];
+//        
+//        [_faceTabScrollView setContentSize:contentSize];
+//
+//        faceCount++;
+//
+//    }
 }
 
 - (void)cleanFaceTabList
@@ -1042,7 +1073,7 @@
             NSLog(@"newContentOffset = %@ / currentPosition = %d / userID = %d", NSStringFromCGPoint(newContentOffset), currentPosition, currentUserID);
         }
         else {
-            currentUserID = -1;
+            currentUserID = -2;
         }
 
 
@@ -1080,18 +1111,20 @@
     
     lastTouchPoint = CGPointZero;
     CGPoint point = [[[event allTouches] anyObject] locationInView:self.view];
-    if(CGRectContainsPoint (_faceTabListBar.frame, point) && currentUserID > 0)
+    if(CGRectContainsPoint (_faceTabListBar.frame, point) && currentUserID > -2)
     {
-        
         [self showStackImages:NO];
         [self showFaceTabBar:NO];
         
-        [self addPhotosToFaceTab:currentUserID];
-//        if(currentUserID > 0) {
-//
-//        }
-        
-        currentUserID = -1;
+        if(currentPosition == 0 && currentUserID == -1){ // New facetab
+            
+            [self makeNewFaceTab];
+            
+        } else { // Add facetab
+             [self addPhotosToFaceTab:currentUserID];
+        }
+
+        currentUserID = -2;
         
     } else {
 

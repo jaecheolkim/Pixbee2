@@ -21,7 +21,8 @@
         _photoAssets = [NSMutableArray array];
         
         
-        self.carousel = [[iCarousel alloc] initWithFrame:CGRectMake(0, 56, 320, 400)];
+//        self.carousel = [[iCarousel alloc] initWithFrame:CGRectMake(0, 56, 320, 400)];
+        self.carousel = [[iCarousel alloc] initWithFrame:CGRectMake(0, 0, 320, 568)];
         self.carousel.backgroundColor = [UIColor greenColor];
         
         for (int i = 0; i < 100; i++)
@@ -32,6 +33,7 @@
         _carousel.type = iCarouselTypeLinear;
         _carousel.dataSource = self;
         _carousel.delegate = self;
+        _carousel.pagingEnabled = YES;
         
         [self addSubview:self.carousel];
 
@@ -124,10 +126,10 @@
     //customize carousel display
     switch (option)
     {
-        case iCarouselOptionWrap:
+        case iCarouselOptionWrap: // Circle wrap
         {
             //normally you would hard-code this to YES or NO
-            return YES;
+            return NO;
         }
         case iCarouselOptionSpacing:
         {

@@ -22,6 +22,10 @@
 #import "BFNavigationBarDrawer.h"
 
 
+#import "ModalTestViewController.h"
+#import "AFPopupView.h"
+
+
 #define LX_LIMITED_MOVEMENT 0
 
 @interface PBMainDashBoardViewController()
@@ -61,6 +65,9 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *rightBarButton;
 
 @property (strong, nonatomic) FBFriendController *friendPopup;
+
+@property (nonatomic, strong) ModalTestViewController *modalTest;
+@property (nonatomic, strong) AFPopupView *popup;
 
 
 - (IBAction)leftBarButtonHandler:(id)sender;
@@ -134,7 +141,27 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
     selectedPhotos = [NSMutableArray array];
     
     [self initNaviMenu];
+    
+    
+    // Modal Popup test
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:Nil];
+    _modalTest = [storyboard instantiateViewControllerWithIdentifier:@"ModalTest"];
+
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(hide) name:@"HideAFPopup" object:nil];
+
  }
+
+-(void)go {
+    
+    _popup = [AFPopupView popupWithView:_modalTest.view];
+    [_popup show];
+}
+
+-(void)hide {
+    
+    [_popup hide];
+}
+
 
 - (void)viewWillAppear:(BOOL)animated
 {
@@ -364,6 +391,8 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
             {
                 
                 [selectedPhotos addObject:indexPath];
+                
+                [self go];
                 
             } else {
                 NSLog(@"go to detail view");

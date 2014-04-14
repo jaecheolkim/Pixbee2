@@ -172,6 +172,8 @@
 		8033E77B18F670FE00861CDD /* ananymous.png in Resources */ = {isa = PBXBuildFile; fileRef = 8033E77A18F670FE00861CDD /* ananymous.png */; };
 		8033E77E18F7B6AC00861CDD /* PBGalleryView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8033E77D18F7B6AC00861CDD /* PBGalleryView.m */; };
 		8033E78018F7BBF500861CDD /* page.png in Resources */ = {isa = PBXBuildFile; fileRef = 8033E77F18F7BBF500861CDD /* page.png */; };
+		8033E78418F7D4D200861CDD /* AFPopupView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8033E78318F7D4D200861CDD /* AFPopupView.m */; };
+		8033E78718F7D71A00861CDD /* ModalTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8033E78618F7D71A00861CDD /* ModalTestViewController.m */; };
 		803E574218CEB56B00BE14EA /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 803E574118CEB56B00BE14EA /* FacebookSDK.framework */; };
 		803E574418CF2E2800BE14EA /* focus@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 803E574318CF2E2800BE14EA /* focus@2x.png */; };
 		803E576018CF7A6F00BE14EA /* APNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 803E575F18CF7A6F00BE14EA /* APNavigationController.m */; };
@@ -641,6 +643,10 @@
 		8033E77C18F7B6AC00861CDD /* PBGalleryView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBGalleryView.h; sourceTree = "<group>"; };
 		8033E77D18F7B6AC00861CDD /* PBGalleryView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBGalleryView.m; sourceTree = "<group>"; };
 		8033E77F18F7BBF500861CDD /* page.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = page.png; sourceTree = "<group>"; };
+		8033E78218F7D4D200861CDD /* AFPopupView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFPopupView.h; sourceTree = "<group>"; };
+		8033E78318F7D4D200861CDD /* AFPopupView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFPopupView.m; sourceTree = "<group>"; };
+		8033E78518F7D71A00861CDD /* ModalTestViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModalTestViewController.h; sourceTree = "<group>"; };
+		8033E78618F7D71A00861CDD /* ModalTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ModalTestViewController.m; sourceTree = "<group>"; };
 		803E574118CEB56B00BE14EA /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FacebookSDK.framework; path = ../../../Documents/FacebookSDK/FacebookSDK.framework; sourceTree = "<group>"; };
 		803E574318CF2E2800BE14EA /* focus@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "focus@2x.png"; sourceTree = "<group>"; };
 		803E575E18CF7A6F00BE14EA /* APNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APNavigationController.h; sourceTree = "<group>"; };
@@ -1592,6 +1598,15 @@
 			path = SMShadowdLayer;
 			sourceTree = "<group>";
 		};
+		8033E78118F7D4D200861CDD /* AFPopView */ = {
+			isa = PBXGroup;
+			children = (
+				8033E78218F7D4D200861CDD /* AFPopupView.h */,
+				8033E78318F7D4D200861CDD /* AFPopupView.m */,
+			);
+			path = AFPopView;
+			sourceTree = "<group>";
+		};
 		803E574718CF791D00BE14EA /* DropDownToolBar */ = {
 			isa = PBXGroup;
 			children = (
@@ -1933,6 +1948,7 @@
 		80D2A0C4184A1E57008D29B2 /* External */ = {
 			isa = PBXGroup;
 			children = (
+				8033E78118F7D4D200861CDD /* AFPopView */,
 				8058CC7518EEF509009A0274 /* BBCyclingLabel */,
 				8048F6B618E9604A0094EE12 /* BFNavigationBarDrawer */,
 				80BC692918E4A29F001BD753 /* UINavigationController+SGProgress */,
@@ -2128,6 +2144,8 @@
 				80E2D82718BDB5DD000924AE /* ProfileCard.m */,
 				80E2D82818BDB5DD000924AE /* ProfileCardCell.h */,
 				80E2D82918BDB5DD000924AE /* ProfileCardCell.m */,
+				8033E78518F7D71A00861CDD /* ModalTestViewController.h */,
+				8033E78618F7D71A00861CDD /* ModalTestViewController.m */,
 				80E2D82118BDB3B7000924AE /* PBMainDashBoardViewController.h */,
 				80E2D82218BDB3B7000924AE /* PBMainDashBoardViewController.m */,
 			);
@@ -2412,6 +2430,7 @@
 				78685D6A184979A6002D2BAA /* InvitationController.m in Sources */,
 				807E75C91851576100B1AD7E /* THObserver.m in Sources */,
 				8065CCC4189C00E500E37716 /* UIAlertView+NSCookbook.m in Sources */,
+				8033E78418F7D4D200861CDD /* AFPopupView.m in Sources */,
 				78C950AA185D5FA60041E8DD /* SBPageFlowView.m in Sources */,
 				78A80541184F80E5008E81B3 /* UIStoryboardSegue+CustomTransitions.m in Sources */,
 				69C39FCD18606B39001EDDFA /* SDWebImageDecoder.m in Sources */,
@@ -2424,6 +2443,7 @@
 				807DD92818BAFDB8003EBF30 /* RMDownloadIndicator.m in Sources */,
 				7805A66518659ECC00B234C1 /* AFHTTPClient.m in Sources */,
 				80A9615118D7532800DC3F26 /* Animator.m in Sources */,
+				8033E78718F7D71A00861CDD /* ModalTestViewController.m in Sources */,
 				69B1B2FF18587D9200774382 /* IntroView.m in Sources */,
 				8058CC6E18EE78BB009A0274 /* ASImageScrollView.m in Sources */,
 				7805A6B118668AD700B234C1 /* UserAddView.m in Sources */,

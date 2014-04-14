@@ -43,9 +43,9 @@
 
 #import "BBCyclingLabel.h"
 
-#import "iCarousel.h"
+//#import "iCarousel.h"
 
-//#import "PBGalleryView.h"
+#import "PBGalleryView.h"
 
 static void *IsAdjustingFocusingContext = &IsAdjustingFocusingContext;
 
@@ -102,8 +102,8 @@ CGRect DetectFaceTabs[6] = {
 @interface FaceDetectionViewController ()
 <UIGestureRecognizerDelegate,
 AVCaptureMetadataOutputObjectsDelegate,
-AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate,
-iCarouselDataSource, iCarouselDelegate>
+AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
+//,iCarouselDataSource, iCarouselDelegate>
 {
     IBOutlet UIView *previewView;
     IBOutlet UIView *faceView;
@@ -163,7 +163,9 @@ iCarouselDataSource, iCarouselDelegate>
     
     NSMutableArray* galleryAssets;
     
-//    PBGalleryView *galleryView;
+    PBGalleryView *galleryView;
+    NSMutableArray *galleryPhotos;
+    NSMutableArray *galleryURLs;
 
 }
 @property (weak, nonatomic) IBOutlet UIView *topView;
@@ -194,9 +196,9 @@ iCarouselDataSource, iCarouselDelegate>
 @property (strong, nonatomic) UIPercentDrivenInteractiveTransition* interactionController;
 
 
-@property (weak, nonatomic) IBOutlet UIView *galleryView;
-@property (weak, nonatomic) IBOutlet iCarousel *carousel;
-@property (nonatomic, strong) NSMutableArray *items;
+//@property (weak, nonatomic) IBOutlet UIView *galleryView;
+//@property (weak, nonatomic) IBOutlet iCarousel *carousel;
+//@property (nonatomic, strong) NSMutableArray *items;
 
 //@property (weak, nonatomic) IBOutlet FXBlurView *BlurView;
 
@@ -217,28 +219,28 @@ iCarouselDataSource, iCarouselDelegate>
 }
 
 
-- (void)awakeFromNib
-{
-    self.items = [NSMutableArray array];
-    for (int i = 0; i < 100; i++)
-    {
-        [_items addObject:@(i)];
-    }
-}
-
-- (void)dealloc
-{
-    _carousel.delegate = nil;
-    _carousel.dataSource = nil;
-}
+//- (void)awakeFromNib
+//{
+//    self.items = [NSMutableArray array];
+//    for (int i = 0; i < 100; i++)
+//    {
+//        [_items addObject:@(i)];
+//    }
+//}
+//
+//- (void)dealloc
+//{
+//    _carousel.delegate = nil;
+//    _carousel.dataSource = nil;
+//}
 
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
-//    galleryView = [[PBGalleryView alloc] initWithFrame:CGRectMake(320, 0, 320, 568)];
-//    [self.view addSubview:galleryView];
+    galleryView = [[PBGalleryView alloc] initWithFrame:CGRectMake(320, 0, 320, 568)];
+    [self.view addSubview:galleryView];
 
     
     NSLog(@"SegueFrom = %@", _segueid);
@@ -256,9 +258,6 @@ iCarouselDataSource, iCarouselDelegate>
             // iOS 6
             [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
         }
-        
-        
-        
     }
     
     
@@ -269,9 +268,10 @@ iCarouselDataSource, iCarouselDelegate>
     
     instructPoint = @[NSStringFromCGPoint(CGPointMake(0, 0)),  ];
 
-
-    
     galleryAssets = [NSMutableArray array];
+    
+    galleryPhotos = [NSMutableArray array];
+    galleryURLs = [NSMutableArray array];
 
     recognisedFaces = @{}.mutableCopy;
     processing = @{}.mutableCopy;
@@ -345,9 +345,9 @@ iCarouselDataSource, iCarouselDelegate>
     self.animator = [Animator new];
     
     
-    _carousel.type = iCarouselTypeLinear;
-    _carousel.dataSource = self;
-    _carousel.delegate = self;
+//    _carousel.type = iCarouselTypeLinear;
+//    _carousel.dataSource = self;
+//    _carousel.delegate = self;
 
     NSLog(@"viewDidLoad = %@", @"---- END");
 }
@@ -393,6 +393,10 @@ iCarouselDataSource, iCarouselDelegate>
     isReadyToScanFace = NO;
     [self teardownAVCapture];
     [unSelectedUSers removeAllObjects];
+    
+    [galleryPhotos removeAllObjects];
+    [galleryURLs removeAllObjects];
+
 
     [[NSNotificationCenter defaultCenter] removeObserver:self name:MotionOrientationChangedNotification object:nil];
     
@@ -400,13 +404,13 @@ iCarouselDataSource, iCarouselDelegate>
 
 }
 
-- (void)viewDidUnload
-{
-    [super viewDidUnload];
-    
-    //free up memory by releasing subviews
-    self.carousel = nil;
-}
+//- (void)viewDidUnload
+//{
+//    [super viewDidUnload];
+//    
+//    //free up memory by releasing subviews
+//    self.carousel = nil;
+//}
 
 - (void)didReceiveMemoryWarning
 {
@@ -502,7 +506,7 @@ iCarouselDataSource, iCarouselDelegate>
         else
             frame = CGRectMake(d * 320, 0, 320, 568);
 
-        _galleryView.frame = frame;
+        galleryView.frame = frame;
         NSLog(@"UIGestureRecognizerStateChanged d = %f", d);
     }
     else if (gestureRecognizer.state == UIGestureRecognizerStateEnded)
@@ -510,24 +514,36 @@ iCarouselDataSource, iCarouselDelegate>
         NSLog(@"animator.operation = %d / x = %d", (int)(self.animator.operation), (int)[gestureRecognizer velocityInView:view].x);
         if(self.animator.operation == UINavigationControllerOperationPush){
             if ([gestureRecognizer velocityInView:view].x <= 0) {
-                _galleryView.frame = CGRectMake(0, 0, 320, 568);
+                
+                galleryView.frame = CGRectMake(0, 0, 320, 568);
+                galleryView.isShown = YES;
+                
                 [[NSNotificationCenter defaultCenter] postNotificationName:@"RootViewControllerEventHandler"
                                                                     object:self
                                                                   userInfo:@{@"panGestureEnabled":@"NO"}];
 
             } else {
-                _galleryView.frame = CGRectMake(320, 0, 320, 568);
+                
+                [galleryView.carousel scrollToItemAtIndex:0 animated:NO];
+                galleryView.frame = CGRectMake(320, 0, 320, 568);
+                
             }
         } else if(self.animator.operation == UINavigationControllerOperationPop){
             if ([gestureRecognizer velocityInView:view].x > 0) {
-                _galleryView.frame = CGRectMake(320, 0, 320, 568);
+                
+                [galleryView.carousel scrollToItemAtIndex:0 animated:NO];
+                galleryView.frame = CGRectMake(320, 0, 320, 568);
+                
+                
                 [[NSNotificationCenter defaultCenter] postNotificationName:@"RootViewControllerEventHandler"
                                                                     object:self
                                                                   userInfo:@{@"panGestureEnabled":@"YES"}];
 
 
             } else {
-                _galleryView.frame = CGRectMake(0, 0, 320, 568);
+                
+                galleryView.frame = CGRectMake(0, 0, 320, 568);
+                
             }
         }
         self.interactionController = nil;
@@ -833,71 +849,73 @@ iCarouselDataSource, iCarouselDelegate>
 -(void)saveImage:(CMSampleBufferRef)jpegSampleBuffer
 {
     NSData *imgData = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:jpegSampleBuffer];
-
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         @autoreleasepool {
-            
-            
+ 
             UIImage *image = [UIImage imageWithData:imgData];
             image = [image fixRotation];
             
             dispatch_async(dispatch_get_main_queue(), ^{
+                
+#warning 갤러리용 Temp 이미지 저장.
+                NSLog(@"=============== [[ 1 ]] 갤러리용 Temp 이미지 저장");
+                [galleryPhotos addObject:image];
+                
                 [self saveImageAnimation:image];
+
+                [[SDImageCache sharedImageCache] storeImage:image forKey:@"LastImage" toDisk:YES];
+                
             });
-            
-            
-            
-            
+
             [AssetLib.assetsLibrary saveImageData:imgData
                                          metadata:nil
                                           toAlbum:@"Pixbee"
                               withCompletionBlock:^(NSURL *assetURL, NSError *error) {
                                   if (error) {
-                                      dispatch_async(dispatch_get_main_queue(), ^{
-                                          if ([ALAssetsLibrary authorizationStatus] != ALAuthorizationStatusAuthorized) {
-                                              
-                                              NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-                                              BOOL showCameraRollGuide = [userDefaults boolForKey:@"SHOWCAMERAROLLGUIDE"];
-                                              
-                                              if (!showCameraRollGuide) {
-                                                  UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"To save Photos to Camera Roll", @"To save Photos to Camera Roll")
-                                                                                                  message:NSLocalizedString(@"Go to iPhone Settings > Privacy > Photo,\nand turn ON Pixbee.", @"Go to iPhone Settings > Privacy > Photo,\nand turn ON Pudding Camera.")
-                                                                                                 delegate:nil
-                                                                                        cancelButtonTitle:NSLocalizedString(@"Done", @"Done")
-                                                                                        otherButtonTitles:nil];
-                                                  [alert show];
-                                                  
-                                                  [userDefaults setBool:YES forKey:@"SHOWCAMERAROLLGUIDE"];
-                                                  [userDefaults synchronize];
-                                              }
-                                          }
-                                      });
-
+                                      [self showCameraRollSaveError];
+                                  } else {
                                       
-                                  }
-                                  
-                                  else {
-                                      
-                                      [[SDImageCache sharedImageCache] storeImage:image forKey:@"LastImage" toDisk:YES];
+#warning 갤러리용 Temp 이미지 URL 저장.
+                                      NSLog(@"=============== [[ 2 ]] 갤러리용 Temp 이미지 URL 저장");
+                                      [galleryURLs addObject:assetURL];
                                       
                                       [self savePhoto:assetURL users:selectedUsers];
+                                      
                                       
                                       dispatch_async(dispatch_get_main_queue(), ^{
                                           [[NSNotificationCenter defaultCenter] postNotificationName:@"RootViewControllerEventHandler"
                                                                                               object:self
                                                                                             userInfo:@{@"refreshBGImage":@"YES"}];
                                       });
-                                      
                                   }
-                              }];
-            
+              }];
             
         }
     });
-    
+}
 
-
+- (void)showCameraRollSaveError
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if ([ALAssetsLibrary authorizationStatus] != ALAuthorizationStatusAuthorized) {
+            
+            NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+            BOOL showCameraRollGuide = [userDefaults boolForKey:@"SHOWCAMERAROLLGUIDE"];
+            
+            if (!showCameraRollGuide) {
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"To save Photos to Camera Roll", @"To save Photos to Camera Roll")
+                                                                message:NSLocalizedString(@"Go to iPhone Settings > Privacy > Photo,\nand turn ON Pixbee.", @"Go to iPhone Settings > Privacy > Photo,\nand turn ON Pudding Camera.")
+                                                               delegate:nil
+                                                      cancelButtonTitle:NSLocalizedString(@"Done", @"Done")
+                                                      otherButtonTitles:nil];
+                [alert show];
+                
+                [userDefaults setBool:YES forKey:@"SHOWCAMERAROLLGUIDE"];
+                [userDefaults synchronize];
+            }
+        }
+    });
 }
 
 - (IBAction)snapStillImage:(id)sender
@@ -965,10 +983,13 @@ iCarouselDataSource, iCarouselDelegate>
         ALAssetAdapter* gasset = [[ALAssetAdapter alloc] init];
         gasset.asset = asset;
         [galleryAssets addObject:gasset];
+        
+        NSLog(@"=============== [[ 3 - 1 ]] 실제 이미지 URL 받아옴.");
     };
     
     ALAssetsLibraryAccessFailureBlock failureBlock  = ^(NSError *error)
     {
+        NSLog(@"=============== [[ 3 - 2 ]] 실제 이미지 URL 받아 오기 실패.");
         NSLog(@"Unresolved error: %@, %@", error, [error localizedDescription]);
     };
     
@@ -1564,11 +1585,8 @@ bail:
                 dispatch_async(dispatch_get_main_queue(), ^(void) {
 
                     [self collectFace:feature inImage:ciImage ofUserID:_UserID];
-                    
 
-                    
                 });
-                
             }
             else if(ciImage && [features count] > 1 ) {
 #warning 한명 이상은 얼굴 등록 할 수 없음 메시지 뿌려주기
@@ -2273,164 +2291,164 @@ bail:
 }
 
 
-#pragma mark -
-#pragma mark iCarousel methods
-
-- (void)carouselWillBeginScrollingAnimation:(iCarousel *)carousel
-{
-    NSLog(@"carouselWillBeginScrollingAnimation");
-}
-
-- (void)carouselDidEndScrollingAnimation:(iCarousel *)carousel
-{
-    // 여기가 맨 마지막 이벤트 임..
-    NSLog(@"carouselDidEndScrollingAnimation / CurrentIndex = %d", (int)carousel.currentItemIndex);
-}
-
-- (BOOL)carousel:(iCarousel *)carousel shouldSelectItemAtIndex:(NSInteger)index
-{
-    return YES;
-}
-
-- (void)carousel:(iCarousel *)carousel didSelectItemAtIndex:(NSInteger)index
-{
-    NSLog(@"didSelectItemAtIndex = %d", (int)index);
-}
-
-- (void)carouselCurrentItemIndexDidChange:(iCarousel *)carousel
-{
-    NSLog(@"currentItemIndex = %d", (int)carousel.currentItemIndex);
-}
-
-- (NSUInteger)numberOfItemsInCarousel:(iCarousel *)carousel
-{
-    //return the total number of items in the carousel
-    return [_items count];
-}
-
-- (UIView *)carousel:(iCarousel *)carousel viewForItemAtIndex:(NSUInteger)index reusingView:(UIView *)view
-{
-    UILabel *label = nil;
-    
-    //create new view if no view is available for recycling
-    if (view == nil)
-    {
-        //don't do anything specific to the index within
-        //this `if (view == nil) {...}` statement because the view will be
-        //recycled and used with other index values later
-        view = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 250.0f, 400.0f)];
-        view.backgroundColor = [UIColor yellowColor];
-        ((UIImageView *)view).image = [UIImage imageNamed:@"page.png"];
-        view.contentMode = UIViewContentModeCenter;
-        
-        label = [[UILabel alloc] initWithFrame:view.bounds];
-        label.backgroundColor = [UIColor clearColor];
-        label.textAlignment = NSTextAlignmentCenter;
-        label.font = [label.font fontWithSize:50];
-        label.tag = 1;
-        [view addSubview:label];
-    }
-    else
-    {
-        //get a reference to the label in the recycled view
-        label = (UILabel *)[view viewWithTag:1];
-    }
-    
-    //set item label
-    //remember to always set any properties of your carousel item
-    //views outside of the `if (view == nil) {...}` check otherwise
-    //you'll get weird issues with carousel item content appearing
-    //in the wrong place in the carousel
-    label.text = [_items[index] stringValue];
-    
-    return view;
-    
-    //    UIButton *button = (UIButton *)view;
-    //	if (button == nil)
-    //	{
-    //		//no button available to recycle, so create new one
-    //		UIImage *image = [UIImage imageNamed:@"page.png"];
-    //		button = [UIButton buttonWithType:UIButtonTypeCustom];
-    //		button.frame = CGRectMake(0.0f, 0.0f, image.size.width, image.size.height);
-    //		[button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    //		[button setBackgroundImage:image forState:UIControlStateNormal];
-    //		button.titleLabel.font = [button.titleLabel.font fontWithSize:50];
-    //		[button addTarget:self action:@selector(buttonTapped:) forControlEvents:UIControlEventTouchUpInside];
-    //	}
-    //
-    //	//set button label
-    //	[button setTitle:[NSString stringWithFormat:@"%d", (int)index] forState:UIControlStateNormal];
-    //
-    //	return button;
-    
-}
-
-- (CGFloat)carousel:(iCarousel *)carousel valueForOption:(iCarouselOption)option withDefault:(CGFloat)value
-{
-    
-    
-    //    switch (option)
-    //    {
-    //        case iCarouselOptionSpacing:
-    //            return value * 1.1f;
-    //        case iCarouselOptionFadeMin:
-    //            return -0.2;
-    //        case iCarouselOptionFadeMax:
-    //            return 0.2;
-    //        case iCarouselOptionFadeRange:
-    //            return 2.0;
-    //        default:
-    //            return value;
-    //    }
-    //
-    //    return value;
-    
-    //customize carousel display
-    switch (option)
-    {
-        case iCarouselOptionWrap:
-        {
-            //normally you would hard-code this to YES or NO
-            return YES;
-        }
-        case iCarouselOptionSpacing:
-        {
-            //add a bit of spacing between the item views
-            return value * 1.1f;
-        }
-            //        case iCarouselOptionFadeMax:
-            //        {
-            //            if (carousel.type == iCarouselTypeCustom)
-            //            {
-            //                //set opacity based on distance from camera
-            //                return 0.0f;
-            //            }
-            //            return value;
-            //        }
-            
-        case iCarouselOptionFadeMin:
-        {
-            return -0.2;
-        }
-            
-        case iCarouselOptionFadeMax:
-        {
-            return 0.2;
-        }
-            
-        case iCarouselOptionFadeRange:
-        {
-            return 1.0;
-        }
-            
-            
-            
-        default:
-        {
-            return value;
-        }
-    }
-}
+//#pragma mark -
+//#pragma mark iCarousel methods
+//
+//- (void)carouselWillBeginScrollingAnimation:(iCarousel *)carousel
+//{
+//    NSLog(@"carouselWillBeginScrollingAnimation");
+//}
+//
+//- (void)carouselDidEndScrollingAnimation:(iCarousel *)carousel
+//{
+//    // 여기가 맨 마지막 이벤트 임..
+//    NSLog(@"carouselDidEndScrollingAnimation / CurrentIndex = %d", (int)carousel.currentItemIndex);
+//}
+//
+//- (BOOL)carousel:(iCarousel *)carousel shouldSelectItemAtIndex:(NSInteger)index
+//{
+//    return YES;
+//}
+//
+//- (void)carousel:(iCarousel *)carousel didSelectItemAtIndex:(NSInteger)index
+//{
+//    NSLog(@"didSelectItemAtIndex = %d", (int)index);
+//}
+//
+//- (void)carouselCurrentItemIndexDidChange:(iCarousel *)carousel
+//{
+//    NSLog(@"currentItemIndex = %d", (int)carousel.currentItemIndex);
+//}
+//
+//- (NSUInteger)numberOfItemsInCarousel:(iCarousel *)carousel
+//{
+//    //return the total number of items in the carousel
+//    return [_items count];
+//}
+//
+//- (UIView *)carousel:(iCarousel *)carousel viewForItemAtIndex:(NSUInteger)index reusingView:(UIView *)view
+//{
+//    UILabel *label = nil;
+//    
+//    //create new view if no view is available for recycling
+//    if (view == nil)
+//    {
+//        //don't do anything specific to the index within
+//        //this `if (view == nil) {...}` statement because the view will be
+//        //recycled and used with other index values later
+//        view = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 250.0f, 400.0f)];
+//        view.backgroundColor = [UIColor yellowColor];
+//        ((UIImageView *)view).image = [UIImage imageNamed:@"page.png"];
+//        view.contentMode = UIViewContentModeCenter;
+//        
+//        label = [[UILabel alloc] initWithFrame:view.bounds];
+//        label.backgroundColor = [UIColor clearColor];
+//        label.textAlignment = NSTextAlignmentCenter;
+//        label.font = [label.font fontWithSize:50];
+//        label.tag = 1;
+//        [view addSubview:label];
+//    }
+//    else
+//    {
+//        //get a reference to the label in the recycled view
+//        label = (UILabel *)[view viewWithTag:1];
+//    }
+//    
+//    //set item label
+//    //remember to always set any properties of your carousel item
+//    //views outside of the `if (view == nil) {...}` check otherwise
+//    //you'll get weird issues with carousel item content appearing
+//    //in the wrong place in the carousel
+//    label.text = [_items[index] stringValue];
+//    
+//    return view;
+//    
+//    //    UIButton *button = (UIButton *)view;
+//    //	if (button == nil)
+//    //	{
+//    //		//no button available to recycle, so create new one
+//    //		UIImage *image = [UIImage imageNamed:@"page.png"];
+//    //		button = [UIButton buttonWithType:UIButtonTypeCustom];
+//    //		button.frame = CGRectMake(0.0f, 0.0f, image.size.width, image.size.height);
+//    //		[button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+//    //		[button setBackgroundImage:image forState:UIControlStateNormal];
+//    //		button.titleLabel.font = [button.titleLabel.font fontWithSize:50];
+//    //		[button addTarget:self action:@selector(buttonTapped:) forControlEvents:UIControlEventTouchUpInside];
+//    //	}
+//    //
+//    //	//set button label
+//    //	[button setTitle:[NSString stringWithFormat:@"%d", (int)index] forState:UIControlStateNormal];
+//    //
+//    //	return button;
+//    
+//}
+//
+//- (CGFloat)carousel:(iCarousel *)carousel valueForOption:(iCarouselOption)option withDefault:(CGFloat)value
+//{
+//    
+//    
+//    //    switch (option)
+//    //    {
+//    //        case iCarouselOptionSpacing:
+//    //            return value * 1.1f;
+//    //        case iCarouselOptionFadeMin:
+//    //            return -0.2;
+//    //        case iCarouselOptionFadeMax:
+//    //            return 0.2;
+//    //        case iCarouselOptionFadeRange:
+//    //            return 2.0;
+//    //        default:
+//    //            return value;
+//    //    }
+//    //
+//    //    return value;
+//    
+//    //customize carousel display
+//    switch (option)
+//    {
+//        case iCarouselOptionWrap:
+//        {
+//            //normally you would hard-code this to YES or NO
+//            return YES;
+//        }
+//        case iCarouselOptionSpacing:
+//        {
+//            //add a bit of spacing between the item views
+//            return value * 1.1f;
+//        }
+//            //        case iCarouselOptionFadeMax:
+//            //        {
+//            //            if (carousel.type == iCarouselTypeCustom)
+//            //            {
+//            //                //set opacity based on distance from camera
+//            //                return 0.0f;
+//            //            }
+//            //            return value;
+//            //        }
+//            
+//        case iCarouselOptionFadeMin:
+//        {
+//            return -0.2;
+//        }
+//            
+//        case iCarouselOptionFadeMax:
+//        {
+//            return 0.2;
+//        }
+//            
+//        case iCarouselOptionFadeRange:
+//        {
+//            return 1.0;
+//        }
+//            
+//            
+//            
+//        default:
+//        {
+//            return value;
+//        }
+//    }
+//}
 
 
 @end
