@@ -427,7 +427,7 @@
                                                             
                                                             FBHELPER.friends = (NSArray*)array;
                                                             
-                                                            NSLog(@"Friends = %@", FBHELPER.friends);
+                                                            NSLog(@"total %d Friends = %@", (int)[array count], FBHELPER.friends);
                                                         }];
 
                               }];

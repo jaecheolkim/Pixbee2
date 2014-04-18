@@ -30,7 +30,36 @@
 
     [self setWantsFullScreenLayout:YES];
     
+//    UIBarButtonItem *backButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"back.png"] style:UIBarButtonItemStylePlain target:self action:@selector(popVC)];
+//    self.navigationItem.leftBarButtonItem =  backButton; //[[UIBarButtonItem alloc] initWithCustomView:backButton];
+//    self.navigationController.navigationBar.tintColor=[UIColor whiteColor];
+    
+    
+    // Create a containing view to position the button
+    UIImage *barButtonImage = [UIImage imageNamed:@"back.png"];
+    UIView *containingView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, barButtonImage.size.width + 40, barButtonImage.size.height)];
+    //containingView.backgroundColor = [UIColor redColor];
 
+    // Create a custom button with the image
+    UIButton *barUIButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [barUIButton setImage:barButtonImage forState:UIControlStateNormal];
+    barUIButton.frame = CGRectMake(-14, 0, barButtonImage.size.width + 14, barButtonImage.size.height);
+    barUIButton.contentEdgeInsets = UIEdgeInsetsMake(0, -14, 0, 0);
+    [barUIButton addTarget:self action:@selector(popVC) forControlEvents:UIControlEventTouchUpInside];
+     //barUIButton.backgroundColor = [UIColor yellowColor];
+    
+    [containingView addSubview:barUIButton];
+    
+    // Create a container bar button
+    UIBarButtonItem *containingBarButton = [[UIBarButtonItem alloc] initWithCustomView:containingView];
+    
+    // Add the container bar button
+    self.navigationItem.leftBarButtonItem = containingBarButton;
+
+}
+
+- (void) popVC{
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 - (void)viewDidAppear:(BOOL)animated

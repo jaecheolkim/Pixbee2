@@ -14,4 +14,9 @@
 @property (nonatomic, strong) NSMutableArray *photoAssets;
 @property (nonatomic, assign) BOOL isShown;
 @property (nonatomic, strong) iCarousel *carousel;
+@property (nonatomic, strong) UIImage *currentImage;
+
+
+- (void)reloadData;
+
 @end

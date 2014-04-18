@@ -90,6 +90,7 @@
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *menuButton;
 
 @property (weak, nonatomic) IBOutlet UIButton *stackImages;
+@property (weak, nonatomic) IBOutlet UIButton *facetabButton;
 
 
 - (IBAction)rightBarButtonHandler:(id)sender;
@@ -100,6 +101,7 @@
 
 - (IBAction)leftBarButtonHandler:(id)sender;
 
+- (IBAction)facetabButtonHandler:(id)sender;
 
 @end
 
@@ -156,10 +158,21 @@
         
     } else {
         ASSETFILTER = YES;
+
+        
+//        EDIT_MODE = YES;
+//        self.navigationItem.rightBarButtonItem.image = nil;
+//        [self initSwipeToSelectPanGesture];
+//        [self.collectionView setAllowsSelection:EDIT_MODE];
+//        [self.collectionView setAllowsMultipleSelection:EDIT_MODE];
     }
     
+    self.facetabButton.hidden = YES;
 
 }
+
+
+
 
 - (void)viewWillAppear:(BOOL)animated
 {
@@ -480,6 +493,7 @@
     newFaceTabButton.enabled = NO;
     addFaceTabButton.enabled = NO;
     deleteButton.enabled = NO;
+    self.facetabButton.enabled = NO;
     
     int selectcount = 0;
     if(!IsEmpty(selectedPhotos)) {
@@ -491,6 +505,9 @@
         newFaceTabButton.enabled = YES;
         addFaceTabButton.enabled = YES;
         deleteButton.enabled = YES;
+        
+        if(EDIT_MODE)
+            self.facetabButton.enabled = YES;
     }
     
     
@@ -580,7 +597,8 @@
     [self showFaceTabBar:NO];
     
     if(EDIT_MODE) [self initSwipeToSelectPanGesture];
-
+    
+    _facetabButton.hidden = NO;
 }
 
 - (IBAction)leftBarButtonHandler:(id)sender {
@@ -591,6 +609,13 @@
     } else {
         [self.sideMenuViewController presentMenuViewController];
     }
+    
+}
+
+- (IBAction)facetabButtonHandler:(id)sender {
+    _facetabButton.hidden = YES;
+    [self removeSwipeToSelectPanGesture];
+    [self showFaceTabBar:YES];
     
 }
 
@@ -641,9 +666,9 @@
         frame = CGRectMake(frame.origin.x, rect.size.height, frame.size.width, frame.size.height);
     }
     
-    if(show){
-        if(EDIT_MODE) [self showToolBar:NO];
-    }
+//    if(show){
+//        if(EDIT_MODE) [self showToolBar:NO];
+//    }
     
     
     [UIView animateWithDuration:0.2
@@ -662,7 +687,7 @@
                                  [self refreshSelectedPhotCountOnNavTilte];
                                  [_collectionView reloadData];
                                  
-                                 [self showToolBar:YES];
+//                                 [self showToolBar:YES];
                                  
                               }
                          }
@@ -689,6 +714,7 @@
     }
 }
 
+
 - (void)toggleEdit
 {
     EDIT_MODE = !EDIT_MODE;
@@ -707,12 +733,15 @@
         
         [self initSwipeToSelectPanGesture];
         
-        [drawer showFromNavigationBar:self.navigationController.navigationBar animated:YES];
+        self.facetabButton.hidden = NO;
+        self.facetabButton.enabled = NO;
+        //[drawer showFromNavigationBar:self.navigationController.navigationBar animated:YES];
         
     }
     else {
         
-        [drawer hideAnimated:YES];
+        self.facetabButton.hidden = YES;
+        //[drawer hideAnimated:YES];
         
         [self removeSwipeToSelectPanGesture];
         
@@ -1297,7 +1326,10 @@
         
         [self hideProgressHUD:YES];
         
-        if(EDIT_MODE) [self toggleEdit];
+        //if(EDIT_MODE) [self toggleEdit];
+        
+        _facetabButton.hidden = NO;
+        [self initSwipeToSelectPanGesture];
         
         if([_segueIdentifier isEqualToString:@"Segue3_1to4_3"])
         {
@@ -1339,7 +1371,11 @@
     } completion:^(BOOL finished) {
         [self hideProgressHUD:YES];
         
-        if(EDIT_MODE) [self toggleEdit];
+        //if(EDIT_MODE) [self toggleEdit];
+        
+        _facetabButton.hidden = NO;
+        [self initSwipeToSelectPanGesture];
+
         
         if([_segueIdentifier isEqualToString:@"Segue3_1to4_3"])
         {

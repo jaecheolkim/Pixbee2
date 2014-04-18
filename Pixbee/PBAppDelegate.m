@@ -151,6 +151,8 @@
     [AssetLib checkNewPhoto];
     
     [FBAppCall handleDidBecomeActive];
+    
+    [FBHELPER getFBFriend];
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application {

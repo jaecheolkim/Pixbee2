@@ -29,8 +29,8 @@
     
     //[self resetFontShape:_nameLabel];
  
-    _nameTextField.delegate = self;
-    [_nameTextField addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
+//    _nameTextField.delegate = self;
+//    [_nameTextField addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
 
 }
 
@@ -110,56 +110,56 @@
    _profileImageView.alpha = highlighted ? 0.75f : 1.0f;
 }
 
-- (void)setSelected:(BOOL)selected
-{
-    [super setSelected:selected];
-    
-    if(self.selected) _checkImageView.image = [UIImage imageNamed:@"check"];
-    else _checkImageView.image = nil;//[UIImage imageNamed:@"checkbox"];
-}
-
-
-- (void)textFieldDidBeginEditing:(UITextField *)textField {
-    textField.placeholder = self.nameLabel.text;
-    self.nameLabel.text = nil;
-    
-    
-    if([self.delegate respondsToSelector:@selector(nameDidBeginEditing:)])
-    {
-        [self.delegate nameDidBeginEditing:self];
-    }
-    
-    NSLog(@"textFieldDidBeginEditing:");
-}
-- (void)textFieldDidEndEditing:(UITextField *)textField {
-    if(!IsEmpty(textField.text)){
-        self.nameLabel.text = textField.text;
-    } else {
-        self.nameLabel.text = userName;
-    }
-
-    textField.text = nil;
-    textField.placeholder = nil;
-    
-    if([self.delegate respondsToSelector:@selector(nameDidEndEditing:)])
-    {
-        [self.delegate nameDidEndEditing:self];
-    }
-    NSLog(@"textFieldDidEndEditing:");
-}
-- (void)textFieldDidChange:(id)sender {
-    
-    if([self.delegate respondsToSelector:@selector(nameDidChange:)])
-    {
-        [self.delegate nameDidChange:self];
-    }
-    NSLog(@"textFieldDidChange:");
-}
-- (BOOL)textFieldShouldReturn:(UITextField *)textField {
-    
-    NSLog(@"textFieldShouldReturn:");
-    return [textField resignFirstResponder];
-}
+//- (void)setSelected:(BOOL)selected
+//{
+//    [super setSelected:selected];
+//    
+//    if(self.selected) _checkImageView.image = [UIImage imageNamed:@"check"];
+//    else _checkImageView.image = nil;//[UIImage imageNamed:@"checkbox"];
+//}
+//
+//
+//- (void)textFieldDidBeginEditing:(UITextField *)textField {
+//    textField.placeholder = self.nameLabel.text;
+//    self.nameLabel.text = nil;
+//    
+//    
+//    if([self.delegate respondsToSelector:@selector(nameDidBeginEditing:)])
+//    {
+//        [self.delegate nameDidBeginEditing:self];
+//    }
+//    
+//    NSLog(@"textFieldDidBeginEditing:");
+//}
+//- (void)textFieldDidEndEditing:(UITextField *)textField {
+//    if(!IsEmpty(textField.text)){
+//        self.nameLabel.text = textField.text;
+//    } else {
+//        self.nameLabel.text = userName;
+//    }
+//
+//    textField.text = nil;
+//    textField.placeholder = nil;
+//    
+//    if([self.delegate respondsToSelector:@selector(nameDidEndEditing:)])
+//    {
+//        [self.delegate nameDidEndEditing:self];
+//    }
+//    NSLog(@"textFieldDidEndEditing:");
+//}
+//- (void)textFieldDidChange:(id)sender {
+//    
+//    if([self.delegate respondsToSelector:@selector(nameDidChange:)])
+//    {
+//        [self.delegate nameDidChange:self];
+//    }
+//    NSLog(@"textFieldDidChange:");
+//}
+//- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+//    
+//    NSLog(@"textFieldShouldReturn:");
+//    return [textField resignFirstResponder];
+//}
 
 
 @end

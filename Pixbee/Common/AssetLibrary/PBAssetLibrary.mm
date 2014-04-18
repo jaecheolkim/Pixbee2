@@ -58,6 +58,8 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self name:ALAssetsLibraryChangedNotification object:nil];
 }
 
+
+
 #pragma mark - Notification handlers
 //In iOS 6.0 and later, the user information dictionary describes what changed:
 //If the user information dictionary is nil, reload all assets and asset groups.

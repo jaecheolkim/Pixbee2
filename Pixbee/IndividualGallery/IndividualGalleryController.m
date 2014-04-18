@@ -28,6 +28,11 @@
 
 #import "BFNavigationBarDrawer.h"
 
+#import "FullScreenPhotoController.h"
+#import "ASAssetsLibrary.h"
+#import "ALAssetAdapter.h"
+
+
 @interface IndividualGalleryController ()
 <UICollectionViewDataSource, UICollectionViewDelegate,
 IDMPhotoBrowserDelegate, GalleryViewCellDelegate>
@@ -108,6 +113,7 @@ IDMPhotoBrowserDelegate, GalleryViewCellDelegate>
     [self initRefreshControl];
     
     [self initNaviMenu];
+
 }
 
 
@@ -516,30 +522,12 @@ IDMPhotoBrowserDelegate, GalleryViewCellDelegate>
         cell.selectIcon.hidden = YES;
         cell.checkIcon.hidden = YES;
         
+        [self gotoGallery:indexPath];
         
-        NSMutableArray *idmPhotos = [NSMutableArray arrayWithCapacity:[self.photos count]];
-        for (NSDictionary *photoinfo in self.photos) {
-            NSString *photo = [photoinfo objectForKey:@"AssetURL"];
-            [idmPhotos addObject:photo];
-        }
- 
-        // Create and setup browser
-        IDMPhotoBrowser *browser = [[IDMPhotoBrowser alloc] initWithPhotoURLs:idmPhotos animatedFromView:cell]; // using initWithPhotos:animatedFromView: method to use the zoom-in animation
-        browser.delegate = self;
-        [browser setInitialPageIndex:indexPath.row];
-        browser.displayActionButton = NO;
-        browser.displayArrowButton = NO;
-        //        browser.displayArrowButton = YES;
-        browser.displayCounterLabel = YES;
-        browser.scaleImage = cell.photoImageView.image;
-
-        // Show
-        [self.navigationController pushViewController:browser animated:YES];
-
+        
     }
-    
-
 }
+
 
 - (void)collectionView:(UICollectionView *)collectionView didDeselectItemAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -596,6 +584,98 @@ IDMPhotoBrowserDelegate, GalleryViewCellDelegate>
     
     
 }
+
+//- (void)gotoGallery:(NSIndexPath*)indexPath
+//{
+//    GalleryViewCell *cell = (GalleryViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
+//    
+//    NSMutableArray *idmPhotos = [NSMutableArray arrayWithCapacity:[self.photos count]];
+//    for (NSDictionary *photoinfo in self.photos) {
+//        NSString *photo = [photoinfo objectForKey:@"AssetURL"];
+//        [idmPhotos addObject:photo];
+//    }
+//    
+//    // Create and setup browser
+//    IDMPhotoBrowser *browser = [[IDMPhotoBrowser alloc] initWithPhotoURLs:idmPhotos animatedFromView:cell]; // using initWithPhotos:animatedFromView: method to use the zoom-in animation
+//    browser.delegate = self;
+//    [browser setInitialPageIndex:indexPath.row];
+//    browser.displayActionButton = NO;
+//    browser.displayArrowButton = NO;
+//    //        browser.displayArrowButton = YES;
+//    browser.displayCounterLabel = YES;
+//    browser.scaleImage = cell.photoImageView.image;
+//    
+//    // Show
+//    [self.navigationController pushViewController:browser animated:YES];
+//    
+//}
+
+- (void)AssetFromURLS:(NSArray *)urls success:(void (^)(NSArray *result))success
+{
+    NSMutableArray *assets = [NSMutableArray arrayWithCapacity:[urls count]];
+    
+	[urls enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        
+        if(!IsEmpty(obj)){
+            
+            NSURL *assetURL = (NSURL *)obj;
+            
+            ALAssetsLibraryAssetForURLResultBlock resultBlock = ^(ALAsset *asset)
+            {
+                
+                ALAssetAdapter* gasset = [[ALAssetAdapter alloc] init];
+                gasset.asset = asset;
+                [assets addObject:gasset];
+                
+                if(idx == [urls count]- 1){
+                    success(assets);
+                }
+                
+            };
+            
+            ALAssetsLibraryAccessFailureBlock failureBlock  = ^(NSError *error)
+            {
+                
+            };
+            
+            [AssetLib.assetsLibrary assetForURL:assetURL
+                                    resultBlock:resultBlock
+                                   failureBlock:failureBlock];
+        }
+
+	}];
+}
+
+
+- (void)gotoGallery:(NSIndexPath*)indexPath
+{
+
+    NSMutableArray *idmPhotos = [NSMutableArray arrayWithCapacity:[self.photos count]];
+    for (NSDictionary *photoinfo in self.photos) {
+        
+        NSString *photo = [photoinfo objectForKey:@"AssetURL"];
+        NSURL *assetURL = [NSURL URLWithString:photo];
+        [idmPhotos addObject:assetURL];
+
+    }
+    
+    [self AssetFromURLS:idmPhotos success:^(NSArray *result) {
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+            FullScreenPhotoController *vc = [storyboard instantiateViewControllerWithIdentifier:@"galleryView"];
+            vc.assets = result;
+            vc.selectedIndex = indexPath.row;
+            [self.navigationController pushViewController:vc animated:YES ];
+        });
+
+    }];
+    
+
+
+}
+
+
 
 #pragma mark -
 #pragma mark ButtonAction

@@ -164,8 +164,8 @@ AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
     NSMutableArray* galleryAssets;
     
     PBGalleryView *galleryView;
-    NSMutableArray *galleryPhotos;
-    NSMutableArray *galleryURLs;
+//    NSMutableArray *galleryPhotos;
+//    NSMutableArray *galleryURLs;
 
 }
 @property (weak, nonatomic) IBOutlet UIView *topView;
@@ -194,6 +194,9 @@ AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
 
 @property (strong, nonatomic) Animator* animator;
 @property (strong, nonatomic) UIPercentDrivenInteractiveTransition* interactionController;
+
+
+@property (strong, nonatomic) UIActivityViewController *activityController;
 
 
 //@property (weak, nonatomic) IBOutlet UIView *galleryView;
@@ -270,8 +273,8 @@ AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
 
     galleryAssets = [NSMutableArray array];
     
-    galleryPhotos = [NSMutableArray array];
-    galleryURLs = [NSMutableArray array];
+//    galleryPhotos = [NSMutableArray array];
+//    galleryURLs = [NSMutableArray array];
 
     recognisedFaces = @{}.mutableCopy;
     processing = @{}.mutableCopy;
@@ -364,6 +367,13 @@ AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(OrientationEventHandler:)
 												 name:MotionOrientationChangedNotification object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(closeGalleryViewAnimation)
+												 name:@"closeGalleryView" object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(shareHandler:)
+												 name:@"shareGalleryView" object:nil];
+ 
 
     [self setupAVCapture];
     [self initFaceRecognize];
@@ -394,11 +404,14 @@ AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
     [self teardownAVCapture];
     [unSelectedUSers removeAllObjects];
     
-    [galleryPhotos removeAllObjects];
-    [galleryURLs removeAllObjects];
+//    [galleryPhotos removeAllObjects];
+//    [galleryURLs removeAllObjects];
+    
+    [galleryView.photoAssets removeAllObjects];
 
 
     [[NSNotificationCenter defaultCenter] removeObserver:self name:MotionOrientationChangedNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"galleryViewClosed" object:nil];
     
     NSLog(@"viewDidDisappear = %@", @"---- END");
 
@@ -417,6 +430,56 @@ AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+
+
+- (IBAction)shareHandler:(id)sender
+{
+    
+//    NSMutableArray *activityItems = [NSMutableArray arrayWithCapacity:[galleryView.photoAssets count]];
+//    
+//    for (UIImage *image in galleryView.photoAssets) {
+//
+//        [activityItems addObject:image];
+//    }
+    
+    NSMutableArray *activityItems = [NSMutableArray array];
+    [activityItems addObject:galleryView.currentImage];
+    
+
+    NSArray *activitys = nil;//@[deleteActivity];
+    
+    self.activityController = [[UIActivityViewController alloc] initWithActivityItems:activityItems applicationActivities:activitys];
+    [self.activityController setExcludedActivityTypes:@[UIActivityTypePostToTwitter,
+                                                        UIActivityTypePostToWeibo,
+                                                        UIActivityTypePrint,
+                                                        UIActivityTypeCopyToPasteboard,
+                                                        UIActivityTypeAssignToContact,
+                                                        UIActivityTypeSaveToCameraRoll,
+                                                        UIActivityTypeAddToReadingList,
+                                                        UIActivityTypePostToFlickr,
+                                                        UIActivityTypePostToVimeo,
+                                                        UIActivityTypePostToTencentWeibo,
+                                                        UIActivityTypeAirDrop]];
+    
+    
+    [self presentViewController:self.activityController
+                       animated:YES
+                     completion:^
+     {
+         
+     }];
+    
+
+    __weak typeof(self) weakSelf = self;
+    [self.activityController setCompletionHandler:^(NSString *act, BOOL done) {
+
+        [weakSelf.activityController dismissViewControllerAnimated:YES completion:nil];
+        weakSelf.activityController = nil;
+
+    }];
+    
+}
+
 
 
 
@@ -444,6 +507,25 @@ AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
     return self.interactionController;
 }
 
+//-(BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
+//{
+//    CGPoint touchPoint = [gestureUp locationOfTouch:0 inView:gestureUp.view];
+//    
+//    CGPoint touchPoint = [gestureRecognizer locationOfTouch:0 inView:[self view]];
+//    if (touchPoint.y <= 160)
+//    {
+//        if (gestureUp.direction == UISwipeGestureRecognizerDirectionUp)
+//        {
+//            NSLog(@"the location x...%f",touchPoint.x);
+//            NSLog(@"the location y...%f",touchPoint.y);
+//        }
+//        else
+//        { }
+//    }
+//    return YES;
+//}
+
+
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer{
     if ([gestureRecognizer isKindOfClass:[UIPanGestureRecognizer class]]) {
         NSLog(@"panchGesture");
@@ -459,6 +541,12 @@ AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
         }
         else {
             NSLog(@"gesture went left");
+            
+            CGPoint touchPoint = [gestureRecognizer locationOfTouch:0 inView:[self view]];
+            if (touchPoint.x <= 280)
+            {
+                return NO;
+            }
             // galleryView가 보여 줬을 때 도 다시 보이지 않도록
 //            if(self.animator.operation == UINavigationControllerOperationPush){
 //               return NO;
@@ -476,7 +564,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
 
 - (void)handlePanGesture:(UIPanGestureRecognizer *)gestureRecognizer {
 
-    //if(![galleryAssets count]) return;
+    //if(![galleryView.photoAssets count]) return;
 
     UIView* view = self.navigationController.view;
     if (gestureRecognizer.state == UIGestureRecognizerStateBegan) {
@@ -484,19 +572,17 @@ AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
         CGPoint location = [gestureRecognizer locationInView:view];
         if (location.x <  CGRectGetMidX(view.bounds) ) {  // POP
             self.animator.operation = UINavigationControllerOperationPop;
-
-
         }
 
         else if(location.x >  CGRectGetMidX(view.bounds) ){// PUSH
             self.animator.operation = UINavigationControllerOperationPush;
-
-
         }
 
     }
     else if (gestureRecognizer.state == UIGestureRecognizerStateChanged)
     {
+        if(![galleryView.photoAssets count]) return;
+        
         CGPoint translation = [gestureRecognizer translationInView:view];
         CGFloat d = fabs(translation.x / CGRectGetWidth(view.bounds));
         CGRect frame;
@@ -511,39 +597,50 @@ AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
     }
     else if (gestureRecognizer.state == UIGestureRecognizerStateEnded)
     {
+        if(![galleryView.photoAssets count]) return;
+        
         NSLog(@"animator.operation = %d / x = %d", (int)(self.animator.operation), (int)[gestureRecognizer velocityInView:view].x);
         if(self.animator.operation == UINavigationControllerOperationPush){
             if ([gestureRecognizer velocityInView:view].x <= 0) {
                 
-                galleryView.frame = CGRectMake(0, 0, 320, 568);
-                galleryView.isShown = YES;
+                [self openGalleryView];
                 
-                [[NSNotificationCenter defaultCenter] postNotificationName:@"RootViewControllerEventHandler"
-                                                                    object:self
-                                                                  userInfo:@{@"panGestureEnabled":@"NO"}];
+//                galleryView.frame = CGRectMake(0, 0, 320, 568);
+//                galleryView.isShown = YES;
+//                [[NSNotificationCenter defaultCenter] postNotificationName:@"RootViewControllerEventHandler"
+//                                                                    object:self
+//                                                                  userInfo:@{@"panGestureEnabled":@"NO"}];
 
             } else {
                 
-                [galleryView.carousel scrollToItemAtIndex:0 animated:NO];
-                galleryView.frame = CGRectMake(320, 0, 320, 568);
+                [self closeGalleryView];
+                
+//                [galleryView.carousel scrollToItemAtIndex:0 animated:NO];
+//                galleryView.frame = CGRectMake(320, 0, 320, 568);
+//                galleryView.isShown = NO;
                 
             }
         } else if(self.animator.operation == UINavigationControllerOperationPop){
             if ([gestureRecognizer velocityInView:view].x > 0) {
                 
-                [galleryView.carousel scrollToItemAtIndex:0 animated:NO];
-                galleryView.frame = CGRectMake(320, 0, 320, 568);
+                [self closeGalleryView];
                 
-                
-                [[NSNotificationCenter defaultCenter] postNotificationName:@"RootViewControllerEventHandler"
-                                                                    object:self
-                                                                  userInfo:@{@"panGestureEnabled":@"YES"}];
+//                [galleryView.carousel scrollToItemAtIndex:0 animated:NO];
+//                galleryView.frame = CGRectMake(320, 0, 320, 568);
+//                galleryView.isShown = NO;
+//                
+//                [[NSNotificationCenter defaultCenter] postNotificationName:@"RootViewControllerEventHandler"
+//                                                                    object:self
+//                                                                  userInfo:@{@"panGestureEnabled":@"YES"}];
 
 
             } else {
                 
-                galleryView.frame = CGRectMake(0, 0, 320, 568);
+                [self openGalleryView];
                 
+//                galleryView.frame = CGRectMake(0, 0, 320, 568);
+//                galleryView.isShown = YES;
+
             }
         }
         self.interactionController = nil;
@@ -553,10 +650,47 @@ AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
 
 }
 
+- (void)openGalleryView
+{
+    
+    [galleryView reloadData];
+    galleryView.frame = CGRectMake(0, 0, 320, 568);
+    galleryView.isShown = YES;
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"RootViewControllerEventHandler"
+                                                        object:self
+                                                      userInfo:@{@"panGestureEnabled":@"NO"}];
+    [self.view bringSubviewToFront:galleryView];
+}
 
+- (void)closeGalleryView
+{
+    [galleryView.carousel scrollToItemAtIndex:0 animated:NO];
+    galleryView.frame = CGRectMake(320, 0, 320, 568);
+    galleryView.isShown = NO;
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"RootViewControllerEventHandler"
+                                                        object:self
+                                                      userInfo:@{@"panGestureEnabled":@"YES"}];
+}
+
+- (void)closeGalleryViewAnimation
+{
+    [UIView animateWithDuration:0.3
+                          delay:0
+                        options:UIViewAnimationOptionCurveEaseInOut
+                     animations:^{
+                         [self closeGalleryView];
+                     }
+                     completion:^(BOOL finished) {
+                         
+                     }];
+    
+    
+}
 
 //- (void)handlePanGesture:(UIPanGestureRecognizer *)gestureRecognizer {
-//    
+//
 //    if(![galleryAssets count]) return;
 //    
 //    UIView* view = self.navigationController.view;
@@ -860,7 +994,10 @@ AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
                 
 #warning 갤러리용 Temp 이미지 저장.
                 NSLog(@"=============== [[ 1 ]] 갤러리용 Temp 이미지 저장");
-                [galleryPhotos addObject:image];
+                //[galleryPhotos addObject:image];
+                
+                [galleryView.photoAssets addObject:image];
+                
                 
                 [self saveImageAnimation:image];
 
@@ -878,7 +1015,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
                                       
 #warning 갤러리용 Temp 이미지 URL 저장.
                                       NSLog(@"=============== [[ 2 ]] 갤러리용 Temp 이미지 URL 저장");
-                                      [galleryURLs addObject:assetURL];
+                                      //[galleryURLs addObject:assetURL];
                                       
                                       [self savePhoto:assetURL users:selectedUsers];
                                       
@@ -1660,6 +1797,8 @@ bail:
 
 - (void)captureOutput:(AVCaptureOutput *)captureOutput didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnection *)connection
 {
+    if(galleryView.isShown) return;
+    
     if(isFeedingSafe){
         [self processImage:sampleBuffer];
     }

@@ -87,12 +87,12 @@
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" textAlignment="center" lineBreakMode="middleTruncation" numberOfLines="5" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="270" translatesAutoresizingMaskIntoConstraints="NO" id="k1z-H0-k0Q">
-                                <rect key="frame" x="25" y="290" width="270" height="174"/>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" textAlignment="center" lineBreakMode="middleTruncation" numberOfLines="5" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="200" translatesAutoresizingMaskIntoConstraints="NO" id="k1z-H0-k0Q">
+                                <rect key="frame" x="64" y="281" width="200" height="127"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <string key="text">Pixbee will automatically  detect your face from your friend’s album.
 Connect now to see what your friends have</string>
-                                <fontDescription key="fontDescription" name="Avenir-BlackOblique" family="Avenir" pointSize="17"/>
+                                <fontDescription key="fontDescription" name="Avenir-LightOblique" family="Avenir" pointSize="12"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                                 <size key="shadowOffset" width="0.0" height="0.0"/>
@@ -160,35 +160,35 @@ Connect now to see what your friends have</string>
                         <viewControllerLayoutGuide type="bottom" id="On9-gj-EcZ"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="Wdq-bG-S4V">
-                        <rect key="frame" x="0.0" y="0.0" width="200" height="95"/>
+                        <rect key="frame" x="0.0" y="0.0" width="200" height="260"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="listbox.png" translatesAutoresizingMaskIntoConstraints="NO" id="bbi-15-loz">
-                                <rect key="frame" x="0.0" y="0.0" width="200" height="95"/>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="popupbg.png" translatesAutoresizingMaskIntoConstraints="NO" id="bbi-15-loz">
+                                <rect key="frame" x="0.0" y="0.0" width="200" height="260"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                             </imageView>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="nEz-t3-2uP">
-                                <rect key="frame" x="4" y="11" width="192" height="79"/>
+                                <rect key="frame" x="4" y="19" width="192" height="237"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
-                                    <tableViewCell contentMode="scaleToFill" restorationIdentifier="FriendCell" selectionStyle="none" indentationWidth="10" reuseIdentifier="FriendCell" rowHeight="28" id="V7E-O6-iHH" customClass="FriendCell">
-                                        <rect key="frame" x="0.0" y="22" width="192" height="28"/>
+                                    <tableViewCell contentMode="scaleToFill" restorationIdentifier="FriendCell" selectionStyle="none" indentationWidth="10" reuseIdentifier="FriendCell" rowHeight="60" id="V7E-O6-iHH" customClass="FriendCell">
+                                        <rect key="frame" x="0.0" y="22" width="192" height="60"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="V7E-O6-iHH" id="JRt-DL-N1l">
-                                            <rect key="frame" x="0.0" y="0.0" width="192" height="28"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="192" height="60"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="E2AD1C96-14B2-46C4-8774-AD87008AC9CC" translatesAutoresizingMaskIntoConstraints="NO" id="6aK-Ak-lFj">
-                                                    <rect key="frame" x="0.0" y="0.0" width="28" height="29"/>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="68C9BFB3-5B5B-46B0-B569-84C36748B01D" translatesAutoresizingMaskIntoConstraints="NO" id="6aK-Ak-lFj">
+                                                    <rect key="frame" x="0.0" y="0.0" width="58" height="58"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                                 </imageView>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text=" Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PsL-oW-7y5">
-                                                    <rect key="frame" x="32" y="0.0" width="160" height="28"/>
+                                                    <rect key="frame" x="61" y="10" width="127" height="38"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                                     <color key="textColor" red="0.10980392160000001" green="0.10980392160000001" blue="0.10980392160000001" alpha="1" colorSpace="deviceRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
@@ -213,7 +213,7 @@ Connect now to see what your friends have</string>
                     <nil key="simulatedBottomBarMetrics"/>
                     <simulatedOrientationMetrics key="simulatedOrientationMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-                    <size key="freeformSize" width="200" height="95"/>
+                    <size key="freeformSize" width="200" height="260"/>
                     <connections>
                         <outlet property="tableView" destination="nEz-t3-2uP" id="zQ3-FH-7QA"/>
                         <outlet property="view" destination="Wdq-bG-S4V" id="ixI-Ls-dGg"/>
@@ -221,7 +221,7 @@ Connect now to see what your friends have</string>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ZPe-rL-CBk" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-78" y="458"/>
+            <point key="canvasLocation" x="288" y="1094"/>
         </scene>
         <!--Setting Table View Controller - SETTING-->
         <scene sceneID="u89-IS-bin">
@@ -295,7 +295,7 @@ Connect now to see what your friends have</string>
                                 </collectionViewFlowLayout>
                                 <cells>
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="GalleryViewCell" id="GL3-qa-tri" customClass="GalleryViewCell">
-                                        <rect key="frame" x="4" y="48" width="75" height="75"/>
+                                        <rect key="frame" x="4" y="4" width="75" height="75"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                             <rect key="frame" x="0.0" y="0.0" width="75" height="75"/>
@@ -485,6 +485,16 @@ Connect now to see what your friends have</string>
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="W7c-Xe-gbf" userLabel="Button-newFacetabButton">
+                                <rect key="frame" x="124" y="478" width="72" height="82"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" backgroundImage="addface.png">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="facetabButtonHandler:" destination="eM8-Ev-WUw" eventType="touchUpInside" id="LSL-Pe-Xih"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
@@ -510,6 +520,7 @@ Connect now to see what your friends have</string>
                         <outlet property="doneButton" destination="zFy-oG-3T3" id="dVc-6E-AV4"/>
                         <outlet property="faceTabListBar" destination="IWO-CM-EbJ" id="4Fm-u8-Alg"/>
                         <outlet property="faceTabScrollView" destination="toO-HT-dwQ" id="adB-TX-OoG"/>
+                        <outlet property="facetabButton" destination="W7c-Xe-gbf" id="1sF-8U-vNi"/>
                         <outlet property="menuButton" destination="l1y-X7-Xex" id="hxN-75-zaf"/>
                         <outlet property="shareButton" destination="mfQ-tq-A4f" id="Cip-iR-fYl"/>
                         <outlet property="stackImages" destination="fUA-03-oaN" id="pYB-GI-4Eg"/>
@@ -1011,7 +1022,7 @@ Connect now to see what your friends have</string>
                         </collectionViewFlowLayout>
                         <cells>
                             <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="Uou-Am-qTZ">
-                                <rect key="frame" x="0.0" y="44" width="100" height="100"/>
+                                <rect key="frame" x="0.0" y="0.0" width="100" height="100"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                     <rect key="frame" x="0.0" y="0.0" width="100" height="100"/>
@@ -1053,7 +1064,7 @@ Connect now to see what your friends have</string>
                         </collectionViewFlowLayout>
                         <cells>
                             <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="tAq-Md-ymg" customClass="SFCollectionViewCell">
-                                <rect key="frame" x="0.0" y="44" width="150" height="150"/>
+                                <rect key="frame" x="0.0" y="0.0" width="150" height="150"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                     <rect key="frame" x="0.0" y="0.0" width="150" height="150"/>
@@ -1217,7 +1228,7 @@ Connect now to see what your friends have</string>
                                 </collectionViewFlowLayout>
                                 <cells>
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="ProfileCardCell" id="Uo2-LQ-tyD" customClass="ProfileCardCell">
-                                        <rect key="frame" x="15" y="59" width="88" height="88"/>
+                                        <rect key="frame" x="15" y="15" width="88" height="88"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                             <rect key="frame" x="0.0" y="0.0" width="88" height="88"/>
@@ -1267,7 +1278,7 @@ Connect now to see what your friends have</string>
                                         </connections>
                                     </collectionViewCell>
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" tag="3000" contentMode="center" reuseIdentifier="AddCell" id="TI1-dC-v2t">
-                                        <rect key="frame" x="116" y="59" width="88" height="88"/>
+                                        <rect key="frame" x="116" y="15" width="88" height="88"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                             <rect key="frame" x="0.0" y="0.0" width="88" height="88"/>
@@ -1334,7 +1345,6 @@ Connect now to see what your friends have</string>
                         <outlet property="deleteButton" destination="zsZ-yN-sgD" id="qqR-aQ-VMB"/>
                         <outlet property="leftBarButton" destination="DQV-UP-CC1" id="AAs-dZ-w3a"/>
                         <outlet property="rightBarButton" destination="JTN-UC-K0i" id="Wcf-h4-d4s"/>
-                        <outlet property="toolBar" destination="EkB-z0-ncF" id="7Uh-hv-pYi"/>
                         <segue destination="eM8-Ev-WUw" kind="push" identifier="Segue3_1to4_3" customClass="PBDisolveSegue" id="M8M-y8-RXx"/>
                         <segue destination="cgv-md-euH" kind="push" identifier="Segue3_1to4_1" id="tWG-45-OJb"/>
                         <segue destination="ehe-Nr-PU9" kind="modal" identifier="Segue3_1toSetting" id="uK4-Se-chF"/>
@@ -1399,10 +1409,10 @@ Connect now to see what your friends have</string>
             </objects>
             <point key="canvasLocation" x="-497" y="777"/>
         </scene>
-        <!--Modal Test View Controller-->
+        <!--Face Tab Edit Controller-->
         <scene sceneID="bEu-it-h5u">
             <objects>
-                <viewController storyboardIdentifier="ModalTest" useStoryboardIdentifierAsRestorationIdentifier="YES" id="7A8-qx-mzm" customClass="ModalTestViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ModalTest" useStoryboardIdentifierAsRestorationIdentifier="YES" id="7A8-qx-mzm" customClass="FaceTabEditController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="Two-El-Iav"/>
                         <viewControllerLayoutGuide type="bottom" id="eWC-Ha-viN"/>
@@ -1411,25 +1421,98 @@ Connect now to see what your friends have</string>
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Modal view" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LGN-m9-iAr">
-                                <rect key="frame" x="116" y="273" width="88" height="21"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pN0-3o-2GZ">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" fixedFrame="YES" barStyle="black" translucent="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pN0-3o-2GZ">
+                                <rect key="frame" x="0.0" y="23" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                 <items>
-                                    <barButtonItem title="Close" id="4O6-Ir-oSr">
+                                    <barButtonItem title="Cancel" id="4O6-Ir-oSr" userLabel="Cancel">
+                                        <color key="tintColor" red="0.96862745100000003" green="0.96862745100000003" blue="0.96862745100000003" alpha="1" colorSpace="calibratedRGB"/>
                                         <connections>
                                             <action selector="close:" destination="7A8-qx-mzm" id="7Wm-oz-AGt"/>
                                         </connections>
                                     </barButtonItem>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="H2O-G0-56E"/>
+                                    <barButtonItem title="Delete" id="nVV-9z-Otg">
+                                        <color key="tintColor" red="0.96862745100000003" green="0.96862745100000003" blue="0.96862745100000003" alpha="1" colorSpace="calibratedRGB"/>
+                                        <connections>
+                                            <action selector="deleteFacetab:" destination="7A8-qx-mzm" id="3dJ-QV-Nf9"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="g8O-rP-8Vd"/>
+                                    <barButtonItem title="Done" id="4Rt-JD-sGo" userLabel="OK">
+                                        <color key="tintColor" red="0.96862745100000003" green="0.96862745100000003" blue="0.96862745100000003" alpha="1" colorSpace="calibratedRGB"/>
+                                        <connections>
+                                            <action selector="Ok:" destination="7A8-qx-mzm" id="wtn-on-JVK"/>
+                                        </connections>
+                                    </barButtonItem>
                                 </items>
                             </toolbar>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="c6q-5H-vY9" userLabel="Profile_ImageView">
+                                <rect key="frame" x="60" y="91" width="200" height="200"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" red="1" green="0.89383292120000002" blue="0.063512074619999997" alpha="1" colorSpace="calibratedRGB"/>
+                            </imageView>
+                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hcH-tO-Qjh" userLabel="View-nameField">
+                                <rect key="frame" x="60" y="250" width="200" height="41"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <subviews>
+                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="idQ-hE-KYJ" userLabel="Name_TextField">
+                                        <rect key="frame" x="6" y="6" width="156" height="30"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <color key="tintColor" red="0.96862745100000003" green="0.96862745100000003" blue="0.96862745100000003" alpha="1" colorSpace="calibratedRGB"/>
+                                        <color key="textColor" red="0.96862745100000003" green="0.96862745100000003" blue="0.96862745100000003" alpha="1" colorSpace="calibratedRGB"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="21"/>
+                                        <textInputTraits key="textInputTraits" returnKeyType="done" enablesReturnKeyAutomatically="YES"/>
+                                    </textField>
+                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0pA-bq-JH8" userLabel="fb_Button">
+                                        <rect key="frame" x="167" y="5" width="30" height="29"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <state key="normal" backgroundImage="fbicon1.png">
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="fbButtonHandler:" destination="7A8-qx-mzm" eventType="touchUpInside" id="NF6-ZG-cdk"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                            </view>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="sC2-CV-cLc" userLabel="nextProfile_button">
+                                <rect key="frame" x="233" y="175" width="28" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" backgroundImage="ft_arrowr.png">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="nextProfile:" destination="7A8-qx-mzm" eventType="touchUpInside" id="aNQ-0J-AGj"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="J9j-4N-BsU" userLabel="previousProfile_button">
+                                <rect key="frame" x="60" y="176" width="28" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" backgroundImage="ft_arrowl.png">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="prevProfile:" destination="7A8-qx-mzm" eventType="touchUpInside" id="DPO-wG-NMZ"/>
+                                </connections>
+                            </button>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="popupbg.png" translatesAutoresizingMaskIntoConstraints="NO" id="a3J-9j-9Po">
+                                <rect key="frame" x="60" y="292" width="200" height="260"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </imageView>
                         </subviews>
+                        <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                     </view>
+                    <connections>
+                        <outlet property="fbListButton" destination="0pA-bq-JH8" id="xuU-W9-tiM"/>
+                        <outlet property="fbPopupBG" destination="a3J-9j-9Po" id="R6X-wm-vTB"/>
+                        <outlet property="nameField" destination="hcH-tO-Qjh" id="IlI-3o-5mc"/>
+                        <outlet property="nameTextField" destination="idQ-hE-KYJ" id="oYq-f0-cSv"/>
+                        <outlet property="nextProfileButton" destination="sC2-CV-cLc" id="YKa-Up-mu4"/>
+                        <outlet property="prevProfile" destination="J9j-4N-BsU" id="euv-1y-rJg"/>
+                        <outlet property="profileImageView" destination="c6q-5H-vY9" id="Cbl-vw-hQt"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="9Al-2a-vtS" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -1437,7 +1520,7 @@ Connect now to see what your friends have</string>
         </scene>
     </scenes>
     <resources>
-        <image name="E2AD1C96-14B2-46C4-8774-AD87008AC9CC" width="628" height="152">
+        <image name="68C9BFB3-5B5B-46B0-B569-84C36748B01D" width="628" height="152">
             <mutableData key="keyedArchiveRepresentation">
 YnBsaXN0MDDUAQIDBAUGPj9YJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoK4HCBMU
 GR4fIyQsLzI4O1UkbnVsbNUJCgsMDQ4PEBESVk5TU2l6ZVYkY2xhc3NcTlNJbWFnZUZsYWdzVk5TUmVw
@@ -7855,6 +7938,7 @@ Bd3JAAAAAAAABAEAAAAAAAAAQgAAAAAAAAAAAAAAAAAF3cs
 </mutableData>
         </image>
         <image name="addbutton.png" width="86" height="43"/>
+        <image name="addface.png" width="72" height="82"/>
         <image name="back.png" width="40" height="40"/>
         <image name="bg.png" width="320" height="568"/>
         <image name="blue_button_select.png" width="287" height="46"/>
@@ -7866,12 +7950,15 @@ Bd3JAAAAAAAABAEAAAAAAAAAQgAAAAAAAAAAAAAAAAAF3cs
         <image name="delete.png" width="40" height="40"/>
         <image name="edit.png" width="40" height="40"/>
         <image name="facebookshare.png" width="159" height="39"/>
+        <image name="fbicon1.png" width="29" height="29"/>
+        <image name="ft_arrowl.png" width="28" height="28"/>
+        <image name="ft_arrowr.png" width="28" height="28"/>
         <image name="individualphoto.png" width="105" height="105"/>
-        <image name="listbox.png" width="115" height="95"/>
         <image name="login.png" width="159" height="39"/>
         <image name="logo_1.png" width="140" height="160"/>
         <image name="menu.png" width="40" height="40"/>
         <image name="placeholder.png" width="88" height="88"/>
+        <image name="popupbg.png" width="200" height="260"/>
         <image name="portrait.png" width="88" height="88"/>
         <image name="profile.png" width="58" height="67"/>
         <image name="share.png" width="40" height="40"/>
@@ -7899,6 +7986,6 @@ Bd3JAAAAAAAABAEAAAAAAAAAQgAAAAAAAAAAAAAAAAAF3cs
     <inferredMetricsTieBreakers>
         <segue reference="t8Q-Mi-1Tt"/>
         <segue reference="ExU-qK-S9d"/>
-        <segue reference="Zls-qO-0s8"/>
+        <segue reference="M8M-y8-RXx"/>
     </inferredMetricsTieBreakers>
 </document>

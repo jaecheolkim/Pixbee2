@@ -37,7 +37,7 @@
 
 #pragma mark - Table view data source
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return 28;
+    return 60;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -62,9 +62,12 @@
     return cell;
 }
 
-- (void)appearPopup:(CGPoint)point reverse:(BOOL)reverse{
+- (void)appearPopup:(CGPoint)point reverse:(BOOL)reverse {
 
-    [self.view setFrame:CGRectMake(point.x, point.y, 115, 95)];
+    //CGRect frame = CGRectMake(point.x, point.y, 115, 95);
+    CGRect frame = CGRectMake(point.x, point.y, 292, 250);
+    
+    [self.view setFrame:frame];
     
     if (self.delegate) {
         

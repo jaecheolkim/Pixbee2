@@ -12,17 +12,17 @@
 #import "AllPhotosController.h"
 #import "FaceDetectionViewController.h"
 
-#import "ProfileCard.h"
+//#import "ProfileCard.h"
 #import "ProfileCardCell.h"
 
 #import "FBFriendController.h"
 #import "UIImageView+WebCache.h"
 #import "FXImageView.h"
 
-#import "BFNavigationBarDrawer.h"
+//#import "BFNavigationBarDrawer.h"
 
 
-#import "ModalTestViewController.h"
+#import "FaceTabEditController.h"
 #import "AFPopupView.h"
 
 
@@ -30,8 +30,8 @@
 
 @interface PBMainDashBoardViewController()
 <LXReorderableCollectionViewDataSource, LXReorderableCollectionViewDelegateFlowLayout,
-UIActionSheetDelegate, UITextFieldDelegate,
-ProfileCardCellDelegate, FBFriendControllerDelegate >
+UIActionSheetDelegate, UITextFieldDelegate>
+//,ProfileCardCellDelegate, FBFriendControllerDelegate >
 {
     BOOL EDIT_MODE;
     int totalCellCount;
@@ -46,7 +46,7 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
     
     int currentColor;
     
-    BFNavigationBarDrawer *drawer;
+    //BFNavigationBarDrawer *drawer;
     UIBarButtonItem *deleteButton;
     
     UICollectionViewCell *addFacetabcell;
@@ -54,9 +54,9 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
 
 
 @property (weak, nonatomic) IBOutlet UICollectionView *collectionView;
-@property (strong, nonatomic) IBOutlet UIButton *galleryButton;
-@property (weak, nonatomic) IBOutlet UIButton *shutterButton;
-@property (weak, nonatomic) IBOutlet UIView *toolBar;
+//@property (strong, nonatomic) IBOutlet UIButton *galleryButton;
+//@property (weak, nonatomic) IBOutlet UIButton *shutterButton;
+//@property (weak, nonatomic) IBOutlet UIView *toolBar;
 @property (weak, nonatomic) IBOutlet UIButton *deleteButton;
 
 @property (strong, nonatomic) NSMutableArray *users;
@@ -64,9 +64,9 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *leftBarButton;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *rightBarButton;
 
-@property (strong, nonatomic) FBFriendController *friendPopup;
+//@property (strong, nonatomic) FBFriendController *friendPopup;
 
-@property (nonatomic, strong) ModalTestViewController *modalTest;
+@property (nonatomic, strong) FaceTabEditController *modalTest;
 @property (nonatomic, strong) AFPopupView *popup;
 
 
@@ -124,9 +124,9 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
 
     [self.view setBackgroundColor:[UIColor colorWithRed:255/255.0 green:255/255.0 blue:255/255.0 alpha:0.1]];
     
-    CGRect rect = [UIScreen mainScreen].bounds;
-    self.colorBar.frame = CGRectMake(0, rect.size.height, 320, 25);
-    [self.view addSubview:self.colorBar];
+//    CGRect rect = [UIScreen mainScreen].bounds;
+//    self.colorBar.frame = CGRectMake(0, rect.size.height, 320, 25);
+//    [self.view addSubview:self.colorBar];
     
 
     UIImageView *titleView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"title_facetab"]];
@@ -140,20 +140,26 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
     
     selectedPhotos = [NSMutableArray array];
     
-    [self initNaviMenu];
+    //[self initNaviMenu];
     
-    
-    // Modal Popup test
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:Nil];
     _modalTest = [storyboard instantiateViewControllerWithIdentifier:@"ModalTest"];
 
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(reloadData) name:@"reloadData" object:nil];
+    
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(hide) name:@"HideAFPopup" object:nil];
-
- }
-
--(void)go {
     
     _popup = [AFPopupView popupWithView:_modalTest.view];
+
+}
+
+-(void)go
+{
+
+    NSDictionary *userInfo = [self.users  objectAtIndex:currentIndexPath.item];
+    _modalTest.userInfo = userInfo;
+    
+     _popup = [AFPopupView popupWithView:_modalTest.view];
     [_popup show];
 }
 
@@ -170,47 +176,47 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
     [self reloadData];
     //self.title = [NSString stringWithFormat:@"%d Faces", totalCellCount];
     
-    [AssetLib loadThumbImage:^(UIImage *thumbImage)
-    {
-        [_galleryButton setImage:thumbImage forState:UIControlStateNormal];
-    }];
+//    [AssetLib loadThumbImage:^(UIImage *thumbImage)
+//    {
+//        [_galleryButton setImage:thumbImage forState:UIControlStateNormal];
+//    }];
     
 
 }
 
-- (void)viewDidAppear:(BOOL)animated
-{
-    [super viewDidAppear:animated];
-    
-    
-    [self showToolBar:NO];
-}
+//- (void)viewDidAppear:(BOOL)animated
+//{
+//    [super viewDidAppear:animated];
+//    
+//    
+//    [self showToolBar:NO];
+//}
 
 #pragma mark -
 #pragma mark Navi Drawer Sub Menu methods
 
-- (void)initNaviMenu
-{
-    // Init a drawer with default size
-    
-	drawer = [[BFNavigationBarDrawer alloc] init];
-    
-    drawer.barStyle = self.navigationController.navigationBar.barStyle;
-    drawer.barTintColor = self.navigationController.navigationBar.barTintColor;
-    drawer.tintColor = [UIColor whiteColor ]; //self.navigationController.navigationBar.tintColor;
-	
-	// Assign the table view as the affected scroll view of the drawer.
-	// This will make sure the scroll view is properly scrolled and updated
-	// when the drawer is shown.
-	drawer.scrollView = self.collectionView;
-    
-	UIBarButtonItem *button4 = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:0];
-	deleteButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemTrash target:self action:@selector(deleteAction:)];
-	drawer.items = @[button4, deleteButton];
-
-    deleteButton.enabled = NO;
-    
-}
+//- (void)initNaviMenu
+//{
+//    // Init a drawer with default size
+//    
+//	drawer = [[BFNavigationBarDrawer alloc] init];
+//    
+//    drawer.barStyle = self.navigationController.navigationBar.barStyle;
+//    drawer.barTintColor = self.navigationController.navigationBar.barTintColor;
+//    drawer.tintColor = [UIColor whiteColor ]; //self.navigationController.navigationBar.tintColor;
+//	
+//	// Assign the table view as the affected scroll view of the drawer.
+//	// This will make sure the scroll view is properly scrolled and updated
+//	// when the drawer is shown.
+//	drawer.scrollView = self.collectionView;
+//    
+//	UIBarButtonItem *button4 = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:0];
+//	deleteButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemTrash target:self action:@selector(deleteAction:)];
+//	drawer.items = @[button4, deleteButton];
+//
+//    deleteButton.enabled = NO;
+//    
+//}
 
 
 - (void)deleteAction:(id)sender {
@@ -250,37 +256,37 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
 //                           failureBlock:failureBlock];
 //}
 
-- (void)showToolBar:(BOOL)show
-{
-    CGRect rect = [UIScreen mainScreen].bounds;
-    CGRect frame = _toolBar.frame;
-    
-    if(show){
-        _shutterButton.alpha = 0.0;
-        _galleryButton.alpha = 0.0;
-        
-        frame = CGRectMake(frame.origin.x, rect.size.height - frame.size.height, frame.size.width, frame.size.height);
-        
-    } else {
-
-        frame = CGRectMake(frame.origin.x, rect.size.height, frame.size.width, frame.size.height);
-    }
-    
-    [UIView animateWithDuration:0.2
-                          delay:0.1
-                        options: UIViewAnimationOptionCurveEaseIn
-                     animations:^{
-                         _toolBar.frame = frame;
-                     }
-                     completion:^(BOOL finished){
-                         if(!show){
-                             _shutterButton.alpha = 1.0;
-                             _galleryButton.alpha = 1.0;
-                         }
-                     }];
-
-    
-}
+//- (void)showToolBar:(BOOL)show
+//{
+//    CGRect rect = [UIScreen mainScreen].bounds;
+//    CGRect frame = _toolBar.frame;
+//    
+//    if(show){
+//        _shutterButton.alpha = 0.0;
+//        _galleryButton.alpha = 0.0;
+//        
+//        frame = CGRectMake(frame.origin.x, rect.size.height - frame.size.height, frame.size.width, frame.size.height);
+//        
+//    } else {
+//
+//        frame = CGRectMake(frame.origin.x, rect.size.height, frame.size.width, frame.size.height);
+//    }
+//    
+//    [UIView animateWithDuration:0.2
+//                          delay:0.1
+//                        options: UIViewAnimationOptionCurveEaseIn
+//                     animations:^{
+//                         _toolBar.frame = frame;
+//                     }
+//                     completion:^(BOOL finished){
+//                         if(!show){
+//                             _shutterButton.alpha = 1.0;
+//                             _galleryButton.alpha = 1.0;
+//                         }
+//                     }];
+//
+//    
+//}
 
 #pragma mark - UICollectionViewDataSource methods
 
@@ -309,17 +315,16 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
             [profileCardCell resetFontShape];
             
             if(EDIT_MODE){
-                profileCardCell.delegate = self;
-                
-                profileCardCell.nameTextField.enabled = YES;
-                profileCardCell.nameTextField.placeholder = profileCardCell.nameLabel.text;
+//                profileCardCell.delegate = self;
+//                profileCardCell.nameTextField.enabled = YES;
+//                profileCardCell.nameTextField.placeholder = profileCardCell.nameLabel.text;
                 profileCardCell.blackOverlay.hidden = NO;
-                profileCardCell.checkImageView.hidden = NO;
+                //profileCardCell.checkImageView.hidden = NO;
                 
-                if ([selectedPhotos containsObject:indexPath]) {
-                    //[cell showSelectIcon:YES];
-                    profileCardCell.checkImageView.image = [UIImage imageNamed:@"check"];
-                }
+//                if ([selectedPhotos containsObject:indexPath]) {
+//                    //[cell showSelectIcon:YES];
+//                    profileCardCell.checkImageView.image = [UIImage imageNamed:@"check"];
+//                }
                 
             } else {
                 
@@ -409,25 +414,24 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
     }
 
 }
-- (void)collectionView:(UICollectionView *)collectionView didDeselectItemAtIndexPath:(NSIndexPath *)indexPath
-{
-    if(indexPath.section == 0){
-        if (indexPath.row == totalCellCount) {
-        
-        } else {
-            NSLog(@"didDeselectItemAtIndexPath : %@", self.collectionView.indexPathsForSelectedItems);
-            
-            if(EDIT_MODE)
-            {
-                [selectedPhotos removeObject:indexPath];
-            }
-            
-            [self refreshDeleteButton];
-
-        }
-    }
-
-}
+//- (void)collectionView:(UICollectionView *)collectionView didDeselectItemAtIndexPath:(NSIndexPath *)indexPath
+//{
+//    if(indexPath.section == 0){
+//        if (indexPath.row == totalCellCount) {
+//        
+//        } else {
+//            NSLog(@"didDeselectItemAtIndexPath : %@", self.collectionView.indexPathsForSelectedItems);
+//            
+//            if(EDIT_MODE)
+//            {
+//                [selectedPhotos removeObject:indexPath];
+//            }
+//            
+//            [self refreshDeleteButton];
+//
+//        }
+//    }
+//}
 
 //- (void)collectionView:(UICollectionView *)collectionView didEndDisplayingCell:(UICollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath
 //{
@@ -552,12 +556,12 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
                                                           userInfo:@{@"panGestureEnabled":@"NO"}];
         _leftBarButton.enabled = NO;
         
-        [drawer showFromNavigationBar:self.navigationController.navigationBar animated:YES];
+        //[drawer showFromNavigationBar:self.navigationController.navigationBar animated:YES];
         
     }
     else {
         
-        [drawer hideAnimated:YES];
+        //[drawer hideAnimated:YES];
         
         [[NSNotificationCenter defaultCenter] postNotificationName:@"RootViewControllerEventHandler"
                                                             object:self
@@ -594,17 +598,17 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
     //[self.collectionView reloadData];
 }
 
-- (IBAction)galleryButtonHandler:(id)sender {
-     NSLog(@"clicked galleryButtonHandler");
-    [Flurry logEvent:@"Gallery_START"];
-    [self performSegueWithIdentifier:SEGUE_3_1_TO_4_3 sender:self];
-}
-
-- (IBAction)shutterButtonHandler:(id)sender {
-    facemode = FaceModeRecognize;
-    [Flurry logEvent:@"Camera_START"];
-    NSLog(@"clicked shutterButtonHandler");
-}
+//- (IBAction)galleryButtonHandler:(id)sender {
+//     NSLog(@"clicked galleryButtonHandler");
+//    [Flurry logEvent:@"Gallery_START"];
+//    [self performSegueWithIdentifier:SEGUE_3_1_TO_4_3 sender:self];
+//}
+//
+//- (IBAction)shutterButtonHandler:(id)sender {
+//    facemode = FaceModeRecognize;
+//    [Flurry logEvent:@"Camera_START"];
+//    NSLog(@"clicked shutterButtonHandler");
+//}
 
 - (IBAction)deleteButtonHandler:(id)sender {
     ActionSheetType = 200;
@@ -868,33 +872,9 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
 
 
 
-//Override Keyboard noti handler from PBcommonViewController
--(void)keyboardWillShow:(NSNotification*)notification
-{
-    NSDictionary *info = notification.userInfo;
-    CGRect keyboardRect = [[info valueForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue];
-    int keyboardHeight = keyboardRect.size.height;
-    float duration = [[info valueForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
-    
-    CGRect rect = self.view.frame;
-    
-    
-
-    float toHeight = rect.size.height - keyboardHeight - 25;
-    
-    [UIView animateWithDuration:duration
-                     animations:^{
-                         self.colorBar.frame = CGRectMake(0, toHeight, 320, 25);
-                         //[self.view addSubview:self.colorBar];
-//                         [self.view setFrame:CGRectMake(rect.origin.x, -keyboardHeight, rect.size.width, rect.size.height)];
-                     }
-                     completion:^(BOOL finished){
-                         
-                     }];
- 
-}
--(void)keyboardDidShow:(NSNotification*)notification
-{
+////Override Keyboard noti handler from PBcommonViewController
+//-(void)keyboardWillShow:(NSNotification*)notification
+//{
 //    NSDictionary *info = notification.userInfo;
 //    CGRect keyboardRect = [[info valueForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue];
 //    int keyboardHeight = keyboardRect.size.height;
@@ -903,219 +883,243 @@ ProfileCardCellDelegate, FBFriendControllerDelegate >
 //    CGRect rect = self.view.frame;
 //    
 //    
-//    
+//
 //    float toHeight = rect.size.height - keyboardHeight - 25;
 //    
-//    [UIView animateWithDuration:0
+//    [UIView animateWithDuration:duration
 //                     animations:^{
 //                         self.colorBar.frame = CGRectMake(0, toHeight, 320, 25);
 //                         //[self.view addSubview:self.colorBar];
-//                         //                         [self.view setFrame:CGRectMake(rect.origin.x, -keyboardHeight, rect.size.width, rect.size.height)];
+////                         [self.view setFrame:CGRectMake(rect.origin.x, -keyboardHeight, rect.size.width, rect.size.height)];
 //                     }
 //                     completion:^(BOOL finished){
 //                         
 //                     }];
-}
-
--(void)keyboardWillHide:(NSNotification*)notification
-{
-    
-    //int keyboardHeight = 0.0;
-    NSDictionary *info = notification.userInfo;
-    float duration = [[info valueForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
-    CGRect rect = self.view.frame;
-    
-    [UIView animateWithDuration:duration
-                     animations:^{
-                         self.colorBar.frame = CGRectMake(0, rect.size.height, 320, 25);
-                         //[self.colorBar removeFromSuperview];
-                     }
-                     completion:^(BOOL finished){
-                         
-                     }];
-
-    
-}
-
--(void)keyboardDidHide:(NSNotification*)notification
-{
-    
-}
-
-//Override colorButtonHandler from PBCommonViewController
-- (void)colorButtonHandler:(id)sender
-{
-    UIButton *colorButton = (UIButton*)sender;
-    currentColor = (int)colorButton.tag;
-    NSLog(@"ColorBar Selected = %d", currentColor );
-    
-    if(currentSelectedCell){
-        currentSelectedCell.nameLabel.backgroundColor = [SQLManager getUserColor:currentColor alpha:0.5];
-        [currentSelectedCell setUserColor:currentColor];
-    }
-}
-
-
-- (void)nameDidBeginEditing:(ProfileCardCell *)cell
-{
-    currentSelectedCell = cell;
-    NSLog(@"==> nameDidBeginEditing: userInfo = %@", cell.userInfo);
-    [self frientList:cell appear:YES];
-}
-- (void)nameDidEndEditing:(ProfileCardCell *)cell
-{
-    currentSelectedCell = cell;
-    //[cell.nameTextField endEditing:YES];
-    
-    NSLog(@"==> nameDidEndEditing:");
-    //[self frientList:cell appear:NO];
-    [self cellEditDone];
-}
-- (void)nameDidChange:(ProfileCardCell *)cell
-{
-    currentSelectedCell = cell;
-    NSLog(@"==> nameDidChange:");
-    [self searchFriend:cell name:cell.nameTextField.text];
-}
-
-
-
-
-#pragma mark FBFriendControllerDelegate
-// ProfileCardCell Delegate
-- (void)frientList:(ProfileCardCell *)cell appear:(BOOL)show
-{
-    
-    if(show) {
-        // show friend Picker
-        [self popover:cell.profileImageView];
-        NSLog(@"show friend Picker ");
-    } else {
-        // hide friend Picker
-        [self.friendPopup disAppearPopup];
-        self.friendPopup = nil;
-        NSLog(@"hide friend Picker ");
-    }
-}
-- (void)searchFriend:(ProfileCardCell *)cell name:(NSString *)name
-{
-    currentSelectedCell = cell;
-    [self.friendPopup handleSearchForTerm:name];
-    NSLog(@"changed Name = %@", name);
-}
-
--(void)popover:(id)sender
-{
-    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    FBFriendController *controller = (FBFriendController *)[storyboard instantiateViewControllerWithIdentifier:@"FBFriendController"];
-    
-    controller.delegate = self;
-    CGPoint convertedPoint = [self.view convertPoint:((UIImageView *)sender).center fromView:((UIImageView *)sender).superview];
-    int x = convertedPoint.x - 48;
-    int y = convertedPoint.y + 45;
-    
-    [controller appearPopup:CGPointMake(x, y) reverse:NO];
-    
-    self.friendPopup = controller;
-}
+// 
+//}
+//-(void)keyboardDidShow:(NSNotification*)notification
+//{
+////    NSDictionary *info = notification.userInfo;
+////    CGRect keyboardRect = [[info valueForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue];
+////    int keyboardHeight = keyboardRect.size.height;
+////    float duration = [[info valueForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
+////    
+////    CGRect rect = self.view.frame;
+////    
+////    
+////    
+////    float toHeight = rect.size.height - keyboardHeight - 25;
+////    
+////    [UIView animateWithDuration:0
+////                     animations:^{
+////                         self.colorBar.frame = CGRectMake(0, toHeight, 320, 25);
+////                         //[self.view addSubview:self.colorBar];
+////                         //                         [self.view setFrame:CGRectMake(rect.origin.x, -keyboardHeight, rect.size.width, rect.size.height)];
+////                     }
+////                     completion:^(BOOL finished){
+////                         
+////                     }];
+//}
+//
+//-(void)keyboardWillHide:(NSNotification*)notification
+//{
+//    
+//    //int keyboardHeight = 0.0;
+//    NSDictionary *info = notification.userInfo;
+//    float duration = [[info valueForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
+//    CGRect rect = self.view.frame;
+//    
+//    [UIView animateWithDuration:duration
+//                     animations:^{
+//                         self.colorBar.frame = CGRectMake(0, rect.size.height, 320, 25);
+//                         //[self.colorBar removeFromSuperview];
+//                     }
+//                     completion:^(BOOL finished){
+//                         
+//                     }];
+//
+//    
+//}
+//
+//-(void)keyboardDidHide:(NSNotification*)notification
+//{
+//    
+//}
+//
+////Override colorButtonHandler from PBCommonViewController
+//- (void)colorButtonHandler:(id)sender
+//{
+//    UIButton *colorButton = (UIButton*)sender;
+//    currentColor = (int)colorButton.tag;
+//    NSLog(@"ColorBar Selected = %d", currentColor );
+//    
+//    if(currentSelectedCell){
+//        currentSelectedCell.nameLabel.backgroundColor = [SQLManager getUserColor:currentColor alpha:0.5];
+//        [currentSelectedCell setUserColor:currentColor];
+//    }
+//}
+//
+//
+//- (void)nameDidBeginEditing:(ProfileCardCell *)cell
+//{
+//    currentSelectedCell = cell;
+//    NSLog(@"==> nameDidBeginEditing: userInfo = %@", cell.userInfo);
+//    [self frientList:cell appear:YES];
+//}
+//- (void)nameDidEndEditing:(ProfileCardCell *)cell
+//{
+//    currentSelectedCell = cell;
+//    //[cell.nameTextField endEditing:YES];
+//    
+//    NSLog(@"==> nameDidEndEditing:");
+//    //[self frientList:cell appear:NO];
+//    [self cellEditDone];
+//}
+//- (void)nameDidChange:(ProfileCardCell *)cell
+//{
+//    currentSelectedCell = cell;
+//    NSLog(@"==> nameDidChange:");
+//    [self searchFriend:cell name:cell.nameTextField.text];
+//}
 
 
-- (void)selectedFBFriend:(NSDictionary *)friend {
-    NSDictionary *userInfo = currentSelectedCell.userInfo;
-    
-    int cellUserID = [[userInfo objectForKey:@"UserID"] intValue];
-    NSString *cellUserName = [userInfo objectForKey:@"UserName"];
-    NSString *cellfbID = [userInfo objectForKey:@"fbID"];
-    
-    NSString *fbUserName = [friend objectForKey:@"name"];
-    NSString *fbID = [friend objectForKey:@"id"];
-    
-    NSString *fbProfile;// = [[[friend objectForKey:@"picture"] objectForKey:@"data"] objectForKey:@"url"];
-    
-    id picture = [friend objectForKey:@"picture"];
-    if(!IsEmpty(picture)){
-        fbProfile = [[[friend objectForKey:@"picture"] objectForKey:@"data"] objectForKey:@"url"];
-    } else {
-        //    http://graph.facebook.com/[user id]/picture?type=large     -------------->    for larger image
-        //    http://graph.facebook.com/[user id]/picture?type=smaller   -------------->    for smaller image
-        //    http://graph.facebook.com/[user id]/picture?type=square     -------------->    for square image
-        
-        fbProfile = [NSString stringWithFormat:@"http://graph.facebook.com/%@/picture?type=large",friend[@"id"]];
-    }
-    
-    
-    //NSString *fbProfile = [[[friend objectForKey:@"picture"] objectForKey:@"data"] objectForKey:@"url"];
-    
-    
-    //if(GlobalValue.UserID != cellUserID && ![fbID isEqualToString:cellfbID])
-    //{  // 로그인 한 사용자는 페북 계정을 cell에서 바꿀 수 없음.
-    
-    
-    NSArray *result = [SQLManager updateUser:@{ @"UserID" : @(cellUserID), @"UserName" : fbUserName,
-                                                @"UserNick" : fbUserName,  @"UserProfile" : fbProfile,
-                                                @"fbID" : fbID, @"fbName" : fbUserName,
-                                                @"fbProfile" : fbProfile }];
-    
-    NSLog(@"result = %@", result);
-    
-    if(!IsEmpty(result)) {
-        
-        currentSelectedCell.userInfo = [result objectAtIndex:0];
-        currentSelectedCell.nameTextField.text = nil;
-        currentSelectedCell.nameTextField.placeholder = nil;
-        
-        [currentSelectedCell.profileImageView setImageWithURL:[NSURL URLWithString:fbProfile]
-                         placeholderImage:[UIImage imageNamed:@"placeholder.png"]];
-        
-        [SQLManager setUserProfileImage:currentSelectedCell.profileImageView.image UserID:cellUserID];
-        
-//        self.editCell.userName.text = fbUserName;
-//        self.editCell.inputName.text = @"";
+
+
+//#pragma mark FBFriendControllerDelegate
+//// ProfileCardCell Delegate
+//- (void)frientList:(ProfileCardCell *)cell appear:(BOOL)show
+//{
+//    
+//    if(show) {
+//        // show friend Picker
+//        [self popover:cell.profileImageView];
+//        NSLog(@"show friend Picker ");
+//    } else {
+//        // hide friend Picker
+//        [self.friendPopup disAppearPopup];
+//        self.friendPopup = nil;
+//        NSLog(@"hide friend Picker ");
+//    }
+//}
+//- (void)searchFriend:(ProfileCardCell *)cell name:(NSString *)name
+//{
+//    currentSelectedCell = cell;
+//    [self.friendPopup handleSearchForTerm:name];
+//    NSLog(@"changed Name = %@", name);
+//}
+//
+//-(void)popover:(id)sender
+//{
+//    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+//    FBFriendController *controller = (FBFriendController *)[storyboard instantiateViewControllerWithIdentifier:@"FBFriendController"];
+//    
+//    controller.delegate = self;
+//    CGPoint convertedPoint = [self.view convertPoint:((UIImageView *)sender).center fromView:((UIImageView *)sender).superview];
+//    int x = convertedPoint.x - 48;
+//    int y = convertedPoint.y + 45;
+//    
+//    [controller appearPopup:CGPointMake(x, y) reverse:NO];
+//    
+//    self.friendPopup = controller;
+//}
+
+
+//- (void)selectedFBFriend:(NSDictionary *)friend {
+//    NSDictionary *userInfo = currentSelectedCell.userInfo;
+//    
+//    int cellUserID = [[userInfo objectForKey:@"UserID"] intValue];
+//    NSString *cellUserName = [userInfo objectForKey:@"UserName"];
+//    NSString *cellfbID = [userInfo objectForKey:@"fbID"];
+//    
+//    NSString *fbUserName = [friend objectForKey:@"name"];
+//    NSString *fbID = [friend objectForKey:@"id"];
+//    
+//    NSString *fbProfile;// = [[[friend objectForKey:@"picture"] objectForKey:@"data"] objectForKey:@"url"];
+//    
+//    id picture = [friend objectForKey:@"picture"];
+//    if(!IsEmpty(picture)){
+//        fbProfile = [[[friend objectForKey:@"picture"] objectForKey:@"data"] objectForKey:@"url"];
+//    } else {
+//        //    http://graph.facebook.com/[user id]/picture?type=large     -------------->    for larger image
+//        //    http://graph.facebook.com/[user id]/picture?type=smaller   -------------->    for smaller image
+//        //    http://graph.facebook.com/[user id]/picture?type=square     -------------->    for square image
 //        
-//        [self.editCell.userImage setImageWithURL:[NSURL URLWithString:fbProfile]
-//                                placeholderImage:[UIImage imageNamed:@"placeholder.png"]];
+//        fbProfile = [NSString stringWithFormat:@"http://graph.facebook.com/%@/picture?type=large",friend[@"id"]];
+//    }
+//    
+//    
+//    //NSString *fbProfile = [[[friend objectForKey:@"picture"] objectForKey:@"data"] objectForKey:@"url"];
+//    
+//    
+//    //if(GlobalValue.UserID != cellUserID && ![fbID isEqualToString:cellfbID])
+//    //{  // 로그인 한 사용자는 페북 계정을 cell에서 바꿀 수 없음.
+//    
+//    
+//    NSArray *result = [SQLManager updateUser:@{ @"UserID" : @(cellUserID), @"UserName" : fbUserName,
+//                                                @"UserNick" : fbUserName,  @"UserProfile" : fbProfile,
+//                                                @"fbID" : fbID, @"fbName" : fbUserName,
+//                                                @"fbProfile" : fbProfile }];
+//    
+//    NSLog(@"result = %@", result);
+//    
+//    if(!IsEmpty(result)) {
 //        
-//        [self.editCell doneButtonClickHandler:nil];
-    }
-    
+//        currentSelectedCell.userInfo = [result objectAtIndex:0];
+//        currentSelectedCell.nameTextField.text = nil;
+//        currentSelectedCell.nameTextField.placeholder = nil;
+//        
+//        [currentSelectedCell.profileImageView setImageWithURL:[NSURL URLWithString:fbProfile]
+//                         placeholderImage:[UIImage imageNamed:@"placeholder.png"]];
+//        
+//        [SQLManager setUserProfileImage:currentSelectedCell.profileImageView.image UserID:cellUserID];
+//        
+////        self.editCell.userName.text = fbUserName;
+////        self.editCell.inputName.text = @"";
+////        
+////        [self.editCell.userImage setImageWithURL:[NSURL URLWithString:fbProfile]
+////                                placeholderImage:[UIImage imageNamed:@"placeholder.png"]];
+////        
+////        [self.editCell doneButtonClickHandler:nil];
+//    }
+//    
+////    [self frientList:currentSelectedCell appear:NO];
+////    [currentSelectedCell.nameTextField resignFirstResponder];
+//    //}
+//    
+//    [self cellEditDone];
+//    
+//    
+//    
+//    // DB에 저장하는 부분 추가
+//    
+//}
+
+//- (void)cellEditDone
+//{
+//    NSDictionary *userInfo = currentSelectedCell.userInfo;
+//    NSIndexPath *indexPath = currentSelectedCell.indexPath;
+//   
+//    int UserID = [userInfo[@"UserID"] intValue];
+//    NSString *UserName = currentSelectedCell.nameLabel.text;
+//    int color = currentSelectedCell.userColor;
+//    
+//    //[currentSelectedCell.nameTextField endEditing:YES];//  resignFirstResponder];
+//    
+//    
+//    NSArray *result = [SQLManager updateUser:@{ @"UserID" : @(UserID), @"UserName" : UserName,
+//                                                @"color" : @(currentColor) }];
+//
+//    if(!IsEmpty(result)){
+//        [self.users replaceObjectAtIndex:indexPath.row withObject:[result objectAtIndex:0]];
+//    }
+//
+//    currentSelectedCell.nameTextField.placeholder = UserName;
+//    
 //    [self frientList:currentSelectedCell appear:NO];
-//    [currentSelectedCell.nameTextField resignFirstResponder];
-    //}
-    
-    [self cellEditDone];
-    
-    
-    
-    // DB에 저장하는 부분 추가
-    
-}
-
-- (void)cellEditDone
-{
-    NSDictionary *userInfo = currentSelectedCell.userInfo;
-    NSIndexPath *indexPath = currentSelectedCell.indexPath;
-   
-    int UserID = [userInfo[@"UserID"] intValue];
-    NSString *UserName = currentSelectedCell.nameLabel.text;
-    int color = currentSelectedCell.userColor;
-    
-    //[currentSelectedCell.nameTextField endEditing:YES];//  resignFirstResponder];
-    
-    
-    NSArray *result = [SQLManager updateUser:@{ @"UserID" : @(UserID), @"UserName" : UserName,
-                                                @"color" : @(currentColor) }];
-
-    if(!IsEmpty(result)){
-        [self.users replaceObjectAtIndex:indexPath.row withObject:[result objectAtIndex:0]];
-    }
-
-    currentSelectedCell.nameTextField.placeholder = UserName;
-    
-    [self frientList:currentSelectedCell appear:NO];
-    
-    
-    [self rightBarButtonHandler:nil];
-}
+//    
+//    
+//    [self rightBarButtonHandler:nil];
+//}
 
 
 
