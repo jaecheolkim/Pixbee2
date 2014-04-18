@@ -787,7 +787,7 @@
     
     NSArray *users = [SQLManager getAllUsers];
     
-    int faceCount = 0;
+    //int faceCount = 0;
     
     int margin = 8;
     int size = 88;
@@ -797,10 +797,12 @@
     for(int i = 0 ; i < [users count] + 1; i++ )
     {
         CGRect buttonFrame = CGRectMake(margin + i * (margin + size), y, size, size);
+        CGRect labelFrame = CGRectMake(0, 68, 88, 20);
         CGSize contentSize = CGSizeMake(margin + i * (margin + size) + size, _faceTabScrollView.frame.size.height);
 
         int UserID;
-        UIImage *profileImage;
+        UIImage *profileImage = nil;;
+        UILabel *nameLabel = nil;
         
         if(i == 0) {
             UserID = -1;
@@ -808,9 +810,17 @@
             
         } else {
             NSDictionary *userInfo = users[i-1];
-            
+
             UserID = [userInfo[@"UserID"] intValue];
             profileImage = [SQLManager getUserProfileImage:UserID];
+            
+            NSString *UserName = userInfo[@"UserName"];
+            int userColor = [userInfo[@"color"] intValue];
+            UIColor *color = [SQLManager getUserColor:userColor alpha:0.5];
+            nameLabel = [self getLabel:labelFrame];
+            [nameLabel setBackgroundColor:color];
+            [nameLabel setText:UserName];
+            
         }
         
         
@@ -825,39 +835,29 @@
         button.UserID = UserID;
         button.index = i;
         button.originRect = button.frame;
+
+        if(nameLabel != nil)
+            [button addSubview:nameLabel];
         
         [_faceTabScrollView addSubview:button];
         
         [_faceTabScrollView setContentSize:contentSize];
     }
+
+}
+
+- (UILabel*)getLabel:(CGRect)rect
+{
+    UILabel *label;
     
-//    for(NSDictionary *userInfo in users) {
-//
-//        int UserID = [userInfo[@"UserID"] intValue];
-//        UIImage *profileImage = [SQLManager getUserProfileImage:UserID];
-//        
-//        CGRect buttonFrame = CGRectMake(margin + faceCount * (margin + size), y, size, size);
-//        CGSize contentSize = CGSizeMake(margin + faceCount * (margin + size) + size, _faceTabScrollView.frame.size.height);
-//        
-//        [scrollViewCellFrames addObject:NSStringFromCGRect(buttonFrame)];
-//        
-//        UIButton_FaceIcon* button = [UIButton_FaceIcon buttonWithType:UIButtonTypeCustom];
-//        
-//        [button setProfileImage:profileImage];
-//        
-//        button.frame = buttonFrame;
-//        
-//        button.UserID = UserID;
-//        button.index = faceCount;
-//        button.originRect = button.frame;
-//        
-//        [_faceTabScrollView addSubview:button];
-//        
-//        [_faceTabScrollView setContentSize:contentSize];
-//
-//        faceCount++;
-//
-//    }
+    label = [[UILabel alloc] initWithFrame:rect];
+    label.textAlignment = NSTextAlignmentCenter;
+    label.font = [UIFont fontWithName:@"Helvetica" size:12];
+    label.textColor = [UIColor whiteColor];
+    label.shadowColor = [UIColor darkTextColor];
+    label.shadowOffset = CGSizeMake(0, 1);
+ 
+    return label;
 }
 
 - (void)cleanFaceTabList
