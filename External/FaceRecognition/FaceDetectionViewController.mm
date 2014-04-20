@@ -309,7 +309,7 @@ AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
 
         NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:@"     "];
         
-        UIFont *font = [UIFont fontWithName:@"AvenirNext-HeavyItalic" size:26];
+        UIFont *font = [UIFont fontWithName:@"AvenirNext-Medium" size:23];
         [attributedString addAttribute:NSFontAttributeName value:font range:NSMakeRange(0, [attributedString length])];
         
         [attributedString addAttribute:NSForegroundColorAttributeName
@@ -352,6 +352,25 @@ AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
 //    _carousel.dataSource = self;
 //    _carousel.delegate = self;
 
+    
+    // List all fonts on iPhone
+//    NSArray *familyNames = [[NSArray alloc] initWithArray:[UIFont familyNames]];
+//    NSArray *fontNames;
+//    NSInteger indFamily, indFont;
+//    for (indFamily=0; indFamily<[familyNames count]; ++indFamily)
+//    {
+//        NSLog(@"Family name: %@", [familyNames objectAtIndex:indFamily]);
+//        fontNames = [[NSArray alloc] initWithArray:
+//                     [UIFont fontNamesForFamilyName:
+//                      [familyNames objectAtIndex:indFamily]]];
+//        for (indFont=0; indFont<[fontNames count]; ++indFont)
+//        {
+//            NSLog(@"    Font name: %@", [fontNames objectAtIndex:indFont]);
+//        }
+//        
+//    }
+
+    
     NSLog(@"viewDidLoad = %@", @"---- END");
 }
 
@@ -776,8 +795,8 @@ AVCaptureVideoDataOutputSampleBufferDelegate, UINavigationControllerDelegate>
 	layer.contents = (id)guideImage.CGImage;
 	
     
-	UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tap:)];
-	[self.view addGestureRecognizer:tap];
+//	UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tap:)];
+//	[self.view addGestureRecognizer:tap];
     
     CGSize viewSize = faceView.bounds.size;
 	layer.frame = CGRectMake((viewSize.width - 232)/2, (viewSize.height - 279)/2, 232, 279);
@@ -2096,6 +2115,17 @@ bail:
 //                    serialized = [FaceLib serializeCvMat:mirroredFace];
 //                    [SQLManager addTrainModelForUserID:UserID withFaceData:serialized];
                     
+                    
+                    CGImageRef cgimage = [FaceLib getFaceCGImage:ciImage bound:feature.bounds];
+                    UIImage *profileImage = [UIImage imageWithCGImage:cgimage scale:1.0 orientation:imageOrient];
+                    CGImageRelease(cgimage);
+                    profileImage = [profileImage fixRotation];
+                    
+                    //UIImage *profileImage = [UIImage imageWithCIImage:ciImage];
+                    [SQLManager setUserProfileImage:profileImage UserID:UserID];
+
+                    
+                    
                     if(GlobalValue.testMode){
                         UIImage *faceImage = [FaceLib MatToUIImage:preprocessedFace];
                         if(faceImage) [faceImageView setImage:faceImage];
@@ -2109,13 +2139,13 @@ bail:
                     if(ani_step > 7){
                     //if (self.numPicsTaken == TOTAL_COLLECT) {
                         
-                        CGImageRef cgimage = [FaceLib getFaceCGImage:ciImage bound:feature.bounds];
-                        UIImage *profileImage = [UIImage imageWithCGImage:cgimage scale:1.0 orientation:imageOrient];
-                        CGImageRelease(cgimage);
-                        profileImage = [profileImage fixRotation];
-                        
-                        //UIImage *profileImage = [UIImage imageWithCIImage:ciImage];
-                        [SQLManager setUserProfileImage:profileImage UserID:UserID];
+//                        CGImageRef cgimage = [FaceLib getFaceCGImage:ciImage bound:feature.bounds];
+//                        UIImage *profileImage = [UIImage imageWithCGImage:cgimage scale:1.0 orientation:imageOrient];
+//                        CGImageRelease(cgimage);
+//                        profileImage = [profileImage fixRotation];
+//                        
+//                        //UIImage *profileImage = [UIImage imageWithCIImage:ciImage];
+//                        [SQLManager setUserProfileImage:profileImage UserID:UserID];
                         
                         //최종 사진을 Blur 처리해서 이미지 저장.
                         cgimage = [FaceLib getFaceCGImage:ciImage bound:ciImage.extent];
