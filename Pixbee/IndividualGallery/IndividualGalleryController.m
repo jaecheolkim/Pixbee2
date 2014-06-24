@@ -70,11 +70,13 @@ IDMPhotoBrowserDelegate, GalleryViewCellDelegate>
 @property (weak, nonatomic) IBOutlet UIView *toolbar;
 @property (weak, nonatomic) IBOutlet UIButton *shareButton;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *backButton;
+@property (weak, nonatomic) IBOutlet UIButton *pulltoRefreshButton;
 
 - (IBAction)editButtonClickHandler:(id)sender;
 
 - (IBAction)shareButtonHandler:(id)sender;
 
+- (IBAction)pulltoRefreshButtonHandler:(id)sender;
 @end
 
 @implementation IndividualGalleryController
@@ -110,6 +112,8 @@ IDMPhotoBrowserDelegate, GalleryViewCellDelegate>
 
     self.collectionView.backgroundColor = [UIColor clearColor];
  
+    self.pulltoRefreshButton.hidden = YES;
+    
     [self initRefreshControl];
     
     [self initNaviMenu];
@@ -368,6 +372,8 @@ IDMPhotoBrowserDelegate, GalleryViewCellDelegate>
                             EDIT_MODE = YES;
                             [self.collectionView setAllowsMultipleSelection:EDIT_MODE];
                             [self.collectionView setAllowsSelection:EDIT_MODE];
+                            
+                            self.pulltoRefreshButton.hidden = NO;
 
                         }
                     });
@@ -403,6 +409,8 @@ IDMPhotoBrowserDelegate, GalleryViewCellDelegate>
 
     self.title = [NSString stringWithFormat:@"%@ (%d)", UserName, (int)[self.photos count]];
  
+    if(IsEmpty(self.photos)) self.pulltoRefreshButton.hidden = NO;
+    
 }
 
 - (void)refresh
@@ -783,6 +791,11 @@ IDMPhotoBrowserDelegate, GalleryViewCellDelegate>
 //         }
      }];
 
+}
+
+- (IBAction)pulltoRefreshButtonHandler:(id)sender {
+    self.pulltoRefreshButton.hidden = YES;
+    [self startRefresh];
 }
 
 

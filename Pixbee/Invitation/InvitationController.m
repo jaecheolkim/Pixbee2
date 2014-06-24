@@ -159,11 +159,11 @@
     
     // Put together the dialog parameters
     NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-                                   @"Sharing Tutorial", @"name",
-                                   @"Build great social apps and get more installs.", @"caption",
-                                   @"Allow your users to share stories on Facebook from your app using the iOS SDK.", @"description",
-                                   @"https://developers.facebook.com/docs/ios/share/", @"link",
-                                   @"http://i.imgur.com/g3Qc1HN.png", @"picture",
+                                   @"Pixbee - Facial recognition camera", @"name",
+                                   @"Redefine the camera from the human eyes", @"caption",
+                                   @" Organize your memories by friends or family", @"description",
+                                   @"http://http://www.pixbee.co", @"link",
+                                   @"https://www.dropbox.com/s/x2c2c8uiy9zw9js/logo.png", @"picture",
                                    nil];
     
     // Make the request
